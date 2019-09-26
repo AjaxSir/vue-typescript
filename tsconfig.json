@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "esnext",
     "noImplicitAny": false,
+    "strictPropertyInitialization": false,
     "module": "esnext",
     "strict": true,
     "jsx": "preserve",
