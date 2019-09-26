@@ -21,7 +21,7 @@ export default class HelloWorld extends Vue {
   constructor() {
     super();
   }
-  private tableData: Array<Object> = [];
+  public tableData: Array<Object> = [];
   @Prop({ default: "默认值" }) private msg!: string;
   @Getter("name") name: any;
   @Action("SET_NAME") set_name: any;
