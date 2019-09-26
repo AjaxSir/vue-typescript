@@ -14,12 +14,11 @@ public page: any =  {
     current: 1,
     size: 10
 }
-created() {
-}
 public orderBy: Object = {
     prop: "", // 需要的根据什么排序
     order: "descending" // ascending 表示升序，descending 表示降序
 }
+public list_data: Array<Object> = [];
 fetchData(page: number): void {
     // axiosConfig({
     //     method,
