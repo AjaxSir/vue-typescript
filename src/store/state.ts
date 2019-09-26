@@ -1,6 +1,6 @@
 import stateType from "./type";
 const state: stateType = {
-    name: "一石",
+    name: "sxl",
     token: ""
 }
 export default state
