@@ -26,9 +26,7 @@ export default class HelloWorld extends Vue {
   @Getter("name") name: any;
   @Action("SET_NAME") set_name: any;
   created() {
-    console.log(this.name);
     this.set_name("科技");
-    console.log(this.name);
     login({
       username: "root",
       password: "root!2345"
