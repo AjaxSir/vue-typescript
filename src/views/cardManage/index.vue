@@ -12,22 +12,21 @@
       <el-col :span="20">
         <div class="rightContent">
           <el-table :data="cardList" stripe class="demo-block">
-            <el-table-column type="selection" width="50"></el-table-column>
-            <el-table-column
-              type="index"
-              label="序号"
-              width="50"
-            ></el-table-column>
+            <el-table-column type="selection" width="50">
+              <template slot-scope="scope">
+                <i class="iconfont icon-_shezhi-xian"></i>
+              </template>
+            </el-table-column>
+
+            <el-table-column type="index" label="序号" width="50"></el-table-column>
+
             <el-table-column prop="name" label="编号"></el-table-column>
-            <el-table-column
-              prop="houseRelative"
-              label="关联房屋"
-            ></el-table-column>
+
+            <el-table-column prop="houseRelative" label="关联房屋"></el-table-column>
+
             <el-table-column prop="createDate" label="创建"></el-table-column>
-            <el-table-column
-              prop="createDate"
-              label="最近刷卡时间"
-            ></el-table-column>
+
+            <el-table-column prop="createDate" label="最近刷卡时间"></el-table-column>
             <el-table-column prop="type" label="状态">
               <template slot-scope="scope">
                 <el-tag
@@ -35,18 +34,13 @@
                   style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
                   :type="scope.row.type === 1 ? 'success' : 'danger'"
                   @click="editType(scope.row)"
-                  >{{ scope.row.type === 1 ? "正常" : "异常" }}</el-tag
-                >
+                >{{ scope.row.type === 1 ? "正常" : "异常" }}</el-tag>
               </template>
             </el-table-column>
-            <el-table-column
-              prop="createDate"
-              label="日平均刷卡次数"
-            ></el-table-column>
-            <el-table-column
-              prop="createDate"
-              label="周平均刷卡次数"
-            ></el-table-column>
+
+            <el-table-column prop="createDate" label="日平均刷卡次数"></el-table-column>
+
+            <el-table-column prop="createDate" label="周平均刷卡次数"></el-table-column>
           </el-table>
         </div>
       </el-col>
@@ -70,7 +64,7 @@
           >确 定</el-button
         >
       </div>
-    </el-dialog> -->
+    </el-dialog>-->
   </div>
 </template>
 
@@ -78,8 +72,10 @@
 import { Component, Prop, Vue, Mixins } from "vue-property-decorator";
 import { Getter, Action, Mutation } from "vuex-class";
 import mixin from "@/config/minxins";
+
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 const DataTree = () => import("@/components/DataTree.vue");
+
 @Component({
   mixins: [mixin],
   components: {
