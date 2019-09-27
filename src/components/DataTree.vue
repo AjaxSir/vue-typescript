@@ -1,3 +1,7 @@
+<!--
+  数据页面对应左边的树形结构
+  data: 传入的数据
+-->
 <template>
   <div class="content">
     <el-tree

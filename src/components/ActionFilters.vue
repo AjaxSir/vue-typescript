@@ -1,3 +1,8 @@
+<!--
+  不同页面的筛选
+  传入不同的slot 在ActionHeader 里面对应写入不同的筛选条件
+  slot name=housenum  对应单元号筛选
+-->
 <template>
   <div @mouseenter="visibleStatus" @mouseleave="visibleStatus" class="content">
     过滤
