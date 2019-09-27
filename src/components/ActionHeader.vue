@@ -4,48 +4,65 @@
   pageSize 每页的数据条数
  -->
 <template>
-  <div class="content">
-    <div class="leftAction">
-      <el-button class="createBtn" type="primary">创建</el-button>
-      <el-dropdown split-button type="primary" @click="handleClick">
-        更多菜单
-        <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item>导入</el-dropdown-item>
-          <el-dropdown-item>导出</el-dropdown-item>
-          <el-dropdown-item>统计信息</el-dropdown-item>
-          <el-dropdown-item>远程开门</el-dropdown-item>
-        </el-dropdown-menu>
-      </el-dropdown>
-    </div>
-    <div class="rightAction">
-      <ActionFilter>
-        <div class="houseNum" slot="houseNum">
-          <span>单元号:</span>
-          <el-input class="input" placeholder="输入单元号"></el-input>
-        </div>
-      </ActionFilter>
-      <span class="total">总共:{{ total }}条</span>
-      <i @click="visible = !visible" class="iconfont icon-chilun"></i>
-      <transition name="el-zoom-in-top">
-        <div v-show="visible" class="setting">
-          <span>每页显示:</span>
-          <el-select
-            style="width:100px;margin-left:10px"
-            v-model="size"
-            placeholder="请选择"
-          >
-            <el-option
-              v-for="item in pageSize"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
+  <el-row type="flex" class="row-bg">
+    <el-col :span="12">
+      <div class="leftAction">
+        <el-button
+          class="createBtn"
+          type="primary"
+          size="small"
+          icon="el-icon-plus"
+          >创建</el-button
+        >
+        <el-dropdown split-button size="small" @click="handleClick">
+          更多菜单
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item>导入</el-dropdown-item>
+            <el-dropdown-item>导出</el-dropdown-item>
+            <el-dropdown-item>统计信息</el-dropdown-item>
+            <el-dropdown-item>远程开门</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+      </div>
+    </el-col>
+
+    <el-col :span="12" justify="end">
+      <div class="rightAction">
+        <ActionFilter>
+          <div class="houseNum" slot="houseNum">
+            <span>单元号:</span>
+            <el-input class="input" placeholder="输入单元号"></el-input>
+          </div>
+        </ActionFilter>
+
+        <span class="total">总共:{{ total }}条</span>
+
+        <i
+          @click="visible = !visible"
+          style="font-size:20px;"
+          class="iconfont icon-_shezhi-xian"
+        ></i>
+
+        <transition name="el-zoom-in-top">
+          <div v-show="visible" class="setting">
+            <span>每页显示:</span>
+            <el-select
+              style="width:100px;margin-left:10px"
+              v-model="size"
+              placeholder="请选择"
             >
-            </el-option>
-          </el-select>
-        </div>
-      </transition>
-    </div>
-  </div>
+              <el-option
+                v-for="item in pageSize"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              ></el-option>
+            </el-select>
+          </div>
+        </transition>
+      </div>
+    </el-col>
+  </el-row>
 </template>
 
 <script lang="ts">
@@ -79,18 +96,13 @@ export default class ActionManage extends Vue {
 </script>
 
 <style lang="scss" scoped>
-.content {
-  width: 100%;
-  height: 40px;
-  display: flex;
+.row-bg {
   margin-bottom: 10px;
-  div {
-    flex: 1;
-  }
+  height: 32px;
   .leftAction {
     text-align: left;
     .createBtn {
-      margin-right: 20px;
+      margin-right: 10px;
     }
   }
   .rightAction {
@@ -111,12 +123,19 @@ export default class ActionManage extends Vue {
     font-size: 14px;
     position: relative;
     .total {
-      margin: 0 20px;
+      padding: 0 10px;
+      margin: 0 10px;
       font-size: 14px;
+      color: #8494a7;
+      border-left: 1px solid #dfe6ee;
+      border-right: 1px solid #dfe6ee;
+    }
+    .iconfont {
+      color: #8494a7;
     }
     .houseNum {
       height: 100px;
-      color: black;
+      color: #8494a7;
       text-align: left;
       .input {
         display: inline-block;
