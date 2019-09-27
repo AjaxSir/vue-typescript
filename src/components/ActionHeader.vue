@@ -1,3 +1,8 @@
+<!-- 
+  对表格的操作组件
+  total 传入的数据总条数
+  pageSize 每页的数据条数
+ -->
 <template>
   <div class="content">
     <div class="leftAction">
@@ -20,7 +25,25 @@
         </div>
       </ActionFilter>
       <span class="total">总共:{{ total }}条</span>
-      <i class="iconfont icon-chilun"></i>
+      <i @click="visible = !visible" class="iconfont icon-chilun"></i>
+      <transition name="el-zoom-in-top">
+        <div v-show="visible" class="setting">
+          <span>每页显示:</span>
+          <el-select
+            style="width:100px;margin-left:10px"
+            v-model="size"
+            placeholder="请选择"
+          >
+            <el-option
+              v-for="item in pageSize"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            >
+            </el-option>
+          </el-select>
+        </div>
+      </transition>
     </div>
   </div>
 </template>
@@ -35,6 +58,22 @@ const ActionFilter = () => import("./ActionFilters.vue");
 })
 export default class ActionManage extends Vue {
   @Prop() private total: any;
+  private visible: boolean = false;
+  private size: string = "10";
+  private pageSize: Array<Object> = [
+    {
+      label: "10",
+      value: "10"
+    },
+    {
+      label: "30",
+      value: "30"
+    },
+    {
+      label: "50",
+      value: "50"
+    }
+  ];
   handleClick() {}
 }
 </script>
@@ -55,6 +94,19 @@ export default class ActionManage extends Vue {
     }
   }
   .rightAction {
+    .setting {
+      text-align: left;
+      padding: 10px 10px;
+      width: 200px;
+      height: 80px;
+      position: absolute;
+      top: 40px;
+      right: 0px;
+      border: 1px solid lightgray;
+      box-shadow: 0px 10px 10px gray;
+      background: white;
+      z-index: 9;
+    }
     text-align: right;
     font-size: 14px;
     position: relative;
