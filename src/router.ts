@@ -55,12 +55,32 @@ export const constantRouterMap = [{
     path: 'access_card',
     component: _import_('cardManage/index'),
     meta: {
-      title: '门禁卡管理',
+      title: '房屋管理',
+      icon: 'monitor'
+    }
+  }]
+},
+{
+  path: '/user',
+  name: 'user',
+  component: Layout,
+  redirect: '/user/ownermanage',
+  alwaysShow: true,
+  meta: {
+    title: '用户管理',
+    icon: 'user',
+    icon_class: "person-iconA",
+  },
+  children: [{
+    name: 'ownermanage',
+    path: 'ownermanage',
+    component: _import_('ownerManage/index'),
+    meta: {
+      title: '业主管理',
       icon: 'monitor'
     }
   }]
 },]
-
 
 export default new Router({
   mode: 'history',

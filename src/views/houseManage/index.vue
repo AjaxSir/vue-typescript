@@ -1,76 +1,44 @@
 <template>
-  <div class="app-container">
-    <el-row>
-      <el-col :span="24">
-        <action-header :total="1" />
-      </el-col>
-    </el-row>
-    <el-row :gutter="20">
-      <el-col :span="4">
-        <data-tree />
-      </el-col>
-      <el-col :span="20">
-        <div class="rightContent">
-          <el-table :data="cardList" stripe class="demo-block">
-            <el-table-column type="selection" width="50"></el-table-column>
-            <el-table-column
-              type="index"
-              label="序号"
-              width="50"
-            ></el-table-column>
-            <el-table-column prop="name" label="编号"></el-table-column>
-            <el-table-column
-              prop="houseRelative"
-              label="关联房屋"
-            ></el-table-column>
-            <el-table-column prop="createDate" label="创建"></el-table-column>
-            <el-table-column
-              prop="createDate"
-              label="最近刷卡时间"
-            ></el-table-column>
-            <el-table-column prop="type" label="状态">
-              <template slot-scope="scope">
-                <el-tag
-                  size="small"
-                  style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
-                  :type="scope.row.type === 1 ? 'success' : 'danger'"
-                  @click="editType(scope.row)"
-                  >{{ scope.row.type === 1 ? "正常" : "异常" }}</el-tag
-                >
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="createDate"
-              label="日平均刷卡次数"
-            ></el-table-column>
-            <el-table-column
-              prop="createDate"
-              label="周平均刷卡次数"
-            ></el-table-column>
-          </el-table>
-        </div>
-      </el-col>
-    </el-row>
-
-    <!-- <el-dialog title="收货地址" :visible.sync="dialogFormVisible" width="40%">
-      <el-form :model="form">
-        <el-form-item label="活动名称" :label-width="formLabelWidth">
-          <el-input v-model="form.name" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="活动区域" :label-width="formLabelWidth">
-          <el-select v-model="form.region" placeholder="请选择活动区域">
-            <el-option label="区域一" value="shanghai"></el-option>
-            <el-option label="区域二" value="beijing"></el-option>
-          </el-select>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogFormVisible = false"
-          >确 定</el-button
+  <div class="main">
+    <div class="leftContent">
+      <DataTree />
+    </div>
+    <div class="rightContent">
+      <ActionHeader :total="1"></ActionHeader>
+      <el-table :data="list_data" border>
+        <el-table-column type="selection" width="50"> </el-table-column>
+        <el-table-column
+          prop="date"
+          align="center"
+          label="所属楼栋"
+          width="180"
         >
-      </div>
-    </el-dialog> -->
+        </el-table-column>
+        <el-table-column
+          prop="name"
+          align="center"
+          label="所属单元"
+          width="180"
+        >
+        </el-table-column>
+        <el-table-column prop="address" align="center" label="房屋编号">
+        </el-table-column>
+        <el-table-column prop="address" align="center" label="注册人数">
+        </el-table-column>
+        <el-table-column prop="address" align="center" label="累计访客人数">
+        </el-table-column>
+        <el-table-column prop="address" align="center" label="累计访客次数">
+        </el-table-column>
+        <el-table-column prop="address" align="center" label="日平均进出次数">
+        </el-table-column>
+        <el-table-column prop="address" align="center" label="昨日进出次数">
+        </el-table-column>
+        <el-table-column prop="address" align="center" label="状态">
+        </el-table-column>
+        <el-table-column prop="address" align="center" label="备注">
+        </el-table-column>
+      </el-table>
+    </div>
   </div>
 </template>
 
@@ -139,6 +107,7 @@ export default class HouseManage extends Vue {
 
 <style lang="scss" scoped>
 .main {
+  padding: 20px;
   display: flex;
   .rightContent {
     flex: 1;
