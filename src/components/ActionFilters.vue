@@ -41,7 +41,7 @@ export default class DataTree extends Vue {
     cursor: pointer;
   }
   .filterDialog {
-    width: 200px;
+    width: 240px;
     height: auto;
     padding: 20px 10px;
     position: absolute;

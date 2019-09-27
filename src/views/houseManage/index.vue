@@ -7,19 +7,36 @@
       <ActionHeader :total="1"></ActionHeader>
       <el-table :data="list_data" border>
         <el-table-column type="selection" width="50"> </el-table-column>
-        <el-table-column prop="date" label="所属楼栋" width="180">
+        <el-table-column
+          prop="date"
+          align="center"
+          label="所属楼栋"
+          width="180"
+        >
         </el-table-column>
-        <el-table-column prop="name" label="所属单元" width="180">
+        <el-table-column
+          prop="name"
+          align="center"
+          label="所属单元"
+          width="180"
+        >
         </el-table-column>
-        <el-table-column prop="address" label="房屋编号"> </el-table-column>
-        <el-table-column prop="address" label="注册人数"> </el-table-column>
-        <el-table-column prop="address" label="累计访客人数"> </el-table-column>
-        <el-table-column prop="address" label="累计访客次数"> </el-table-column>
-        <el-table-column prop="address" label="日平均进出次数">
+        <el-table-column prop="address" align="center" label="房屋编号">
         </el-table-column>
-        <el-table-column prop="address" label="昨日进出次数"> </el-table-column>
-        <el-table-column prop="address" label="状态"> </el-table-column>
-        <el-table-column prop="address" label="备注"> </el-table-column>
+        <el-table-column prop="address" align="center" label="注册人数">
+        </el-table-column>
+        <el-table-column prop="address" align="center" label="累计访客人数">
+        </el-table-column>
+        <el-table-column prop="address" align="center" label="累计访客次数">
+        </el-table-column>
+        <el-table-column prop="address" align="center" label="日平均进出次数">
+        </el-table-column>
+        <el-table-column prop="address" align="center" label="昨日进出次数">
+        </el-table-column>
+        <el-table-column prop="address" align="center" label="状态">
+        </el-table-column>
+        <el-table-column prop="address" align="center" label="备注">
+        </el-table-column>
       </el-table>
     </div>
   </div>
@@ -43,6 +60,7 @@ export default class HouseManage extends Vue {}
 
 <style lang="scss" scoped>
 .main {
+  padding: 20px;
   display: flex;
   .leftContent {
     flex: none;
