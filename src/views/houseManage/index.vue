@@ -1,10 +1,4 @@
 <template>
-<<<<<<< HEAD
-  <div class="app-container">
-    houseManage
-  </div>
-</template>
-=======
   <div class="main">
     <div class="leftContent">
       <DataTree />
@@ -59,4 +53,3 @@ export default class HouseManage extends Vue {}
   }
 }
 </style>
->>>>>>> partComponent :fire:
