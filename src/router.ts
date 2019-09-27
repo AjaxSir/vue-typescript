@@ -23,23 +23,43 @@ export const constantRouterMap = [{
   path: '/house',
   name: 'house',
   component: Layout,
-  redirect: '/house/access_card',
+  redirect: '/house/houseManage',
   alwaysShow: true,
   meta: {
-    title: '楼栋管理',
+    title: '房屋管理',
+    icon: 'v_house',
+    icon_class: "person-iconB",
+  },
+  children: [{
+    name: 'houseManage',
+    path: 'houseManage',
+    component: _import_('houseManage/index'),
+    meta: {
+      title: '房屋管理',
+      icon: 'monitor'
+    }
+  }]
+}, {
+  path: '/card',
+  name: 'card',
+  component: Layout,
+  redirect: '/card/access_card',
+  alwaysShow: true,
+  meta: {
+    title: '门禁卡管理',
     icon: 'v_house',
     icon_class: "person-iconB",
   },
   children: [{
     name: 'access_card',
     path: 'access_card',
-    component: _import_('houseManage/index'),
+    component: _import_('cardManage/index'),
     meta: {
       title: '门禁卡管理',
       icon: 'monitor'
     }
   }]
-}]
+},]
 
 
 export default new Router({

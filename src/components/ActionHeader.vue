@@ -31,7 +31,11 @@
         <ActionFilter>
           <div class="houseNum" slot="houseNum">
             <span>单元号:</span>
-            <el-input class="input" placeholder="输入单元号"></el-input>
+            <el-input
+              class="input"
+              size="small"
+              placeholder="输入单元号"
+            ></el-input>
           </div>
         </ActionFilter>
 
@@ -139,7 +143,7 @@ export default class ActionManage extends Vue {
       text-align: left;
       .input {
         display: inline-block;
-        width: 130px;
+        width: 200px;
       }
       span {
         margin-right: 10px;

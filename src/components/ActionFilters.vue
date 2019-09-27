@@ -4,11 +4,7 @@
   slot name=housenum  对应单元号筛选
 -->
 <template>
-  <el-button
-    type="text"
-    @mouseenter="visibleStatus"
-    @mouseleave="visibleStatus"
-  >
+  <div @mouseenter="visibleStatus" @mouseleave="visibleStatus" class="content">
     <i class="iconfont icon-filtration"></i>
     过滤
     <transition name="el-zoom-in-top">
@@ -17,7 +13,7 @@
         <el-button>筛选</el-button>
       </div>
     </transition>
-  </el-button>
+  </div>
 </template>
 
 <script lang="ts">
@@ -25,25 +21,31 @@ import { Component, Prop, Vue, Mixins } from "vue-property-decorator";
 @Component
 export default class DataTree extends Vue {
   private visible: boolean = false;
-
   visibleStatus() {
-    console.log(this.visible);
     this.visible = !this.visible;
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.filterDialog {
-  width: 200px;
-  height: auto;
-  padding: 20px 10px;
-  position: absolute;
-  z-index: 11;
-  left: -20px;
-  top: 40px;
-  border: 1px solid lightgray;
-  box-shadow: 0px 10px 10px gray;
-  background: white;
+.content {
+  display: inline-block;
+  position: relative;
+  color: #8494a7;
+  &:hover {
+    cursor: pointer;
+  }
+  .filterDialog {
+    width: 300px;
+    height: auto;
+    padding: 20px 10px;
+    position: absolute;
+    z-index: 11;
+    left: -120px;
+    top: 40px;
+    border: 1px solid lightgray;
+    box-shadow: 0px 10px 10px gray;
+    background: white;
+  }
 }
 </style>

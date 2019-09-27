@@ -87,7 +87,7 @@ const DataTree = () => import("@/components/DataTree.vue");
     DataTree
   }
 })
-export default class HouseManage extends Vue {
+export default class CardManage extends Vue {
   private cardList: Array<Object> = [
     {
       name: "张三",
