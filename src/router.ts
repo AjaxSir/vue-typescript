@@ -80,7 +80,7 @@ export const constantRouterMap = [{
       icon: 'monitor'
     }
   }]
-},]
+}]
 
 export default new Router({
   mode: 'history',
