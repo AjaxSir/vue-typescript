@@ -1,43 +1,75 @@
 <template>
-  <div class="main">
-    <div class="leftContent">
-      <DataTree />
-    </div>
-    <div class="rightContent">
-      <ActionHeader :total="1"></ActionHeader>
-      <el-table :data="list_data" border>
-        <el-table-column type="selection" align="center"> </el-table-column>
-        <el-table-column type="index" width="60" align="center" label="编号">
-        </el-table-column>
-        <el-table-column prop="name" align="center" label="姓名">
-        </el-table-column>
-        <el-table-column prop="name" align="center" label="年龄">
-        </el-table-column>
-        <el-table-column prop="name" align="center" label="性别">
-        </el-table-column>
-        <el-table-column prop="name" align="center" label="联系电话">
-        </el-table-column>
-        <el-table-column prop="name" align="center" label="房屋信息">
-        </el-table-column>
-        <el-table-column prop="name" align="center" label="过期时间">
-        </el-table-column>
-        <el-table-column prop="name" align="center" label="远程开门">
-        </el-table-column>
-        <el-table-column prop="name" align="center" label="访客车辆">
-        </el-table-column>
-        <el-table-column prop="name" align="center" label="是否主联系人">
-        </el-table-column>
-        <el-table-column prop="name" align="center" label="状态">
-        </el-table-column>
-        <el-table-column prop="name" align="center" label="备注">
-        </el-table-column>
-        <el-table-column prop="name" align="center" label="创建时间">
-        </el-table-column>
-      </el-table>
-    </div>
+  <div class="app-container">
+    <el-row>
+      <el-col :span="24">
+        <ActionHeader :total="1" />
+      </el-col>
+    </el-row>
+    <el-row :gutter="20">
+      <el-col :span="4">
+        <DataTree />
+      </el-col>
+      <el-col :span="20">
+        <div class="rightContent">
+          <el-table :data="list_data" border>
+            <el-table-column type="selection" align="center"> </el-table-column>
+            <el-table-column
+              type="index"
+              width="60"
+              align="center"
+              label="编号"
+            >
+            </el-table-column>
+            <el-table-column prop="name" align="center" label="姓名">
+            </el-table-column>
+            <el-table-column prop="name" align="center" label="年龄">
+            </el-table-column>
+            <el-table-column prop="name" align="center" label="性别">
+            </el-table-column>
+            <el-table-column prop="name" align="center" label="联系电话">
+            </el-table-column>
+            <el-table-column prop="name" align="center" label="房屋信息">
+            </el-table-column>
+            <el-table-column prop="name" align="center" label="过期时间">
+            </el-table-column>
+            <el-table-column prop="name" align="center" label="远程开门">
+            </el-table-column>
+            <el-table-column prop="name" align="center" label="访客车辆">
+            </el-table-column>
+            <el-table-column prop="name" align="center" label="是否主联系人">
+            </el-table-column>
+            <el-table-column prop="name" align="center" label="状态">
+            </el-table-column>
+            <el-table-column prop="name" align="center" label="备注">
+            </el-table-column>
+            <el-table-column prop="name" align="center" label="创建时间">
+            </el-table-column>
+          </el-table>
+        </div>
+      </el-col>
+    </el-row>
+
+    <!-- <el-dialog title="收货地址" :visible.sync="dialogFormVisible" width="40%">
+      <el-form :model="form">
+        <el-form-item label="活动名称" :label-width="formLabelWidth">
+          <el-input v-model="form.name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="活动区域" :label-width="formLabelWidth">
+          <el-select v-model="form.region" placeholder="请选择活动区域">
+            <el-option label="区域一" value="shanghai"></el-option>
+            <el-option label="区域二" value="beijing"></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogFormVisible = false"
+          >确 定</el-button
+        >
+      </div>
+    </el-dialog> -->
   </div>
 </template>
-
 <script lang="ts">
 import { Component, Prop, Vue, Mixins } from "vue-property-decorator";
 import { Getter, Action, Mutation } from "vuex-class";
