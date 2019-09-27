@@ -95,7 +95,7 @@ p {
 .navbar {
   height: 40px;
   line-height: 40px;
-  margin: 0 36px;
+  margin: 0 20px;
   border-radius: 0px !important;
   display: flex;
   align-items: flex-end;

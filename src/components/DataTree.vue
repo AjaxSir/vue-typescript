@@ -90,5 +90,7 @@ export default class DataTree extends Vue {
 .content {
   width: 100%;
   text-align: center;
+  border: 1px solid #ebeef5;
+  padding: 10px;
 }
 </style>

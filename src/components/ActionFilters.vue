@@ -5,6 +5,7 @@
 -->
 <template>
   <div @mouseenter="visibleStatus" @mouseleave="visibleStatus" class="content">
+    <i class="iconfont icon-filtration"></i>
     过滤
     <transition name="el-zoom-in-top">
       <div v-show="visible" class="filterDialog">
@@ -28,25 +29,19 @@ export default class DataTree extends Vue {
 
 <style lang="scss" scoped>
 .content {
-  width: 120px;
   display: inline-block;
-  color: white;
-  background: teal;
-  border-radius: 5px;
-  height: 40px;
-  text-align: center;
   position: relative;
-  line-height: 40px;
+  color: #8494a7;
   &:hover {
     cursor: pointer;
   }
   .filterDialog {
-    width: 200px;
+    width: 300px;
     height: auto;
     padding: 20px 10px;
     position: absolute;
     z-index: 11;
-    left: -20px;
+    left: -120px;
     top: 40px;
     border: 1px solid lightgray;
     box-shadow: 0px 10px 10px gray;
