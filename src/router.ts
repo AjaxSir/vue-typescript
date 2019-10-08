@@ -79,6 +79,69 @@ export const constantRouterMap = [{
   }]
 },
 {
+  path: '/traffic',
+  name: 'traffic',
+  component: Layout,
+  redirect: '/traffic/carManage',
+  alwaysShow: true,
+  meta: {
+    title: '车辆管理',
+    icon: 'v_regVisitor',
+    icon_class: "person-iconE",
+  },
+  children: [{
+    name: 'carManage',
+    path: 'carManage',
+    component: _import_('carManage/index'),
+    meta: {
+      title: '车辆管理',
+      icon: 'monitor'
+    }
+  }]
+},
+{
+  path: '/device',
+  name: 'device',
+  component: Layout,
+  redirect: '/device/_manage',
+  alwaysShow: true,
+  meta: {
+    title: '设备管理',
+    icon: 'v_deviceInfo',
+    icon_class: "query-iconA",
+  },
+  children: [{
+    name: '_manage',
+    path: '_manage',
+    component: _import_('deviceManage/index'),
+    meta: {
+      title: '设备管理',
+      icon: 'monitor'
+    }
+  }]
+},
+{
+  path: '/device',
+  name: 'device',
+  component: Layout,
+  redirect: '/device/_manage',
+  alwaysShow: true,
+  meta: {
+    title: '通行管理',
+    icon: 'record',
+    icon_class: "person-iconC",
+  },
+  children: [{
+    name: '_manage',
+    path: '_manage',
+    component: _import_('deviceManage/index'),
+    meta: {
+      title: '通行管理',
+      icon: 'monitor'
+    }
+  }]
+},
+{
   path: '/user',
   name: 'user',
   component: Layout,
@@ -87,7 +150,7 @@ export const constantRouterMap = [{
   meta: {
     title: '用户管理',
     icon: 'user',
-    icon_class: "person-iconA",
+    icon_class: "person-iconD",
   },
   children: [{
     name: 'ownermanage',

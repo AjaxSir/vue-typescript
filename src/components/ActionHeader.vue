@@ -86,7 +86,7 @@ export default class ActionManage extends Vue {
 
 <style lang="scss" scoped>
 .row-bg {
-  margin-bottom: 10px;
+  margin: 10px 0;
   height: 32px;
   .leftAction {
     text-align: left;

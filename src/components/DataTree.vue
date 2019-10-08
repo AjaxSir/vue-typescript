@@ -18,14 +18,15 @@
       <span
         class="custom-tree-node"
         slot-scope="{ node, data }"
-        @mouseenter="MouseNnter(node.showMenu)"
-        @mouseleave="MouseLeave(node.showMenu)"
+        @mouseenter="MouseNnter(node.id)"
+        @mouseleave="MouseLeave(node.id)"
       >
         <span>{{ node.label }}</span>
         <div class="fun-btn">
           <el-dropdown trigger="click" placement="bottom-start">
-            <i v-show="node.showMenu" class="iconfont icon-menu"></i>
+            <i v-show="node.id===showMenu" class="iconfont icon-menu"></i>
             <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item>创建</el-dropdown-item>
               <el-dropdown-item>修改</el-dropdown-item>
               <el-dropdown-item>删除</el-dropdown-item>
             </el-dropdown-menu>
@@ -41,11 +42,11 @@ import { Component, Prop, Vue, Mixins } from "vue-property-decorator";
 import { Getter, Action, Mutation } from "vuex-class";
 @Component
 export default class DataTree extends Vue {
+  private showMenu: Number = 0;
   private data: Array<Object> = [
     {
       id: 1,
       label: "一级 1",
-      showMenu: false,
       children: [
         {
           id: 4,
@@ -66,7 +67,6 @@ export default class DataTree extends Vue {
     {
       id: 2,
       label: "一级 2",
-      showMenu: true,
       children: [
         {
           id: 5,
@@ -93,20 +93,21 @@ export default class DataTree extends Vue {
       ]
     }
   ];
+
   @Prop({ default: true }) needAction: any;
 
   handleNodeClick(data) {
     /**@description */
-    console.log(data);
-    data.showMenu = !data.showMenu;
+    // console.log(data);
+    // data.showMenu = !data.showMenu;
   }
 
   MouseNnter(val) {
-    val = true;
+    this.showMenu = val;
   }
 
   MouseLeave(val) {
-    val = false;
+    this.showMenu = 0;
   }
 }
 </script>
@@ -127,6 +128,7 @@ export default class DataTree extends Vue {
   height: 70vh;
   text-align: center;
   border: 1px solid #ebeef5;
+  box-shadow: 0px 0px 8px 0px lightgrey;
 }
 .treeHeader {
   width: 100%;
@@ -145,19 +147,6 @@ export default class DataTree extends Vue {
   justify-content: space-between;
   font-size: 14px;
   padding-right: 8px;
-  // padding: 10px;
-  box-shadow: 0px 10px 10px 0px lightgray;
-  .treeHeader {
-    i {
-      font-size: 22px;
-    }
-    color: #606266;
-    border-bottom: 1px solid lightgray;
-    width: 100%;
-    height: 40px;
-    text-align: left;
-    line-height: 40px;
-  }
 }
 
 .fun-btn {
