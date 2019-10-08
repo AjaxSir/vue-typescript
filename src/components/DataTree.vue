@@ -4,22 +4,23 @@
 -->
 <template>
   <div class="content">
-    <!-- <el-tree
+    <el-tree
       :data="data"
       node-key="id"
       default-expand-all
       :expand-on-click-node="false"
       @node-click="handleNodeClick"
     >
-      <span class="custom-tree-node" slot-scope="{ node, data }">
+      <span
+        class="custom-tree-node"
+        slot-scope="{ node, data }"
+        @mouseenter="MouseNnter(node.showMenu)"
+        @mouseleave="MouseLeave(node.showMenu)"
+      >
         <span>{{ node.label }}</span>
-        <span v-if="needAction">
-          <el-button type="text" size="mini" @click="() => append(data)">Append</el-button>
-          <el-button type="text" size="mini" @click="() => remove(node, data)">Delete</el-button>
-        </span>
         <div class="fun-btn">
           <el-dropdown trigger="click" placement="bottom-start">
-            <i class="iconfont icon-menu"></i>
+            <i v-show="node.showMenu" class="iconfont icon-menu"></i>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item>修改</el-dropdown-item>
               <el-dropdown-item>删除</el-dropdown-item>
@@ -27,27 +28,9 @@
           </el-dropdown>
         </div>
       </span>
-    </el-tree>-->
-    <div class="treeHeader">
+    </el-tree>    <div class="treeHeader">
       <i class="iconfont icon-shuji"></i>
       所有
-    </div>
-    <el-tree
-      :data="data"
-      node-key="id"
-      default-expand-all
-      :expand-on-click-node="false"
-      :render-content="renderContent"
-    ></el-tree>
-
-    <div class="fun-btn">
-      <el-dropdown trigger="click" placement="bottom-start">
-        <i class="iconfont icon-menu"></i>
-        <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item>修改</el-dropdown-item>
-          <el-dropdown-item>删除</el-dropdown-item>
-        </el-dropdown-menu>
-      </el-dropdown>
     </div>
   </div>
 </template>
@@ -61,6 +44,7 @@ export default class DataTree extends Vue {
     {
       id: 1,
       label: "一级 1",
+      showMenu: false,
       children: [
         {
           id: 4,
@@ -81,6 +65,7 @@ export default class DataTree extends Vue {
     {
       id: 2,
       label: "一级 2",
+      showMenu: true,
       children: [
         {
           id: 5,
@@ -110,64 +95,7 @@ export default class DataTree extends Vue {
   @Prop({ default: true }) needAction: any;
 
   renderContent(h, { node, data, store }) {
-    return h(
-      "span",
-      {
-        style: {
-          //						color: "red",
-        },
-        //这里添加hover事件
-        on: {
-          mouseenter: () => {
-            data.is_show = true;
-            console.log(123);
-          },
-          //鼠标离开
-          mouseleave: () => {
-            data.is_show = false;
-          }
-        }
-      },
-      [
-        h(
-          "span",
-          {
-            //显示名称
-          },
-          node.label
-        ),
-        h(
-          "span",
-          {
-            style: {
-              display: data.is_show ? "" : "none"
-            }
-          },
-          [
-            //添加
-            h(
-              "el-button",
-              {
-                props: {
-                  type: "text",
-                  size: "small"
-                },
-                style: {
-                  marginLeft: "15px",
-
-                },
-                on: {
-                  click: () => {
-                    this.append();
-                  }
-                }
-              },
-              "..."
-            ),
-          ]
-        )
-      ]
-    );
+    return;
   }
 
   handleNodeClick(data) {
@@ -176,8 +104,13 @@ export default class DataTree extends Vue {
     data.showMenu = !data.showMenu;
   }
 
-  append() {}
-  remove() {}
+  MouseNnter(val) {
+    val = true
+  }
+
+  MouseLeave(val) {
+    val = false
+  }
 }
 </script>
 
@@ -209,7 +142,13 @@ export default class DataTree extends Vue {
   }
 }
 .custom-tree-node {
-  padding: 10px;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  padding-right: 8px;
+  // padding: 10px;
   box-shadow: 0px 10px 10px 0px lightgray;
   .treeHeader {
     i {
