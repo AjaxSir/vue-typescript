@@ -12,7 +12,7 @@
       </div>
     </div>
     <p class="line"></p>
-    <el-menu class="navbar" mode="horizontal">
+    <el-menu class="navbar" mode="horizontal" style="border:none;">
       <p class="style-line"></p>
       <p class="style-line style-lineA"></p>
       <p class="style-line style-lineB"></p>
@@ -47,6 +47,7 @@ p {
   margin: 0;
   padding: 0;
 }
+
 .yishi-header {
   height: 80px;
   padding: 6px 30px 0;

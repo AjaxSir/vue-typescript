@@ -25,9 +25,9 @@
 
             <el-table-column type="index" label="序号" width="50"></el-table-column>
 
-            <el-table-column class="serial-num" prop="name" label="编号">
+            <el-table-column prop="name" label="所属房屋">
               <template slot-scope="scope">
-                <span>{{scope.row.name}}</span>
+                <span class="serial-num">{{scope.row.name}}</span>
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start">
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
@@ -40,11 +40,18 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="houseRelative" label="关联房屋"></el-table-column>
+            <el-table-column prop="houseRelative" label="类型"></el-table-column>
 
-            <el-table-column prop="createDate" label="创建"></el-table-column>
+            <el-table-column prop="carNum" label="车牌号"></el-table-column>
 
-            <el-table-column prop="createDate" label="最近刷卡时间"></el-table-column>
+            <el-table-column prop="createDate" label="最近一次访问"></el-table-column>
+
+            <el-table-column prop="img" label="最近抓拍图片">
+              <template slot-scope="scope">
+                <img class="capture-img" :src="scope.row.img" alt />
+              </template>
+            </el-table-column>
+
             <el-table-column prop="type" label="状态">
               <template slot-scope="scope">
                 <el-tag
@@ -55,10 +62,6 @@
                 >{{ scope.row.type === 1 ? "正常" : "异常" }}</el-tag>
               </template>
             </el-table-column>
-
-            <el-table-column prop="createDate" label="日平均刷卡次数"></el-table-column>
-
-            <el-table-column prop="createDate" label="周平均刷卡次数"></el-table-column>
           </el-table>
         </div>
         <div :class="rowSpan.row1===4 ? menuControl1 : menuControl2" @click="menuVisible">
@@ -90,31 +93,30 @@ const DataTree = () => import("@/components/DataTree.vue");
 export default class CardManage extends Vue {
   private cardList: Array<Object> = [
     {
-      name: "张三",
-      houseRelative: "10",
+      name: "1-1-105",
+      houseRelative: "业主",
+      carNum: "川1256489",
       createDate: "2019-9-26",
+      img: require("../../assets/4075389faf0c20cf430ce772c3afa47.png"),
+      type: 1,
+      showMenu: false
+    },
+    {
+      name: "1-1-105",
+      houseRelative: "业主",
+      carNum: "川1256489",
+      createDate: "2019-9-26",
+      img: require("../../assets/4075389faf0c20cf430ce772c3afa47.png"),
+      type: 1,
+      showMenu: false
+    },
+    {
+      name: "1-1-105",
+      houseRelative: "业主",
+      carNum: "川1256489",
+      createDate: "2019-9-26",
+      img: require("../../assets/4075389faf0c20cf430ce772c3afa47.png"),
       type: 2,
-      showMenu: false
-    },
-    {
-      name: "张三",
-      houseRelative: "10",
-      createDate: "2019-9-26",
-      type: 1,
-      showMenu: false
-    },
-    {
-      name: "张三",
-      houseRelative: "10",
-      createDate: "2019-9-26",
-      type: 1,
-      showMenu: false
-    },
-    {
-      name: "张三",
-      houseRelative: "10",
-      createDate: "2019-9-26",
-      type: 1,
       showMenu: false
     }
   ];
@@ -194,7 +196,7 @@ export default class CardManage extends Vue {
 .fun-btn {
   position: absolute;
   left: -64px;
-  top: 12px;
+  top: 38%;
   .iconfont {
     font-size: 19px;
     color: #8091a5;
@@ -233,5 +235,9 @@ export default class CardManage extends Vue {
   line-height: 48px;
   position: absolute;
   left: -1px;
+}
+
+.capture-img {
+  width: 60px;
 }
 </style>
