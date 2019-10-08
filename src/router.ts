@@ -47,15 +47,15 @@ export const constantRouterMap = [{
   alwaysShow: true,
   meta: {
     title: '门禁卡管理',
-    icon: 'v_house',
-    icon_class: "person-iconB",
+    icon: 'v_card',
+    icon_class: "person-iconA",
   },
   children: [{
     name: 'access_card',
     path: 'access_card',
     component: _import_('cardManage/index'),
     meta: {
-      title: '房屋管理',
+      title: '门禁卡管理',
       icon: 'monitor'
     }
   }]
