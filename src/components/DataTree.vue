@@ -198,7 +198,16 @@ export default class DataTree extends Vue {
   text-align: center;
   border: 1px solid #ebeef5;
 }
-
+.treeHeader{
+  width: 100%;
+  height: 40px;
+  text-align: left;
+  text-indent: 1em;
+  line-height: 40px;
+  i{
+    font-size: 20px;
+  }
+}
 .custom-tree-node {
   padding: 10px;
   box-shadow: 0px 10px 10px 0px lightgray;
