@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="header">
     <div class="yishi-header">
       <div class="header-left">
         <img class="logo" src="../../../assets/logo.png" alt />

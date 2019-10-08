@@ -58,6 +58,24 @@ export const constantRouterMap = [{
       title: '门禁卡管理',
       icon: 'monitor'
     }
+  },
+  {
+    name: 'propertymanage',
+    path: 'propertymanage',
+    component: _import_('propertyManage/index'),
+    meta: {
+      title: '物业管理',
+      icon: 'monitor'
+    }
+  },
+  {
+    name: ' ',
+    path: 'vistormanage',
+    component: _import_('vistorManage/index'),
+    meta: {
+      title: '访客管理',
+      icon: 'monitor'
+    }
   }]
 },
 {
