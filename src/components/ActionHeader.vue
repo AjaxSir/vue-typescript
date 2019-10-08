@@ -7,15 +7,12 @@
   <el-row type="flex" class="row-bg">
     <el-col :span="12">
       <div class="leftAction">
-        <el-button
-          class="createBtn"
-          type="primary"
-          size="small"
-          icon="el-icon-plus"
-          >创建</el-button
-        >
-        <el-dropdown split-button size="small" @click="handleClick">
-          更多菜单
+        <el-button class="createBtn" type="primary" size="small" icon="el-icon-plus">创建</el-button>
+        <el-dropdown size="small" @click="handleClick">
+          <el-button size="small" style="border-color: #409EFF; color: #409EFF;">
+            更多菜单
+            <i class="el-icon-arrow-down el-icon--right"></i>
+          </el-button>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>导入</el-dropdown-item>
             <el-dropdown-item>导出</el-dropdown-item>
@@ -31,30 +28,18 @@
         <ActionFilter>
           <div class="houseNum" slot="houseNum">
             <span>单元号:</span>
-            <el-input
-              class="input"
-              size="small"
-              placeholder="输入单元号"
-            ></el-input>
+            <el-input class="input" size="small" placeholder="输入单元号"></el-input>
           </div>
         </ActionFilter>
 
         <span class="total">总共:{{ total }}条</span>
 
-        <i
-          @click="visible = !visible"
-          style="font-size:20px;"
-          class="iconfont icon-_shezhi-xian"
-        ></i>
+        <i @click="visible = !visible" style="font-size:20px;" class="iconfont icon-_shezhi-xian"></i>
 
         <transition name="el-zoom-in-top">
           <div v-show="visible" class="setting">
             <span>每页显示:</span>
-            <el-select
-              style="width:100px;margin-left:10px"
-              v-model="size"
-              placeholder="请选择"
-            >
+            <el-select style="width:100px;margin-left:10px" v-model="size" placeholder="请选择">
               <el-option
                 v-for="item in pageSize"
                 :key="item.value"

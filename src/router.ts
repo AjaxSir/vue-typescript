@@ -55,7 +55,7 @@ export const constantRouterMap = [{
     path: 'access_card',
     component: _import_('cardManage/index'),
     meta: {
-      title: '房屋管理',
+      title: '门禁卡管理',
       icon: 'monitor'
     }
   }]
