@@ -31,19 +31,9 @@
             </el-table-column>
             <el-table-column prop="phone" align="center" label="联系电话">
             </el-table-column>
-            <el-table-column prop="house_info" align="center" label="房屋信息">
-            </el-table-column>
             <el-table-column prop="expire_time" align="center" label="过期时间">
             </el-table-column>
-            <el-table-column prop="far_door" align="center" label="远程开门">
-            </el-table-column>
-            <el-table-column prop="car" align="center" label="访客车辆">
-            </el-table-column>
-            <el-table-column
-              prop="main_linker"
-              align="center"
-              label="是否主联系人"
-            >
+            <el-table-column prop="role_group" align="center" label="权限组">
             </el-table-column>
             <el-table-column prop="status" align="center" label="状态">
             </el-table-column>
@@ -79,16 +69,14 @@ import { Getter, Action, Mutation } from "vuex-class";
 import mixin from "@/config/minxins";
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 const DataTree = () => import("@/components/DataTree.vue");
-const DiaLog = () => import("@/components/dialog.vue");
 @Component({
   mixins: [mixin],
   components: {
     ActionHeader,
-    DataTree,
-    DiaLog
+    DataTree
   }
 })
-export default class OwnerManage extends Vue {
+export default class PropertyManage extends Vue {
   private activeName: string = "first";
   private dialogFormVisible: boolean = false;
   private title: string = "详情";
@@ -98,11 +86,8 @@ export default class OwnerManage extends Vue {
       age: 18,
       sex: "男",
       phone: "13518160000",
-      house_info: "一栋一单元",
       expire_time: "2019/10/1",
-      far_door: "是",
-      car: "川A 12345",
-      main_linker: "是",
+      role_group: "权限组一",
       status: "已住",
       detail: "租户",
       create_time: "2019/10/1"

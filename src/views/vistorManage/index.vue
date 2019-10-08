@@ -20,36 +20,28 @@
               label="编号"
             >
             </el-table-column>
-            <el-table-column prop="name" align="center" label="姓名">
+            <el-table-column prop="name" align="center" label="受访人姓名">
               <template slot-scope="{ row }">
                 <el-tag @click="showDetail(row)">{{ row.name }}</el-tag>
               </template>
             </el-table-column>
-            <el-table-column prop="age" align="center" label="年龄">
+            <el-table-column prop="vistor_type" align="center" label="访客类型">
             </el-table-column>
-            <el-table-column prop="sex" align="center" label="性别">
+            <el-table-column prop="card_number" align="center" label="身份证号">
             </el-table-column>
-            <el-table-column prop="phone" align="center" label="联系电话">
-            </el-table-column>
-            <el-table-column prop="house_info" align="center" label="房屋信息">
-            </el-table-column>
-            <el-table-column prop="expire_time" align="center" label="过期时间">
-            </el-table-column>
-            <el-table-column prop="far_door" align="center" label="远程开门">
-            </el-table-column>
-            <el-table-column prop="car" align="center" label="访客车辆">
+            <el-table-column prop="regis_time" align="center" label="注册时间">
             </el-table-column>
             <el-table-column
-              prop="main_linker"
+              prop="all_times"
               align="center"
-              label="是否主联系人"
+              label="累计访问次数"
             >
             </el-table-column>
-            <el-table-column prop="status" align="center" label="状态">
-            </el-table-column>
-            <el-table-column prop="detail" align="center" label="备注">
-            </el-table-column>
-            <el-table-column prop="create_time" align="center" label="创建时间">
+            <el-table-column
+              prop="last_time"
+              align="center"
+              label="最近访问时间"
+            >
             </el-table-column>
           </el-table>
         </div>
@@ -79,33 +71,26 @@ import { Getter, Action, Mutation } from "vuex-class";
 import mixin from "@/config/minxins";
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 const DataTree = () => import("@/components/DataTree.vue");
-const DiaLog = () => import("@/components/dialog.vue");
 @Component({
   mixins: [mixin],
   components: {
     ActionHeader,
-    DataTree,
-    DiaLog
+    DataTree
   }
 })
-export default class OwnerManage extends Vue {
+export default class VistoryManage extends Vue {
   private activeName: string = "first";
   private dialogFormVisible: boolean = false;
   private title: string = "详情";
   private list_data: Array<Object> = [
     {
       name: "张三",
-      age: 18,
-      sex: "男",
+      vistor_type: "111",
+      card_number: "13512156432165",
       phone: "13518160000",
-      house_info: "一栋一单元",
-      expire_time: "2019/10/1",
-      far_door: "是",
-      car: "川A 12345",
-      main_linker: "是",
-      status: "已住",
-      detail: "租户",
-      create_time: "2019/10/1"
+      regis_time: "2019/10/1",
+      all_times: "1",
+      last_time: "2019/10/1"
     }
   ];
   private Dialog: Object = {

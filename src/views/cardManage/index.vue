@@ -137,7 +137,7 @@ export default class CardManage extends Vue {
     }
   ];
 
-  private rowSpan: Object = {
+  private rowSpan: any = {
     row1: 4,
     row2: 20
   };

@@ -10,44 +10,380 @@
         <DataTree />
       </el-col>
       <el-col :span="20">
-        <div class="rightContent">
-          <el-table :data="list_data" border>
-            <el-table-column type="selection" width="50"> </el-table-column>
-            <el-table-column
-              prop="date"
-              align="center"
-              label="所属楼栋"
-              width="180"
-            >
-            </el-table-column>
-            <el-table-column
-              prop="name"
-              align="center"
-              label="所属单元"
-              width="180"
-            >
-            </el-table-column>
-            <el-table-column prop="address" align="center" label="房屋编号">
-            </el-table-column>
-            <el-table-column prop="address" align="center" label="注册人数">
-            </el-table-column>
-            <el-table-column prop="address" align="center" label="累计访客人数">
-            </el-table-column>
-            <el-table-column prop="address" align="center" label="累计访客次数">
-            </el-table-column>
-            <el-table-column
-              prop="address"
-              align="center"
-              label="日平均进出次数"
-            >
-            </el-table-column>
-            <el-table-column prop="address" align="center" label="昨日进出次数">
-            </el-table-column>
-            <el-table-column prop="address" align="center" label="状态">
-            </el-table-column>
-            <el-table-column prop="address" align="center" label="备注">
-            </el-table-column>
-          </el-table>
+        <div style="margin-bottom:15px">
+          <el-card class="box-card">
+            <div slot="header" class="clearfix">
+              <span>出入口</span>
+            </div>
+            <el-button type="primary" plain
+              >东门<i class="iconfont icon-shexiangtou"></i
+            ></el-button>
+          </el-card>
+        </div>
+        <div class="col-20">
+          <div class="singleTable" :style="{ width: '602px' }">
+            <el-table class="singleClass" border :data="list_data">
+              <el-table-column label="1" align="center" width="50">
+                <template slot-scope="scope">
+                  <el-tag v-if="scope.row.first.status">{{
+                    scope.row.first.num
+                  }}</el-tag>
+                  <el-tag v-else type="danger">标签一</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column label="2" align="center" width="50">
+                <template slot-scope="scope">
+                  <el-tooltip
+                    v-if="scope.row.first.status"
+                    class="item"
+                    effect="dark"
+                    content="132"
+                    placement="top"
+                  >
+                    <el-tag>{{ scope.row.first.num }}</el-tag>
+                  </el-tooltip>
+                  <el-tag v-else type="danger">标签一</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column label="3" align="center" width="50">
+                <template slot-scope="scope">
+                  <el-tag v-if="scope.row.first.status">{{
+                    scope.row.first.num
+                  }}</el-tag>
+                  <el-tag v-else type="danger">标签一</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column label="4" align="center" width="50">
+                <template slot-scope="scope">
+                  <el-tag v-if="scope.row.first.status">{{
+                    scope.row.first.num
+                  }}</el-tag>
+                  <el-tag v-else type="danger">标签一</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column label="5" align="center" width="50">
+                <template slot-scope="scope">
+                  <el-tag v-if="scope.row.first.status">{{
+                    scope.row.first.num
+                  }}</el-tag>
+                  <el-tag v-else type="danger">标签一</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column label="6" align="center" width="50">
+                <template slot-scope="scope">
+                  <el-tag v-if="scope.row.first.status">{{
+                    scope.row.first.num
+                  }}</el-tag>
+                  <el-tag v-else type="danger">标签一</el-tag>
+                </template>
+              </el-table-column>
+            </el-table>
+            <el-table class="singleClass" border :data="list_data">
+              <el-table-column label="1" align="center" width="50">
+                <template slot-scope="scope">
+                  <el-tag v-if="scope.row.first.status">{{
+                    scope.row.first.num
+                  }}</el-tag>
+                  <el-tag v-else type="danger">标签一</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column label="2" align="center" width="50">
+                <template slot-scope="scope">
+                  <el-tooltip
+                    v-if="scope.row.first.status"
+                    class="item"
+                    effect="dark"
+                    content="132"
+                    placement="top"
+                  >
+                    <el-tag>{{ scope.row.first.num }}</el-tag>
+                  </el-tooltip>
+                  <el-tag v-else type="danger">标签一</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column label="3" align="center" width="50">
+                <template slot-scope="scope">
+                  <el-tag v-if="scope.row.first.status">{{
+                    scope.row.first.num
+                  }}</el-tag>
+                  <el-tag v-else type="danger">标签一</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column label="4" align="center" width="50">
+                <template slot-scope="scope">
+                  <el-tag v-if="scope.row.first.status">{{
+                    scope.row.first.num
+                  }}</el-tag>
+                  <el-tag v-else type="danger">标签一</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column label="5" align="center" width="50">
+                <template slot-scope="scope">
+                  <el-tag v-if="scope.row.first.status">{{
+                    scope.row.first.num
+                  }}</el-tag>
+                  <el-tag v-else type="danger">标签一</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column label="6" align="center" width="50">
+                <template slot-scope="scope">
+                  <el-tag v-if="scope.row.first.status">{{
+                    scope.row.first.num
+                  }}</el-tag>
+                  <el-tag v-else type="danger">标签一</el-tag>
+                </template>
+              </el-table-column>
+            </el-table>
+            <div class="houseInfo">
+              一单元<i class="iconfont icon-shexiangtou"></i>
+            </div>
+            <div class="houseInfo">
+              二单元<i class="iconfont icon-shexiangtou"></i>
+            </div>
+            <div class="partHouse">西区-1栋</div>
+          </div>
+          <div class="singleTable" :style="{ width: '602px' }">
+            <el-table class="singleClass" border :data="list_data">
+              <el-table-column label="1" align="center" width="50">
+                <template slot-scope="scope">
+                  <el-tag v-if="scope.row.first.status">{{
+                    scope.row.first.num
+                  }}</el-tag>
+                  <el-tag v-else type="danger">标签一</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column label="2" align="center" width="50">
+                <template slot-scope="scope">
+                  <el-tooltip
+                    v-if="scope.row.first.status"
+                    class="item"
+                    effect="dark"
+                    content="132"
+                    placement="top"
+                  >
+                    <el-tag>{{ scope.row.first.num }}</el-tag>
+                  </el-tooltip>
+                  <el-tag v-else type="danger">标签一</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column label="3" align="center" width="50">
+                <template slot-scope="scope">
+                  <el-tag v-if="scope.row.first.status">{{
+                    scope.row.first.num
+                  }}</el-tag>
+                  <el-tag v-else type="danger">标签一</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column label="4" align="center" width="50">
+                <template slot-scope="scope">
+                  <el-tag v-if="scope.row.first.status">{{
+                    scope.row.first.num
+                  }}</el-tag>
+                  <el-tag v-else type="danger">标签一</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column label="5" align="center" width="50">
+                <template slot-scope="scope">
+                  <el-tag v-if="scope.row.first.status">{{
+                    scope.row.first.num
+                  }}</el-tag>
+                  <el-tag v-else type="danger">标签一</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column label="6" align="center" width="50">
+                <template slot-scope="scope">
+                  <el-tag v-if="scope.row.first.status">{{
+                    scope.row.first.num
+                  }}</el-tag>
+                  <el-tag v-else type="danger">标签一</el-tag>
+                </template>
+              </el-table-column>
+            </el-table>
+            <el-table class="singleClass" border :data="list_data">
+              <el-table-column label="1" align="center" width="50">
+                <template slot-scope="scope">
+                  <el-tag v-if="scope.row.first.status">{{
+                    scope.row.first.num
+                  }}</el-tag>
+                  <el-tag v-else type="danger">标签一</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column label="2" align="center" width="50">
+                <template slot-scope="scope">
+                  <el-tooltip
+                    v-if="scope.row.first.status"
+                    class="item"
+                    effect="dark"
+                    content="132"
+                    placement="top"
+                  >
+                    <el-tag>{{ scope.row.first.num }}</el-tag>
+                  </el-tooltip>
+                  <el-tag v-else type="danger">标签一</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column label="3" align="center" width="50">
+                <template slot-scope="scope">
+                  <el-tag v-if="scope.row.first.status">{{
+                    scope.row.first.num
+                  }}</el-tag>
+                  <el-tag v-else type="danger">标签一</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column label="4" align="center" width="50">
+                <template slot-scope="scope">
+                  <el-tag v-if="scope.row.first.status">{{
+                    scope.row.first.num
+                  }}</el-tag>
+                  <el-tag v-else type="danger">标签一</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column label="5" align="center" width="50">
+                <template slot-scope="scope">
+                  <el-tag v-if="scope.row.first.status">{{
+                    scope.row.first.num
+                  }}</el-tag>
+                  <el-tag v-else type="danger">标签一</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column label="6" align="center" width="50">
+                <template slot-scope="scope">
+                  <el-tag v-if="scope.row.first.status">{{
+                    scope.row.first.num
+                  }}</el-tag>
+                  <el-tag v-else type="danger">标签一</el-tag>
+                </template>
+              </el-table-column>
+            </el-table>
+            <div class="houseInfo">
+              一单元<i class="iconfont icon-shexiangtou"></i>
+            </div>
+            <div class="houseInfo">
+              二单元<i class="iconfont icon-shexiangtou"></i>
+            </div>
+            <div class="partHouse">西区-1栋</div>
+          </div>
+          <div class="singleTable" :style="{ width: '602px' }">
+            <el-table class="singleClass" border :data="list_data">
+              <el-table-column label="1" align="center" width="50">
+                <template slot-scope="scope">
+                  <el-tag v-if="scope.row.first.status">{{
+                    scope.row.first.num
+                  }}</el-tag>
+                  <el-tag v-else type="danger">标签一</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column label="2" align="center" width="50">
+                <template slot-scope="scope">
+                  <el-tooltip
+                    v-if="scope.row.first.status"
+                    class="item"
+                    effect="dark"
+                    content="132"
+                    placement="top"
+                  >
+                    <el-tag>{{ scope.row.first.num }}</el-tag>
+                  </el-tooltip>
+                  <el-tag v-else type="danger">标签一</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column label="3" align="center" width="50">
+                <template slot-scope="scope">
+                  <el-tag v-if="scope.row.first.status">{{
+                    scope.row.first.num
+                  }}</el-tag>
+                  <el-tag v-else type="danger">标签一</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column label="4" align="center" width="50">
+                <template slot-scope="scope">
+                  <el-tag v-if="scope.row.first.status">{{
+                    scope.row.first.num
+                  }}</el-tag>
+                  <el-tag v-else type="danger">标签一</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column label="5" align="center" width="50">
+                <template slot-scope="scope">
+                  <el-tag v-if="scope.row.first.status">{{
+                    scope.row.first.num
+                  }}</el-tag>
+                  <el-tag v-else type="danger">标签一</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column label="6" align="center" width="50">
+                <template slot-scope="scope">
+                  <el-tag v-if="scope.row.first.status">{{
+                    scope.row.first.num
+                  }}</el-tag>
+                  <el-tag v-else type="danger">标签一</el-tag>
+                </template>
+              </el-table-column>
+            </el-table>
+            <el-table class="singleClass" border :data="list_data">
+              <el-table-column label="1" align="center" width="50">
+                <template slot-scope="scope">
+                  <el-tag v-if="scope.row.first.status">{{
+                    scope.row.first.num
+                  }}</el-tag>
+                  <el-tag v-else type="danger">标签一</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column label="2" align="center" width="50">
+                <template slot-scope="scope">
+                  <el-tooltip
+                    v-if="scope.row.first.status"
+                    class="item"
+                    effect="dark"
+                    content="132"
+                    placement="top"
+                  >
+                    <el-tag>{{ scope.row.first.num }}</el-tag>
+                  </el-tooltip>
+                  <el-tag v-else type="danger">标签一</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column label="3" align="center" width="50">
+                <template slot-scope="scope">
+                  <el-tag v-if="scope.row.first.status">{{
+                    scope.row.first.num
+                  }}</el-tag>
+                  <el-tag v-else type="danger">标签一</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column label="4" align="center" width="50">
+                <template slot-scope="scope">
+                  <el-tag v-if="scope.row.first.status">{{
+                    scope.row.first.num
+                  }}</el-tag>
+                  <el-tag v-else type="danger">标签一</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column label="5" align="center" width="50">
+                <template slot-scope="scope">
+                  <el-tag v-if="scope.row.first.status">{{
+                    scope.row.first.num
+                  }}</el-tag>
+                  <el-tag v-else type="danger">标签一</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column label="6" align="center" width="50">
+                <template slot-scope="scope">
+                  <el-tag v-if="scope.row.first.status">{{
+                    scope.row.first.num
+                  }}</el-tag>
+                  <el-tag v-else type="danger">标签一</el-tag>
+                </template>
+              </el-table-column>
+            </el-table>
+            <div class="houseInfo">
+              一单元<i class="iconfont icon-shexiangtou"></i>
+            </div>
+            <div class="houseInfo">
+              二单元<i class="iconfont icon-shexiangtou"></i>
+            </div>
+            <div class="partHouse">西区-1栋</div>
+          </div>
         </div>
       </el-col>
     </el-row>
@@ -68,66 +404,80 @@ const DataTree = () => import("@/components/DataTree.vue");
   }
 })
 export default class HouseManage extends Vue {
-  private cardList: Array<Object> = [
+  private list_data: Array<any> = [
     {
-      name: "张三",
-      houseRelative: "10",
-      createDate: "2019-9-26",
-      type: 2
-    },
-    {
-      name: "张三",
-      houseRelative: "10",
-      createDate: "2019-9-26",
-      type: 1
-    },
-    {
-      name: "张三",
-      houseRelative: "10",
-      createDate: "2019-9-26",
-      type: 1
-    },
-    {
-      name: "张三",
-      houseRelative: "10",
-      createDate: "2019-9-26",
-      type: 1
+      first: {
+        num: "1",
+        status: true
+      },
+      second: {
+        num: "2",
+        status: false
+      },
+      third: {
+        num: "3",
+        status: true
+      },
+      four: {
+        num: "4",
+        status: false
+      },
+      five: {
+        num: "5",
+        status: true
+      },
+      six: {
+        num: "6",
+        status: true
+      }
     }
   ];
-
-  private form: Object = {
-    name: "",
-    region: "",
-    date1: "",
-    date2: "",
-    delivery: false,
-    type: [],
-    resource: "",
-    desc: ""
-  };
-
-  private dialogFormVisible: Boolean = false;
-  private formLabelWidth: String = "120px";
-
-  editType(item) {
-    /**@description 修改状态 */
-    console.log(item);
-    // this.dialogFormVisible = true;
-  }
 }
 </script>
 
 <style lang="scss" scoped>
-.main {
-  padding: 20px;
-  display: flex;
-  .rightContent {
-    flex: 1;
+.col-20 {
+  overflow-y: auto;
+  white-space: nowrap;
+  padding-bottom: 10px;
+  min-height: 240px;
+}
+.singleTable {
+  display: inline-block;
+  height: 100%;
+  width: auto;
+  box-shadow: 0px 6px 5px 0px lightgray;
+  margin-left: 20px;
+  &:first-child {
+    margin-left: 0px;
+  }
+  .singleClass {
+    width: 301px;
+    float: left;
+  }
+  .houseInfo {
+    width: 301px;
+    // display: inline-block;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    float: left;
+    border-bottom: 1px solid #ebeef5;
+    &:nth-last-child(2) {
+      border-left: 1px solid #ebeef5;
+      box-sizing: border-box;
+    }
+  }
+  .partHouse {
+    width: 100%;
+    height: 40px;
+    float: left;
+    text-align: center;
+    line-height: 40px;
   }
 }
-
-.demo-block {
-  border: 1px solid #ebebeb;
-  border-radius: 3px;
+.iconfont {
+  margin-left: 5px;
+  font-size: 16px;
 }
 </style>

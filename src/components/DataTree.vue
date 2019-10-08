@@ -28,6 +28,10 @@
         </div>
       </span>
     </el-tree>-->
+    <div class="treeHeader">
+      <i class="iconfont icon-shuji"></i>
+      所有
+    </div>
     <el-tree
       :data="data"
       node-key="id"
@@ -154,7 +158,7 @@ export default class DataTree extends Vue {
                 },
                 on: {
                   click: () => {
-                    this.append(data);
+                    this.append();
                   }
                 }
               },
@@ -197,6 +201,18 @@ export default class DataTree extends Vue {
 
 .custom-tree-node {
   padding: 10px;
+  box-shadow: 0px 10px 10px 0px lightgray;
+  .treeHeader {
+    i {
+      font-size: 22px;
+    }
+    color: #606266;
+    border-bottom: 1px solid lightgray;
+    width: 100%;
+    height: 40px;
+    text-align: left;
+    line-height: 40px;
+  }
 }
 
 .fun-btn {
