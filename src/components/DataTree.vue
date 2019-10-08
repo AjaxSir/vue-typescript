@@ -4,6 +4,10 @@
 -->
 <template>
   <div class="content">
+    <div class="treeHeader">
+      <i class="iconfont icon-shuji"></i>
+      所有
+    </div>
     <el-tree
       :data="data"
       node-key="id"
@@ -28,10 +32,7 @@
           </el-dropdown>
         </div>
       </span>
-    </el-tree>    <div class="treeHeader">
-      <i class="iconfont icon-shuji"></i>
-      所有
-    </div>
+    </el-tree>
   </div>
 </template>
 
@@ -94,10 +95,6 @@ export default class DataTree extends Vue {
   ];
   @Prop({ default: true }) needAction: any;
 
-  renderContent(h, { node, data, store }) {
-    return;
-  }
-
   handleNodeClick(data) {
     /**@description */
     console.log(data);
@@ -105,11 +102,11 @@ export default class DataTree extends Vue {
   }
 
   MouseNnter(val) {
-    val = true
+    val = true;
   }
 
   MouseLeave(val) {
-    val = false
+    val = false;
   }
 }
 </script>
@@ -131,13 +128,13 @@ export default class DataTree extends Vue {
   text-align: center;
   border: 1px solid #ebeef5;
 }
-.treeHeader{
+.treeHeader {
   width: 100%;
   height: 40px;
   text-align: left;
   text-indent: 1em;
   line-height: 40px;
-  i{
+  i {
     font-size: 20px;
   }
 }
