@@ -24,7 +24,7 @@
 
             <el-table-column type="index" label="序号" width="50"></el-table-column>
 
-            <el-table-column prop="name" label="车牌号">
+            <el-table-column prop="name" label="设备编号">
               <template slot-scope="scope">
                 <span class="serial-num">{{scope.row.carNum}}</span>
                 <div class="fun-btn">
@@ -39,30 +39,37 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="createDate" label="抓拍时间"></el-table-column>
+            <el-table-column prop="car" label="单元信息"></el-table-column>
 
-            <el-table-column prop="img" label="最近抓拍图片">
+            <el-table-column prop="type" label="设备型号">
               <template slot-scope="scope">
-                <img class="capture-img" :src="scope.row.img" alt />
-              </template>
-            </el-table-column>
-
-            <el-table-column prop="car" label="车辆品牌"></el-table-column>
-
-            <el-table-column prop="type" label="是否校内">
-              <template slot-scope="scope">
-                <el-tag
+                <span>{{scope.row.car}}</span>
+                <!-- <el-tag
                   size="small"
                   style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
                   :type="scope.row.type === 1 ? 'success' : 'danger'"
                   @click="editType(scope.row)"
-                >{{ scope.row.type === 1 ? "是" : "否" }}</el-tag>
+                >{{ scope.row.type === 1 ? "是" : "否" }}</el-tag> -->
               </template>
             </el-table-column>
 
-            <el-table-column prop="car" label="车辆颜色"></el-table-column>
+            <el-table-column prop="createDate" label="通行时间"></el-table-column>
 
-            <el-table-column prop="car" label="车主信息"></el-table-column>
+            <el-table-column prop="car" label="通行方式"></el-table-column>
+
+            <el-table-column prop="car" label="姓名"></el-table-column>
+
+            <el-table-column prop="img" label="人脸">
+              <template slot-scope="scope">
+                <img
+                  class="capture-img"
+                  @mouseout="imgVisible=false"
+                  @mouseover="imgVisible=true,bigImg=scope.row.img"
+                  :src="scope.row.img"
+                  alt
+                />
+              </template>
+            </el-table-column>
           </el-table>
         </div>
         <div :class="rowSpan.row1===4 ? menuControl1 : menuControl2" @click="menuVisible">
@@ -73,6 +80,8 @@
         </div>
       </el-col>
     </el-row>
+
+    <ImageMagni :centerDialogVisible="imgVisible" bigTitle="抓拍图片" :bigImg="bigImg" />
   </div>
 </template>
 
@@ -82,12 +91,14 @@ import { Getter, Action, Mutation } from "vuex-class";
 import mixin from "@/config/minxins";
 
 const ActionHeader = () => import("@/components/ActionHeader.vue");
+const ImageMagni = () => import("@/components/ImageMagnification/index.vue");
 const DataTree = () => import("@/components/DataTree.vue");
 
 @Component({
   mixins: [mixin],
   components: {
     ActionHeader,
+    ImageMagni,
     DataTree
   }
 })
@@ -96,7 +107,7 @@ export default class CardManage extends Vue {
     {
       name: "1-1-105",
       houseRelative: "业主",
-      carNum: "川1256489",
+      carNum: "1000000001",
       createDate: "2019-9-26",
       img: require("../../assets/4075389faf0c20cf430ce772c3afa47.png"),
       type: 1,
@@ -106,7 +117,7 @@ export default class CardManage extends Vue {
     {
       name: "1-1-105",
       houseRelative: "业主",
-      carNum: "川1256489",
+      carNum: "1000000011",
       createDate: "2019-9-26",
       img: require("../../assets/4075389faf0c20cf430ce772c3afa47.png"),
       type: 1,
@@ -116,7 +127,7 @@ export default class CardManage extends Vue {
     {
       name: "1-1-105",
       houseRelative: "业主",
-      carNum: "川1256489",
+      carNum: "1000000001",
       createDate: "2019-9-26",
       img: require("../../assets/4075389faf0c20cf430ce772c3afa47.png"),
       type: 2,
@@ -132,6 +143,9 @@ export default class CardManage extends Vue {
 
   private menuControl1: String = "menu-control";
   private menuControl2: String = "menu-visible";
+
+  private imgVisible: Boolean = false; // 控制放大图片的visible
+  private bigImg: String = ""; // 保存放大图片的地址
 
   private form: Object = {
     name: "",
@@ -242,6 +256,7 @@ export default class CardManage extends Vue {
 }
 
 .capture-img {
-  width: 60px;
+  width: 30px;
+  height: 30px;
 }
 </style>

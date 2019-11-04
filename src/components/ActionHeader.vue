@@ -60,9 +60,35 @@
         </el-dropdown>
 
         <ActionFilter>
-          <div class="houseNum" slot="houseNum">
-            <span>单元号:</span>
-            <el-input class="input" size="small" placeholder="输入单元号"></el-input>
+          <div v-if="type==='house'" class="houseNum" slot="houseNum">
+            <div class="input">
+              <span class="input-title">单元号:</span>
+              <el-input class="input" size="small" placeholder="输入单元号"></el-input>
+            </div>
+          </div>
+
+          <div v-if="type==='owner'" class="houseNum" slot="ownerFilter">
+            <div class="input">
+              <span class="input-title">姓名:</span>
+              <el-input class="input" size="small" placeholder="输入姓名"></el-input>
+            </div>
+
+            <div class="input">
+              <span class="input-title">电话:</span>
+              <el-input class="input" size="small" placeholder="输入姓名"></el-input>
+            </div>
+
+            <div class="input">
+              <span class="input-title">创建时间:</span>
+              <el-date-picker
+                v-model="filterData.dateRange"
+                size="small"
+                type="datetimerange"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+              ></el-date-picker>
+            </div>
           </div>
         </ActionFilter>
 
@@ -88,10 +114,6 @@
     <div v-if="type==='classroom'">
       <house-from :formShow.sync="dialogCreateHouse" :formData="modifyData" />
     </div>
-
-    <div>
-      <statistic-data-dialog :formShow.sync="dialogStatisticData" :fromTitle="fromTitle" />
-    </div>
   </el-row>
 </template>
 
@@ -99,16 +121,11 @@
 import { Component, Prop, Vue, Mixins, Watch } from "vue-property-decorator";
 const ActionFilter = () => import("./ActionFilters.vue");
 const HouseFrom = () => import("./houseFrom.vue");
-const StatisticDataDialog = () =>
-  import(
-    "@/views/schoolhouse/classroomManage/components/statisticDataDialog.vue"
-  );
 
 @Component({
   components: {
     ActionFilter,
     HouseFrom,
-    StatisticDataDialog
   }
 })
 export default class ActionManage extends Vue {
@@ -144,6 +161,10 @@ export default class ActionManage extends Vue {
     id: null,
     unit: "1",
     copyUnit: ""
+  };
+
+  private filterData: object = {
+    dateRange: ""
   };
 
   created() {
@@ -233,8 +254,13 @@ a {
       color: #8494a7;
       text-align: left;
       .input {
-        display: inline-block;
-        width: 200px;
+        display: flex;
+        align-items: center;
+        margin-bottom: 5px;
+        .input-title {
+          display: inline-block;
+          white-space: nowrap;
+        }
       }
       span {
         margin-right: 10px;
