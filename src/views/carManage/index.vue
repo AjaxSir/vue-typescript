@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-row>
       <el-col :span="24">
-        <action-header :total="1" />
+        <action-header :type="'carFilter'" :total="1" />
       </el-col>
     </el-row>
     <el-row :gutter="10">
@@ -43,7 +43,7 @@
 
             <el-table-column prop="img" label="最近抓拍图片">
               <template slot-scope="scope">
-                <img class="capture-img" :src="scope.row.img" alt />
+                <img class="capture-img" @mouseout="imgVisible=false" @mouseover="imgVisible=true,bigImg=scope.row.img" :src="scope.row.img" alt />
               </template>
             </el-table-column>
 
@@ -64,9 +64,11 @@
             <i v-if="rowSpan.row1===4" class="iconfont icon-left icon-class"></i>
             <i v-else class="iconfont icon-zuo icon-class"></i>
           </p>
-        </div> -->
+        </div>-->
       </el-col>
     </el-row>
+
+    <ImageMagni :centerDialogVisible="imgVisible" bigTitle="抓拍图片" :bigImg="bigImg" />
   </div>
 </template>
 
@@ -76,12 +78,14 @@ import { Getter, Action, Mutation } from "vuex-class";
 import mixin from "@/config/minxins";
 
 const ActionHeader = () => import("@/components/ActionHeader.vue");
+const ImageMagni = () => import("@/components/ImageMagnification/index.vue");
 const DataTree = () => import("@/components/DataTree.vue");
 
 @Component({
   mixins: [mixin],
   components: {
     ActionHeader,
+    ImageMagni,
     DataTree
   }
 })
@@ -92,7 +96,7 @@ export default class CardManage extends Vue {
       houseRelative: "业主",
       carNum: "川1256489",
       createDate: "2019-9-26",
-      img: require("../../assets/4075389faf0c20cf430ce772c3afa47.png"),
+      img: require("../../assets/car1.png"),
       type: 1,
       showMenu: false
     },
@@ -101,7 +105,7 @@ export default class CardManage extends Vue {
       houseRelative: "业主",
       carNum: "川1256489",
       createDate: "2019-9-26",
-      img: require("../../assets/4075389faf0c20cf430ce772c3afa47.png"),
+      img: require("../../assets/car1.png"),
       type: 1,
       showMenu: false
     },
@@ -110,7 +114,7 @@ export default class CardManage extends Vue {
       houseRelative: "业主",
       carNum: "川1256489",
       createDate: "2019-9-26",
-      img: require("../../assets/4075389faf0c20cf430ce772c3afa47.png"),
+      img: require("../../assets/car1.png"),
       type: 2,
       showMenu: false
     }
@@ -123,6 +127,8 @@ export default class CardManage extends Vue {
 
   // private menuControl1: String = "menu-control";
   // private menuControl2: String = "menu-visible";
+  private imgVisible: Boolean = false;  // 控制放大图片的visible
+  private bigImg: String = "";  // 保存放大图片的地址
 
   private form: Object = {
     name: "",
@@ -233,6 +239,6 @@ export default class CardManage extends Vue {
 // }
 
 .capture-img {
-  width: 60px;
+  width: 30px;
 }
 </style>

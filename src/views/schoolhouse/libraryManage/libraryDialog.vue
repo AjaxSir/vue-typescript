@@ -1,17 +1,40 @@
 <template>
   <div>
     <el-dialog
-      title="图书馆"
-      width="680px"
+      class="dialog-rewrite"
+      width="750px"
+      :title="dialogData.name"
       :visible.sync="formShow"
       :close-on-click-modal="false"
       :before-close="formClose"
     >
-      <div slot="title" class="dialog-title">图书馆:</div>
+      <div slot="title" class="dialog-title">{{dialogData.name}}:</div>
       <div>
         <el-tabs type="border-card" @tab-click="getData">
-          <el-tab-pane label="详细信息">详细信息</el-tab-pane>
-          <el-tab-pane label="通行记录">通行记录</el-tab-pane>
+          <el-tab-pane label="详细信息">
+            <div class="border-card">
+              <p class="target-detail">开放时间： {{dialogData.createDate}}</p>
+              <p class="target-detail">当前人数： {{dialogData.personNum}}</p>
+              <p class="target-detail">备注信息： {{dialogData.remark}}</p>
+            </div>
+          </el-tab-pane>
+          <el-tab-pane label="通行记录">
+            <div class="border-card">
+              <el-table stripe :data="gridData">
+                <el-table-column property="name" label="姓名"></el-table-column>
+                <el-table-column property="gender" label="性别" width="50px"></el-table-column>
+                <el-table-column property="num" label="学号" width="50px"></el-table-column>
+                <el-table-column property="address" label="所属学院"></el-table-column>
+                <el-table-column property="pass" label="通行时间" width="130px"></el-table-column>
+                <el-table-column property="gonum" sortable label="进出次数" width="100px"></el-table-column>
+                <el-table-column property="dateTotal" sortable label="总时长" width="100px"></el-table-column>
+                <el-table-column property="averagedate" sortable label="平均时长" width="100px"></el-table-column>
+              </el-table>
+              <div class="statistics-pagination">
+                <el-pagination layout="prev, pager, next" :total="1000"></el-pagination>
+              </div>
+            </div>
+          </el-tab-pane>
         </el-tabs>
       </div>
     </el-dialog>
@@ -23,6 +46,50 @@ import { Vue, Prop, Component } from "vue-property-decorator";
 @Component
 export default class LibraryDialog extends Vue {
   @Prop({ default: false }) public formShow: any;
+  @Prop() public dialogData: any;
+
+  private gridData: Array<Object> = [
+    {
+      name: "王小虎",
+      gender: "男",
+      num: "001",
+      address: "学院1",
+      gonum: 22,
+      dateTotal: 9,
+      averagedate: 5,
+      pass: "2019-09-11 18:42"
+    },
+    {
+      name: "王小小",
+      gender: "男",
+      num: "001",
+      address: "学院1",
+      gonum: 22,
+      dateTotal: 9,
+      averagedate: 5,
+      pass: "2019-09-11 18:42"
+    },
+    {
+      name: "王小虎",
+      gender: "男",
+      num: "001",
+      address: "学院1",
+      gonum: 22,
+      dateTotal: 9,
+      averagedate: 5,
+      pass: "2019-09-11 18:42"
+    },
+    {
+      name: "王小小",
+      gender: "男",
+      num: "001",
+      address: "学院1",
+      gonum: 22,
+      dateTotal: 9,
+      averagedate: 5,
+      pass: "2019-09-11 18:42"
+    }
+  ];
 
   formClose() {
     /**@description Form 关闭处理 */

@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-row>
       <el-col :span="24">
-        <action-header :type="'classroom'" :total="1"/>
+        <action-header :type="'classroom'" :total="1" />
       </el-col>
     </el-row>
     <el-row :gutter="10">
@@ -26,7 +26,11 @@
 
             <el-table-column prop="name" label="所在楼层">
               <template slot-scope="scope">
-                <el-button style="padding:0px;" type="text" @click="queryIdetity">{{scope.row.name}}</el-button>
+                <el-button
+                  style="padding:0px;"
+                  type="text"
+                  @click="queryIdetity(scope.row)"
+                >{{scope.row.name}}</el-button>
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start">
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
@@ -58,6 +62,7 @@
 
             <el-table-column prop="carNum" label="备注"></el-table-column>
           </el-table>
+          <el-pagination style="margin-top:10px;" background layout="prev, pager, next" :total="2"></el-pagination>
         </div>
         <div :class="rowSpan.row1===4 ? menuControl1 : menuControl2" @click="menuVisible">
           <p class="close-menu">
@@ -67,7 +72,7 @@
         </div>
       </el-col>
     </el-row>
-    <classroom-dialog :formShow.sync="dialogClassRoom"/>
+    <classroom-dialog :formShow.sync="dialogClassRoom" :dialogData="dialogData" />
   </div>
 </template>
 
@@ -78,7 +83,7 @@ import mixin from "@/config/minxins";
 
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 const DataTree = () => import("@/components/DataTree.vue");
-const ClassroomDialog = () => import("./components/classroomDialog.vue");
+const ClassroomDialog = () => import("./classroomDialog.vue");
 
 @Component({
   mixins: [mixin],
@@ -88,7 +93,7 @@ const ClassroomDialog = () => import("./components/classroomDialog.vue");
     ClassroomDialog
   }
 })
-export default class CardManage extends Vue {
+export default class ClassroomManage extends Vue {
   private cardList: Array<Object> = [
     {
       name: "401",
@@ -122,14 +127,17 @@ export default class CardManage extends Vue {
   private formLabelWidth: String = "120px";
   private dialogClassRoom: any = false;
 
+  private dialogData: Object = {}; // 目标教师详情
+
   editType(item) {
     /**@description 修改状态 */
     console.log(item);
     // this.dialogFormVisible = true;
   }
 
-  queryIdetity() {
+  queryIdetity(val) {
     this.dialogClassRoom = true;
+    this.dialogData = val;
   }
 
   enterRowChange(row, column, cell, event) {

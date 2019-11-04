@@ -47,7 +47,7 @@
 
             <el-table-column prop="img" label="最近抓拍图片">
               <template slot-scope="scope">
-                <img class="capture-img" :src="scope.row.img" alt />
+                <img class="capture-img" @mouseout="imgVisible=false" @mouseover="imgVisible=true,bigImg=scope.row.img" :src="scope.row.img" alt />
               </template>
             </el-table-column>
 
@@ -71,6 +71,8 @@
         </div>
       </el-col>
     </el-row>
+
+     <ImageMagni :centerDialogVisible="imgVisible" bigTitle="抓拍图片" :bigImg="bigImg" />
   </div>
 </template>
 
@@ -80,12 +82,14 @@ import { Getter, Action, Mutation } from "vuex-class";
 import mixin from "@/config/minxins";
 
 const ActionHeader = () => import("@/components/ActionHeader.vue");
+const ImageMagni = () => import("@/components/ImageMagnification/index.vue");
 const DataTree = () => import("@/components/DataTree.vue");
 
 @Component({
   mixins: [mixin],
   components: {
     ActionHeader,
+    ImageMagni,
     DataTree
   }
 })
@@ -127,6 +131,9 @@ export default class CardManage extends Vue {
 
   private menuControl1: String = "menu-control";
   private menuControl2: String = "menu-visible";
+
+    private imgVisible: Boolean = false; // 控制放大图片的visible
+  private bigImg: String = ""; // 保存放大图片的地址
 
   private form: Object = {
     name: "",
@@ -237,6 +244,7 @@ export default class CardManage extends Vue {
 }
 
 .capture-img {
-  width: 60px;
+  width: 30px;
+  height: 30px;
 }
 </style>

@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-row>
       <el-col :span="24">
-        <ActionHeader :total="1" />
+        <ActionHeader :type="'owner'" :total="1" />
       </el-col>
     </el-row>
     <el-row :gutter="20">
@@ -55,6 +55,7 @@
         </div>
       </el-col>
     </el-row>
+
     <el-dialog :title="Dialog.name" :visible.sync="dialogFormVisible">
       <el-tabs v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="用户管理" name="first">详细信息</el-tab-pane>

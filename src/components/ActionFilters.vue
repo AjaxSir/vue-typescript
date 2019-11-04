@@ -4,13 +4,14 @@
   slot name=housenum  对应单元号筛选
 -->
 <template>
-  <div @mouseenter="visibleStatus" @mouseleave="visibleStatus" class="content">
+  <div @click="visibleStatus" class="content">
     <i class="iconfont icon-filtration"></i>
     过滤
     <transition name="el-zoom-in-top">
       <div v-show="visible" class="filterDialog">
         <slot name="houseNum"></slot>
-        <el-button>筛选</el-button>
+        <slot name="ownerFilter"></slot>
+        <el-button class="filter-btn" size="small" type="primary" plain>筛选</el-button>
       </div>
     </transition>
   </div>
@@ -32,20 +33,26 @@ export default class DataTree extends Vue {
   display: inline-block;
   position: relative;
   color: #8494a7;
+
   &:hover {
     cursor: pointer;
   }
+
   .filterDialog {
-    width: 300px;
+    width: 400px;
     height: auto;
     padding: 20px 10px;
     position: absolute;
     z-index: 11;
-    left: -120px;
+    left: -220px;
     top: 40px;
     border: 1px solid lightgray;
     box-shadow: 0px 10px 10px gray;
     background: white;
+
+    .filter-btn{
+        margin-top: 40px;
+    }
   }
 }
 </style>
