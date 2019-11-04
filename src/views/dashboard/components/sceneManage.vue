@@ -1,5 +1,5 @@
 <template>
-  <div class="scene">
+  <div class="scene scene-rename">
     <div class="scene-header">
       <svg-icon icon-class="v_houses" class-name="scene-house" />
       <span class="scene-titile">{{ houseInf.name }}</span>
@@ -54,6 +54,7 @@ $block: inline-block;
 .scene {
   height: 396px;
   border: solid 1px #e6e6e6;
+  background: #fff;
 }
 .scene-header {
   padding: 10px 10px 2px 10px;

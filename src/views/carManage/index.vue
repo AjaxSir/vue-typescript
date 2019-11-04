@@ -6,14 +6,9 @@
       </el-col>
     </el-row>
     <el-row :gutter="10">
-      <el-col :span="rowSpan.row1">
-        <data-tree />
-      </el-col>
-
-      <el-col :span="rowSpan.row2" class="table-col">
+      <el-col :span="24" class="table-col">
         <div class="rightContent">
           <el-table
-            style="box-shadow: 0px 0px 8px 0px lightgrey;"
             :data="cardList"
             stripe
             class="demo-block"
@@ -64,12 +59,12 @@
             </el-table-column>
           </el-table>
         </div>
-        <div :class="rowSpan.row1===4 ? menuControl1 : menuControl2" @click="menuVisible">
+        <!-- <div :class="rowSpan.row1===4 ? menuControl1 : menuControl2" @click="menuVisible">
           <p class="close-menu">
             <i v-if="rowSpan.row1===4" class="iconfont icon-left icon-class"></i>
             <i v-else class="iconfont icon-zuo icon-class"></i>
           </p>
-        </div>
+        </div> -->
       </el-col>
     </el-row>
   </div>
@@ -126,8 +121,8 @@ export default class CardManage extends Vue {
     row2: 20
   };
 
-  private menuControl1: String = "menu-control";
-  private menuControl2: String = "menu-visible";
+  // private menuControl1: String = "menu-control";
+  // private menuControl2: String = "menu-visible";
 
   private form: Object = {
     name: "",
@@ -159,20 +154,20 @@ export default class CardManage extends Vue {
     row.showMenu = false;
   }
 
-  menuVisible() {
-    /**@description 控制楼栋 */
-    if (this.rowSpan.row1 === 4) {
-      this.rowSpan = {
-        row1: 0,
-        row2: 24
-      };
-    } else {
-      this.rowSpan = {
-        row1: 4,
-        row2: 20
-      };
-    }
-  }
+  // menuVisible() {
+  //   /**@description 控制楼栋 */
+  //   if (this.rowSpan.row1 === 4) {
+  //     this.rowSpan = {
+  //       row1: 0,
+  //       row2: 24
+  //     };
+  //   } else {
+  //     this.rowSpan = {
+  //       row1: 4,
+  //       row2: 20
+  //     };
+  //   }
+  // }
 }
 </script>
 
@@ -207,17 +202,17 @@ export default class CardManage extends Vue {
   position: relative;
 }
 
-.menu-control {
-  position: absolute;
-  top: 32vh;
-  left: -5px;
-}
+// .menu-control {
+//   position: absolute;
+//   top: 32vh;
+//   left: -5px;
+// }
 
-.menu-visible {
-  position: absolute;
-  top: 32vh;
-  left: -15px;
-}
+// .menu-visible {
+//   position: absolute;
+//   top: 32vh;
+//   left: -15px;
+// }
 
 .close-menu {
   width: 10px;
@@ -228,14 +223,14 @@ export default class CardManage extends Vue {
   position: relative;
 }
 
-.icon-class {
-  font-size: 12px;
-  color: #e7eaeb;
-  cursor: pointer;
-  line-height: 48px;
-  position: absolute;
-  left: -1px;
-}
+// .icon-class {
+//   font-size: 12px;
+//   color: #e7eaeb;
+//   cursor: pointer;
+//   line-height: 48px;
+//   position: absolute;
+//   left: -1px;
+// }
 
 .capture-img {
   width: 60px;

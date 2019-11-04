@@ -6,6 +6,6 @@
 <style lang="scss">
 .contentOut {
   padding-top: 10px;
-  box-shadow: inset 0px 15px 10px -15px lightgray;
+  // box-shadow: inset 0px 15px 10px -15px lightgray;
 }
 </style>

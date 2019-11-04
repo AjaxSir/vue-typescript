@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="pass">
+    <div class="pass scene-rename">
       <div class="scene-header">
         <svg-icon icon-class="v_zanbi" class-name="scene-house" />
         <span class="scene-titile">开门占比</span>
@@ -55,6 +55,7 @@ $lv: #66bb6a;
 $block: inline-block;
 .pass {
   border: solid 1px #e6e6e6;
+  background: #fff;
 }
 .visitor {
   margin-top: 16px;

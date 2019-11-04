@@ -1,11 +1,9 @@
 <template>
-  <div class="pass">
+  <div class="pass scene-rename">
     <div class="scene-header">
       <svg-icon icon-class="v_line" class-name="scene-house" />
       <span class="scene-titile">实时通行</span>
-      <span class="pass-time"
-        >{{ today.ymd }} {{ today.week }} {{ today.hour }} {{ today.sec }}</span
-      >
+      <span class="pass-time">{{ today.ymd }} {{ today.week }} {{ today.hour }} {{ today.sec }}</span>
     </div>
     <el-row>
       <el-col :span="18">
@@ -109,6 +107,7 @@ $lv: #66bb6a;
 $block: inline-block;
 .pass {
   border: solid 1px #e6e6e6;
+  background: #fff;
 }
 .scene-header {
   padding: 10px 10px 2px 10px;

@@ -3,7 +3,7 @@
   data: 传入的数据
 -->
 <template>
-  <div class="content">
+  <div class="content tree-rename">
     <div class="treeHeader">
       <i class="iconfont icon-shuji"></i>
       所有
@@ -28,7 +28,9 @@
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item>创建</el-dropdown-item>
               <el-dropdown-item>修改</el-dropdown-item>
-              <el-dropdown-item>删除</el-dropdown-item>
+              <el-dropdown-item>
+                <span @click="deleteHouse">删除</span>
+              </el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </div>
@@ -109,6 +111,26 @@ export default class DataTree extends Vue {
   MouseLeave(val) {
     this.showMenu = 0;
   }
+
+  deleteHouse() {
+    /**@description 删除房屋 */
+  this.$confirm('此操作将永久删除该目标, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
+      }
+  }
 }
 </script>
 
@@ -128,7 +150,6 @@ export default class DataTree extends Vue {
   height: 70vh;
   text-align: center;
   border: 1px solid #ebeef5;
-  box-shadow: 0px 0px 8px 0px lightgrey;
 }
 .treeHeader {
   width: 100%;

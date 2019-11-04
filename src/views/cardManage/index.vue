@@ -13,7 +13,6 @@
       <el-col :span="rowSpan.row2" class="table-col">
         <div class="rightContent">
           <el-table
-            style="box-shadow: 0px 0px 8px 0px lightgrey;"
             :data="cardList"
             stripe
             class="demo-block"
