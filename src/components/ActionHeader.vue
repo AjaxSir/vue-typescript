@@ -19,24 +19,7 @@
             更多菜单
             <i class="el-icon-arrow-down el-icon--right"></i>
           </el-button>
-          <el-dropdown-menu slot="dropdown" v-if="type!=='classroom'">
-            <el-dropdown-item>导入</el-dropdown-item>
-            <el-dropdown-item>导出</el-dropdown-item>
-            <el-dropdown-item>统计信息</el-dropdown-item>
-            <el-dropdown-item>远程开门</el-dropdown-item>
-          </el-dropdown-menu>
-
-          <el-dropdown-menu slot="dropdown" v-if="type==='classroom'">
-            <el-dropdown-item>
-              <span @click="fetchData('统计')">统计</span>
-            </el-dropdown-item>
-            <el-dropdown-item>
-              <span @click="fetchData('进出次数')">进出次数</span>
-            </el-dropdown-item>
-            <el-dropdown-item>
-              <span @click="fetchData('人均时长')">人均时长</span>
-            </el-dropdown-item>
-          </el-dropdown-menu>
+          <slot name='dropdown'></slot>
         </el-dropdown>
       </div>
     </el-col>
@@ -47,7 +30,7 @@
           <span class="el-dropdown-link">
             <i style="font-size:16px;" class="iconfont icon-appstore-o"></i>
           </span>
-          <el-dropdown-menu slot="dropdown">
+          <el-dropdown-menu>
             <el-dropdown-item
               command="a"
               v-for="item in levelList.children"
@@ -59,12 +42,16 @@
           </el-dropdown-menu>
         </el-dropdown>
 
-        <ActionFilter>
-          <div class="houseNum" slot="houseNum">
-            <span>单元号:</span>
-            <el-input class="input" size="small" placeholder="输入单元号"></el-input>
-          </div>
-        </ActionFilter>
+        <div @click="visibleFilter = !visibleFilter" class="content">
+          <i class="iconfont icon-filtration"></i>
+          过滤
+          <transition name="el-zoom-in-top">
+            <div v-show="visibleFilter" class="filterDialog">
+              <slot name="houseNum"></slot>
+              <el-button class="fliterBtn">筛选</el-button>
+            </div>
+          </transition>
+        </div>
 
         <span class="total">总共:{{ total }}条</span>
 
@@ -85,44 +72,26 @@
         </transition>
       </div>
     </el-col>
-    <div v-if="type==='classroom'">
-      <house-from :formShow.sync="dialogCreateHouse" :formData="modifyData" />
-    </div>
 
-    <div>
-      <statistic-data-dialog :formShow.sync="dialogStatisticData" :fromTitle="fromTitle" />
-    </div>
   </el-row>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue, Mixins, Watch } from "vue-property-decorator";
-const ActionFilter = () => import("./ActionFilters.vue");
-const HouseFrom = () => import("./houseFrom.vue");
-const StatisticDataDialog = () =>
-  import(
-    "@/views/schoolhouse/classroomManage/components/statisticDataDialog.vue"
-  );
-
 @Component({
   components: {
-    ActionFilter,
-    HouseFrom,
-    StatisticDataDialog
   }
 })
 export default class ActionManage extends Vue {
-  @Prop() private type: any;
-  @Prop() private total: any;
+  @Prop() private total: any; // 显示总共多少条记录
+  @Prop() dialogCreate: Boolean; // 创建弹框状态 公用
 
-  private visible: boolean = false;
-  private size: string = "10";
-  private levelList: Object = {};
-  private matched: Array<Object> = [];
-  private dialogCreateHouse: boolean = false;
-  private dialogStatisticData: boolean = false;
-  private fromTitle: string = "统计";
-  private pageSize: Array<Object> = [
+  private visible: boolean = false; // 数据显示条数dialog状态
+  private size: string = "10"; // 默认每页显示10条
+  private levelList: Object = {}; // 当前路由的子路由
+  private matched: Array<Object> = []; // 获取当前路由
+  visibleFilter: Boolean = false; // 筛选dialog状态狂
+  private pageSize: Array<Object> = [ // 数据显示条数数组
     {
       label: "10",
       value: "10"
@@ -137,14 +106,6 @@ export default class ActionManage extends Vue {
     }
   ];
 
-  private modifyData: Object = {
-    // 编辑设备信息
-    name: null,
-    type: null,
-    id: null,
-    unit: "1",
-    copyUnit: ""
-  };
 
   created() {
     this.getRouter();
@@ -152,19 +113,18 @@ export default class ActionManage extends Vue {
 
   handleHouse() {
     /** @description 创建楼栋 */
-    this.dialogCreateHouse = true;
+    // this.dialogCreate = true;
+    this.$emit('update:dialogCreate', true)
   }
 
   fetchData(t) {
-    this.fromTitle = t;
-    this.dialogStatisticData = true;
   }
 
   getRouter() {
     this.matched = this.$route.matched.filter(item => item.name);
     const first = this.matched[0];
-    for (const item of this.$router.options.routes) {
-      if (first && first.name === item.name) {
+    for (const item of this.$router['options'].routes) {
+      if (first && first['name'] === item.name) {
         this.levelList = item;
       }
     }
@@ -175,9 +135,7 @@ export default class ActionManage extends Vue {
 </script>
 
 <style lang="scss" scoped>
-li {
-  padding: 0;
-}
+
 a {
   display: inline-block;
   width: 100%;
@@ -246,6 +204,30 @@ a {
       &:hover {
         cursor: pointer;
       }
+    }
+  }
+}
+.content {
+  display: inline-block;
+  position: relative;
+  color: #8494a7;
+  &:hover {
+    cursor: pointer;
+  }
+  .filterDialog {
+    text-align: left;
+    width: 300px;
+    height: auto;
+    padding: 20px 10px;
+    position: absolute;
+    z-index: 11;
+    left: -120px;
+    top: 40px;
+    border: 1px solid lightgray;
+    box-shadow: 0px 10px 10px gray;
+    background: white;
+    .fliterBtn{
+      float: right;
     }
   }
 }

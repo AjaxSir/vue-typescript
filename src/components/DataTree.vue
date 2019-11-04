@@ -17,7 +17,7 @@
     >
       <span
         class="custom-tree-node"
-        slot-scope="{ node, data }"
+        slot-scope="{ node }"
         @mouseenter="MouseNnter(node.id)"
         @mouseleave="MouseLeave(node.id)"
       >
@@ -131,7 +131,6 @@ export default class DataTree extends Vue {
         });
       }
   }
-}
 </script>
 
 <style>
