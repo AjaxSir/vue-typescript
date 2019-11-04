@@ -16,7 +16,6 @@
       <el-col :span="rowSpan.row2" class="table-col">
         <div class="rightContent">
           <el-table
-            style="box-shadow: 0px 0px 8px 0px lightgrey;"
             :data="cardList"
             stripe
             class="demo-block"
@@ -28,7 +27,7 @@
 
             <el-table-column type="index" label="序号" width="50"></el-table-column>
 
-            <el-table-column prop="name" label="设备编号">
+            <el-table-column prop="name" label="设备编号" width="90">
               <template slot-scope="scope">
                 <span class="serial-num">{{scope.row.name}}</span>
                 <div class="fun-btn">
@@ -47,26 +46,22 @@
 
             <el-table-column prop="carNum" label="设备型号"></el-table-column>
 
-            <el-table-column prop="createDate" label="通行时间"></el-table-column>
+            <el-table-column prop="createDate" label="上线时间" width="160"></el-table-column>
 
-            <el-table-column prop="type" label="通行方式">
+            <el-table-column prop="num" label="故障次数"></el-table-column>
+
+            <el-table-column prop="type" label="状态">
               <template slot-scope="scope">
                 <el-tag
                   size="small"
                   style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
-                  :type="scope.row.type === 1 ? 'success' : 'primary'"
+                  :type="scope.row.type === 1 ? 'success' : 'danger'"
                   @click="editType(scope.row)"
-                >{{ scope.row.type === 1 ? "人脸识别" : "刷卡识别" }}</el-tag>
+                >{{ scope.row.type === 1 ? "连线中" : "离线中" }}</el-tag>
               </template>
             </el-table-column>
 
-            <el-table-column prop="img" label="人脸">
-              <template slot-scope="scope">
-                <img class="capture-img" :src="scope.row.img" alt />
-              </template>
-            </el-table-column>
-
-            <el-table-column prop="user" label="姓名"></el-table-column>
+            <el-table-column prop="createDate" label="创建时间" width="160"></el-table-column>
           </el-table>
         </div>
         <div :class="rowSpan.row1===4 ? menuControl1 : menuControl2" @click="menuVisible">
@@ -104,8 +99,7 @@ export default class CardManage extends Vue {
       createDate: "2019-10-10 12:12:12",
       type: 1,
       showMenu: false,
-      user: "张三",
-      img: require("../../assets/4075389faf0c20cf430ce772c3afa47.png")
+      num:0
     },  {
       name: "123",
       houseRelative: "东区-1栋-1-1",
@@ -113,8 +107,7 @@ export default class CardManage extends Vue {
       createDate: "2019-10-10 12:12:12",
       type: 2,
       showMenu: false,
-      user: "张三",
-      img: require("../../assets/4075389faf0c20cf430ce772c3afa47.png")
+         num:0
     },  {
       name: "123",
       houseRelative: "东区-1栋-1-1",
@@ -122,8 +115,7 @@ export default class CardManage extends Vue {
       createDate: "2019-10-10 12:12:12",
       type: 1,
       showMenu: false,
-      user: "张三",
-      img: require("../../assets/4075389faf0c20cf430ce772c3afa47.png")
+         num:0
     }
   ];
 
@@ -202,7 +194,7 @@ export default class CardManage extends Vue {
 .fun-btn {
   position: absolute;
   left: -64px;
-  top: 38%;
+  top: 12px;
   .iconfont {
     font-size: 19px;
     color: #8091a5;

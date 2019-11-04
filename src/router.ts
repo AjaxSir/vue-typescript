@@ -26,7 +26,7 @@ export const constantRouterMap = [{
   redirect: '/house/houseManage',
   alwaysShow: true,
   meta: {
-    title: '房屋管理',
+    title: '住宅管理',
     icon: 'v_house',
     icon_class: "person-iconB",
   },
@@ -35,36 +35,43 @@ export const constantRouterMap = [{
     path: 'houseManage',
     component: _import_('houseManage/index'),
     meta: {
-      title: '房屋管理',
+      title: '住宅管理 - 房屋管理',
       icon: 'monitor'
     }
-  }]
-}, {
-  path: '/card',
-  name: 'card',
-  component: Layout,
-  redirect: '/card/access_card',
-  alwaysShow: true,
-  meta: {
-    title: '门禁卡管理',
-    icon: 'v_card',
-    icon_class: "person-iconA",
-  },
-  children: [{
+  }, {
     name: 'access_card',
     path: 'access_card',
     component: _import_('cardManage/index'),
     meta: {
-      title: '门禁卡管理',
+      title: '住宅管理 - 门禁卡管理',
       icon: 'monitor'
     }
+  },]
+}, {
+  path: '/person',
+  name: 'person',
+  component: Layout,
+  redirect: '/person/owner',
+  alwaysShow: true,
+  meta: {
+    title: '人员管理',
+    icon: 'v_person',
+    icon_class: "person-iconA",
   },
-  {
-    name: 'propertymanage',
-    path: 'propertymanage',
+  children: [{
+    name: 'owner',
+    path: 'owner',
+    component: _import_('ownerManage/index'),
+    meta: {
+      title: '人员管理 - 业主管理',
+      icon: 'monitor'
+    }
+  }, {
+    name: 'property',
+    path: 'property',
     component: _import_('propertyManage/index'),
     meta: {
-      title: '物业管理',
+      title: '人员管理 - 物业管理',
       icon: 'monitor'
     }
   },
@@ -73,7 +80,7 @@ export const constantRouterMap = [{
     path: 'vistormanage',
     component: _import_('vistorManage/index'),
     meta: {
-      title: '访客管理',
+      title: '人员管理 - 访客管理',
       icon: 'monitor'
     }
   }]
@@ -86,7 +93,7 @@ export const constantRouterMap = [{
   alwaysShow: true,
   meta: {
     title: '车辆管理',
-    icon: 'v_regVisitor',
+    icon: 'v_car',
     icon_class: "person-iconE",
   },
   children: [{
@@ -95,6 +102,14 @@ export const constantRouterMap = [{
     component: _import_('carManage/index'),
     meta: {
       title: '车辆管理',
+      icon: 'monitor'
+    }
+  }, {
+    name: 'carPass',
+    path: 'carPass',
+    component: _import_('carPass/index'),
+    meta: {
+      title: '车辆管理 - 车辆通行',
       icon: 'monitor'
     }
   }]
@@ -118,13 +133,21 @@ export const constantRouterMap = [{
       title: '设备管理',
       icon: 'monitor'
     }
+  }, {
+    name: 'fault',
+    path: 'fault',
+    component: _import_('deviceFault/index'),
+    meta: {
+      title: '设备管理 - 设备故障',
+      icon: 'monitor'
+    }
   }]
 },
 {
-  path: '/device',
-  name: 'device',
+  path: '/pass',
+  name: 'pass',
   component: Layout,
-  redirect: '/device/_manage',
+  redirect: '/pass/management',
   alwaysShow: true,
   meta: {
     title: '通行管理',
@@ -132,36 +155,82 @@ export const constantRouterMap = [{
     icon_class: "person-iconC",
   },
   children: [{
-    name: '_manage',
-    path: '_manage',
-    component: _import_('deviceManage/index'),
+    name: 'management',
+    path: 'management',
+    component: _import_('personPass/index'),
     meta: {
-      title: '通行管理',
+      title: '人员通行管理',
       icon: 'monitor'
     }
   }]
 },
 {
-  path: '/user',
-  name: 'user',
+  path: '/subscription',
+  name: 'subscription',
   component: Layout,
-  redirect: '/user/ownermanage',
+  redirect: '/subscription/subscriber',
   alwaysShow: true,
   meta: {
-    title: '用户管理',
+    title: '订阅报警服务',
     icon: 'user',
     icon_class: "person-iconD",
   },
   children: [{
-    name: 'ownermanage',
-    path: 'ownermanage',
-    component: _import_('ownerManage/index'),
+    name: 'subscriber',
+    path: 'subscriber',
+    component: _import_('subscriberManage/index'),
     meta: {
-      title: '业主管理',
+      title: '订阅人管理',
       icon: 'monitor'
     }
   }]
-}]
+},
+{
+  path: '/schoolhouse',
+  name: 'schoolhouse',
+  component: Layout,
+  redirect: '/schoolhouse/library',
+  alwaysShow: true,
+  meta: {
+    title: '校舍管理',
+    icon: 'user',
+    icon_class: "person-iconD",
+  },
+  children: [{
+    name: 'library',
+    path: 'library',
+    component: _import_('schoolhouse/libraryManage/index'),
+    meta: {
+      title: '图书馆管理',
+      icon: 'monitor'
+    }
+  },{
+    name: 'classroom',
+    path: 'classroom',
+    component: _import_('schoolhouse/classroomManage/index'),
+    meta: {
+      title: '教室管理',
+      icon: 'monitor'
+    }
+  },{
+    name: 'office',
+    path: 'office',
+    component: _import_('schoolhouse/officeManage/index'),
+    meta: {
+      title: '教室管理',
+      icon: 'monitor'
+    }
+  },{
+    name: 'canteen ',
+    path: 'canteen ',
+    component: _import_('schoolhouse/canteenManage/index'),
+    meta: {
+      title: '食堂管理',
+      icon: 'monitor'
+    }
+  },]
+}
+]
 
 export default new Router({
   mode: 'history',

@@ -9,7 +9,7 @@
       >
         <div class="fun-title">
           <router-link v-if="item.meta && item.meta.title" :to="item.redirect">
-            <div class="item">
+            <div class="item group-rename">
               <svg-icon
                 v-if="item.meta && item.meta.icon"
                 :icon-class="item.meta.icon"
@@ -81,6 +81,7 @@ $color: #ffffff;
   flex-wrap: wrap;
   // justify-content: space-between;
   padding: 17px 10px 5px 10px;
+
 }
 .data-statistics {
   // width: 456px;
@@ -265,6 +266,7 @@ $color: #ffffff;
   background: #f9f9f9;
   margin: 5px 21px;
   border-radius: 6px;
+  background: #fff;
 }
 .car-list {
   position: relative;
