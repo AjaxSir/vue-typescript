@@ -213,7 +213,7 @@ export default class CardManage extends Vue {
 .fun-btn {
   position: absolute;
   left: -64px;
-  top: 38%;
+  top: 28%;
   .iconfont {
     font-size: 19px;
     color: #8091a5;

@@ -100,7 +100,7 @@ export const constantRouterMap = [{
     path: 'carManage',
     component: _import_('carManage/index'),
     meta: {
-      title: '车辆管理',
+      title: '车辆管理 - 车辆名单',
       icon: 'monitor'
     }
   }, {
@@ -108,7 +108,15 @@ export const constantRouterMap = [{
     path: 'carPass',
     component: _import_('carPass/index'),
     meta: {
-      title: '车辆管理 - 车辆通行',
+      title: '车辆管理 - 通行记录',
+      icon: 'monitor'
+    }
+  },{
+    name: 'carport',
+    path: 'carport',
+    component: _import_('carportManage/index'),
+    meta: {
+      title: '车辆管理 - 车位管理',
       icon: 'monitor'
     }
   }]
