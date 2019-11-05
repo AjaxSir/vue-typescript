@@ -403,7 +403,7 @@
       :visible.sync="dialogCreate"
       width="30%"
       :before-close="handleClose">
-      <span>这是一段信息</span>
+      <span>这是房屋管理新增</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogCreate = false">取 消</el-button>
         <el-button type="primary" @click="dialogCreate = false">确 定</el-button>
@@ -454,8 +454,6 @@ export default class HouseManage extends Vue {
       }
     }
   ];
-  dialogCreate: Boolean = false
-  handleClose() {}
 }
 </script>
 

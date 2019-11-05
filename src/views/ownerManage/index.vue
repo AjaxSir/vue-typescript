@@ -2,7 +2,23 @@
   <div class="app-container">
     <el-row>
       <el-col :span="24">
-        <ActionHeader :type="'owner'" :total="1" />
+        <ActionHeader :dialogCreate.sync='dialogCreate' :total="1">
+          <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item>导入</el-dropdown-item>
+              <el-dropdown-item>导出</el-dropdown-item>
+              <el-dropdown-item>统计信息</el-dropdown-item>
+            </el-dropdown-menu>
+          <div slot="houseNum">
+            <span class="wordFilter">姓&nbsp;&nbsp;&nbsp;名:<el-input class="inputFilter"></el-input></span>
+            <span class="wordFilter">手机号:<el-input class="inputFilter"></el-input></span>
+            <span class="wordFilter">用户类型:
+              <el-select style='width:212px' v-model="UserType" placeholder="请选择">
+                <el-option label="租客" value="all"></el-option>
+                <el-option label="业主" value="owner"></el-option>
+              </el-select>
+            </span>
+          </div>
+        </ActionHeader>
       </el-col>
     </el-row>
     <el-row :gutter="20">
@@ -72,6 +88,17 @@
         >
       </span>
     </el-dialog>
+    <el-dialog
+      title="提示"
+      :visible.sync="dialogCreate"
+      width="30%"
+      :before-close="handleClose">
+      <span>这是业主管理新增</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogCreate = false">取 消</el-button>
+        <el-button type="primary" @click="dialogCreate = false">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 <script lang="ts">
@@ -109,6 +136,7 @@ export default class OwnerManage extends Vue {
       create_time: "2019/10/1"
     }
   ];
+  UserType: string = 'owner';
   private Dialog: Object = {
     name: ""
   };

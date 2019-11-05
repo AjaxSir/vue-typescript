@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-row>
       <el-col :span="24">
-        <action-header :total="1">
+        <action-header :dialogCreate.sync='dialogCreate' :total="1">
            <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>导出</el-dropdown-item>
           </el-dropdown-menu>
@@ -57,6 +57,17 @@
         </div>
       </el-col>
     </el-row>
+    <el-dialog
+      title="提示"
+      :visible.sync="dialogCreate"
+      width="30%"
+      :before-close="handleClose">
+      <span>这是重点人员新增</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogCreate = false">取 消</el-button>
+        <el-button type="primary" @click="dialogCreate = false">确 定</el-button>
+      </span>
+    </el-dialog>
     <BigImg :centerDialogVisible="imgVisible" bigTitle="抓拍图片" :bigImg="bigImg" />
   </div>
 </template>

@@ -8,12 +8,21 @@
     <el-col :span="12">
       <div class="leftAction">
         <el-button
+          v-if='btnStatus'
           class="createBtn"
           type="primary"
           size="small"
           icon="el-icon-plus"
           @click="handleHouse"
         >创建</el-button>
+        <el-button
+          v-else
+          class="createBtn"
+          type="primary"
+          size="small"
+          icon="el-icon-download"
+          @click="exportTable"
+        >导出</el-button>
         <el-dropdown size="small" @click="handleClick">
           <el-button size="small" style="border-color: #409EFF; color: #409EFF;">
             更多菜单
@@ -42,9 +51,11 @@
           </el-dropdown-menu>
         </el-dropdown>
 
-        <div @click="visibleFilter = !visibleFilter" class="content">
-          <i class="iconfont icon-filtration"></i>
-          过滤
+        <div class="content">
+          <span @click="visibleFilter = !visibleFilter">
+            <i class="iconfont icon-filtration"></i>
+            过滤
+          </span>
           <transition name="el-zoom-in-top">
             <div v-show="visibleFilter" class="filterDialog">
               <slot name="houseNum"></slot>
@@ -84,7 +95,7 @@ import { Component, Prop, Vue, Mixins, Watch } from "vue-property-decorator";
 export default class ActionManage extends Vue {
   @Prop() private total: any; // 显示总共多少条记录
   @Prop() dialogCreate: Boolean; // 创建弹框状态 公用
-
+  @Prop({ default: true }) btnStatus:Boolean; // true 表示新增框 false 表示导出
   private visible: boolean = false; // 数据显示条数dialog状态
   private size: string = "10"; // 默认每页显示10条
   private levelList: Object = {}; // 当前路由的子路由
@@ -119,7 +130,8 @@ export default class ActionManage extends Vue {
     // this.dialogCreate = true;
     this.$emit('update:dialogCreate', true)
   }
-
+  // 导出
+  exportTable() {}
   fetchData(t) {
   }
 

@@ -2,7 +2,17 @@
   <div class="app-container">
     <el-row>
       <el-col :span="24">
-        <ActionHeader :total="1" />
+        <ActionHeader :dialogCreate.sync='dialogCreate' :total="1">
+           <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item>导入</el-dropdown-item>
+              <el-dropdown-item>导出</el-dropdown-item>
+              <el-dropdown-item>统计信息</el-dropdown-item>
+            </el-dropdown-menu>
+            <div slot="houseNum">
+            <span class="wordFilter">姓&nbsp;&nbsp;&nbsp;名:<el-input class="inputFilter"></el-input></span>
+            <span class="wordFilter">手机号:<el-input class="inputFilter"></el-input></span>
+          </div>
+        </ActionHeader>
       </el-col>
     </el-row>
     <el-row :gutter="20">
@@ -45,7 +55,7 @@
         </div>
       </el-col>
     </el-row>
-    <el-dialog :title="Dialog.name" :visible.sync="dialogFormVisible">
+    <el-dialog :title="Dialog.name" :visible.sync="dialogCreate">
       <el-tabs v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="用户管理" name="first">详细信息</el-tab-pane>
         <el-tab-pane label="配置管理" name="second">进出单元记录</el-tab-pane>
@@ -56,7 +66,7 @@
         <el-tab-pane label="人脸库信息" name="seven">人脸库信息</el-tab-pane>
       </el-tabs>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogFormVisible = false"
+        <el-button type="primary" @click="dialogCreate = false"
           >确 定</el-button
         >
       </span>

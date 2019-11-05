@@ -2,7 +2,21 @@
   <div class="app-container">
     <el-row>
       <el-col :span="24">
-        <action-header :total="1" />
+        <action-header :total="1">
+          <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item>导入</el-dropdown-item>
+              <el-dropdown-item>导出</el-dropdown-item>
+            </el-dropdown-menu>
+            <div slot="houseNum">
+              <span class="wordFilter">状态:
+                <el-select style='width:212px' v-model="deviceStatus" placeholder="请选择">
+                  <el-option label="全部" value="all"></el-option>
+                  <el-option label="离线" value="offline"></el-option>
+                  <el-option label="在线" value="online"></el-option>
+                </el-select>
+              </span>
+            </div>
+        </action-header>
       </el-col>
     </el-row>
     <el-row :gutter="10">
@@ -140,7 +154,7 @@ export default class CardManage extends Vue {
     row1: 4,
     row2: 20
   };
-
+  deviceStatus: String = 'all'
   private menuControl1: String = "menu-control";
   private menuControl2: String = "menu-visible";
 

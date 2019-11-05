@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-row>
       <el-col :span="24">
-        <action-header :total="1" />
+        <!-- <action-header :total="1" /> -->
       </el-col>
     </el-row>
     <el-row :gutter="10">
