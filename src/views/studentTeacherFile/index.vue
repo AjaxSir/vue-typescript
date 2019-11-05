@@ -9,17 +9,32 @@
             <el-dropdown-item>统计图表</el-dropdown-item>
           </el-dropdown-menu>
           <div slot="houseNum">
-            <span class="wordFilter">姓名: <el-input class="inputFilter"></el-input></span>
-            <span class="wordFilter">专业: <el-input class="inputFilter"></el-input></span>
-            <span class="wordFilter">性别: <el-input class="inputFilter"></el-input></span>
-            <span class="wordFilter">入学年份: <el-input class="inputFilter specialFilter"></el-input></span>
-            <span class="wordFilter">国籍: <el-input class="inputFilter"></el-input></span>
+            <div class="word-filter">
+              <span class="filter-name">姓名:</span>
+              <el-input class="input-filter" size="small"></el-input>
+            </div>
+            <div class="word-filter">
+              <span class="filter-name">专业:</span>
+              <el-input class="input-filter" size="small"></el-input>
+            </div>
+            <div class="word-filter">
+              <span class="filter-name">性别:</span>
+              <el-input class="input-filter" size="small"></el-input>
+            </div>
+            <div class="word-filter">
+              <span class="filter-name">入学年份:</span>
+              <el-input class="input-filter" size="small"></el-input>
+            </div>
+            <div class="word-filter">
+              <span class="filter-name">国籍:</span>
+              <el-input class="input-filter" size="small"></el-input>
+            </div>
           </div>
         </action-header>
       </el-col>
     </el-row>
     <el-row :gutter="10">
-       <transition name="el-fade-in-linear">
+      <transition name="el-fade-in-linear">
         <!-- <div v-show="show" class="transition-box">.el-fade-in-linear</div> -->
       </transition>
       <el-col :span="rowSpan.row1">
@@ -38,9 +53,9 @@
           >
             <el-table-column type="selection" width="50"></el-table-column>
 
-            <el-table-column type="index" label="序号" align='center' width="50"></el-table-column>
+            <el-table-column type="index" label="序号" align="center" width="50"></el-table-column>
 
-            <el-table-column prop="name" label="姓名"  align='center' width="90">
+            <el-table-column prop="name" label="姓名" align="center" width="90">
               <template slot-scope="scope">
                 <span class="serial-num">{{scope.row.name}}</span>
                 <div class="fun-btn">
@@ -55,29 +70,27 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="xb" label="性别" align='center'></el-table-column>
+            <el-table-column prop="xb" label="性别" align="center"></el-table-column>
 
-            <el-table-column prop="xh" label="学号" align='center'></el-table-column>
+            <el-table-column prop="xh" label="学号" align="center"></el-table-column>
 
-            <el-table-column prop="kx" label="科系" align='center' width="160"></el-table-column>
+            <el-table-column prop="kx" label="科系" align="center" width="160"></el-table-column>
 
-            <el-table-column prop="zy" label="专业" align='center'></el-table-column>
+            <el-table-column prop="zy" label="专业" align="center"></el-table-column>
 
-            <el-table-column prop="sfzh" label="身份证号" align='center'>
+            <el-table-column prop="sfzh" label="身份证号" align="center"></el-table-column>
 
-            </el-table-column>
-
-            <el-table-column prop="hj" label="户籍" align='center'></el-table-column>
-            <el-table-column prop="mz" label="民族"  align='center'></el-table-column>
-            <el-table-column prop="gj" label="国籍" align='center'></el-table-column>
-            <el-table-column prop="csrq" label="出生日期" align='center'></el-table-column>
-            <el-table-column prop="rxnf" label="入学年份" align='center'></el-table-column>
-            <el-table-column prop="zp" label="照片" align='center'>
+            <el-table-column prop="hj" label="户籍" align="center"></el-table-column>
+            <el-table-column prop="mz" label="民族" align="center"></el-table-column>
+            <el-table-column prop="gj" label="国籍" align="center"></el-table-column>
+            <el-table-column prop="csrq" label="出生日期" align="center"></el-table-column>
+            <el-table-column prop="rxnf" label="入学年份" align="center"></el-table-column>
+            <el-table-column prop="zp" label="照片" align="center">
               <template slot-scope="{row}">
-                <img :src="row.zp" width="30px" alt="">
+                <img :src="row.zp" width="30px" alt />
               </template>
             </el-table-column>
-            <el-table-column prop="bz" label="备注" align='center'></el-table-column>
+            <el-table-column prop="bz" label="备注" align="center"></el-table-column>
           </el-table>
         </div>
         <div :class="rowSpan.row1===4 ? menuControl1 : menuControl2" @click="menuVisible">
@@ -88,7 +101,6 @@
         </div>
       </el-col>
     </el-row>
-
   </div>
 </template>
 
@@ -114,15 +126,16 @@ export default class CardManage extends Vue {
       xb: "男",
       xh: "123456789",
       kx: "计算机",
-      zy: '物联网',
-      sfzh: '12345',
-      hj: '成都市',
-      gj: '中国',
-      mz: '汉族',
-      csrq: '1994/4/20',
-      rxnf: '2013/9/1',
-      zp: 'http://192.168.3.19:8089/gcxuYFkPVzC2GLb2JGppLR/ea74acb14304ec41369f44ed18219dc.jpg',
-      bz: '优生'
+      zy: "物联网",
+      sfzh: "12345",
+      hj: "成都市",
+      gj: "中国",
+      mz: "汉族",
+      csrq: "1994/4/20",
+      rxnf: "2013/9/1",
+      zp:
+        "http://192.168.3.19:8089/gcxuYFkPVzC2GLb2JGppLR/ea74acb14304ec41369f44ed18219dc.jpg",
+      bz: "优生"
     }
   ];
 
@@ -245,7 +258,5 @@ export default class CardManage extends Vue {
 .capture-img {
   width: 60px;
 }
-.specialFilter{
-  width: 190px !important;
-}
+
 </style>

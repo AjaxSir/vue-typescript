@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-row>
       <el-col :span="24">
-        <ActionHeader :dialogCreate.sync='dialogCreate' :total="1">
+        <ActionHeader :dialogCreate.sync="dialogCreate" :total="1">
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>房屋导入</el-dropdown-item>
             <el-dropdown-item>房屋导出</el-dropdown-item>
@@ -10,7 +10,10 @@
             <el-dropdown-item>远程开门</el-dropdown-item>
           </el-dropdown-menu>
           <div slot="houseNum">
-            <span class="wordFilter">房屋号: <el-input class="inputFilter"></el-input></span>
+            <div class="word-filter">
+              <span class="filter-name">房屋号:</span>
+              <el-input class="input-filter" size="small"></el-input>
+            </div>
           </div>
           <!-- <span slot='houseNum'></span> -->
         </ActionHeader>
@@ -26,9 +29,10 @@
             <div slot="header" class="clearfix">
               <span>出入口</span>
             </div>
-            <el-button type="primary" plain
-              >东门<i class="iconfont icon-shexiangtou"></i
-            ></el-button>
+            <el-button type="primary" plain>
+              东门
+              <i class="iconfont icon-shexiangtou"></i>
+            </el-button>
           </el-card>
         </div>
         <div class="col-20">
@@ -36,9 +40,11 @@
             <el-table class="singleClass" border :data="list_data">
               <el-table-column label="1" align="center" width="50">
                 <template slot-scope="scope">
-                  <el-tag v-if="scope.row.first.status">{{
+                  <el-tag v-if="scope.row.first.status">
+                    {{
                     scope.row.first.num
-                  }}</el-tag>
+                    }}
+                  </el-tag>
                   <el-tag v-else type="danger">标签一</el-tag>
                 </template>
               </el-table-column>
@@ -58,33 +64,41 @@
               </el-table-column>
               <el-table-column label="3" align="center" width="50">
                 <template slot-scope="scope">
-                  <el-tag v-if="scope.row.first.status">{{
+                  <el-tag v-if="scope.row.first.status">
+                    {{
                     scope.row.first.num
-                  }}</el-tag>
+                    }}
+                  </el-tag>
                   <el-tag v-else type="danger">标签一</el-tag>
                 </template>
               </el-table-column>
               <el-table-column label="4" align="center" width="50">
                 <template slot-scope="scope">
-                  <el-tag v-if="scope.row.first.status">{{
+                  <el-tag v-if="scope.row.first.status">
+                    {{
                     scope.row.first.num
-                  }}</el-tag>
+                    }}
+                  </el-tag>
                   <el-tag v-else type="danger">标签一</el-tag>
                 </template>
               </el-table-column>
               <el-table-column label="5" align="center" width="50">
                 <template slot-scope="scope">
-                  <el-tag v-if="scope.row.first.status">{{
+                  <el-tag v-if="scope.row.first.status">
+                    {{
                     scope.row.first.num
-                  }}</el-tag>
+                    }}
+                  </el-tag>
                   <el-tag v-else type="danger">标签一</el-tag>
                 </template>
               </el-table-column>
               <el-table-column label="6" align="center" width="50">
                 <template slot-scope="scope">
-                  <el-tag v-if="scope.row.first.status">{{
+                  <el-tag v-if="scope.row.first.status">
+                    {{
                     scope.row.first.num
-                  }}</el-tag>
+                    }}
+                  </el-tag>
                   <el-tag v-else type="danger">标签一</el-tag>
                 </template>
               </el-table-column>
@@ -92,9 +106,11 @@
             <el-table class="singleClass" border :data="list_data">
               <el-table-column label="1" align="center" width="50">
                 <template slot-scope="scope">
-                  <el-tag v-if="scope.row.first.status">{{
+                  <el-tag v-if="scope.row.first.status">
+                    {{
                     scope.row.first.num
-                  }}</el-tag>
+                    }}
+                  </el-tag>
                   <el-tag v-else type="danger">标签一</el-tag>
                 </template>
               </el-table-column>
@@ -114,163 +130,52 @@
               </el-table-column>
               <el-table-column label="3" align="center" width="50">
                 <template slot-scope="scope">
-                  <el-tag v-if="scope.row.first.status">{{
+                  <el-tag v-if="scope.row.first.status">
+                    {{
                     scope.row.first.num
-                  }}</el-tag>
+                    }}
+                  </el-tag>
                   <el-tag v-else type="danger">标签一</el-tag>
                 </template>
               </el-table-column>
               <el-table-column label="4" align="center" width="50">
                 <template slot-scope="scope">
-                  <el-tag v-if="scope.row.first.status">{{
+                  <el-tag v-if="scope.row.first.status">
+                    {{
                     scope.row.first.num
-                  }}</el-tag>
+                    }}
+                  </el-tag>
                   <el-tag v-else type="danger">标签一</el-tag>
                 </template>
               </el-table-column>
               <el-table-column label="5" align="center" width="50">
                 <template slot-scope="scope">
-                  <el-tag v-if="scope.row.first.status">{{
+                  <el-tag v-if="scope.row.first.status">
+                    {{
                     scope.row.first.num
-                  }}</el-tag>
+                    }}
+                  </el-tag>
                   <el-tag v-else type="danger">标签一</el-tag>
                 </template>
               </el-table-column>
               <el-table-column label="6" align="center" width="50">
                 <template slot-scope="scope">
-                  <el-tag v-if="scope.row.first.status">{{
+                  <el-tag v-if="scope.row.first.status">
+                    {{
                     scope.row.first.num
-                  }}</el-tag>
+                    }}
+                  </el-tag>
                   <el-tag v-else type="danger">标签一</el-tag>
                 </template>
               </el-table-column>
             </el-table>
             <div class="houseInfo">
-              一单元<i class="iconfont icon-shexiangtou"></i>
+              一单元
+              <i class="iconfont icon-shexiangtou"></i>
             </div>
             <div class="houseInfo">
-              二单元<i class="iconfont icon-shexiangtou"></i>
-            </div>
-            <div class="partHouse">西区-1栋</div>
-          </div>
-          <div class="singleTable" :style="{ width: '602px' }">
-            <el-table class="singleClass" border :data="list_data">
-              <el-table-column label="1" align="center" width="50">
-                <template slot-scope="scope">
-                  <el-tag v-if="scope.row.first.status">{{
-                    scope.row.first.num
-                  }}</el-tag>
-                  <el-tag v-else type="danger">标签一</el-tag>
-                </template>
-              </el-table-column>
-              <el-table-column label="2" align="center" width="50">
-                <template slot-scope="scope">
-                  <el-tooltip
-                    v-if="scope.row.first.status"
-                    class="item"
-                    effect="dark"
-                    content="132"
-                    placement="top"
-                  >
-                    <el-tag>{{ scope.row.first.num }}</el-tag>
-                  </el-tooltip>
-                  <el-tag v-else type="danger">标签一</el-tag>
-                </template>
-              </el-table-column>
-              <el-table-column label="3" align="center" width="50">
-                <template slot-scope="scope">
-                  <el-tag v-if="scope.row.first.status">{{
-                    scope.row.first.num
-                  }}</el-tag>
-                  <el-tag v-else type="danger">标签一</el-tag>
-                </template>
-              </el-table-column>
-              <el-table-column label="4" align="center" width="50">
-                <template slot-scope="scope">
-                  <el-tag v-if="scope.row.first.status">{{
-                    scope.row.first.num
-                  }}</el-tag>
-                  <el-tag v-else type="danger">标签一</el-tag>
-                </template>
-              </el-table-column>
-              <el-table-column label="5" align="center" width="50">
-                <template slot-scope="scope">
-                  <el-tag v-if="scope.row.first.status">{{
-                    scope.row.first.num
-                  }}</el-tag>
-                  <el-tag v-else type="danger">标签一</el-tag>
-                </template>
-              </el-table-column>
-              <el-table-column label="6" align="center" width="50">
-                <template slot-scope="scope">
-                  <el-tag v-if="scope.row.first.status">{{
-                    scope.row.first.num
-                  }}</el-tag>
-                  <el-tag v-else type="danger">标签一</el-tag>
-                </template>
-              </el-table-column>
-            </el-table>
-            <el-table class="singleClass" border :data="list_data">
-              <el-table-column label="1" align="center" width="50">
-                <template slot-scope="scope">
-                  <el-tag v-if="scope.row.first.status">{{
-                    scope.row.first.num
-                  }}</el-tag>
-                  <el-tag v-else type="danger">标签一</el-tag>
-                </template>
-              </el-table-column>
-              <el-table-column label="2" align="center" width="50">
-                <template slot-scope="scope">
-                  <el-tooltip
-                    v-if="scope.row.first.status"
-                    class="item"
-                    effect="dark"
-                    content="132"
-                    placement="top"
-                  >
-                    <el-tag>{{ scope.row.first.num }}</el-tag>
-                  </el-tooltip>
-                  <el-tag v-else type="danger">标签一</el-tag>
-                </template>
-              </el-table-column>
-              <el-table-column label="3" align="center" width="50">
-                <template slot-scope="scope">
-                  <el-tag v-if="scope.row.first.status">{{
-                    scope.row.first.num
-                  }}</el-tag>
-                  <el-tag v-else type="danger">标签一</el-tag>
-                </template>
-              </el-table-column>
-              <el-table-column label="4" align="center" width="50">
-                <template slot-scope="scope">
-                  <el-tag v-if="scope.row.first.status">{{
-                    scope.row.first.num
-                  }}</el-tag>
-                  <el-tag v-else type="danger">标签一</el-tag>
-                </template>
-              </el-table-column>
-              <el-table-column label="5" align="center" width="50">
-                <template slot-scope="scope">
-                  <el-tag v-if="scope.row.first.status">{{
-                    scope.row.first.num
-                  }}</el-tag>
-                  <el-tag v-else type="danger">标签一</el-tag>
-                </template>
-              </el-table-column>
-              <el-table-column label="6" align="center" width="50">
-                <template slot-scope="scope">
-                  <el-tag v-if="scope.row.first.status">{{
-                    scope.row.first.num
-                  }}</el-tag>
-                  <el-tag v-else type="danger">标签一</el-tag>
-                </template>
-              </el-table-column>
-            </el-table>
-            <div class="houseInfo">
-              一单元<i class="iconfont icon-shexiangtou"></i>
-            </div>
-            <div class="houseInfo">
-              二单元<i class="iconfont icon-shexiangtou"></i>
+              二单元
+              <i class="iconfont icon-shexiangtou"></i>
             </div>
             <div class="partHouse">西区-1栋</div>
           </div>
@@ -278,9 +183,11 @@
             <el-table class="singleClass" border :data="list_data">
               <el-table-column label="1" align="center" width="50">
                 <template slot-scope="scope">
-                  <el-tag v-if="scope.row.first.status">{{
+                  <el-tag v-if="scope.row.first.status">
+                    {{
                     scope.row.first.num
-                  }}</el-tag>
+                    }}
+                  </el-tag>
                   <el-tag v-else type="danger">标签一</el-tag>
                 </template>
               </el-table-column>
@@ -300,33 +207,41 @@
               </el-table-column>
               <el-table-column label="3" align="center" width="50">
                 <template slot-scope="scope">
-                  <el-tag v-if="scope.row.first.status">{{
+                  <el-tag v-if="scope.row.first.status">
+                    {{
                     scope.row.first.num
-                  }}</el-tag>
+                    }}
+                  </el-tag>
                   <el-tag v-else type="danger">标签一</el-tag>
                 </template>
               </el-table-column>
               <el-table-column label="4" align="center" width="50">
                 <template slot-scope="scope">
-                  <el-tag v-if="scope.row.first.status">{{
+                  <el-tag v-if="scope.row.first.status">
+                    {{
                     scope.row.first.num
-                  }}</el-tag>
+                    }}
+                  </el-tag>
                   <el-tag v-else type="danger">标签一</el-tag>
                 </template>
               </el-table-column>
               <el-table-column label="5" align="center" width="50">
                 <template slot-scope="scope">
-                  <el-tag v-if="scope.row.first.status">{{
+                  <el-tag v-if="scope.row.first.status">
+                    {{
                     scope.row.first.num
-                  }}</el-tag>
+                    }}
+                  </el-tag>
                   <el-tag v-else type="danger">标签一</el-tag>
                 </template>
               </el-table-column>
               <el-table-column label="6" align="center" width="50">
                 <template slot-scope="scope">
-                  <el-tag v-if="scope.row.first.status">{{
+                  <el-tag v-if="scope.row.first.status">
+                    {{
                     scope.row.first.num
-                  }}</el-tag>
+                    }}
+                  </el-tag>
                   <el-tag v-else type="danger">标签一</el-tag>
                 </template>
               </el-table-column>
@@ -334,9 +249,11 @@
             <el-table class="singleClass" border :data="list_data">
               <el-table-column label="1" align="center" width="50">
                 <template slot-scope="scope">
-                  <el-tag v-if="scope.row.first.status">{{
+                  <el-tag v-if="scope.row.first.status">
+                    {{
                     scope.row.first.num
-                  }}</el-tag>
+                    }}
+                  </el-tag>
                   <el-tag v-else type="danger">标签一</el-tag>
                 </template>
               </el-table-column>
@@ -356,53 +273,202 @@
               </el-table-column>
               <el-table-column label="3" align="center" width="50">
                 <template slot-scope="scope">
-                  <el-tag v-if="scope.row.first.status">{{
+                  <el-tag v-if="scope.row.first.status">
+                    {{
                     scope.row.first.num
-                  }}</el-tag>
+                    }}
+                  </el-tag>
                   <el-tag v-else type="danger">标签一</el-tag>
                 </template>
               </el-table-column>
               <el-table-column label="4" align="center" width="50">
                 <template slot-scope="scope">
-                  <el-tag v-if="scope.row.first.status">{{
+                  <el-tag v-if="scope.row.first.status">
+                    {{
                     scope.row.first.num
-                  }}</el-tag>
+                    }}
+                  </el-tag>
                   <el-tag v-else type="danger">标签一</el-tag>
                 </template>
               </el-table-column>
               <el-table-column label="5" align="center" width="50">
                 <template slot-scope="scope">
-                  <el-tag v-if="scope.row.first.status">{{
+                  <el-tag v-if="scope.row.first.status">
+                    {{
                     scope.row.first.num
-                  }}</el-tag>
+                    }}
+                  </el-tag>
                   <el-tag v-else type="danger">标签一</el-tag>
                 </template>
               </el-table-column>
               <el-table-column label="6" align="center" width="50">
                 <template slot-scope="scope">
-                  <el-tag v-if="scope.row.first.status">{{
+                  <el-tag v-if="scope.row.first.status">
+                    {{
                     scope.row.first.num
-                  }}</el-tag>
+                    }}
+                  </el-tag>
                   <el-tag v-else type="danger">标签一</el-tag>
                 </template>
               </el-table-column>
             </el-table>
             <div class="houseInfo">
-              一单元<i class="iconfont icon-shexiangtou"></i>
+              一单元
+              <i class="iconfont icon-shexiangtou"></i>
             </div>
             <div class="houseInfo">
-              二单元<i class="iconfont icon-shexiangtou"></i>
+              二单元
+              <i class="iconfont icon-shexiangtou"></i>
+            </div>
+            <div class="partHouse">西区-1栋</div>
+          </div>
+          <div class="singleTable" :style="{ width: '602px' }">
+            <el-table class="singleClass" border :data="list_data">
+              <el-table-column label="1" align="center" width="50">
+                <template slot-scope="scope">
+                  <el-tag v-if="scope.row.first.status">
+                    {{
+                    scope.row.first.num
+                    }}
+                  </el-tag>
+                  <el-tag v-else type="danger">标签一</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column label="2" align="center" width="50">
+                <template slot-scope="scope">
+                  <el-tooltip
+                    v-if="scope.row.first.status"
+                    class="item"
+                    effect="dark"
+                    content="132"
+                    placement="top"
+                  >
+                    <el-tag>{{ scope.row.first.num }}</el-tag>
+                  </el-tooltip>
+                  <el-tag v-else type="danger">标签一</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column label="3" align="center" width="50">
+                <template slot-scope="scope">
+                  <el-tag v-if="scope.row.first.status">
+                    {{
+                    scope.row.first.num
+                    }}
+                  </el-tag>
+                  <el-tag v-else type="danger">标签一</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column label="4" align="center" width="50">
+                <template slot-scope="scope">
+                  <el-tag v-if="scope.row.first.status">
+                    {{
+                    scope.row.first.num
+                    }}
+                  </el-tag>
+                  <el-tag v-else type="danger">标签一</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column label="5" align="center" width="50">
+                <template slot-scope="scope">
+                  <el-tag v-if="scope.row.first.status">
+                    {{
+                    scope.row.first.num
+                    }}
+                  </el-tag>
+                  <el-tag v-else type="danger">标签一</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column label="6" align="center" width="50">
+                <template slot-scope="scope">
+                  <el-tag v-if="scope.row.first.status">
+                    {{
+                    scope.row.first.num
+                    }}
+                  </el-tag>
+                  <el-tag v-else type="danger">标签一</el-tag>
+                </template>
+              </el-table-column>
+            </el-table>
+            <el-table class="singleClass" border :data="list_data">
+              <el-table-column label="1" align="center" width="50">
+                <template slot-scope="scope">
+                  <el-tag v-if="scope.row.first.status">
+                    {{
+                    scope.row.first.num
+                    }}
+                  </el-tag>
+                  <el-tag v-else type="danger">标签一</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column label="2" align="center" width="50">
+                <template slot-scope="scope">
+                  <el-tooltip
+                    v-if="scope.row.first.status"
+                    class="item"
+                    effect="dark"
+                    content="132"
+                    placement="top"
+                  >
+                    <el-tag>{{ scope.row.first.num }}</el-tag>
+                  </el-tooltip>
+                  <el-tag v-else type="danger">标签一</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column label="3" align="center" width="50">
+                <template slot-scope="scope">
+                  <el-tag v-if="scope.row.first.status">
+                    {{
+                    scope.row.first.num
+                    }}
+                  </el-tag>
+                  <el-tag v-else type="danger">标签一</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column label="4" align="center" width="50">
+                <template slot-scope="scope">
+                  <el-tag v-if="scope.row.first.status">
+                    {{
+                    scope.row.first.num
+                    }}
+                  </el-tag>
+                  <el-tag v-else type="danger">标签一</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column label="5" align="center" width="50">
+                <template slot-scope="scope">
+                  <el-tag v-if="scope.row.first.status">
+                    {{
+                    scope.row.first.num
+                    }}
+                  </el-tag>
+                  <el-tag v-else type="danger">标签一</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column label="6" align="center" width="50">
+                <template slot-scope="scope">
+                  <el-tag v-if="scope.row.first.status">
+                    {{
+                    scope.row.first.num
+                    }}
+                  </el-tag>
+                  <el-tag v-else type="danger">标签一</el-tag>
+                </template>
+              </el-table-column>
+            </el-table>
+            <div class="houseInfo">
+              一单元
+              <i class="iconfont icon-shexiangtou"></i>
+            </div>
+            <div class="houseInfo">
+              二单元
+              <i class="iconfont icon-shexiangtou"></i>
             </div>
             <div class="partHouse">西区-1栋</div>
           </div>
         </div>
       </el-col>
     </el-row>
-    <el-dialog
-      title="提示"
-      :visible.sync="dialogCreate"
-      width="30%"
-      :before-close="handleClose">
+    <el-dialog title="提示" :visible.sync="dialogCreate" width="30%" :before-close="handleClose">
       <span>这是一段信息</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogCreate = false">取 消</el-button>
@@ -454,7 +520,7 @@ export default class HouseManage extends Vue {
       }
     }
   ];
-  dialogCreate: Boolean = false
+  dialogCreate: Boolean = false;
   handleClose() {}
 }
 </script>
