@@ -60,14 +60,16 @@ a:hover {
 .tree-rename {
   box-shadow: 0px 0px 8px 0px lightgrey;
 }
-.wordFilter{
-  display: inline-block;
-  font-size: 14px;
+.word-filter{
+  display: flex;
+  align-items: center;;
   margin-bottom: 10px;
 }
-.inputFilter {
-  width: 218px !important;
-  margin-left: 10px;
+.filter-name{
+  white-space: nowrap;;
+}
+.input-filter {
+  margin-left: 6px;
 
 }
 .dialog-rewrite .el-dialog .el-dialog__body {

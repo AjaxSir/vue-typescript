@@ -28,7 +28,7 @@
             更多菜单
             <i class="el-icon-arrow-down el-icon--right"></i>
           </el-button>
-          <slot name='dropdown'></slot>
+          <slot name="dropdown"></slot>
         </el-dropdown>
       </div>
     </el-col>
@@ -59,7 +59,7 @@
           <transition name="el-zoom-in-top">
             <div v-show="visibleFilter" class="filterDialog">
               <slot name="houseNum"></slot>
-              <el-button class="fliterBtn">筛选</el-button>
+              <el-button class="fliterBtn" type="primary" plain size="small">筛选</el-button>
             </div>
           </transition>
         </div>
@@ -89,8 +89,7 @@
 <script lang="ts">
 import { Component, Prop, Vue, Mixins, Watch } from "vue-property-decorator";
 @Component({
-  components: {
-  }
+  components: {}
 })
 export default class ActionManage extends Vue {
   @Prop() private total: any; // 显示总共多少条记录
@@ -101,7 +100,8 @@ export default class ActionManage extends Vue {
   private levelList: Object = {}; // 当前路由的子路由
   private matched: Array<Object> = []; // 获取当前路由
   visibleFilter: Boolean = false; // 筛选dialog状态狂
-  private pageSize: Array<Object> = [ // 数据显示条数数组
+  private pageSize: Array<Object> = [
+    // 数据显示条数数组
     {
       label: "10",
       value: "10"
@@ -116,7 +116,6 @@ export default class ActionManage extends Vue {
     }
   ];
 
-
   private filterData: object = {
     dateRange: ""
   };
@@ -128,7 +127,7 @@ export default class ActionManage extends Vue {
   handleHouse() {
     /** @description 创建楼栋 */
     // this.dialogCreate = true;
-    this.$emit('update:dialogCreate', true)
+    this.$emit("update:dialogCreate", true);
   }
   // 导出
   exportTable() {}
@@ -138,8 +137,8 @@ export default class ActionManage extends Vue {
   getRouter() {
     this.matched = this.$route.matched.filter(item => item.name);
     const first = this.matched[0];
-    for (const item of this.$router['options'].routes) {
-      if (first && first['name'] === item.name) {
+    for (const item of this.$router["options"].routes) {
+      if (first && first["name"] === item.name) {
         this.levelList = item;
       }
     }
@@ -150,7 +149,6 @@ export default class ActionManage extends Vue {
 </script>
 
 <style lang="scss" scoped>
-
 a {
   display: inline-block;
   width: 100%;
@@ -246,7 +244,7 @@ a {
     border: 1px solid lightgray;
     box-shadow: 0px 10px 10px gray;
     background: white;
-    .fliterBtn{
+    .fliterBtn {
       float: right;
     }
   }

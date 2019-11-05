@@ -111,7 +111,7 @@ export const constantRouterMap = [{
       title: '车辆管理 - 通行记录',
       icon: 'monitor'
     }
-  },{
+  }, {
     name: 'carport',
     path: 'carport',
     component: _import_('carportManage/index'),
@@ -173,7 +173,7 @@ export const constantRouterMap = [{
   path: '/studentTeacherFile',
   name: 'studentTeacherFile',
   component: Layout,
-  redirect: '/studentTeacherFile/Info',
+  redirect: '/studentTeacherFile/data',
   alwaysShow: true,
   meta: {
     title: '师生档案',
@@ -181,8 +181,8 @@ export const constantRouterMap = [{
     icon_class: "person-iconB",
   },
   children: [{
-    name: 'Info',
-    path: 'Info',
+    name: 'data',
+    path: 'data',
     component: _import_('studentTeacherFile/index'),
     meta: {
       title: '师生档案管理',
@@ -194,7 +194,7 @@ export const constantRouterMap = [{
   path: '/importantPeople',
   name: 'importantPeople',
   component: Layout,
-  redirect: '/importantPeople/Info',
+  redirect: '/importantPeople/info',
   alwaysShow: true,
   meta: {
     title: '重点人员',
@@ -202,8 +202,8 @@ export const constantRouterMap = [{
     icon_class: "person-iconA",
   },
   children: [{
-    name: 'Info',
-    path: 'Info',
+    name: 'info',
+    path: 'info',
     component: _import_('importantPeople/index'),
     meta: {
       title: '重点人员',
@@ -275,7 +275,27 @@ export const constantRouterMap = [{
       icon: 'monitor'
     }
   }]
-}]
+}, {
+  path: '/inform',
+  name: 'inform',
+  component: Layout,
+  redirect: '/inform/issue',
+  alwaysShow: true,
+  meta: {
+    title: '通知发布',
+    icon: 'stuTeaManage',
+    icon_class: "person-iconB",
+  },
+  children: [{
+    name: 'issue',
+    path: 'issue',
+    component: _import_('informIssue/index'),
+    meta: {
+      title: '通知发布',
+      icon: 'monitor'
+    }
+  }]
+},]
 
 export default new Router({
   mode: 'history',

@@ -2,13 +2,17 @@
   <div class="app-container">
     <el-row>
       <el-col :span="24">
-        <action-header :dialogCreate.sync='dialogCreate' :total="1">
-           <el-dropdown-menu slot="dropdown">
+        <action-header :total="1">
+          <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>导出</el-dropdown-item>
           </el-dropdown-menu>
           <div slot="houseNum">
+            <!-- <span class="word-filter">
+              发布对象:
+              <el-input class="word-filter" size="small"></el-input>
+            </span>-->
             <div class="word-filter">
-              <span class="filter-name">姓名:</span>
+              <span class="filter-name">发布对象:</span>
               <el-input class="input-filter" size="small"></el-input>
             </div>
           </div>
@@ -30,7 +34,7 @@
 
             <el-table-column type="index" label="序号" width="50"></el-table-column>
 
-            <el-table-column prop="name" label="姓名" align="center">
+            <el-table-column prop="name" label="标题" align="center">
               <template slot-scope="scope">
                 <el-button style="padding:0px;" type="text" @click="queryIdetity">{{scope.row.name}}</el-button>
                 <div class="fun-btn">
@@ -45,37 +49,27 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="xb" align="center" label="性别"></el-table-column>
+            <el-table-column prop="xb" align="center" label="发布内容"></el-table-column>
 
-            <el-table-column prop="xq" label="详情" align="center"></el-table-column>
-            <el-table-column prop="tjsj" label="添加时间" align="center"></el-table-column>
-            <el-table-column prop="zp" label="照片" align="center">
-              <template slot-scope="{row}">
-                <img
-                  @mouseover="imgVisible = true,bigImg = row.zp"
-                  @mouseout="imgVisible = false"
-                  :src="row.zp"
-                  width="30px"
-                  alt
-                />
+            <el-table-column prop="xq" label="发布对象" align="center"></el-table-column>
+
+            <el-table-column prop="tjsj" label="发布时间" align="center"></el-table-column>
+
+            <el-table-column prop="zp" label="到达情况" align="center"></el-table-column>
+
+            <el-table-column prop="type" label="状态">
+              <template slot-scope="scope">
+                <el-tag
+                  size="small"
+                  style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
+                  :type="scope.row.type === 1 ? 'success' : 'danger'"
+                >{{ scope.row.type === 1 ? "成功" : "失败" }}</el-tag>
               </template>
             </el-table-column>
           </el-table>
         </div>
       </el-col>
     </el-row>
-    <el-dialog
-      title="提示"
-      :visible.sync="dialogCreate"
-      width="30%"
-      :before-close="handleClose">
-      <span>这是重点人员新增</span>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogCreate = false">取 消</el-button>
-        <el-button type="primary" @click="dialogCreate = false">确 定</el-button>
-      </span>
-    </el-dialog>
-    <BigImg :centerDialogVisible="imgVisible" bigTitle="抓拍图片" :bigImg="bigImg" />
   </div>
 </template>
 
@@ -86,29 +80,26 @@ import mixin from "@/config/minxins";
 
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 const DataTree = () => import("@/components/DataTree.vue");
-const BigImg = () => import("@/components/BigImg/index.vue");
 
 @Component({
   mixins: [mixin],
   components: {
     ActionHeader,
-    DataTree,
-    BigImg
+    DataTree
   }
 })
-export default class CardManage extends Vue {
+export default class InformIssue extends Vue {
   private cardList: Array<Object> = [
     {
-      name: "张三",
+      name: "XXXXX",
       zb: "男",
-      zp:
-        "http://192.168.3.19:8089/gcxuYFkPVzC2GLb2JGppLR/ea74acb14304ec41369f44ed18219dc.jpg",
-      xq: "详情",
-      tjsj: "2019/8/21"
+      xb: "--",
+      zp: "--",
+      xq: "张三",
+      tjsj: "2019/8/21",
+      type: 1
     }
   ];
-  private imgVisible: Boolean = false;
-  bigImg: String = "";
   private rowSpan: any = {
     row1: 4,
     row2: 20
