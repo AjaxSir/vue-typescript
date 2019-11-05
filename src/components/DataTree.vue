@@ -1,6 +1,6 @@
 <!--
   数据页面对应左边的树形结构
-  data: 传入的数据
+  TreeData: 传入的数据
 -->
 <template>
   <div class="content tree-rename">
@@ -9,7 +9,7 @@
       所有
     </div>
     <el-tree
-      :data="data"
+      :data="TreeData"
       node-key="id"
       default-expand-all
       :expand-on-click-node="false"
@@ -45,7 +45,8 @@ import { Getter, Action, Mutation } from "vuex-class";
 @Component
 export default class DataTree extends Vue {
   private showMenu: Number = 0;
-  private data: Array<Object> = [
+  @Prop({default: () => {
+    return [
     {
       id: 1,
       label: "一级 1",
@@ -94,7 +95,9 @@ export default class DataTree extends Vue {
         }
       ]
     }
-  ];
+  ] // 必须是函数式返回
+  } }) TreeData: Array<Object>
+  // private data: Array<Object> =
 
   @Prop({ default: true }) needAction: any;
 

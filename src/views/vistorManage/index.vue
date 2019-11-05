@@ -2,7 +2,16 @@
   <div class="app-container">
     <el-row>
       <el-col :span="24">
-        <ActionHeader :total="1" />
+        <ActionHeader :btnStatus='false' :total="1">
+          <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item>进出次数排序</el-dropdown-item>
+              <el-dropdown-item>滞留时间排序</el-dropdown-item>
+              <el-dropdown-item>次数统计</el-dropdown-item>
+            </el-dropdown-menu>
+            <div slot="houseNum">
+              <span class="wordFilter">受访人:<el-input class="inputFilter"></el-input></span>
+            </div>
+        </ActionHeader>
       </el-col>
     </el-row>
     <el-row :gutter="20">

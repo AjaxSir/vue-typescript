@@ -14,10 +14,12 @@ public page: any =  {
     current: 1,
     size: 10
 }
+public dialogCreate: Boolean = false
 public orderBy: Object = {
     prop: "", // 需要的根据什么排序
     order: "descending" // ascending 表示升序，descending 表示降序
 }
+public TreeData: Array<Object> = []
 public list_data: Array<Object> = [];
 fetchData(page: number): void {
     // axiosConfig({
@@ -29,7 +31,7 @@ fetchData(page: number): void {
     // })
   }
   /**
-   * 
+   *
    * @param size 每页数据条数
    */
   sizeChange(size: number) {
@@ -37,14 +39,21 @@ fetchData(page: number): void {
     this.fetchData(1)
   }
   /**
-   * 
+   *
+   * @param page 关闭新增框
+   */
+  handleClose() {
+    this.dialogCreate = false
+  }
+  /**
+   *
    * @param page 翻页页码
    */
   pageChange(page: number) {
     this.fetchData(page)
   }
   /**
-   * 
+   *
    * @param id 需要删除的id数据
    * @param url 需要请求的地址
    */
@@ -64,7 +73,7 @@ fetchData(page: number): void {
         Message({
           type: 'info',
           message: '已取消删除'
-        });          
+        });
       });
   }
   // 待补充

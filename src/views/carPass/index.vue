@@ -2,7 +2,28 @@
   <div class="app-container">
     <el-row>
       <el-col :span="24">
-        <action-header :total="1" />
+        <action-header :btnStatus='false'  :total="1">
+          <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item>进出次数排序</el-dropdown-item>
+              <el-dropdown-item>滞留时间排序</el-dropdown-item>
+              <el-dropdown-item>统计查询</el-dropdown-item>
+            </el-dropdown-menu>
+            <div slot="houseNum">
+              <span class="wordFilter">车牌号:
+                 <el-input class="inputFilter"></el-input>
+              </span>
+              <span class="wordFilter">时间段:
+                 <el-date-picker
+                    class="inputFilter"
+                    v-model="TimeRange"
+                    type="datetimerange"
+                    range-separator="-"
+                    start-placeholder="开始日期"
+                    end-placeholder="结束日期">
+                  </el-date-picker>
+              </span>
+            </div>
+        </action-header>
       </el-col>
     </el-row>
     <el-row :gutter="10">

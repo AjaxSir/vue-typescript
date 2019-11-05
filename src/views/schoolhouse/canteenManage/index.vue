@@ -2,7 +2,13 @@
   <div class="app-container">
     <el-row>
       <el-col :span="24">
-        <action-header :total="1" />
+        <action-header :dialogCreate.sync='dialogCreate' :total="1">
+          <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item>人数统计</el-dropdown-item>
+              <el-dropdown-item>进出次数统计</el-dropdown-item>
+              <el-dropdown-item>人均时长统计</el-dropdown-item>
+            </el-dropdown-menu>
+        </action-header>
       </el-col>
     </el-row>
     <el-row :gutter="10">
@@ -27,7 +33,17 @@
         </div>
       </el-col>
     </el-row>
-
+    <el-dialog
+      title="提示"
+      :visible.sync="dialogCreate"
+      width="30%"
+      :before-close="handleClose">
+      <span>这是食堂管理新增</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogCreate = false">取 消</el-button>
+        <el-button type="primary" @click="dialogCreate = false">确 定</el-button>
+      </span>
+    </el-dialog>
     <canteen-dialog :formShow.sync="dialogCanteen" :dialogData="dialogData" />
   </div>
 </template>

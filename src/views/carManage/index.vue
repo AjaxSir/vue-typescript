@@ -2,7 +2,17 @@
   <div class="app-container">
     <el-row>
       <el-col :span="24">
-        <action-header :type="'carFilter'" :total="1" />
+        <action-header :dialogCreate.sync='dialogCreate' :total="1">
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item>导入</el-dropdown-item>
+            <el-dropdown-item>导出</el-dropdown-item>
+          </el-dropdown-menu>
+            <div slot="houseNum">
+              <span class="wordFilter">车&nbsp;牌&nbsp;号&nbsp;: <el-input class="inputFilter"></el-input></span>
+              <span class="wordFilter">车主姓名: <el-input class="inputFilter"></el-input></span>
+              <span class="wordFilter">联系电话: <el-input class="inputFilter"></el-input></span>
+            </div>
+        </action-header>
       </el-col>
     </el-row>
     <el-row :gutter="10">
@@ -67,7 +77,17 @@
         </div>-->
       </el-col>
     </el-row>
-
+    <el-dialog
+      title="提示"
+      :visible.sync="dialogCreate"
+      width="30%"
+      :before-close="handleClose">
+      <span>这是车辆管理新增</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogCreate = false">取 消</el-button>
+        <el-button type="primary" @click="dialogCreate = false">确 定</el-button>
+      </span>
+    </el-dialog>
     <ImageMagni :centerDialogVisible="imgVisible" bigTitle="抓拍图片" :bigImg="bigImg" />
   </div>
 </template>
@@ -125,8 +145,6 @@ export default class CardManage extends Vue {
     row2: 20
   };
 
-  // private menuControl1: String = "menu-control";
-  // private menuControl2: String = "menu-visible";
   private imgVisible: Boolean = false;  // 控制放大图片的visible
   private bigImg: String = "";  // 保存放大图片的地址
 
@@ -159,21 +177,6 @@ export default class CardManage extends Vue {
     /**@description hover leave tab 行 */
     row.showMenu = false;
   }
-
-  // menuVisible() {
-  //   /**@description 控制楼栋 */
-  //   if (this.rowSpan.row1 === 4) {
-  //     this.rowSpan = {
-  //       row1: 0,
-  //       row2: 24
-  //     };
-  //   } else {
-  //     this.rowSpan = {
-  //       row1: 4,
-  //       row2: 20
-  //     };
-  //   }
-  // }
 }
 </script>
 
@@ -208,18 +211,6 @@ export default class CardManage extends Vue {
   position: relative;
 }
 
-// .menu-control {
-//   position: absolute;
-//   top: 32vh;
-//   left: -5px;
-// }
-
-// .menu-visible {
-//   position: absolute;
-//   top: 32vh;
-//   left: -15px;
-// }
-
 .close-menu {
   width: 10px;
   height: 48px;
@@ -229,16 +220,10 @@ export default class CardManage extends Vue {
   position: relative;
 }
 
-// .icon-class {
-//   font-size: 12px;
-//   color: #e7eaeb;
-//   cursor: pointer;
-//   line-height: 48px;
-//   position: absolute;
-//   left: -1px;
-// }
-
 .capture-img {
   width: 30px;
+}
+.inputFilter{
+  width:198px !important;
 }
 </style>

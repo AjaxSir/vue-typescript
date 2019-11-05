@@ -2,7 +2,22 @@
   <div class="app-container">
     <el-row>
       <el-col :span="24">
-        <action-header :total="1" />
+        <action-header :dialogCreate.sync='dialogCreate' :total="1">
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item>导入</el-dropdown-item>
+            <el-dropdown-item>导出</el-dropdown-item>
+          </el-dropdown-menu>
+          <div slot="houseNum">
+            <span class="wordFilter">车位号:<el-input class="inputFilter"></el-input></span>
+            <span class="wordFilter">状&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;态:
+              <el-select v-model="status" placeholder="请选择">
+                <el-option label="全部" value="all"></el-option>
+                <el-option label="占用" value="busy"></el-option>
+                <el-option label="空闲" value="free"></el-option>
+              </el-select>
+            </span>
+          </div>
+        </action-header>
       </el-col>
     </el-row>
     <el-row :gutter="10">
@@ -54,6 +69,17 @@
         </div>
       </el-col>
     </el-row>
+    <el-dialog
+      title="提示"
+      :visible.sync="dialogCreate"
+      width="30%"
+      :before-close="handleClose">
+      <span>这是车位管理新增</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogCreate = false">取 消</el-button>
+        <el-button type="primary" @click="dialogCreate = false">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -93,7 +119,7 @@ export default class CardManage extends Vue {
       showMenu: false
     }
   ];
-
+  status: stripe = 'all';
   private rowSpan: any = {
     row1: 4,
     row2: 20
