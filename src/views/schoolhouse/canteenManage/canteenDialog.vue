@@ -13,9 +13,9 @@
         <el-tabs type="border-card" @tab-click="getData">
           <el-tab-pane label="详细信息">
             <div class="border-card">
-              <p class="target-detail">开放时间： {{dialogData.createDate}}</p>
-              <p class="target-detail">当前人数： {{dialogData.personNum}}</p>
-              <p class="target-detail">备注信息： {{dialogData.remark}}</p>
+              <p class="target-detail">开放时间： {{dialogData.roomNum}}</p>
+              <p class="target-detail">当前人数： {{dialogData.intoNum}}</p>
+              <p class="target-detail">备注信息： {{dialogData.spareNum}}</p>
             </div>
           </el-tab-pane>
           <el-tab-pane label="通行记录">

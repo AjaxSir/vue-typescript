@@ -39,14 +39,6 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="createDate" label="抓拍时间"></el-table-column>
-
-            <el-table-column prop="img" label="最近抓拍图片">
-              <template slot-scope="scope">
-                <img class="capture-img" :src="scope.row.img" alt />
-              </template>
-            </el-table-column>
-
             <el-table-column prop="car" label="车辆品牌"></el-table-column>
 
             <el-table-column prop="type" label="是否校内">
@@ -63,6 +55,20 @@
             <el-table-column prop="car" label="车辆颜色"></el-table-column>
 
             <el-table-column prop="car" label="车主信息"></el-table-column>
+
+            <el-table-column prop="createDate" label="抓拍时间"></el-table-column>
+
+            <el-table-column prop="img" label="最近抓拍图片">
+              <template slot-scope="scope">
+                <img
+                  class="capture-img"
+                  @mouseout="imgVisible=false"
+                  @mouseover="imgVisible=true,bigImg=scope.row.img"
+                  :src="scope.row.img"
+                  alt
+                />
+              </template>
+            </el-table-column>
           </el-table>
         </div>
         <div :class="rowSpan.row1===4 ? menuControl1 : menuControl2" @click="menuVisible">
@@ -73,6 +79,8 @@
         </div>
       </el-col>
     </el-row>
+
+    <ImageMagni :centerDialogVisible="imgVisible" bigTitle="抓拍图片" :bigImg="bigImg" />
   </div>
 </template>
 
@@ -82,12 +90,14 @@ import { Getter, Action, Mutation } from "vuex-class";
 import mixin from "@/config/minxins";
 
 const ActionHeader = () => import("@/components/ActionHeader.vue");
+const ImageMagni = () => import("@/components/ImageMagnification/index.vue");
 const DataTree = () => import("@/components/DataTree.vue");
 
 @Component({
   mixins: [mixin],
   components: {
     ActionHeader,
+    ImageMagni,
     DataTree
   }
 })
@@ -101,7 +111,7 @@ export default class CardManage extends Vue {
       img: require("../../assets/car.png"),
       type: 1,
       showMenu: false,
-      car:'--'
+      car: "--"
     },
     {
       name: "1-1-105",
@@ -111,7 +121,7 @@ export default class CardManage extends Vue {
       img: require("../../assets/car.png"),
       type: 1,
       showMenu: false,
-       car:'--'
+      car: "--"
     },
     {
       name: "1-1-105",
@@ -121,7 +131,7 @@ export default class CardManage extends Vue {
       img: require("../../assets/car.png"),
       type: 2,
       showMenu: false,
-       car:'--'
+      car: "--"
     }
   ];
 
@@ -132,6 +142,9 @@ export default class CardManage extends Vue {
 
   private menuControl1: String = "menu-control";
   private menuControl2: String = "menu-visible";
+
+  private imgVisible: Boolean = false; // 控制放大图片的visible
+  private bigImg: String = ""; // 保存放大图片的地址
 
   private form: Object = {
     name: "",
@@ -200,7 +213,7 @@ export default class CardManage extends Vue {
 .fun-btn {
   position: absolute;
   left: -64px;
-  top: 38%;
+  top: 28%;
   .iconfont {
     font-size: 19px;
     color: #8091a5;

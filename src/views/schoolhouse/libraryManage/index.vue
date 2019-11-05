@@ -22,7 +22,11 @@
 
             <el-table-column prop="name" label="图书馆名称">
               <template slot-scope="scope">
-                <el-button style="padding:0px;" type="text" @click="queryIdetity">{{scope.row.name}}</el-button>
+                <el-button
+                  style="padding:0px;"
+                  type="text"
+                  @click="queryIdetity(scope.row)"
+                >{{scope.row.name}}</el-button>
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start">
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
@@ -37,15 +41,16 @@
 
             <el-table-column prop="createDate" label="开放时段"></el-table-column>
 
-            <el-table-column prop="createDate" label="当前人数"></el-table-column>
+            <el-table-column prop="personNum" label="当前人数"></el-table-column>
 
-            <el-table-column prop="createDate" label="备注"></el-table-column>
+            <el-table-column prop="remark" label="备注"></el-table-column>
           </el-table>
+          <el-pagination style="margin-top:10px;" background layout="prev, pager, next" :total="2"></el-pagination>
         </div>
       </el-col>
     </el-row>
 
-    <library-dialog :formShow.sync="dialogLibrary" />
+    <library-dialog :formShow.sync="dialogLibrary" :dialogData="dialogData" />
   </div>
 </template>
 
@@ -66,7 +71,7 @@ const LibraryDialog = () => import("./libraryDialog.vue");
     LibraryDialog
   }
 })
-export default class CardManage extends Vue {
+export default class LibraryManage extends Vue {
   private cardList: Array<Object> = [
     {
       name: "图书馆1",
@@ -96,7 +101,7 @@ export default class CardManage extends Vue {
     row2: 20
   };
 
-  private dialogLibrary:any = false;
+  private dialogLibrary: any = false;
 
   private form: Object = {
     name: "",
@@ -111,6 +116,8 @@ export default class CardManage extends Vue {
 
   private dialogFormVisible: Boolean = false;
   private formLabelWidth: String = "120px";
+
+  private dialogData: Object = {}; // 目标图书馆详情
 
   editType(item) {
     /**@description 修改状态 */
@@ -127,7 +134,8 @@ export default class CardManage extends Vue {
     /**@description hover leave tab 行 */
     row.showMenu = false;
   }
-  queryIdetity() {
+  queryIdetity(val) {
+    this.dialogData = val;
     this.dialogLibrary = true;
   }
 }

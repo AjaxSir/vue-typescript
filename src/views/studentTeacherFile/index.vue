@@ -6,7 +6,7 @@
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>导入</el-dropdown-item>
             <el-dropdown-item>导出</el-dropdown-item>
-            <el-dropdown-item>统计图标</el-dropdown-item>
+            <el-dropdown-item>统计图表</el-dropdown-item>
           </el-dropdown-menu>
           <div slot="houseNum">
             <span class="wordFilter">姓名: <el-input class="inputFilter"></el-input></span>

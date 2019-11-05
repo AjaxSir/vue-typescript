@@ -65,7 +65,23 @@ a:hover {
   font-size: 14px;
   margin-bottom: 10px;
 }
-.inputFilter{
+.inputFilter {
   width: 218px !important;
   margin-left: 10px;
+
+}
+.dialog-rewrite .el-dialog .el-dialog__body {
+  padding: 0;
+}
+
+
+.target-detail {
+  font-size: 16px;
+  line-height: 36px;
+}
+
+.statistics-pagination {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
 }

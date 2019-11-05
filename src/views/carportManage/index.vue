@@ -2,14 +2,18 @@
   <div class="app-container">
     <el-row>
       <el-col :span="24">
-        <action-header :type="'carFilter'" :total="1" />
+        <action-header :total="1" />
       </el-col>
     </el-row>
     <el-row :gutter="10">
-      <el-col :span="24" class="table-col">
+      <el-col :span="rowSpan.row1">
+        <data-tree />
+      </el-col>
+
+      <el-col :span="rowSpan.row2" class="table-col">
         <div class="rightContent">
           <el-table
-            :data="cardList"
+            :data="tableData"
             stripe
             class="demo-block"
             highlight-current-row
@@ -20,9 +24,9 @@
 
             <el-table-column type="index" label="序号" width="50"></el-table-column>
 
-            <el-table-column prop="name" label="所属房屋">
+            <el-table-column prop="name" label="车位号">
               <template slot-scope="scope">
-                <span class="serial-num">{{scope.row.name}}</span>
+                <span class="serial-num">{{scope.row.car_num}}</span>
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start">
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
@@ -35,40 +39,21 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="houseRelative" label="类型"></el-table-column>
-
-            <el-table-column prop="carNum" label="车牌号"></el-table-column>
-
-            <el-table-column prop="createDate" label="最近一次访问"></el-table-column>
-
-            <el-table-column prop="img" label="最近抓拍图片">
-              <template slot-scope="scope">
-                <img class="capture-img" @mouseout="imgVisible=false" @mouseover="imgVisible=true,bigImg=scope.row.img" :src="scope.row.img" alt />
-              </template>
-            </el-table-column>
-
-            <el-table-column prop="type" label="状态">
-              <template slot-scope="scope">
-                <el-tag
-                  size="small"
-                  style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
-                  :type="scope.row.type === 1 ? 'success' : 'danger'"
-                  @click="editType(scope.row)"
-                >{{ scope.row.type === 1 ? "正常" : "异常" }}</el-tag>
-              </template>
-            </el-table-column>
+            <el-table-column prop="name" align="center" label="业主"></el-table-column>
+            <el-table-column prop="belong_car" align="center" label="绑定车辆"></el-table-column>
+            <el-table-column prop="type" align="center" label="类型"></el-table-column>
+            <el-table-column prop="status" align="center" label="状态"></el-table-column>
+            <el-table-column prop="rent" align="center" label="租客"></el-table-column>
           </el-table>
         </div>
-        <!-- <div :class="rowSpan.row1===4 ? menuControl1 : menuControl2" @click="menuVisible">
+        <div :class="rowSpan.row1===4 ? menuControl1 : menuControl2" @click="menuVisible">
           <p class="close-menu">
             <i v-if="rowSpan.row1===4" class="iconfont icon-left icon-class"></i>
             <i v-else class="iconfont icon-zuo icon-class"></i>
           </p>
-        </div>-->
+        </div>
       </el-col>
     </el-row>
-
-    <ImageMagni :centerDialogVisible="imgVisible" bigTitle="抓拍图片" :bigImg="bigImg" />
   </div>
 </template>
 
@@ -78,44 +63,33 @@ import { Getter, Action, Mutation } from "vuex-class";
 import mixin from "@/config/minxins";
 
 const ActionHeader = () => import("@/components/ActionHeader.vue");
-const ImageMagni = () => import("@/components/ImageMagnification/index.vue");
 const DataTree = () => import("@/components/DataTree.vue");
 
 @Component({
   mixins: [mixin],
   components: {
     ActionHeader,
-    ImageMagni,
     DataTree
   }
 })
 export default class CardManage extends Vue {
-  private cardList: Array<Object> = [
+  private tableData: Array<Object> = [
     {
-      name: "1-1-105",
-      houseRelative: "业主",
-      carNum: "川1256489",
-      createDate: "2019-9-26",
-      img: require("../../assets/car1.png"),
-      type: 1,
+      car_num: "川A 12345",
+      name: "范特西",
+      belong_car: 1,
+      type: "私家车",
+      status: "空闲",
+      rent: "张三",
       showMenu: false
     },
     {
-      name: "1-1-105",
-      houseRelative: "业主",
-      carNum: "川1256489",
-      createDate: "2019-9-26",
-      img: require("../../assets/car1.png"),
-      type: 1,
-      showMenu: false
-    },
-    {
-      name: "1-1-105",
-      houseRelative: "业主",
-      carNum: "川1256489",
-      createDate: "2019-9-26",
-      img: require("../../assets/car1.png"),
-      type: 2,
+      car_num: "川A 54321",
+      name: "范特东",
+      belong_car: 1,
+      type: "公车",
+      status: "占用",
+      rent: "李四",
       showMenu: false
     }
   ];
@@ -125,10 +99,8 @@ export default class CardManage extends Vue {
     row2: 20
   };
 
-  // private menuControl1: String = "menu-control";
-  // private menuControl2: String = "menu-visible";
-  private imgVisible: Boolean = false;  // 控制放大图片的visible
-  private bigImg: String = "";  // 保存放大图片的地址
+  private menuControl1: String = "menu-control";
+  private menuControl2: String = "menu-visible";
 
   private form: Object = {
     name: "",
@@ -143,7 +115,6 @@ export default class CardManage extends Vue {
 
   private dialogFormVisible: Boolean = false;
   private formLabelWidth: String = "120px";
-
   editType(item) {
     /**@description 修改状态 */
     console.log(item);
@@ -160,20 +131,20 @@ export default class CardManage extends Vue {
     row.showMenu = false;
   }
 
-  // menuVisible() {
-  //   /**@description 控制楼栋 */
-  //   if (this.rowSpan.row1 === 4) {
-  //     this.rowSpan = {
-  //       row1: 0,
-  //       row2: 24
-  //     };
-  //   } else {
-  //     this.rowSpan = {
-  //       row1: 4,
-  //       row2: 20
-  //     };
-  //   }
-  // }
+  menuVisible() {
+    /**@description 控制楼栋 */
+    if (this.rowSpan.row1 === 4) {
+      this.rowSpan = {
+        row1: 0,
+        row2: 24
+      };
+    } else {
+      this.rowSpan = {
+        row1: 4,
+        row2: 20
+      };
+    }
+  }
 }
 </script>
 
@@ -197,7 +168,7 @@ export default class CardManage extends Vue {
 .fun-btn {
   position: absolute;
   left: -64px;
-  top: 30%;
+  top: 26%;
   .iconfont {
     font-size: 19px;
     color: #8091a5;
@@ -208,17 +179,17 @@ export default class CardManage extends Vue {
   position: relative;
 }
 
-// .menu-control {
-//   position: absolute;
-//   top: 32vh;
-//   left: -5px;
-// }
+.menu-control {
+  position: absolute;
+  top: 32vh;
+  left: -5px;
+}
 
-// .menu-visible {
-//   position: absolute;
-//   top: 32vh;
-//   left: -15px;
-// }
+.menu-visible {
+  position: absolute;
+  top: 32vh;
+  left: -15px;
+}
 
 .close-menu {
   width: 10px;
@@ -229,16 +200,16 @@ export default class CardManage extends Vue {
   position: relative;
 }
 
-// .icon-class {
-//   font-size: 12px;
-//   color: #e7eaeb;
-//   cursor: pointer;
-//   line-height: 48px;
-//   position: absolute;
-//   left: -1px;
-// }
+.icon-class {
+  font-size: 12px;
+  color: #e7eaeb;
+  cursor: pointer;
+  line-height: 48px;
+  position: absolute;
+  left: -1px;
+}
 
 .capture-img {
-  width: 30px;
+  width: 60px;
 }
 </style>

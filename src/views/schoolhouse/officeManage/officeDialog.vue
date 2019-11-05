@@ -13,9 +13,10 @@
         <el-tabs type="border-card" @tab-click="getData">
           <el-tab-pane label="详细信息">
             <div class="border-card">
-              <p class="target-detail">开放时间： {{dialogData.createDate}}</p>
-              <p class="target-detail">当前人数： {{dialogData.personNum}}</p>
-              <p class="target-detail">备注信息： {{dialogData.remark}}</p>
+              <p class="target-detail">楼层： {{dialogData.house}}</p>
+              <p class="target-detail">开放时间： {{dialogData.roomNum}}</p>
+              <p class="target-detail">累计人数： {{dialogData.intoNum}}</p>
+              <p class="target-detail">备注信息： {{dialogData.spareNum}}</p>
             </div>
           </el-tab-pane>
           <el-tab-pane label="通行记录">
@@ -44,16 +45,36 @@
 <script lang="ts">
 import { Vue, Prop, Component } from "vue-property-decorator";
 @Component
-export default class LibraryDialog extends Vue {
+export default class ClassroomDialog extends Vue {
   @Prop({ default: false }) public formShow: any;
   @Prop() public dialogData: any;
 
   private gridData: Array<Object> = [
     {
-      name: "王小虎",
+      name: "王2",
       gender: "男",
       num: "001",
-      address: "学院1",
+      address: "学院2",
+      gonum: 22,
+      dateTotal: 9,
+      averagedate: 5,
+      pass: "2019-09-11 18:42"
+    },
+    {
+      name: "li4",
+      gender: "男",
+      num: "001",
+      address: "学院2",
+      gonum: 22,
+      dateTotal: 9,
+      averagedate: 5,
+      pass: "2019-09-11 18:42"
+    },
+    {
+      name: "zhang3",
+      gender: "男",
+      num: "001",
+      address: "学院2",
       gonum: 22,
       dateTotal: 9,
       averagedate: 5,
@@ -63,27 +84,7 @@ export default class LibraryDialog extends Vue {
       name: "王小小",
       gender: "男",
       num: "001",
-      address: "学院1",
-      gonum: 22,
-      dateTotal: 9,
-      averagedate: 5,
-      pass: "2019-09-11 18:42"
-    },
-    {
-      name: "王小虎",
-      gender: "男",
-      num: "001",
-      address: "学院1",
-      gonum: 22,
-      dateTotal: 9,
-      averagedate: 5,
-      pass: "2019-09-11 18:42"
-    },
-    {
-      name: "王小小",
-      gender: "男",
-      num: "001",
-      address: "学院1",
+      address: "学院3",
       gonum: 22,
       dateTotal: 9,
       averagedate: 5,
@@ -106,4 +107,5 @@ export default class LibraryDialog extends Vue {
 .dialog-title {
   color: #409eff;
 }
+
 </style>

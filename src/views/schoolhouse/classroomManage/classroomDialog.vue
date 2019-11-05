@@ -8,14 +8,16 @@
       :close-on-click-modal="false"
       :before-close="formClose"
     >
-      <div slot="title" class="dialog-title">{{dialogData.name}}:</div>
+      <div slot="title" class="dialog-title">教室{{dialogData.name}}:</div>
       <div>
         <el-tabs type="border-card" @tab-click="getData">
           <el-tab-pane label="详细信息">
             <div class="border-card">
-              <p class="target-detail">开放时间： {{dialogData.createDate}}</p>
-              <p class="target-detail">当前人数： {{dialogData.personNum}}</p>
-              <p class="target-detail">备注信息： {{dialogData.remark}}</p>
+              <p class="target-detail">当前状态： {{dialogData.type}}</p>
+              <p class="target-detail">开放时段： {{dialogData.createDate}}</p>
+              <p class="target-detail">当前人数： {{dialogData.carNum}}</p>
+              <p class="target-detail">累计人数： {{dialogData.carNum}}</p>
+              <p class="target-detail">备注： {{dialogData.carNum}}</p>
             </div>
           </el-tab-pane>
           <el-tab-pane label="通行记录">
@@ -44,16 +46,36 @@
 <script lang="ts">
 import { Vue, Prop, Component } from "vue-property-decorator";
 @Component
-export default class LibraryDialog extends Vue {
+export default class ClassroomDialog extends Vue {
   @Prop({ default: false }) public formShow: any;
   @Prop() public dialogData: any;
 
   private gridData: Array<Object> = [
     {
-      name: "王小虎",
+      name: "王2",
       gender: "男",
       num: "001",
-      address: "学院1",
+      address: "学院2",
+      gonum: 22,
+      dateTotal: 9,
+      averagedate: 5,
+      pass: "2019-09-11 18:42"
+    },
+    {
+      name: "li4",
+      gender: "男",
+      num: "001",
+      address: "学院2",
+      gonum: 22,
+      dateTotal: 9,
+      averagedate: 5,
+      pass: "2019-09-11 18:42"
+    },
+    {
+      name: "zhang3",
+      gender: "男",
+      num: "001",
+      address: "学院2",
       gonum: 22,
       dateTotal: 9,
       averagedate: 5,
@@ -63,27 +85,7 @@ export default class LibraryDialog extends Vue {
       name: "王小小",
       gender: "男",
       num: "001",
-      address: "学院1",
-      gonum: 22,
-      dateTotal: 9,
-      averagedate: 5,
-      pass: "2019-09-11 18:42"
-    },
-    {
-      name: "王小虎",
-      gender: "男",
-      num: "001",
-      address: "学院1",
-      gonum: 22,
-      dateTotal: 9,
-      averagedate: 5,
-      pass: "2019-09-11 18:42"
-    },
-    {
-      name: "王小小",
-      gender: "男",
-      num: "001",
-      address: "学院1",
+      address: "学院3",
       gonum: 22,
       dateTotal: 9,
       averagedate: 5,

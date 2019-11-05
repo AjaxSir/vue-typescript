@@ -84,8 +84,7 @@ export const constantRouterMap = [{
       icon: 'monitor'
     }
   }]
-},
-{
+}, {
   path: '/traffic',
   name: 'traffic',
   component: Layout,
@@ -101,7 +100,7 @@ export const constantRouterMap = [{
     path: 'carManage',
     component: _import_('carManage/index'),
     meta: {
-      title: '车辆管理',
+      title: '车辆管理 - 车辆名单',
       icon: 'monitor'
     }
   }, {
@@ -109,12 +108,19 @@ export const constantRouterMap = [{
     path: 'carPass',
     component: _import_('carPass/index'),
     meta: {
-      title: '车辆管理 - 车辆通行',
+      title: '车辆管理 - 通行记录',
+      icon: 'monitor'
+    }
+  },{
+    name: 'carport',
+    path: 'carport',
+    component: _import_('carportManage/index'),
+    meta: {
+      title: '车辆管理 - 车位管理',
       icon: 'monitor'
     }
   }]
-},
-{
+}, {
   path: '/device',
   name: 'device',
   component: Layout,
@@ -142,8 +148,7 @@ export const constantRouterMap = [{
       icon: 'monitor'
     }
   }]
-},
-{
+}, {
   path: '/pass',
   name: 'pass',
   component: Layout,
@@ -226,8 +231,7 @@ export const constantRouterMap = [{
       icon: 'monitor'
     }
   }]
-},
-{
+}, {
   path: '/schoolhouse',
   name: 'schoolhouse',
   component: Layout,
@@ -246,33 +250,32 @@ export const constantRouterMap = [{
       title: '图书馆管理',
       icon: 'monitor'
     }
-  },{
+  }, {
     name: 'classroom',
     path: 'classroom',
     component: _import_('schoolhouse/classroomManage/index'),
     meta: {
-      title: '教室管理',
+      title: '教学楼管理',
       icon: 'monitor'
     }
-  },{
+  }, {
     name: 'office',
     path: 'office',
     component: _import_('schoolhouse/officeManage/index'),
     meta: {
-      title: '教室管理',
+      title: '办公室管理',
       icon: 'monitor'
     }
-  },{
-    name: 'canteen ',
-    path: 'canteen ',
+  }, {
+    name: 'canteen',
+    path: 'canteen',
     component: _import_('schoolhouse/canteenManage/index'),
     meta: {
       title: '食堂管理',
       icon: 'monitor'
     }
-  },]
-}
-]
+  }]
+}]
 
 export default new Router({
   mode: 'history',

@@ -72,7 +72,6 @@
         </transition>
       </div>
     </el-col>
-
   </el-row>
 </template>
 
@@ -106,6 +105,10 @@ export default class ActionManage extends Vue {
     }
   ];
 
+
+  private filterData: object = {
+    dateRange: ""
+  };
 
   created() {
     this.getRouter();
@@ -191,8 +194,13 @@ a {
       color: #8494a7;
       text-align: left;
       .input {
-        display: inline-block;
-        width: 200px;
+        display: flex;
+        align-items: center;
+        margin-bottom: 5px;
+        .input-title {
+          display: inline-block;
+          white-space: nowrap;
+        }
       }
       span {
         margin-right: 10px;
