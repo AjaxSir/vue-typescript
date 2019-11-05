@@ -4,10 +4,11 @@
       <div
         class="data-statistics"
         v-for="(item, index) in routes"
-        v-if="!item.hidden && item.children"
+
         :key="index"
       >
-        <div class="fun-title">
+        <div class="fun-title"
+        v-if="!item.hidden && item.children">
           <router-link v-if="item.meta && item.meta.title" :to="item.redirect">
             <div class="item group-rename">
               <svg-icon

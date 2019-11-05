@@ -2,7 +2,18 @@
   <div class="app-container">
     <el-row>
       <el-col :span="24">
-        <ActionHeader :type="'house'" :total="1" />
+        <ActionHeader :dialogCreate.sync='dialogCreate' :total="1">
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item>房屋导入</el-dropdown-item>
+            <el-dropdown-item>房屋导出</el-dropdown-item>
+            <el-dropdown-item>统计信息</el-dropdown-item>
+            <el-dropdown-item>远程开门</el-dropdown-item>
+          </el-dropdown-menu>
+          <div slot="houseNum">
+            <span class="wordFilter">房屋号: <el-input class="inputFilter"></el-input></span>
+          </div>
+          <!-- <span slot='houseNum'></span> -->
+        </ActionHeader>
       </el-col>
     </el-row>
     <el-row :gutter="20">
@@ -387,6 +398,17 @@
         </div>
       </el-col>
     </el-row>
+    <el-dialog
+      title="提示"
+      :visible.sync="dialogCreate"
+      width="30%"
+      :before-close="handleClose">
+      <span>这是一段信息</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogCreate = false">取 消</el-button>
+        <el-button type="primary" @click="dialogCreate = false">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -432,6 +454,8 @@ export default class HouseManage extends Vue {
       }
     }
   ];
+  dialogCreate: Boolean = false
+  handleClose() {}
 }
 </script>
 

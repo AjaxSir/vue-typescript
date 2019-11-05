@@ -168,7 +168,50 @@ export const constantRouterMap = [{
       icon: 'monitor'
     }
   }]
-}, {
+},
+{
+  path: '/studentTeacherFile',
+  name: 'studentTeacherFile',
+  component: Layout,
+  redirect: '/studentTeacherFile/Info',
+  alwaysShow: true,
+  meta: {
+    title: '师生档案',
+    icon: 'stuTeaManage',
+    icon_class: "person-iconB",
+  },
+  children: [{
+    name: 'Info',
+    path: 'Info',
+    component: _import_('studentTeacherFile/index'),
+    meta: {
+      title: '师生档案管理',
+      icon: 'monitor'
+    }
+  }]
+},
+{
+  path: '/importantPeople',
+  name: 'importantPeople',
+  component: Layout,
+  redirect: '/importantPeople/Info',
+  alwaysShow: true,
+  meta: {
+    title: '重点人员',
+    icon: 'importantPeople',
+    icon_class: "person-iconA",
+  },
+  children: [{
+    name: 'Info',
+    path: 'Info',
+    component: _import_('importantPeople/index'),
+    meta: {
+      title: '重点人员',
+      icon: 'monitor'
+    }
+  }]
+},
+{
   path: '/subscription',
   name: 'subscription',
   component: Layout,
