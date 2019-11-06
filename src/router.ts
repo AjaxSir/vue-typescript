@@ -27,8 +27,8 @@ export const constantRouterMap = [{
   alwaysShow: true,
   meta: {
     title: '住宅管理',
-    icon: 'v_house',
-    icon_class: "person-iconB",
+    icon: 'icon-zhuzhai',
+    bg_color: '#DF788D',
   },
   children: [{
     name: 'houseManage',
@@ -55,8 +55,8 @@ export const constantRouterMap = [{
   alwaysShow: true,
   meta: {
     title: '人员管理',
-    icon: 'v_person',
-    icon_class: "person-iconA",
+    icon: 'icon-renyuanguanli',
+    bg_color: '#8FA8C7',
   },
   children: [{
     name: 'owner',
@@ -92,8 +92,8 @@ export const constantRouterMap = [{
   alwaysShow: true,
   meta: {
     title: '车辆管理',
-    icon: 'v_car',
-    icon_class: "person-iconE",
+    icon: 'icon-cheliangguanli',
+    bg_color: '#e4a26e',
   },
   children: [{
     name: 'carManage',
@@ -128,8 +128,8 @@ export const constantRouterMap = [{
   alwaysShow: true,
   meta: {
     title: '设备管理',
-    icon: 'v_deviceInfo',
-    icon_class: "query-iconA",
+    icon: 'icon-shexiangtou1',
+    bg_color: '#7f7dae',
   },
   children: [{
     name: '_manage',
@@ -156,8 +156,8 @@ export const constantRouterMap = [{
   alwaysShow: true,
   meta: {
     title: '通行管理',
-    icon: 'record',
-    icon_class: "person-iconC",
+    icon: 'icon-tongxing',
+    bg_color: '#55b949',
   },
   children: [{
     name: 'management',
@@ -177,8 +177,8 @@ export const constantRouterMap = [{
   alwaysShow: true,
   meta: {
     title: '师生档案',
-    icon: 'stuTeaManage',
-    icon_class: "person-iconB",
+    icon: 'icon-dangan',
+    bg_color: '#009bba',
   },
   children: [{
     name: 'data',
@@ -198,8 +198,8 @@ export const constantRouterMap = [{
   alwaysShow: true,
   meta: {
     title: '重点人员',
-    icon: 'importantPeople',
-    icon_class: "person-iconA",
+    icon: 'icon-zhongdian',
+    bg_color: '#798384',
   },
   children: [{
     name: 'info',
@@ -219,8 +219,8 @@ export const constantRouterMap = [{
   alwaysShow: true,
   meta: {
     title: '订阅报警服务',
-    icon: 'user',
-    icon_class: "person-iconD",
+    icon: 'icon-baojing',
+    bg_color: '#bf5d76',
   },
   children: [{
     name: 'subscriber',
@@ -239,8 +239,8 @@ export const constantRouterMap = [{
   alwaysShow: true,
   meta: {
     title: '校舍管理',
-    icon: 'user',
-    icon_class: "person-iconD",
+    icon: 'icon-xuexiaoqingkuang',
+    bg_color: '#e17f5a',
   },
   children: [{
     name: 'library',
@@ -283,8 +283,8 @@ export const constantRouterMap = [{
   alwaysShow: true,
   meta: {
     title: '通知发布',
-    icon: 'v_inform',
-    icon_class: "person-iconE",
+    icon: 'icon-tongzhi',
+    bg_color: '#664b5e',
   },
   children: [{
     name: 'issue',
