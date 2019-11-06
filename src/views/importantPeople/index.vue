@@ -2,8 +2,8 @@
   <div class="app-container">
     <el-row>
       <el-col :span="24">
-        <action-header :dialogCreate.sync='dialogCreate' :total="1">
-           <el-dropdown-menu slot="dropdown">
+        <action-header :dialogCreate.sync="dialogCreate" :total="1">
+          <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>导出</el-dropdown-item>
           </el-dropdown-menu>
           <div slot="houseNum">
@@ -62,13 +62,11 @@
             </el-table-column>
           </el-table>
         </div>
+
+        <el-pagination style="margin-top:10px;" background layout="prev, pager, next" :total="2"></el-pagination>
       </el-col>
     </el-row>
-    <el-dialog
-      title="提示"
-      :visible.sync="dialogCreate"
-      width="30%"
-      :before-close="handleClose">
+    <el-dialog title="提示" :visible.sync="dialogCreate" width="30%" :before-close="handleClose">
       <span>这是重点人员新增</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogCreate = false">取 消</el-button>

@@ -4,18 +4,19 @@
       <el-col :span="24">
         <action-header :total="1">
           <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>导入</el-dropdown-item>
-              <el-dropdown-item>导出</el-dropdown-item>
-            </el-dropdown-menu>
-            <div slot="houseNum">
-              <span class="wordFilter">状态:
-                <el-select style='width:212px' v-model="deviceStatus" placeholder="请选择">
-                  <el-option label="全部" value="all"></el-option>
-                  <el-option label="离线" value="offline"></el-option>
-                  <el-option label="在线" value="online"></el-option>
-                </el-select>
-              </span>
+            <el-dropdown-item>导入</el-dropdown-item>
+            <el-dropdown-item>导出</el-dropdown-item>
+          </el-dropdown-menu>
+          <div slot="houseNum">
+            <div class="word-filter">
+              <span class="filter-name">状态:</span>
+              <el-select class="input-filter" size="small" v-model="deviceStatus" placeholder="请选择">
+                <el-option label="全部" value="all"></el-option>
+                <el-option label="离线" value="offline"></el-option>
+                <el-option label="在线" value="online"></el-option>
+              </el-select>
             </div>
+          </div>
         </action-header>
       </el-col>
     </el-row>
@@ -63,7 +64,7 @@
                   style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
                   :type="scope.row.type === 1 ? 'success' : 'danger'"
                   @click="editType(scope.row)"
-                >{{ scope.row.type === 1 ? "是" : "否" }}</el-tag> -->
+                >{{ scope.row.type === 1 ? "是" : "否" }}</el-tag>-->
               </template>
             </el-table-column>
 
@@ -85,6 +86,7 @@
               </template>
             </el-table-column>
           </el-table>
+          <el-pagination style="margin-top:10px;" background layout="prev, pager, next" :total="2"></el-pagination>
         </div>
         <div :class="rowSpan.row1===4 ? menuControl1 : menuControl2" @click="menuVisible">
           <p class="close-menu">
@@ -105,7 +107,7 @@ import { Getter, Action, Mutation } from "vuex-class";
 import mixin from "@/config/minxins";
 
 const ActionHeader = () => import("@/components/ActionHeader.vue");
-const ImageMagni = () => import("@/components/ImageMagnification/index.vue");
+const ImageMagni = () => import("@/components/BigImg/index.vue");
 const DataTree = () => import("@/components/DataTree.vue");
 
 @Component({
@@ -154,7 +156,7 @@ export default class CardManage extends Vue {
     row1: 4,
     row2: 20
   };
-  deviceStatus: String = 'all'
+  deviceStatus: String = "all";
   private menuControl1: String = "menu-control";
   private menuControl2: String = "menu-visible";
 

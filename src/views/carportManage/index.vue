@@ -2,20 +2,24 @@
   <div class="app-container">
     <el-row>
       <el-col :span="24">
-        <action-header :dialogCreate.sync='dialogCreate' :total="1">
+        <action-header :dialogCreate.sync="dialogCreate" :total="1">
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>导入</el-dropdown-item>
             <el-dropdown-item>导出</el-dropdown-item>
           </el-dropdown-menu>
           <div slot="houseNum">
-            <span class="wordFilter">车位号:<el-input class="inputFilter"></el-input></span>
-            <span class="wordFilter">状&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;态:
-              <el-select v-model="status" placeholder="请选择">
+            <div class="word-filter">
+              <span class="filter-name">车位号:</span>
+              <el-input class="input-filter" size="small"></el-input>
+            </div>
+            <div class="word-filter">
+              <span class="filter-name">状&nbsp;&nbsp;&nbsp;&nbsp;态:</span>
+              <el-select v-model="status" placeholder="请选择" class="input-filter" size="small">
                 <el-option label="全部" value="all"></el-option>
                 <el-option label="占用" value="busy"></el-option>
                 <el-option label="空闲" value="free"></el-option>
               </el-select>
-            </span>
+            </div>
           </div>
         </action-header>
       </el-col>
@@ -61,6 +65,9 @@
             <el-table-column prop="rent" align="center" label="租客"></el-table-column>
           </el-table>
         </div>
+
+        <el-pagination style="margin-top:10px;" background layout="prev, pager, next" :total="2"></el-pagination>
+
         <div :class="rowSpan.row1===4 ? menuControl1 : menuControl2" @click="menuVisible">
           <p class="close-menu">
             <i v-if="rowSpan.row1===4" class="iconfont icon-left icon-class"></i>
@@ -69,11 +76,7 @@
         </div>
       </el-col>
     </el-row>
-    <el-dialog
-      title="提示"
-      :visible.sync="dialogCreate"
-      width="30%"
-      :before-close="handleClose">
+    <el-dialog title="提示" :visible.sync="dialogCreate" width="30%" :before-close="handleClose">
       <span>这是车位管理新增</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogCreate = false">取 消</el-button>
@@ -119,7 +122,7 @@ export default class CardManage extends Vue {
       showMenu: false
     }
   ];
-  status: stripe = 'all';
+  status: stripe = "all";
   private rowSpan: any = {
     row1: 4,
     row2: 20

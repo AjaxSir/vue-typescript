@@ -2,27 +2,30 @@
   <div class="app-container">
     <el-row>
       <el-col :span="24">
-        <action-header :btnStatus='false'  :total="1">
+        <action-header :btnStatus="false" :total="1">
           <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>进出次数排序</el-dropdown-item>
-              <el-dropdown-item>滞留时间排序</el-dropdown-item>
-              <el-dropdown-item>统计查询</el-dropdown-item>
-            </el-dropdown-menu>
-            <div slot="houseNum">
-              <span class="wordFilter">车牌号:
-                 <el-input class="inputFilter"></el-input>
-              </span>
-              <span class="wordFilter">时间段:
-                 <el-date-picker
-                    class="inputFilter"
-                    v-model="TimeRange"
-                    type="datetimerange"
-                    range-separator="-"
-                    start-placeholder="开始日期"
-                    end-placeholder="结束日期">
-                  </el-date-picker>
-              </span>
+            <el-dropdown-item>进出次数排序</el-dropdown-item>
+            <el-dropdown-item>滞留时间排序</el-dropdown-item>
+            <el-dropdown-item>统计查询</el-dropdown-item>
+          </el-dropdown-menu>
+          <div slot="houseNum">
+            <div class="word-filter">
+              <span class="filter-name">车牌号:</span>
+              <el-input class="input-filter" size="small"></el-input>
             </div>
+            <div class="word-filter">
+              <span class="filter-name">时间段:</span>
+              <el-date-picker
+                size="small"
+                class="input-filter"
+                v-model="TimeRange"
+                type="datetimerange"
+                range-separator="-"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+              ></el-date-picker>
+            </div>
+          </div>
         </action-header>
       </el-col>
     </el-row>
@@ -92,6 +95,9 @@
             </el-table-column>
           </el-table>
         </div>
+
+        <el-pagination style="margin-top:10px;" background layout="prev, pager, next" :total="2"></el-pagination>
+
         <div :class="rowSpan.row1===4 ? menuControl1 : menuControl2" @click="menuVisible">
           <p class="close-menu">
             <i v-if="rowSpan.row1===4" class="iconfont icon-left icon-class"></i>
@@ -111,7 +117,7 @@ import { Getter, Action, Mutation } from "vuex-class";
 import mixin from "@/config/minxins";
 
 const ActionHeader = () => import("@/components/ActionHeader.vue");
-const ImageMagni = () => import("@/components/ImageMagnification/index.vue");
+const ImageMagni = () => import("@/components/BigImg/index.vue");
 const DataTree = () => import("@/components/DataTree.vue");
 
 @Component({
@@ -160,6 +166,8 @@ export default class CardManage extends Vue {
     row1: 4,
     row2: 20
   };
+
+  private TimeRange: any = "";
 
   private menuControl1: String = "menu-control";
   private menuControl2: String = "menu-visible";

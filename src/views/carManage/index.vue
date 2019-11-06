@@ -2,16 +2,25 @@
   <div class="app-container">
     <el-row>
       <el-col :span="24">
-        <action-header :dialogCreate.sync='dialogCreate' :total="1">
+        <action-header :dialogCreate.sync="dialogCreate" :total="1">
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>导入</el-dropdown-item>
             <el-dropdown-item>导出</el-dropdown-item>
           </el-dropdown-menu>
-            <div slot="houseNum">
-              <span class="wordFilter">车&nbsp;牌&nbsp;号&nbsp;: <el-input class="inputFilter"></el-input></span>
-              <span class="wordFilter">车主姓名: <el-input class="inputFilter"></el-input></span>
-              <span class="wordFilter">联系电话: <el-input class="inputFilter"></el-input></span>
+          <div slot="houseNum">
+            <div class="word-filter">
+              <span class="filter-name">车&nbsp;牌&nbsp;号&nbsp;:</span>
+              <el-input class="input-filter" size="small"></el-input>
             </div>
+            <div class="word-filter">
+              <span class="filter-name">车主姓名:</span>
+              <el-input class="input-filter" size="small"></el-input>
+            </div>
+            <div class="word-filter">
+              <span class="filter-name">联系电话:</span>
+              <el-input class="input-filter" size="small"></el-input>
+            </div>
+          </div>
         </action-header>
       </el-col>
     </el-row>
@@ -53,7 +62,13 @@
 
             <el-table-column prop="img" label="最近抓拍图片">
               <template slot-scope="scope">
-                <img class="capture-img" @mouseout="imgVisible=false" @mouseover="imgVisible=true,bigImg=scope.row.img" :src="scope.row.img" alt />
+                <img
+                  class="capture-img"
+                  @mouseout="imgVisible=false"
+                  @mouseover="imgVisible=true,bigImg=scope.row.img"
+                  :src="scope.row.img"
+                  alt
+                />
               </template>
             </el-table-column>
 
@@ -69,6 +84,9 @@
             </el-table-column>
           </el-table>
         </div>
+
+        <el-pagination style="margin-top:10px;" background layout="prev, pager, next" :total="2"></el-pagination>
+
         <!-- <div :class="rowSpan.row1===4 ? menuControl1 : menuControl2" @click="menuVisible">
           <p class="close-menu">
             <i v-if="rowSpan.row1===4" class="iconfont icon-left icon-class"></i>
@@ -77,11 +95,7 @@
         </div>-->
       </el-col>
     </el-row>
-    <el-dialog
-      title="提示"
-      :visible.sync="dialogCreate"
-      width="30%"
-      :before-close="handleClose">
+    <el-dialog title="提示" :visible.sync="dialogCreate" width="30%" :before-close="handleClose">
       <span>这是车辆管理新增</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogCreate = false">取 消</el-button>
@@ -98,7 +112,7 @@ import { Getter, Action, Mutation } from "vuex-class";
 import mixin from "@/config/minxins";
 
 const ActionHeader = () => import("@/components/ActionHeader.vue");
-const ImageMagni = () => import("@/components/ImageMagnification/index.vue");
+const ImageMagni = () => import("@/components/BigImg/index.vue");
 const DataTree = () => import("@/components/DataTree.vue");
 
 @Component({
@@ -145,8 +159,8 @@ export default class CardManage extends Vue {
     row2: 20
   };
 
-  private imgVisible: Boolean = false;  // 控制放大图片的visible
-  private bigImg: String = "";  // 保存放大图片的地址
+  private imgVisible: Boolean = false; // 控制放大图片的visible
+  private bigImg: String = ""; // 保存放大图片的地址
 
   private form: Object = {
     name: "",
@@ -223,7 +237,7 @@ export default class CardManage extends Vue {
 .capture-img {
   width: 30px;
 }
-.inputFilter{
-  width:198px !important;
+.inputFilter {
+  width: 198px !important;
 }
 </style>

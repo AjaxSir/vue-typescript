@@ -283,8 +283,8 @@ export const constantRouterMap = [{
   alwaysShow: true,
   meta: {
     title: '通知发布',
-    icon: 'stuTeaManage',
-    icon_class: "person-iconB",
+    icon: 'v_inform',
+    icon_class: "person-iconE",
   },
   children: [{
     name: 'issue',

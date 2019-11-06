@@ -2,15 +2,21 @@
   <div class="app-container">
     <el-row>
       <el-col :span="24">
-        <ActionHeader :dialogCreate.sync='dialogCreate' :total="1">
-           <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>导入</el-dropdown-item>
-              <el-dropdown-item>导出</el-dropdown-item>
-              <el-dropdown-item>统计信息</el-dropdown-item>
-            </el-dropdown-menu>
-            <div slot="houseNum">
-            <span class="wordFilter">姓&nbsp;&nbsp;&nbsp;名:<el-input class="inputFilter"></el-input></span>
-            <span class="wordFilter">手机号:<el-input class="inputFilter"></el-input></span>
+        <ActionHeader :dialogCreate.sync="dialogCreate" :total="1">
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item>导入</el-dropdown-item>
+            <el-dropdown-item>导出</el-dropdown-item>
+            <el-dropdown-item>统计信息</el-dropdown-item>
+          </el-dropdown-menu>
+          <div slot="houseNum">
+            <div class="word-filter">
+              <span class="filter-name">姓&nbsp;&nbsp;&nbsp;名:</span>
+              <el-input class="input-filter" size="small"></el-input>
+            </div>
+            <div class="word-filter">
+              <span class="filter-name">手机号:</span>
+              <el-input class="input-filter" size="small"></el-input>
+            </div>
           </div>
         </ActionHeader>
       </el-col>
@@ -22,37 +28,24 @@
       <el-col :span="20">
         <div class="rightContent">
           <el-table :data="list_data" border>
-            <el-table-column type="selection" align="center"> </el-table-column>
-            <el-table-column
-              type="index"
-              width="60"
-              align="center"
-              label="编号"
-            >
-            </el-table-column>
+            <el-table-column type="selection" align="center"></el-table-column>
+            <el-table-column type="index" width="60" align="center" label="编号"></el-table-column>
             <el-table-column prop="name" align="center" label="姓名">
               <template slot-scope="{ row }">
                 <el-tag @click="showDetail(row)">{{ row.name }}</el-tag>
               </template>
             </el-table-column>
-            <el-table-column prop="age" align="center" label="年龄">
-            </el-table-column>
-            <el-table-column prop="sex" align="center" label="性别">
-            </el-table-column>
-            <el-table-column prop="phone" align="center" label="联系电话">
-            </el-table-column>
-            <el-table-column prop="expire_time" align="center" label="过期时间">
-            </el-table-column>
-            <el-table-column prop="role_group" align="center" label="权限组">
-            </el-table-column>
-            <el-table-column prop="status" align="center" label="状态">
-            </el-table-column>
-            <el-table-column prop="detail" align="center" label="备注">
-            </el-table-column>
-            <el-table-column prop="create_time" align="center" label="创建时间">
-            </el-table-column>
+            <el-table-column prop="age" align="center" label="年龄"></el-table-column>
+            <el-table-column prop="sex" align="center" label="性别"></el-table-column>
+            <el-table-column prop="phone" align="center" label="联系电话"></el-table-column>
+            <el-table-column prop="expire_time" align="center" label="过期时间"></el-table-column>
+            <el-table-column prop="role_group" align="center" label="权限组"></el-table-column>
+            <el-table-column prop="status" align="center" label="状态"></el-table-column>
+            <el-table-column prop="detail" align="center" label="备注"></el-table-column>
+            <el-table-column prop="create_time" align="center" label="创建时间"></el-table-column>
           </el-table>
         </div>
+        <el-pagination style="margin-top:10px;" background layout="prev, pager, next" :total="2"></el-pagination>
       </el-col>
     </el-row>
     <el-dialog :title="Dialog.name" :visible.sync="dialogCreate">
@@ -66,9 +59,7 @@
         <el-tab-pane label="人脸库信息" name="seven">人脸库信息</el-tab-pane>
       </el-tabs>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogCreate = false"
-          >确 定</el-button
-        >
+        <el-button type="primary" @click="dialogCreate = false">确 定</el-button>
       </span>
     </el-dialog>
   </div>

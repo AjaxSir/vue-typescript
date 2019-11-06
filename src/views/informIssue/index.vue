@@ -68,6 +68,7 @@
             </el-table-column>
           </el-table>
         </div>
+        <el-pagination style="margin-top:10px;" background layout="prev, pager, next" :total="2"></el-pagination>
       </el-col>
     </el-row>
   </div>
