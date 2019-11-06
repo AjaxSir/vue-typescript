@@ -2,15 +2,18 @@
   <div class="app-container">
     <el-row>
       <el-col :span="24">
-        <ActionHeader :btnStatus='false' :total="1">
+        <ActionHeader :btnStatus="false" :total="1">
           <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>进出次数排序</el-dropdown-item>
-              <el-dropdown-item>滞留时间排序</el-dropdown-item>
-              <el-dropdown-item>次数统计</el-dropdown-item>
-            </el-dropdown-menu>
-            <div slot="houseNum">
-              <span class="wordFilter">受访人:<el-input class="inputFilter"></el-input></span>
+            <el-dropdown-item>进出次数排序</el-dropdown-item>
+            <el-dropdown-item>滞留时间排序</el-dropdown-item>
+            <el-dropdown-item>次数统计</el-dropdown-item>
+          </el-dropdown-menu>
+          <div slot="houseNum">
+            <div class="word-filter">
+              <span class="filter-name">受访人:</span>
+              <el-input class="input-filter" size="small"></el-input>
             </div>
+          </div>
         </ActionHeader>
       </el-col>
     </el-row>
@@ -21,39 +24,22 @@
       <el-col :span="20">
         <div class="rightContent">
           <el-table :data="list_data" border>
-            <el-table-column type="selection" align="center"> </el-table-column>
-            <el-table-column
-              type="index"
-              width="60"
-              align="center"
-              label="编号"
-            >
-            </el-table-column>
+            <el-table-column type="selection" align="center"></el-table-column>
+            <el-table-column type="index" width="60" align="center" label="编号"></el-table-column>
             <el-table-column prop="name" align="center" label="受访人姓名">
               <template slot-scope="{ row }">
                 <el-tag @click="showDetail(row)">{{ row.name }}</el-tag>
               </template>
             </el-table-column>
-            <el-table-column prop="vistor_type" align="center" label="访客类型">
-            </el-table-column>
-            <el-table-column prop="card_number" align="center" label="身份证号">
-            </el-table-column>
-            <el-table-column prop="regis_time" align="center" label="注册时间">
-            </el-table-column>
-            <el-table-column
-              prop="all_times"
-              align="center"
-              label="累计访问次数"
-            >
-            </el-table-column>
-            <el-table-column
-              prop="last_time"
-              align="center"
-              label="最近访问时间"
-            >
-            </el-table-column>
+            <el-table-column prop="vistor_type" align="center" label="访客类型"></el-table-column>
+            <el-table-column prop="card_number" align="center" label="身份证号"></el-table-column>
+            <el-table-column prop="regis_time" align="center" label="注册时间"></el-table-column>
+            <el-table-column prop="all_times" align="center" label="累计访问次数"></el-table-column>
+            <el-table-column prop="last_time" align="center" label="最近访问时间"></el-table-column>
           </el-table>
         </div>
+
+        <el-pagination style="margin-top:10px;" background layout="prev, pager, next" :total="2"></el-pagination>
       </el-col>
     </el-row>
     <el-dialog :title="Dialog.name" :visible.sync="dialogFormVisible">
@@ -67,9 +53,7 @@
         <el-tab-pane label="人脸库信息" name="seven">人脸库信息</el-tab-pane>
       </el-tabs>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogFormVisible = false"
-          >确 定</el-button
-        >
+        <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
       </span>
     </el-dialog>
   </div>

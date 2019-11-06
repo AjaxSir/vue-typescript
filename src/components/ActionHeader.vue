@@ -8,7 +8,7 @@
     <el-col :span="12">
       <div class="leftAction">
         <el-button
-          v-if='btnStatus'
+          v-if="btnStatus"
           class="createBtn"
           type="primary"
           size="small"
@@ -94,7 +94,7 @@ import { Component, Prop, Vue, Mixins, Watch } from "vue-property-decorator";
 export default class ActionManage extends Vue {
   @Prop() private total: any; // 显示总共多少条记录
   @Prop() dialogCreate: Boolean; // 创建弹框状态 公用
-  @Prop({ default: true }) btnStatus:Boolean; // true 表示新增框 false 表示导出
+  @Prop({ default: true }) btnStatus: Boolean; // true 表示新增框 false 表示导出
   private visible: boolean = false; // 数据显示条数dialog状态
   private size: string = "10"; // 默认每页显示10条
   private levelList: Object = {}; // 当前路由的子路由
@@ -131,8 +131,7 @@ export default class ActionManage extends Vue {
   }
   // 导出
   exportTable() {}
-  fetchData(t) {
-  }
+  fetchData(t) {}
 
   getRouter() {
     this.matched = this.$route.matched.filter(item => item.name);
@@ -234,12 +233,12 @@ a {
   }
   .filterDialog {
     text-align: left;
-    width: 300px;
+    width: 420px;
     height: auto;
     padding: 20px 10px;
     position: absolute;
     z-index: 11;
-    left: -120px;
+    left: -250px;
     top: 40px;
     border: 1px solid lightgray;
     box-shadow: 0px 10px 10px gray;

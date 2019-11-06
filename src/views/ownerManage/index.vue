@@ -2,21 +2,28 @@
   <div class="app-container">
     <el-row>
       <el-col :span="24">
-        <ActionHeader :dialogCreate.sync='dialogCreate' :total="1">
+        <ActionHeader :dialogCreate.sync="dialogCreate" :total="1">
           <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>导入</el-dropdown-item>
-              <el-dropdown-item>导出</el-dropdown-item>
-              <el-dropdown-item>统计信息</el-dropdown-item>
-            </el-dropdown-menu>
+            <el-dropdown-item>导入</el-dropdown-item>
+            <el-dropdown-item>导出</el-dropdown-item>
+            <el-dropdown-item>统计信息</el-dropdown-item>
+          </el-dropdown-menu>
           <div slot="houseNum">
-            <span class="wordFilter">姓&nbsp;&nbsp;&nbsp;名:<el-input class="inputFilter"></el-input></span>
-            <span class="wordFilter">手机号:<el-input class="inputFilter"></el-input></span>
-            <span class="wordFilter">用户类型:
-              <el-select style='width:212px' v-model="UserType" placeholder="请选择">
+            <div class="word-filter">
+              <span class="filter-name">姓&nbsp;&nbsp;&nbsp;名:</span>
+              <el-input class="input-filter" size="small"></el-input>
+            </div>
+            <div class="word-filter">
+              <span class="filter-name">手机号:</span>
+              <el-input class="input-filter" size="small"></el-input>
+            </div>
+            <div class="word-filter">
+              <span class="filter-name">用户类型:</span>
+              <el-select class="input-filter" size="small" v-model="UserType" placeholder="请选择">
                 <el-option label="租客" value="all"></el-option>
                 <el-option label="业主" value="owner"></el-option>
               </el-select>
-            </span>
+            </div>
           </div>
         </ActionHeader>
       </el-col>
@@ -28,47 +35,28 @@
       <el-col :span="20">
         <div class="rightContent">
           <el-table :data="list_data" border>
-            <el-table-column type="selection" align="center"> </el-table-column>
-            <el-table-column
-              type="index"
-              width="60"
-              align="center"
-              label="编号"
-            >
-            </el-table-column>
+            <el-table-column type="selection" align="center"></el-table-column>
+            <el-table-column type="index" width="60" align="center" label="编号"></el-table-column>
             <el-table-column prop="name" align="center" label="姓名">
               <template slot-scope="{ row }">
                 <el-tag @click="showDetail(row)">{{ row.name }}</el-tag>
               </template>
             </el-table-column>
-            <el-table-column prop="age" align="center" label="年龄">
-            </el-table-column>
-            <el-table-column prop="sex" align="center" label="性别">
-            </el-table-column>
-            <el-table-column prop="phone" align="center" label="联系电话">
-            </el-table-column>
-            <el-table-column prop="house_info" align="center" label="房屋信息">
-            </el-table-column>
-            <el-table-column prop="expire_time" align="center" label="过期时间">
-            </el-table-column>
-            <el-table-column prop="far_door" align="center" label="远程开门">
-            </el-table-column>
-            <el-table-column prop="car" align="center" label="访客车辆">
-            </el-table-column>
-            <el-table-column
-              prop="main_linker"
-              align="center"
-              label="是否主联系人"
-            >
-            </el-table-column>
-            <el-table-column prop="status" align="center" label="状态">
-            </el-table-column>
-            <el-table-column prop="detail" align="center" label="备注">
-            </el-table-column>
-            <el-table-column prop="create_time" align="center" label="创建时间">
-            </el-table-column>
+            <el-table-column prop="age" align="center" label="年龄"></el-table-column>
+            <el-table-column prop="sex" align="center" label="性别"></el-table-column>
+            <el-table-column prop="phone" align="center" label="联系电话"></el-table-column>
+            <el-table-column prop="house_info" align="center" label="房屋信息"></el-table-column>
+            <el-table-column prop="expire_time" align="center" label="过期时间"></el-table-column>
+            <el-table-column prop="far_door" align="center" label="远程开门"></el-table-column>
+            <el-table-column prop="car" align="center" label="访客车辆"></el-table-column>
+            <el-table-column prop="main_linker" align="center" label="是否主联系人"></el-table-column>
+            <el-table-column prop="status" align="center" label="状态"></el-table-column>
+            <el-table-column prop="detail" align="center" label="备注"></el-table-column>
+            <el-table-column prop="create_time" align="center" label="创建时间"></el-table-column>
           </el-table>
         </div>
+
+        <el-pagination style="margin-top:10px;" background layout="prev, pager, next" :total="2"></el-pagination>
       </el-col>
     </el-row>
 
@@ -83,16 +71,10 @@
         <el-tab-pane label="人脸库信息" name="seven">人脸库信息</el-tab-pane>
       </el-tabs>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogFormVisible = false"
-          >确 定</el-button
-        >
+        <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
       </span>
     </el-dialog>
-    <el-dialog
-      title="提示"
-      :visible.sync="dialogCreate"
-      width="30%"
-      :before-close="handleClose">
+    <el-dialog title="提示" :visible.sync="dialogCreate" width="30%" :before-close="handleClose">
       <span>这是业主管理新增</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogCreate = false">取 消</el-button>
@@ -136,7 +118,7 @@ export default class OwnerManage extends Vue {
       create_time: "2019/10/1"
     }
   ];
-  UserType: string = 'owner';
+  UserType: string = "owner";
   private Dialog: Object = {
     name: ""
   };

@@ -2,25 +2,26 @@
   <div class="app-container">
     <el-row>
       <el-col :span="24">
-        <action-header :dialogCreate.sync='dialogCreate' :total="1">
+        <action-header :dialogCreate.sync="dialogCreate" :total="1">
           <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>导入</el-dropdown-item>
-              <el-dropdown-item>导出</el-dropdown-item>
-            </el-dropdown-menu>
-            <div slot="houseNum">
-              <span class="wordFilter">状态:
-                <el-select style='width:212px' v-model="deviceStatus" placeholder="请选择">
-                  <el-option label="全部" value="all"></el-option>
-                  <el-option label="离线" value="offline"></el-option>
-                  <el-option label="在线" value="online"></el-option>
-                </el-select>
-              </span>
-            </div>
+            <el-dropdown-item>导入</el-dropdown-item>
+            <el-dropdown-item>导出</el-dropdown-item>
+          </el-dropdown-menu>
+          <div slot="houseNum">
+            <span class="word-filter">
+              <span class="filter-name">状态:</span>
+              <el-select v-model="deviceStatus" placeholder="请选择" class="input-filter" size="small">
+                <el-option label="全部" value="all"></el-option>
+                <el-option label="离线" value="offline"></el-option>
+                <el-option label="在线" value="online"></el-option>
+              </el-select>
+            </span>
+          </div>
         </action-header>
       </el-col>
     </el-row>
     <el-row :gutter="10">
-       <transition name="el-fade-in-linear">
+      <transition name="el-fade-in-linear">
         <!-- <div v-show="show" class="transition-box">.el-fade-in-linear</div> -->
       </transition>
       <el-col :span="rowSpan.row1">
@@ -78,6 +79,8 @@
             <el-table-column prop="createDate" label="创建时间" width="160"></el-table-column>
           </el-table>
         </div>
+        <el-pagination style="margin-top:10px;" background layout="prev, pager, next" :total="2"></el-pagination>
+
         <div :class="rowSpan.row1===4 ? menuControl1 : menuControl2" @click="menuVisible">
           <p class="close-menu">
             <i v-if="rowSpan.row1===4" class="iconfont icon-left icon-class"></i>
@@ -86,11 +89,7 @@
         </div>
       </el-col>
     </el-row>
-    <el-dialog
-      title="提示"
-      :visible.sync="dialogCreate"
-      width="30%"
-      :before-close="handleClose">
+    <el-dialog title="提示" :visible.sync="dialogCreate" width="30%" :before-close="handleClose">
       <span>这是设备管理新增</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogCreate = false">取 消</el-button>
@@ -124,23 +123,25 @@ export default class CardManage extends Vue {
       createDate: "2019-10-10 12:12:12",
       type: 1,
       showMenu: false,
-      num:0
-    },  {
+      num: 0
+    },
+    {
       name: "123",
       houseRelative: "东区-1栋-1-1",
       carNum: "XX门禁",
       createDate: "2019-10-10 12:12:12",
       type: 2,
       showMenu: false,
-         num:0
-    },  {
+      num: 0
+    },
+    {
       name: "123",
       houseRelative: "东区-1栋-1-1",
       carNum: "XX门禁",
       createDate: "2019-10-10 12:12:12",
       type: 1,
       showMenu: false,
-         num:0
+      num: 0
     }
   ];
 
@@ -148,7 +149,7 @@ export default class CardManage extends Vue {
     row1: 4,
     row2: 20
   };
-  deviceStatus:String = 'all'
+  deviceStatus: String = "all";
   private menuControl1: String = "menu-control";
   private menuControl2: String = "menu-visible";
 

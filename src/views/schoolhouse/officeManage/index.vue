@@ -2,12 +2,34 @@
   <div class="app-container">
     <el-row>
       <el-col :span="24">
-        <action-header :dialogCreate.sync='dialogCreate' :total="1">
+        <action-header :dialogCreate.sync="dialogCreate" :total="1">
           <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>人数统计</el-dropdown-item>
-              <el-dropdown-item>进出次数统计</el-dropdown-item>
-              <el-dropdown-item>人均时长统计</el-dropdown-item>
-            </el-dropdown-menu>
+            <el-dropdown-item>人数统计</el-dropdown-item>
+            <el-dropdown-item>进出次数统计</el-dropdown-item>
+            <el-dropdown-item>人均时长统计</el-dropdown-item>
+          </el-dropdown-menu>
+          <div slot="houseNum">
+            <div class="word-filter">
+              <span class="filter-name">办公室名称:</span>
+              <el-input class="input-filter" size="small"></el-input>
+            </div>
+            <div class="word-filter">
+              <span class="filter-name">所在楼层:</span>
+              <el-input class="input-filter" size="small"></el-input>
+            </div>
+            <div class="word-filter">
+              <span class="filter-name">开放时段:</span>
+              <el-date-picker
+                class="input-filter"
+                size="small"
+                v-model="TimeRange"
+                type="datetimerange"
+                range-separator="-"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+              ></el-date-picker>
+            </div>
+          </div>
         </action-header>
       </el-col>
     </el-row>
@@ -44,11 +66,7 @@
         </div>
       </el-col>
     </el-row>
-    <el-dialog
-      title="提示"
-      :visible.sync="dialogCreate"
-      width="30%"
-      :before-close="handleClose">
+    <el-dialog title="提示" :visible.sync="dialogCreate" width="30%" :before-close="handleClose">
       <span>这是办公室管理新增</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogCreate = false">取 消</el-button>
@@ -99,6 +117,7 @@ export default class OfficeManage extends Vue {
     row1: 4,
     row2: 20
   };
+  private TimeRange: any = ""; // 根据时间进行筛选
   private menuControl1: String = "menu-control";
   private menuControl2: String = "menu-visible";
   private form: Object = {

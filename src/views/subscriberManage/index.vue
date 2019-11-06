@@ -2,7 +2,17 @@
   <div class="app-container">
     <el-row>
       <el-col :span="24">
-        <!-- <action-header :total="1" /> -->
+        <ActionHeader :btnStatus="false" :total="1">
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item>次数统计</el-dropdown-item>
+          </el-dropdown-menu>
+          <div slot="houseNum">
+            <div class="word-filter">
+              <span class="filter-name">姓名:</span>
+              <el-input class="input-filter" size="small"></el-input>
+            </div>
+          </div>
+        </ActionHeader>
       </el-col>
     </el-row>
     <el-row :gutter="10">
@@ -21,7 +31,7 @@
             <el-table-column type="index" label="序号" width="50"></el-table-column>
 
             <el-table-column prop="name" label="姓名">
-              <!-- <template slot-scope="scope">
+              <template slot-scope="scope">
                 <el-button style="padding:0px;" type="text" @click="queryIdetity">{{scope.row.name}}</el-button>
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start">
@@ -32,13 +42,14 @@
                     </el-dropdown-menu>
                   </el-dropdown>
                 </div>
-              </template> -->
+              </template>
             </el-table-column>
 
             <el-table-column prop="phone" label="电话"></el-table-column>
 
             <el-table-column prop="email" label="邮箱"></el-table-column>
           </el-table>
+          <el-pagination style="margin-top:10px;" background layout="prev, pager, next" :total="2"></el-pagination>
         </div>
       </el-col>
     </el-row>
@@ -60,30 +71,30 @@ const DataTree = () => import("@/components/DataTree.vue");
   mixins: [mixin],
   components: {
     ActionHeader,
-    DataTree,
+    DataTree
     // LibraryDialog
   }
 })
 export default class CardManage extends Vue {
   private cardList: Array<Object> = [
     {
-      name: "图书馆1",
+      name: "zhang3",
       phone: "18227645841",
       showMenu: false,
-      email: 'll06@foxmail.com',
-    },
-     {
-      name: "图书馆1",
-      phone: "18227645841",
-      showMenu: false,
-      email: 'll06@foxmail.com',
+      email: "ll06@foxmail.com"
     },
     {
-      name: "图书馆1",
+      name: "li4",
       phone: "18227645841",
       showMenu: false,
-      email: 'll06@foxmail.com',
+      email: "ll06@foxmail.com"
     },
+    {
+      name: "wang2",
+      phone: "18227645841",
+      showMenu: false,
+      email: "ll06@foxmail.com"
+    }
   ];
 
   private rowSpan: any = {
@@ -91,7 +102,7 @@ export default class CardManage extends Vue {
     row2: 20
   };
 
-  private dialogLibrary:any = false;
+  private dialogLibrary: any = false;
 
   private form: Object = {
     name: "",
@@ -122,9 +133,9 @@ export default class CardManage extends Vue {
     /**@description hover leave tab 行 */
     row.showMenu = false;
   }
-  // queryIdetity() {
-  //   this.dialogLibrary = true;
-  // }
+  queryIdetity(val) {
+    this.dialogLibrary = true;
+  }
 }
 </script>
 

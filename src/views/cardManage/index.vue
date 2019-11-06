@@ -2,23 +2,25 @@
   <div class="app-container">
     <el-row>
       <el-col :span="24">
-        <action-header :dialogCreate.sync='dialogCreate' :total="1">
-           <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>导入</el-dropdown-item>
-              <el-dropdown-item>导出</el-dropdown-item>
-            </el-dropdown-menu>
-            <div slot="houseNum">
-              <span class="wordFilter">时间段:
-                 <el-date-picker
-                    class="inputFilter"
-                    v-model="TimeRange"
-                    type="datetimerange"
-                    range-separator="-"
-                    start-placeholder="开始日期"
-                    end-placeholder="结束日期">
-                  </el-date-picker>
-              </span>
+        <action-header :dialogCreate.sync="dialogCreate" :total="1">
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item>导入</el-dropdown-item>
+            <el-dropdown-item>导出</el-dropdown-item>
+          </el-dropdown-menu>
+          <div slot="houseNum">
+            <div class="word-filter">
+              <span class="filter-name">时间段:</span>
+              <el-date-picker
+                class="input-filter"
+                size="small"
+                v-model="TimeRange"
+                type="datetimerange"
+                range-separator="-"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+              ></el-date-picker>
             </div>
+          </div>
         </action-header>
       </el-col>
     </el-row>
@@ -76,6 +78,7 @@
 
             <el-table-column prop="createDate" label="周平均刷卡次数"></el-table-column>
           </el-table>
+          <el-pagination style="margin-top:10px;" background layout="prev, pager, next" :total="2"></el-pagination>
         </div>
         <div :class="rowSpan.row1===4 ? menuControl1 : menuControl2" @click="menuVisible">
           <p class="close-menu">
@@ -85,11 +88,7 @@
         </div>
       </el-col>
     </el-row>
-    <el-dialog
-      title="提示"
-      :visible.sync="dialogCreate"
-      width="30%"
-      :before-close="handleClose">
+    <el-dialog title="提示" :visible.sync="dialogCreate" width="30%" :before-close="handleClose">
       <span>这是门禁卡管理新增</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogCreate = false">取 消</el-button>
@@ -145,7 +144,7 @@ export default class CardManage extends Vue {
       showMenu: false
     }
   ];
-  TimeRange:Array<string> = []
+  TimeRange: Array<string> = [];
   private rowSpan: any = {
     row1: 4,
     row2: 20

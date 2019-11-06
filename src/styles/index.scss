@@ -60,18 +60,22 @@ a:hover {
 .tree-rename {
   box-shadow: 0px 0px 8px 0px lightgrey;
 }
-.word-filter{
+
+.word-filter {
   display: flex;
-  align-items: center;;
+  align-items: center;
+  ;
   margin-bottom: 10px;
 }
-.filter-name{
-  white-space: nowrap;;
+
+.filter-name {
+  white-space: nowrap;
 }
+
 .input-filter {
   margin-left: 6px;
-
 }
+
 .dialog-rewrite .el-dialog .el-dialog__body {
   padding: 0;
 }
