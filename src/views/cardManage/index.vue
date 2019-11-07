@@ -95,6 +95,7 @@
         <el-button type="primary" @click="dialogCreate = false">确 定</el-button>
       </span>
     </el-dialog>
+    <!-- <dialog-form :dialogCreate.sync="dialogCreate" /> -->
   </div>
 </template>
 
@@ -105,12 +106,14 @@ import mixin from "@/config/minxins";
 
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 const DataTree = () => import("@/components/DataTree.vue");
+const DialogForm = () => import("./components/dialogForm.vue");
 
 @Component({
   mixins: [mixin],
   components: {
     ActionHeader,
-    DataTree
+    DataTree,
+    DialogForm
   }
 })
 export default class CardManage extends Vue {
@@ -166,6 +169,7 @@ export default class CardManage extends Vue {
 
   private dialogFormVisible: Boolean = false;
   private formLabelWidth: String = "120px";
+  private dialogCreate: Boolean = false; // 新增弹出表单
 
   editType(item) {
     /**@description 修改状态 */

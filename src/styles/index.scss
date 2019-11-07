@@ -61,6 +61,15 @@ a:hover {
   box-shadow: 0px 0px 8px 0px lightgrey;
 }
 
+.el-tabs__header {
+  margin: 0 0 6px !important;
+}
+
+.el-table th,
+.el-table td {
+  padding: 6px 0 !important;
+}
+
 .word-filter {
   display: flex;
   align-items: center;

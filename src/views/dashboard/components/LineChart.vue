@@ -20,7 +20,7 @@ export default {
     },
     height: {
       type: String,
-      default: "350px"
+      default: "280px"
     },
     autoResize: {
       type: Boolean,
@@ -75,6 +75,7 @@ export default {
       window.addEventListener("resize", this.__resizeHanlder);
     }
   },
+
   methods: {
     setOptions({ expectedData, actualData } = {}) {
       this.chart.setOption({
