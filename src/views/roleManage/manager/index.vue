@@ -34,9 +34,10 @@
 
             <el-table-column type="index" label="序号" width="50"></el-table-column>
 
-            <el-table-column prop="name" label="标题" align="center">
+            <el-table-column prop="name" label="账号名" align="center">
               <template slot-scope="scope">
-                <el-button style="padding:0px;" type="text" @click="queryIdetity">{{scope.row.name}}</el-button>
+                <!-- <el-button style="padding:0px;" type="text" @click="queryIdetity">{{scope.row.name}}</el-button> -->
+                <span>{{scope.row.name}}</span>
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start">
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
@@ -49,23 +50,11 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="xb" align="center" label="发布内容"></el-table-column>
+            <el-table-column prop="xb" align="center" label="角色"></el-table-column>
 
-            <el-table-column prop="xq" label="发布对象" align="center"></el-table-column>
+            <el-table-column prop="xq" label="备注" align="center"></el-table-column>
 
-            <el-table-column prop="tjsj" label="发布时间" align="center"></el-table-column>
-
-            <el-table-column prop="zp" label="到达情况" align="center"></el-table-column>
-
-            <el-table-column prop="type" label="状态">
-              <template slot-scope="scope">
-                <el-tag
-                  size="small"
-                  style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
-                  :type="scope.row.type === 1 ? 'success' : 'danger'"
-                >{{ scope.row.type === 1 ? "成功" : "失败" }}</el-tag>
-              </template>
-            </el-table-column>
+            <el-table-column prop="tjsj" label="操作" align="center"></el-table-column>
           </el-table>
         </div>
         <el-pagination style="margin-top:10px;" background layout="prev, pager, next" :total="2"></el-pagination>
@@ -94,10 +83,10 @@ export default class InformIssue extends Vue {
     {
       name: "XXXXX",
       zb: "男",
-      xb: "--",
+      xb: "管理员",
       zp: "--",
-      xq: "张三",
-      tjsj: "2019/8/21",
+      xq: "--",
+      tjsj: "--",
       type: 1
     }
   ];
