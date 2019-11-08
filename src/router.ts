@@ -49,7 +49,7 @@ export const constantRouterMap = [{
   }, {
     name: 'access_card',
     path: 'access_card',
-    component: _import_('cardManage/index'),
+    component: _import_('houseManage/cardManage/index'),
     meta: {
       title: '门禁卡管理',
       icon: 'monitor'
@@ -57,7 +57,7 @@ export const constantRouterMap = [{
   }, {
     name: 'passageway',
     path: 'passageway',
-    component: _import_('passagewayManage/index'),
+    component: _import_('houseManage/passagewayManage/index'),
     meta: {
       title: '出入口管理',
       icon: 'monitor'
@@ -77,7 +77,7 @@ export const constantRouterMap = [{
   children: [{
     name: 'owner',
     path: 'owner',
-    component: _import_('ownerManage/index'),
+    component: _import_('personManage/ownerManage/index'),
     meta: {
       title: '人员管理 - 住户管理',
       icon: 'monitor'
@@ -85,7 +85,7 @@ export const constantRouterMap = [{
   }, {
     name: 'property',
     path: 'property',
-    component: _import_('propertyManage/index'),
+    component: _import_('personManage/propertyManage/index'),
     meta: {
       title: '人员管理 - 物业管理',
       icon: 'monitor'
@@ -94,7 +94,7 @@ export const constantRouterMap = [{
   {
     name: 'vistormanage ',
     path: 'vistormanage',
-    component: _import_('vistorManage/index'),
+    component: _import_('personManage/vistorManage/index'),
     meta: {
       title: '人员管理 - 访客管理',
       icon: 'monitor'
@@ -102,7 +102,7 @@ export const constantRouterMap = [{
   }, {
     name: 'management',
     path: 'management',
-    component: _import_('personPass/index'),
+    component: _import_('personManage/personPass/index'),
     meta: {
       title: '人员通行管理',
       icon: 'monitor'
@@ -110,7 +110,7 @@ export const constantRouterMap = [{
   }, {
     name: 'stranger',
     path: 'stranger',
-    component: _import_('importantPeople/index'),
+    component: _import_('personManage/strangerPeople/index'),
     meta: {
       title: '陌生人管理',
       icon: 'monitor'
@@ -130,7 +130,7 @@ export const constantRouterMap = [{
   children: [{
     name: 'carManage',
     path: 'carManage',
-    component: _import_('carManage/index'),
+    component: _import_('carManage/carList/index'),
     meta: {
       title: '车辆管理 - 车辆名单',
       icon: 'monitor'
@@ -138,7 +138,7 @@ export const constantRouterMap = [{
   }, {
     name: 'carPass',
     path: 'carPass',
-    component: _import_('carPass/index'),
+    component: _import_('carManage/carPass/index'),
     meta: {
       title: '车辆管理 - 通行记录',
       icon: 'monitor'
@@ -146,7 +146,7 @@ export const constantRouterMap = [{
   }, {
     name: 'carport',
     path: 'carport',
-    component: _import_('carportManage/index'),
+    component: _import_('carManage/carVisitor/index'),
     meta: {
       title: '车辆管理 - 访客车辆',
       icon: 'monitor'

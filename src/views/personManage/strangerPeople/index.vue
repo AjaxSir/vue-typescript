@@ -4,20 +4,11 @@
       <el-col :span="24">
         <action-header :dialogCreate.sync="dialogCreate" :total="1">
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>导入</el-dropdown-item>
             <el-dropdown-item>导出</el-dropdown-item>
           </el-dropdown-menu>
           <div slot="houseNum">
             <div class="word-filter">
-              <span class="filter-name">车&nbsp;牌&nbsp;号&nbsp;:</span>
-              <el-input class="input-filter" size="small"></el-input>
-            </div>
-            <div class="word-filter">
-              <span class="filter-name">车主姓名:</span>
-              <el-input class="input-filter" size="small"></el-input>
-            </div>
-            <div class="word-filter">
-              <span class="filter-name">联系电话:</span>
+              <span class="filter-name">姓名:</span>
               <el-input class="input-filter" size="small"></el-input>
             </div>
           </div>
@@ -39,9 +30,9 @@
 
             <el-table-column type="index" label="序号" width="50"></el-table-column>
 
-            <el-table-column prop="name" label="所属房屋">
+            <el-table-column prop="name" label="位置" align="center">
               <template slot-scope="scope">
-                <span class="serial-num">{{scope.row.name}}</span>
+                <el-button style="padding:0px;" type="text" @click="queryIdetity">{{scope.row.name}}</el-button>
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start">
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
@@ -54,55 +45,33 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="houseRelative" label="类型"></el-table-column>
+            <el-table-column prop="tjsj" label="时间" align="center"></el-table-column>
 
-            <el-table-column prop="carNum" label="车牌号"></el-table-column>
-
-            <el-table-column prop="createDate" label="最近一次访问"></el-table-column>
-
-            <el-table-column prop="img" label="最近抓拍图片">
-              <template slot-scope="scope">
+            <el-table-column prop="zp" label="照片" align="center">
+              <template slot-scope="{row}">
                 <img
-                  class="capture-img"
-                  @mouseout="imgVisible=false"
-                  @mouseover="imgVisible=true,bigImg=scope.row.img"
-                  :src="scope.row.img"
+                  @mouseover="imgVisible = true,bigImg = row.zp"
+                  @mouseout="imgVisible = false"
+                  :src="row.zp"
+                  width="30px"
                   alt
                 />
-              </template>
-            </el-table-column>
-
-            <el-table-column prop="type" label="状态">
-              <template slot-scope="scope">
-                <el-tag
-                  size="small"
-                  style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
-                  :type="scope.row.type === 1 ? 'success' : 'danger'"
-                  @click="editType(scope.row)"
-                >{{ scope.row.type === 1 ? "正常" : "异常" }}</el-tag>
               </template>
             </el-table-column>
           </el-table>
         </div>
 
         <el-pagination style="margin-top:10px;" background layout="prev, pager, next" :total="2"></el-pagination>
-
-        <!-- <div :class="rowSpan.row1===4 ? menuControl1 : menuControl2" @click="menuVisible">
-          <p class="close-menu">
-            <i v-if="rowSpan.row1===4" class="iconfont icon-left icon-class"></i>
-            <i v-else class="iconfont icon-zuo icon-class"></i>
-          </p>
-        </div>-->
       </el-col>
     </el-row>
     <el-dialog title="提示" :visible.sync="dialogCreate" width="30%" :before-close="handleClose">
-      <span>这是车辆管理新增</span>
+      <span>这是重点人员新增</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogCreate = false">取 消</el-button>
         <el-button type="primary" @click="dialogCreate = false">确 定</el-button>
       </span>
     </el-dialog>
-    <ImageMagni :centerDialogVisible="imgVisible" bigTitle="抓拍图片" :bigImg="bigImg" />
+    <BigImg :centerDialogVisible="imgVisible" bigTitle="抓拍图片" :bigImg="bigImg" />
   </div>
 </template>
 
@@ -112,55 +81,36 @@ import { Getter, Action, Mutation } from "vuex-class";
 import mixin from "@/config/minxins";
 
 const ActionHeader = () => import("@/components/ActionHeader.vue");
-const ImageMagni = () => import("@/components/BigImg/index.vue");
 const DataTree = () => import("@/components/DataTree.vue");
+const BigImg = () => import("@/components/BigImg/index.vue");
 
 @Component({
   mixins: [mixin],
   components: {
     ActionHeader,
-    ImageMagni,
-    DataTree
+    DataTree,
+    BigImg
   }
 })
 export default class CardManage extends Vue {
   private cardList: Array<Object> = [
     {
-      name: "1-1-105",
-      houseRelative: "业主",
-      carNum: "川1256489",
-      createDate: "2019-9-26",
-      img: require("../../assets/car1.png"),
-      type: 1,
-      showMenu: false
-    },
-    {
-      name: "1-1-105",
-      houseRelative: "业主",
-      carNum: "川1256489",
-      createDate: "2019-9-26",
-      img: require("../../assets/car1.png"),
-      type: 1,
-      showMenu: false
-    },
-    {
-      name: "1-1-105",
-      houseRelative: "业主",
-      carNum: "川1256489",
-      createDate: "2019-9-26",
-      img: require("../../assets/car1.png"),
-      type: 2,
-      showMenu: false
+      name: "张三",
+      zb: "男",
+      zp:
+        "http://192.168.3.19:8089/gcxuYFkPVzC2GLb2JGppLR/ea74acb14304ec41369f44ed18219dc.jpg",
+      xq: "详情",
+      tjsj: "2019/8/21"
     }
   ];
-
+  private imgVisible: Boolean = false;
+  bigImg: String = "";
   private rowSpan: any = {
     row1: 4,
     row2: 20
   };
 
-  private imgVisible: Boolean = false; // 控制放大图片的visible
-  private bigImg: String = ""; // 保存放大图片的地址
+  private dialogLibrary: any = false;
 
   private form: Object = {
     name: "",
@@ -191,6 +141,9 @@ export default class CardManage extends Vue {
     /**@description hover leave tab 行 */
     row.showMenu = false;
   }
+  queryIdetity() {
+    this.dialogLibrary = true;
+  }
 }
 </script>
 
@@ -201,7 +154,9 @@ export default class CardManage extends Vue {
     flex: 1;
   }
 }
-
+td {
+  padding: 6px 0px;
+}
 .demo-block {
   border: 1px solid #ebebeb;
   border-radius: 3px;
@@ -214,7 +169,7 @@ export default class CardManage extends Vue {
 .fun-btn {
   position: absolute;
   left: -64px;
-  top: 30%;
+  top: 12px;
   .iconfont {
     font-size: 19px;
     color: #8091a5;
@@ -224,7 +179,6 @@ export default class CardManage extends Vue {
 .table-col {
   position: relative;
 }
-
 .close-menu {
   width: 10px;
   height: 48px;
@@ -234,10 +188,16 @@ export default class CardManage extends Vue {
   position: relative;
 }
 
+// .icon-class {
+//   font-size: 12px;
+//   color: #e7eaeb;
+//   cursor: pointer;
+//   line-height: 48px;
+//   position: absolute;
+//   left: -1px;
+// }
+
 .capture-img {
-  width: 30px;
-}
-.inputFilter {
-  width: 198px !important;
+  width: 60px;
 }
 </style>

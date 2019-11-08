@@ -36,7 +36,8 @@
 
             <el-table-column prop="name" label="标题" align="center">
               <template slot-scope="scope">
-                <el-button style="padding:0px;" type="text" @click="queryIdetity">{{scope.row.name}}</el-button>
+                <span>{{scope.row.name}}</span>
+                <!-- <el-button style="padding:0px;" type="text" @click="queryIdetity">{{scope.row.name}}</el-button> -->
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start">
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
@@ -52,6 +53,8 @@
             <el-table-column prop="xb" align="center" label="发布内容"></el-table-column>
 
             <el-table-column prop="xq" label="发布对象" align="center"></el-table-column>
+
+            <el-table-column prop="xq" label="创建时间" align="center"></el-table-column>
 
             <el-table-column prop="tjsj" label="发布时间" align="center"></el-table-column>
 
