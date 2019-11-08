@@ -2,25 +2,34 @@
   <div class="app-container">
     <el-row>
       <el-col :span="24">
-        <action-header :total="1">
+        <action-header :dialogCreate.sync="dialogCreate" :total="1">
           <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item>导入</el-dropdown-item>
             <el-dropdown-item>导出</el-dropdown-item>
           </el-dropdown-menu>
           <div slot="houseNum">
-            <!-- <span class="word-filter">
-              发布对象:
-              <el-input class="word-filter" size="small"></el-input>
-            </span>-->
             <div class="word-filter">
-              <span class="filter-name">发布对象:</span>
-              <el-input class="input-filter" size="small"></el-input>
+              <span class="filter-name">时间段:</span>
+              <el-date-picker
+                class="input-filter"
+                size="small"
+                v-model="TimeRange"
+                type="datetimerange"
+                range-separator="-"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+              ></el-date-picker>
             </div>
           </div>
         </action-header>
       </el-col>
     </el-row>
     <el-row :gutter="10">
-      <el-col :span="24" class="table-col">
+      <el-col :span="rowSpan.row1">
+        <data-tree />
+      </el-col>
+
+      <el-col :span="rowSpan.row2" class="table-col">
         <div class="rightContent">
           <el-table
             :data="cardList"
@@ -34,10 +43,9 @@
 
             <el-table-column type="index" label="序号" width="50"></el-table-column>
 
-            <el-table-column prop="name" label="标题" align="center">
+            <el-table-column class="serial-num" prop="name" label="编号">
               <template slot-scope="scope">
                 <span>{{scope.row.name}}</span>
-                <!-- <el-button style="padding:0px;" type="text" @click="queryIdetity">{{scope.row.name}}</el-button> -->
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start">
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
@@ -50,30 +58,44 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="xb" align="center" label="发布内容"></el-table-column>
+            <el-table-column prop="houseRelative" label="关联房屋"></el-table-column>
 
-            <el-table-column prop="xq" label="发布对象" align="center"></el-table-column>
+            <el-table-column prop="createDate" label="创建"></el-table-column>
 
-            <el-table-column prop="xq" label="创建时间" align="center"></el-table-column>
-
-            <el-table-column prop="tjsj" label="发布时间" align="center"></el-table-column>
-
-            <el-table-column prop="zp" label="到达情况" align="center"></el-table-column>
-
+            <el-table-column prop="createDate" label="最近刷卡时间"></el-table-column>
             <el-table-column prop="type" label="状态">
               <template slot-scope="scope">
                 <el-tag
                   size="small"
                   style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
                   :type="scope.row.type === 1 ? 'success' : 'danger'"
-                >{{ scope.row.type === 1 ? "成功" : "失败" }}</el-tag>
+                  @click="editType(scope.row)"
+                >{{ scope.row.type === 1 ? "正常" : "异常" }}</el-tag>
               </template>
             </el-table-column>
+
+            <el-table-column prop="createDate" label="日平均刷卡次数"></el-table-column>
+
+            <el-table-column prop="createDate" label="周平均刷卡次数"></el-table-column>
           </el-table>
+          <el-pagination style="margin-top:10px;" background layout="prev, pager, next" :total="2"></el-pagination>
         </div>
-        <el-pagination style="margin-top:10px;" background layout="prev, pager, next" :total="2"></el-pagination>
+        <div :class="rowSpan.row1===4 ? menuControl1 : menuControl2" @click="menuVisible">
+          <p class="close-menu">
+            <i v-if="rowSpan.row1===4" class="iconfont icon-left icon-class"></i>
+            <i v-else class="iconfont icon-zuo icon-class"></i>
+          </p>
+        </div>
       </el-col>
     </el-row>
+    <el-dialog title="提示" :visible.sync="dialogCreate" width="30%" :before-close="handleClose">
+      <span>这是门禁卡管理新增</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogCreate = false">取 消</el-button>
+        <el-button type="primary" @click="dialogCreate = false">确 定</el-button>
+      </span>
+    </el-dialog>
+    <!-- <dialog-form :dialogCreate.sync="dialogCreate" /> -->
   </div>
 </template>
 
@@ -92,24 +114,45 @@ const DataTree = () => import("@/components/DataTree.vue");
     DataTree
   }
 })
-export default class InformIssue extends Vue {
+export default class CardManage extends Vue {
   private cardList: Array<Object> = [
     {
-      name: "XXXXX",
-      zb: "男",
-      xb: "--",
-      zp: "--",
-      xq: "张三",
-      tjsj: "2019/8/21",
-      type: 1
+      name: "张三",
+      houseRelative: "10",
+      createDate: "2019-9-26",
+      type: 2,
+      showMenu: false
+    },
+    {
+      name: "张三",
+      houseRelative: "10",
+      createDate: "2019-9-26",
+      type: 1,
+      showMenu: false
+    },
+    {
+      name: "张三",
+      houseRelative: "10",
+      createDate: "2019-9-26",
+      type: 1,
+      showMenu: false
+    },
+    {
+      name: "张三",
+      houseRelative: "10",
+      createDate: "2019-9-26",
+      type: 1,
+      showMenu: false
     }
   ];
+  TimeRange: Array<string> = [];
   private rowSpan: any = {
     row1: 4,
     row2: 20
   };
 
-  private dialogLibrary: any = false;
+  private menuControl1: String = "menu-control";
+  private menuControl2: String = "menu-visible";
 
   private form: Object = {
     name: "",
@@ -124,6 +167,7 @@ export default class InformIssue extends Vue {
 
   private dialogFormVisible: Boolean = false;
   private formLabelWidth: String = "120px";
+  private dialogCreate: Boolean = false; // 新增弹出表单
 
   editType(item) {
     /**@description 修改状态 */
@@ -140,8 +184,19 @@ export default class InformIssue extends Vue {
     /**@description hover leave tab 行 */
     row.showMenu = false;
   }
-  queryIdetity() {
-    this.dialogLibrary = true;
+  menuVisible() {
+    /**@description 控制楼栋 */
+    if (this.rowSpan.row1 === 4) {
+      this.rowSpan = {
+        row1: 0,
+        row2: 24
+      };
+    } else {
+      this.rowSpan = {
+        row1: 4,
+        row2: 20
+      };
+    }
   }
 }
 </script>
@@ -153,9 +208,7 @@ export default class InformIssue extends Vue {
     flex: 1;
   }
 }
-td {
-  padding: 6px 0px;
-}
+
 .demo-block {
   border: 1px solid #ebebeb;
   border-radius: 3px;
@@ -178,6 +231,19 @@ td {
 .table-col {
   position: relative;
 }
+
+.menu-control {
+  position: absolute;
+  top: 32vh;
+  left: -5px;
+}
+
+.menu-visible {
+  position: absolute;
+  top: 32vh;
+  left: -15px;
+}
+
 .close-menu {
   width: 10px;
   height: 48px;
@@ -187,16 +253,12 @@ td {
   position: relative;
 }
 
-// .icon-class {
-//   font-size: 12px;
-//   color: #e7eaeb;
-//   cursor: pointer;
-//   line-height: 48px;
-//   position: absolute;
-//   left: -1px;
-// }
-
-.capture-img {
-  width: 60px;
+.icon-class {
+  font-size: 12px;
+  color: #e7eaeb;
+  cursor: pointer;
+  line-height: 48px;
+  position: absolute;
+  left: -1px;
 }
 </style>

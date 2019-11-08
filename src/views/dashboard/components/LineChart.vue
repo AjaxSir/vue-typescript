@@ -66,14 +66,7 @@ export default {
 
   mounted() {
     this.initChart();
-    if (this.autoResize) {
-      this.__resizeHanlder = debounce(() => {
-        if (this.chart) {
-          this.chart.resize();
-        }
-      }, 100);
-      window.addEventListener("resize", this.__resizeHanlder);
-    }
+    this.chartResize();
   },
 
   methods: {
@@ -174,6 +167,17 @@ export default {
       this.chartData.label = [];
       for (var i = 0; i < 24; i++) {
         this.chartData.label.push(`${i} 时`);
+      }
+    },
+
+    chartResize() {
+      if (this.autoResize) {
+        this.__resizeHanlder = debounce(() => {
+          if (this.chart) {
+            this.chart.resize();
+          }
+        }, 100);
+        window.addEventListener("resize", this.__resizeHanlder);
       }
     }
   }
