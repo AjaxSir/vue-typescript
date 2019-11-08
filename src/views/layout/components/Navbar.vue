@@ -6,7 +6,9 @@
         <p class="header-title">一石智能识别门禁系统</p>
       </div>
       <div class="header-left header-right">
-        <svg-icon icon-class="username" class-name="admin-svg" />
+        <div>
+          <i class="iconfont icon-icon-user"></i>
+        </div>
         <p>admin</p>
         <p class="logout" @click="logout">退出</p>
       </div>
@@ -47,8 +49,8 @@ p {
   margin: 0;
   padding: 0;
 }
-.header{
-  box-shadow:  0px 0px 15px lightgrey;;
+.header {
+  box-shadow: 0px 0px 15px lightgrey;
 }
 
 .yishi-header {
@@ -78,9 +80,9 @@ p {
 .header-right {
   margin-top: 40px;
 }
-.admin-svg {
+.iconfont {
   padding: 5px;
-  font-size: 30px;
+  font-size: 20px;
   color: #fff;
   background: rgb(235, 137, 27);
   border-radius: 50%;

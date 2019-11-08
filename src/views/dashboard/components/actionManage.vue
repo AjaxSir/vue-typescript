@@ -48,7 +48,7 @@ p {
 .fun-data {
   display: flex;
   flex-wrap: wrap;
-  padding: 17px 10px 5px 10px;
+  padding: 46px 10px 5px 10px;
 }
 
 .data-statistics {

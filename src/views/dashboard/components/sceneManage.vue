@@ -52,9 +52,10 @@ $la: #26c6da;
 $lv: #66bb6a;
 $block: inline-block;
 .scene {
-  height: 396px;
+  height: 290px;
   border: solid 1px #e6e6e6;
   background: #fff;
+  margin-bottom: 20px;
 }
 .scene-header {
   padding: 10px 10px 2px 10px;
@@ -70,18 +71,17 @@ $block: inline-block;
 }
 
 .scene-content {
-  height: 280px;
   padding: 10px 10px 2px 10px;
 }
 .scene-image {
   width: 100%;
-  height: 210px;
-  margin-bottom: 20px;
+  height: 145px;
+  margin-bottom: 10px;
 }
 .scene-num {
   font-size: 15px;
   color: #474758;
-  margin-bottom: 8px;
-  line-height: 26px;
+  margin-bottom: 4px;
+  // line-height: 26px;
 }
 </style>
