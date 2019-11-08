@@ -122,15 +122,13 @@ export default class CardManage extends Vue {
       showMenu: false
     }
   ];
-  status: stripe = "all";
+  status: string = "all";
   private rowSpan: any = {
     row1: 4,
     row2: 20
   };
-
   private menuControl1: String = "menu-control";
   private menuControl2: String = "menu-visible";
-
   private form: Object = {
     name: "",
     region: "",

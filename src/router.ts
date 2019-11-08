@@ -10,6 +10,7 @@ export const constantRouterMap = [{
   redirect: 'dashboard',
   hidden: true,
   component: Layout,
+  alwaysShow: false,
   children: [{
     path: 'dashboard',
     component: _import_('dashboard/index'),
@@ -36,7 +37,8 @@ export const constantRouterMap = [{
     component: _import_('houseManage/houseChart/index'),
     meta: {
       title: '房屋管理-楼控视图',
-      icon: 'monitor'
+      icon: 'icon-loudong',
+      bg_color: '#e17f5a'
     }
   }, {
     name: 'list',
@@ -44,7 +46,8 @@ export const constantRouterMap = [{
     component: _import_('houseManage/houseList/index'),
     meta: {
       title: '房屋管理-列表视图',
-      icon: 'monitor'
+      icon: 'icon-fangwufangchan',
+      bg_color: '#2c7fec'
     }
   }, {
     name: 'access_card',
@@ -52,7 +55,8 @@ export const constantRouterMap = [{
     component: _import_('cardManage/index'),
     meta: {
       title: '门禁卡管理',
-      icon: 'monitor'
+      icon: 'icon-qia',
+      bg_color: '#976041'
     }
   }, {
     name: 'passageway',
@@ -60,7 +64,8 @@ export const constantRouterMap = [{
     component: _import_('passagewayManage/index'),
     meta: {
       title: '出入口管理',
-      icon: 'monitor'
+      icon: 'icon-churukou',
+      bg_color: '#bec037'
     }
   },]
 }, {
@@ -80,7 +85,8 @@ export const constantRouterMap = [{
     component: _import_('ownerManage/index'),
     meta: {
       title: '人员管理 - 住户管理',
-      icon: 'monitor'
+      icon: 'icon-yonghu',
+      bg_color: '#83c9a6'
     }
   }, {
     name: 'property',
@@ -88,7 +94,8 @@ export const constantRouterMap = [{
     component: _import_('propertyManage/index'),
     meta: {
       title: '人员管理 - 物业管理',
-      icon: 'monitor'
+      icon: 'icon-wuyeguanli',
+      bg_color: '#6197d4'
     }
   },
   {
@@ -97,7 +104,8 @@ export const constantRouterMap = [{
     component: _import_('vistorManage/index'),
     meta: {
       title: '人员管理 - 访客管理',
-      icon: 'monitor'
+      icon: 'icon-fangkeguanli',
+      bg_color: '#796273'
     }
   }, {
     name: 'management',
@@ -105,7 +113,8 @@ export const constantRouterMap = [{
     component: _import_('personPass/index'),
     meta: {
       title: '人员通行管理',
-      icon: 'monitor'
+      icon: 'icon-renyuantongji1',
+      bg_color: '#723f42'
     }
   }, {
     name: 'stranger',
@@ -113,7 +122,8 @@ export const constantRouterMap = [{
     component: _import_('importantPeople/index'),
     meta: {
       title: '陌生人管理',
-      icon: 'monitor'
+      icon: 'icon-icon-',
+      bg_color: '#b63a9b'
     }
   }]
 }, {
@@ -133,7 +143,8 @@ export const constantRouterMap = [{
     component: _import_('carManage/index'),
     meta: {
       title: '车辆管理 - 车辆名单',
-      icon: 'monitor'
+      icon: 'icon-cheliangpaiban',
+      bg_color: '#68e0c6'
     }
   }, {
     name: 'carPass',
@@ -141,7 +152,8 @@ export const constantRouterMap = [{
     component: _import_('carPass/index'),
     meta: {
       title: '车辆管理 - 通行记录',
-      icon: 'monitor'
+      icon: 'icon-cheliangdangan',
+      bg_color: '#57d87e'
     }
   }, {
     name: 'carport',
@@ -149,7 +161,8 @@ export const constantRouterMap = [{
     component: _import_('carportManage/index'),
     meta: {
       title: '车辆管理 - 访客车辆',
-      icon: 'monitor'
+      icon: 'icon-renxiangcheliangshouquan',
+      bg_color: '#60c92f'
     }
   },
     //  {
@@ -179,7 +192,8 @@ export const constantRouterMap = [{
     component: _import_('deviceManage/index'),
     meta: {
       title: '设备管理',
-      icon: 'monitor'
+      icon: 'icon-shebei',
+      bg_color: '#231d75'
     }
   },
     // {
