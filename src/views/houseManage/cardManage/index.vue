@@ -6,7 +6,6 @@
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>导入</el-dropdown-item>
             <el-dropdown-item>导出</el-dropdown-item>
-            <el-dropdown-item>统计信息</el-dropdown-item>
           </el-dropdown-menu>
           <div slot="houseNum">
             <div class="word-filter">
@@ -44,7 +43,7 @@
 
             <el-table-column type="index" label="序号" width="50"></el-table-column>
 
-            <el-table-column class="serial-num" prop="name" label="所属楼栋">
+            <el-table-column class="serial-num" prop="name" label="编号">
               <template slot-scope="scope">
                 <span>{{scope.row.name}}</span>
                 <div class="fun-btn">
@@ -59,18 +58,11 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="houseRelative" label="所属单元"></el-table-column>
+            <el-table-column prop="houseRelative" label="关联房屋"></el-table-column>
 
-            <el-table-column prop="createDate" label="房屋编号"></el-table-column>
+            <el-table-column prop="createDate" label="创建"></el-table-column>
 
-            <el-table-column prop="num" label="注册人数"></el-table-column>
-
-            <el-table-column prop="num" label="累计访客次数"></el-table-column>
-
-            <el-table-column prop="num" label="累计进出次数"></el-table-column>
-
-            <el-table-column prop="num" label="昨日进出次数"></el-table-column>
-
+            <el-table-column prop="createDate" label="最近刷卡时间"></el-table-column>
             <el-table-column prop="type" label="状态">
               <template slot-scope="scope">
                 <el-tag
@@ -82,7 +74,9 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="num" label="备注"></el-table-column>
+            <el-table-column prop="createDate" label="日平均刷卡次数"></el-table-column>
+
+            <el-table-column prop="createDate" label="周平均刷卡次数"></el-table-column>
           </el-table>
           <el-pagination style="margin-top:10px;" background layout="prev, pager, next" :total="2"></el-pagination>
         </div>
@@ -95,7 +89,7 @@
       </el-col>
     </el-row>
     <el-dialog title="提示" :visible.sync="dialogCreate" width="30%" :before-close="handleClose">
-      <span>这是房屋管理-列表视图的新增</span>
+      <span>这是门禁卡管理新增</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogCreate = false">取 消</el-button>
         <el-button type="primary" @click="dialogCreate = false">确 定</el-button>
@@ -125,34 +119,30 @@ const DialogForm = () => import("./components/dialogForm.vue");
 export default class CardManage extends Vue {
   private cardList: Array<Object> = [
     {
-      name: "西区-1栋",
-      houseRelative: "1-1",
-      createDate: "1-1-201",
-      num: "--",
+      name: "张三",
+      houseRelative: "10",
+      createDate: "2019-9-26",
       type: 2,
       showMenu: false
     },
     {
-      name: "西区-1栋",
-      houseRelative: "1-1",
-      createDate: "1-1-201",
-      num: "--",
+      name: "张三",
+      houseRelative: "10",
+      createDate: "2019-9-26",
       type: 1,
       showMenu: false
     },
     {
-      name: "西区-1栋",
-      houseRelative: "1-1",
-      createDate: "1-1-201",
-      num: "--",
+      name: "张三",
+      houseRelative: "10",
+      createDate: "2019-9-26",
       type: 1,
       showMenu: false
     },
     {
-      name: "西区-1栋",
-      houseRelative: "1-1",
-      createDate: "1-1-201",
-      num: "--",
+      name: "张三",
+      houseRelative: "10",
+      createDate: "2019-9-26",
       type: 1,
       showMenu: false
     }
@@ -233,7 +223,7 @@ export default class CardManage extends Vue {
 .fun-btn {
   position: absolute;
   left: -64px;
-  top: 8px;
+  top: 12px;
   .iconfont {
     font-size: 19px;
     color: #8091a5;

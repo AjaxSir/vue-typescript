@@ -2,18 +2,22 @@
   <div class="app-container">
     <el-row>
       <el-col :span="24">
-        <action-header :dialogCreate.sync="dialogCreate" :total="1">
+        <action-header :btnStatus="false" :total="1">
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>导入</el-dropdown-item>
-            <el-dropdown-item>导出</el-dropdown-item>
-            <el-dropdown-item>统计信息</el-dropdown-item>
+            <el-dropdown-item>进出次数排序</el-dropdown-item>
+            <el-dropdown-item>滞留时间排序</el-dropdown-item>
+            <el-dropdown-item>统计查询</el-dropdown-item>
           </el-dropdown-menu>
           <div slot="houseNum">
             <div class="word-filter">
+              <span class="filter-name">车牌号:</span>
+              <el-input class="input-filter" size="small"></el-input>
+            </div>
+            <div class="word-filter">
               <span class="filter-name">时间段:</span>
               <el-date-picker
-                class="input-filter"
                 size="small"
+                class="input-filter"
                 v-model="TimeRange"
                 type="datetimerange"
                 range-separator="-"
@@ -44,9 +48,9 @@
 
             <el-table-column type="index" label="序号" width="50"></el-table-column>
 
-            <el-table-column class="serial-num" prop="name" label="所属楼栋">
+            <el-table-column prop="name" label="车牌号">
               <template slot-scope="scope">
-                <span>{{scope.row.name}}</span>
+                <span class="serial-num">{{scope.row.carNum}}</span>
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start">
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
@@ -59,33 +63,41 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="houseRelative" label="所属单元"></el-table-column>
+            <el-table-column prop="car" label="车辆品牌"></el-table-column>
 
-            <el-table-column prop="createDate" label="房屋编号"></el-table-column>
-
-            <el-table-column prop="num" label="注册人数"></el-table-column>
-
-            <el-table-column prop="num" label="累计访客次数"></el-table-column>
-
-            <el-table-column prop="num" label="累计进出次数"></el-table-column>
-
-            <el-table-column prop="num" label="昨日进出次数"></el-table-column>
-
-            <el-table-column prop="type" label="状态">
+            <el-table-column prop="type" label="是否校内">
               <template slot-scope="scope">
                 <el-tag
                   size="small"
                   style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
                   :type="scope.row.type === 1 ? 'success' : 'danger'"
                   @click="editType(scope.row)"
-                >{{ scope.row.type === 1 ? "正常" : "异常" }}</el-tag>
+                >{{ scope.row.type === 1 ? "是" : "否" }}</el-tag>
               </template>
             </el-table-column>
 
-            <el-table-column prop="num" label="备注"></el-table-column>
+            <el-table-column prop="car" label="车辆颜色"></el-table-column>
+
+            <el-table-column prop="car" label="车主信息"></el-table-column>
+
+            <el-table-column prop="createDate" label="抓拍时间"></el-table-column>
+
+            <el-table-column prop="img" label="最近抓拍图片">
+              <template slot-scope="scope">
+                <img
+                  class="capture-img"
+                  @mouseout="imgVisible=false"
+                  @mouseover="imgVisible=true,bigImg=scope.row.img"
+                  :src="scope.row.img"
+                  alt
+                />
+              </template>
+            </el-table-column>
           </el-table>
-          <el-pagination style="margin-top:10px;" background layout="prev, pager, next" :total="2"></el-pagination>
         </div>
+
+        <el-pagination style="margin-top:10px;" background layout="prev, pager, next" :total="2"></el-pagination>
+
         <div :class="rowSpan.row1===4 ? menuControl1 : menuControl2" @click="menuVisible">
           <p class="close-menu">
             <i v-if="rowSpan.row1===4" class="iconfont icon-left icon-class"></i>
@@ -94,14 +106,8 @@
         </div>
       </el-col>
     </el-row>
-    <el-dialog title="提示" :visible.sync="dialogCreate" width="30%" :before-close="handleClose">
-      <span>这是房屋管理-列表视图的新增</span>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogCreate = false">取 消</el-button>
-        <el-button type="primary" @click="dialogCreate = false">确 定</el-button>
-      </span>
-    </el-dialog>
-    <!-- <dialog-form :dialogCreate.sync="dialogCreate" /> -->
+
+    <ImageMagni :centerDialogVisible="imgVisible" bigTitle="抓拍图片" :bigImg="bigImg" />
   </div>
 </template>
 
@@ -111,60 +117,63 @@ import { Getter, Action, Mutation } from "vuex-class";
 import mixin from "@/config/minxins";
 
 const ActionHeader = () => import("@/components/ActionHeader.vue");
+const ImageMagni = () => import("@/components/BigImg/index.vue");
 const DataTree = () => import("@/components/DataTree.vue");
-const DialogForm = () => import("./components/dialogForm.vue");
 
 @Component({
   mixins: [mixin],
   components: {
     ActionHeader,
-    DataTree,
-    DialogForm
+    ImageMagni,
+    DataTree
   }
 })
 export default class CardManage extends Vue {
   private cardList: Array<Object> = [
     {
-      name: "西区-1栋",
-      houseRelative: "1-1",
-      createDate: "1-1-201",
-      num: "--",
+      name: "1-1-105",
+      houseRelative: "业主",
+      carNum: "川1256489",
+      createDate: "2019-9-26",
+      img: require("../../assets/car.png"),
+      type: 1,
+      showMenu: false,
+      car: "--"
+    },
+    {
+      name: "1-1-105",
+      houseRelative: "业主",
+      carNum: "川1256489",
+      createDate: "2019-9-26",
+      img: require("../../assets/car.png"),
+      type: 1,
+      showMenu: false,
+      car: "--"
+    },
+    {
+      name: "1-1-105",
+      houseRelative: "业主",
+      carNum: "川1256489",
+      createDate: "2019-9-26",
+      img: require("../../assets/car.png"),
       type: 2,
-      showMenu: false
-    },
-    {
-      name: "西区-1栋",
-      houseRelative: "1-1",
-      createDate: "1-1-201",
-      num: "--",
-      type: 1,
-      showMenu: false
-    },
-    {
-      name: "西区-1栋",
-      houseRelative: "1-1",
-      createDate: "1-1-201",
-      num: "--",
-      type: 1,
-      showMenu: false
-    },
-    {
-      name: "西区-1栋",
-      houseRelative: "1-1",
-      createDate: "1-1-201",
-      num: "--",
-      type: 1,
-      showMenu: false
+      showMenu: false,
+      car: "--"
     }
   ];
-  TimeRange: Array<string> = [];
+
   private rowSpan: any = {
     row1: 4,
     row2: 20
   };
 
+  private TimeRange: any = "";
+
   private menuControl1: String = "menu-control";
   private menuControl2: String = "menu-visible";
+
+  private imgVisible: Boolean = false; // 控制放大图片的visible
+  private bigImg: String = ""; // 保存放大图片的地址
 
   private form: Object = {
     name: "",
@@ -179,7 +188,6 @@ export default class CardManage extends Vue {
 
   private dialogFormVisible: Boolean = false;
   private formLabelWidth: String = "120px";
-  private dialogCreate: Boolean = false; // 新增弹出表单
 
   editType(item) {
     /**@description 修改状态 */
@@ -196,6 +204,7 @@ export default class CardManage extends Vue {
     /**@description hover leave tab 行 */
     row.showMenu = false;
   }
+
   menuVisible() {
     /**@description 控制楼栋 */
     if (this.rowSpan.row1 === 4) {
@@ -233,7 +242,7 @@ export default class CardManage extends Vue {
 .fun-btn {
   position: absolute;
   left: -64px;
-  top: 8px;
+  top: 28%;
   .iconfont {
     font-size: 19px;
     color: #8091a5;
@@ -272,5 +281,9 @@ export default class CardManage extends Vue {
   line-height: 48px;
   position: absolute;
   left: -1px;
+}
+
+.capture-img {
+  width: 60px;
 }
 </style>

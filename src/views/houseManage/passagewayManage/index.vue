@@ -4,7 +4,7 @@
       <el-col :span="24">
         <action-header :total="1">
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>导出</el-dropdown-item>
+            <el-dropdown-item>统计信息</el-dropdown-item>
           </el-dropdown-menu>
           <div slot="houseNum">
             <!-- <span class="word-filter">
@@ -34,11 +34,10 @@
 
             <el-table-column type="index" label="序号" width="50"></el-table-column>
 
-            <el-table-column prop="name" label="角色" align="center">
+            <el-table-column prop="name" label="出入口名称" align="center">
               <template slot-scope="scope">
                 <span>{{scope.row.name}}</span>
-                <!-- <el-button style="padding:0px;" type="text" @click="queryIdetity">{{scope.row.name}}</el-button> -->
-                <!-- <div class="fun-btn">
+                <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start">
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
                     <el-dropdown-menu slot="dropdown">
@@ -46,22 +45,13 @@
                       <el-dropdown-item>删除</el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
-                </div>-->
+                </div>
               </template>
             </el-table-column>
 
-            <el-table-column prop="xb" align="center" label="权限"></el-table-column>
+            <el-table-column prop="xb" align="center" label="累计进入人数"></el-table-column>
 
-            <el-table-column prop="xq" label="备注" align="center"></el-table-column>
-
-            <el-table-column prop="tjsj" label="创建时间" align="center"></el-table-column>
-
-            <el-table-column prop align="center" label="操作" width="160px">
-              <template slot-scope="scope">
-                <el-button type="primary" size="small" plain>修改</el-button>
-                <el-button type="success" size="small" plain>删除</el-button>
-              </template>
-            </el-table-column>
+            <el-table-column prop="xq" label="累计出人数" align="center"></el-table-column>
           </el-table>
         </div>
         <el-pagination style="margin-top:10px;" background layout="prev, pager, next" :total="2"></el-pagination>
@@ -88,13 +78,9 @@ const DataTree = () => import("@/components/DataTree.vue");
 export default class InformIssue extends Vue {
   private cardList: Array<Object> = [
     {
-      name: "XXXXX",
-      zb: "男",
-      xb: "--",
-      zp: "--",
-      xq: "张三",
-      tjsj: "2019/8/21",
-      type: 1
+      name: "东大门",
+      xq: "1000",
+      xb: "1000000",
     }
   ];
   private rowSpan: any = {

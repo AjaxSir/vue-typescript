@@ -25,7 +25,7 @@
             </div>
           </el-tab-pane>
           <el-tab-pane label="图表" name="图表">
-            <line-chart :chartData="chartData"></line-chart>
+            <line-chart ref="chart" :chartData="chartData"></line-chart>
           </el-tab-pane>
         </el-tabs>
         <!-- <pie-chart :chartData="chartData"></pie-chart> -->
@@ -155,8 +155,10 @@ export default class openDoor extends Vue {
     }
   }
 
-  handleClick(tab, event) {
-    console.log(tab, event);
+  handleClick(tab) {
+    // if (tab.label === "图表") {
+    //   this.$refs.chart.chartResize();
+    // }
   }
 }
 </script>
