@@ -135,7 +135,7 @@ export default class CardManage extends Vue {
       houseRelative: "业主",
       carNum: "川1256489",
       createDate: "2019-9-26",
-      img: require("../../assets/car.png"),
+      img: require("@/assets/car.png"),
       type: 1,
       showMenu: false,
       car: "--"
@@ -145,7 +145,7 @@ export default class CardManage extends Vue {
       houseRelative: "业主",
       carNum: "川1256489",
       createDate: "2019-9-26",
-      img: require("../../assets/car.png"),
+      img: require("@/assets/car.png"),
       type: 1,
       showMenu: false,
       car: "--"
@@ -155,7 +155,7 @@ export default class CardManage extends Vue {
       houseRelative: "业主",
       carNum: "川1256489",
       createDate: "2019-9-26",
-      img: require("../../assets/car.png"),
+      img: require("@/assets/car.png"),
       type: 2,
       showMenu: false,
       car: "--"
