@@ -7,7 +7,7 @@
 
 <script lang='ts'>
 import { Component, Prop, Vue, Mixins } from "vue-property-decorator";
-@Component()
+@Component
 export default class BigImg extends Vue{
 @Prop({ default: '图片' }) bigTitle: string;
 @Prop({ default: false }) centerDialogVisible: Boolean;
