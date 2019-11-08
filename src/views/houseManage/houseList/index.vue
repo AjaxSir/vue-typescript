@@ -112,14 +112,12 @@ import mixin from "@/config/minxins";
 
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 const DataTree = () => import("@/components/DataTree.vue");
-const DialogForm = () => import("./components/dialogForm.vue");
 
 @Component({
   mixins: [mixin],
   components: {
     ActionHeader,
-    DataTree,
-    DialogForm
+    DataTree
   }
 })
 export default class CardManage extends Vue {

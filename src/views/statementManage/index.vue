@@ -1,199 +1,136 @@
 <template>
   <div class="app-container">
-    <el-row>
-      <el-col :span="24">
-        <action-header :total="1">
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>导出</el-dropdown-item>
-          </el-dropdown-menu>
-          <div slot="houseNum">
-            <!-- <span class="word-filter">
-              发布对象:
-              <el-input class="word-filter" size="small"></el-input>
-            </span>-->
-            <div class="word-filter">
-              <span class="filter-name">发布对象:</span>
-              <el-input class="input-filter" size="small"></el-input>
-            </div>
-          </div>
-        </action-header>
-      </el-col>
-    </el-row>
-    <el-row :gutter="10">
-      <el-col :span="24" class="table-col">
-        <div class="rightContent">
-          <el-table
-            :data="cardList"
-            stripe
-            class="demo-block"
-            highlight-current-row
-            @cell-mouse-enter="enterRowChange"
-            @cell-mouse-leave="leaveRowChange"
-          >
-            <el-table-column type="selection" width="50"></el-table-column>
-
-            <el-table-column type="index" label="序号" width="50"></el-table-column>
-
-            <el-table-column prop="name" label="标题" align="center">
-              <template slot-scope="scope">
-                <el-button style="padding:0px;" type="text" @click="queryIdetity">{{scope.row.name}}</el-button>
-                <div class="fun-btn">
-                  <el-dropdown trigger="click" placement="bottom-start">
-                    <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
-                    <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item>修改</el-dropdown-item>
-                      <el-dropdown-item>删除</el-dropdown-item>
-                    </el-dropdown-menu>
-                  </el-dropdown>
+    <el-tabs type="border-card">
+      <el-tab-pane label="统计分析">
+        <div class="single" v-for="(route, index) in ArrRoute" :key='index'>
+          <div class="wordTitle">{{route.meta.title}}</div>
+            <div class="pass">
+              <div class="fun-data">
+                <div class="data-statistics" v-for="(item, index) in route.children" :key="index">
+                  <div class="fun-title">
+                    <router-link v-if="item.meta && item.meta.title" :to="route.path + '/' + item.path">
+                      <div class="item">
+                        <div class="sing-svg" :style="{backgroundColor: item.meta.bg_color}">
+                          <i v-if="item.meta && item.meta.icon" :class="['iconfont', item.meta.icon]"></i>
+                        </div>
+                        <p class="item-text" v-if="item.meta && item.meta.title">{{ item.meta.title }}</p>
+                      </div>
+                    </router-link>
+                  </div>
                 </div>
-              </template>
-            </el-table-column>
-
-            <el-table-column prop="xb" align="center" label="发布内容"></el-table-column>
-
-            <el-table-column prop="xq" label="发布对象" align="center"></el-table-column>
-
-            <el-table-column prop="tjsj" label="发布时间" align="center"></el-table-column>
-
-            <el-table-column prop="zp" label="到达情况" align="center"></el-table-column>
-
-            <el-table-column prop="type" label="状态">
-              <template slot-scope="scope">
-                <el-tag
-                  size="small"
-                  style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
-                  :type="scope.row.type === 1 ? 'success' : 'danger'"
-                >{{ scope.row.type === 1 ? "成功" : "失败" }}</el-tag>
-              </template>
-            </el-table-column>
-          </el-table>
+              </div>
+            </div>
         </div>
-        <el-pagination style="margin-top:10px;" background layout="prev, pager, next" :total="2"></el-pagination>
-      </el-col>
-    </el-row>
+      </el-tab-pane>
+    </el-tabs>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Mixins } from "vue-property-decorator";
-import { Getter, Action, Mutation } from "vuex-class";
-import mixin from "@/config/minxins";
-
-const ActionHeader = () => import("@/components/ActionHeader.vue");
-const DataTree = () => import("@/components/DataTree.vue");
-
-@Component({
-  mixins: [mixin],
-  components: {
-    ActionHeader,
-    DataTree
-  }
-})
+import { Component, Vue } from "vue-property-decorator";
+const ActionManage = () => import('@/views/dashboard/components/actionManage.vue')
+@Component
 export default class InformIssue extends Vue {
-  private cardList: Array<Object> = [
-    {
-      name: "XXXXX",
-      zb: "男",
-      xb: "--",
-      zp: "--",
-      xq: "张三",
-      tjsj: "2019/8/21",
-      type: 1
-    }
-  ];
-  private rowSpan: any = {
-    row1: 4,
-    row2: 20
-  };
-
-  private dialogLibrary: any = false;
-
-  private form: Object = {
-    name: "",
-    region: "",
-    date1: "",
-    date2: "",
-    delivery: false,
-    type: [],
-    resource: "",
-    desc: ""
-  };
-
-  private dialogFormVisible: Boolean = false;
-  private formLabelWidth: String = "120px";
-
-  editType(item) {
-    /**@description 修改状态 */
-    console.log(item);
-    // this.dialogFormVisible = true;
+  showRoutes:Array<string> = ['traffic', 'person', 'house', 'device'] // 需要显示的路由
+  private ArrRoute: Array<object> = []
+  getRoutes() {
+    this.$router['options'].routes.forEach(element => {
+      if (this.showRoutes.includes(element.name)) {
+        this.ArrRoute.push(element)
+      }
+    })
+    const [a, b, c, d] = this.ArrRoute
+    this.ArrRoute = [c, b, a, d]
   }
-
-  enterRowChange(row, column, cell, event) {
-    /**@description hover enter tab 行 */
-    row.showMenu = true;
-  }
-
-  leaveRowChange(row) {
-    /**@description hover leave tab 行 */
-    row.showMenu = false;
-  }
-  queryIdetity() {
-    this.dialogLibrary = true;
+  mounted() {
+    this.getRoutes()
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.main {
+.single{
+  width: 100%;
+  height: auto;
+  border: 1px solid lightgray;
+  position: relative;
+  margin-top: 20px;
+  box-shadow: 0 12px 10px -10px lightgray;
+  .wordTitle{
+    position: absolute;
+    width: 100px;
+    height: 20px;
+    text-align: center;
+    top:-10px;
+    left: 100px;
+    line-height: 20px;
+    background: white;
+    z-index: 99;
+  }
+}
+$size: 48px;
+$color: #ffffff;
+
+p {
+  margin: 5px;
+}
+
+.scene-house {
+  font-size: 26px;
+  margin-right: 4px;
+}
+
+.scene-titile {
+  color: #5c5f63;
+  font-size: 15px;
+}
+
+.fun-data {
   display: flex;
-  .rightContent {
-    flex: 1;
-  }
-}
-td {
-  padding: 6px 0px;
-}
-.demo-block {
-  border: 1px solid #ebebeb;
-  border-radius: 3px;
+  flex-wrap: wrap;
+  padding: 46px 10px 5px 10px;
 }
 
-.serial-num {
-  position: relative;
+.data-statistics {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
 }
 
-.fun-btn {
-  position: absolute;
-  left: -64px;
-  top: 12px;
-  .iconfont {
-    font-size: 19px;
-    color: #8091a5;
-    cursor: pointer;
-  }
-}
-.table-col {
-  position: relative;
-}
-.close-menu {
-  width: 10px;
-  height: 48px;
-  background: #acb7c1;
-  border-top-right-radius: 20px;
-  border-bottom-right-radius: 20px;
-  position: relative;
+.fun-title {
+  font-size: 14px;
+  white-space: nowrap;
 }
 
-// .icon-class {
-//   font-size: 12px;
-//   color: #e7eaeb;
-//   cursor: pointer;
-//   line-height: 48px;
-//   position: absolute;
-//   left: -1px;
-// }
+.item-text {
+  font-size: 17px;
+  line-height: 68px;
+  margin-left: 20px;
+}
 
-.capture-img {
-  width: 60px;
+.item {
+  font-size: 14px;
+  display: flex;
+  border: 1px solid #e6e6e6;
+  padding: 0 15px 0 0;
+  background: #f9f9f9;
+  margin: 5px 21px;
+  border-radius: 6px;
+  background: #fff;
+}
+
+.iconfont {
+  font-size: $size;
+  color: $color;
+}
+
+.sing-svg {
+  width: 80px;
+  text-align: center;
+  line-height: 80px;
+  height: 80px;
+  box-shadow: 0 12px 20px -10px rgba(244, 67, 54, 0.28),
+    0 4px 20px 0 rgba(0, 0, 0, 0.12), 0 7px 8px -5px rgba(244, 67, 54, 0.2);
+  border-radius: 5px;
 }
 </style>

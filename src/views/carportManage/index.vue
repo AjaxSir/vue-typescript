@@ -2,28 +2,23 @@
   <div class="app-container">
     <el-row>
       <el-col :span="24">
-        <action-header :btnStatus="false" :total="1">
+        <action-header :dialogCreate.sync="dialogCreate" :total="1">
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>进出次数排序</el-dropdown-item>
-            <el-dropdown-item>滞留时间排序</el-dropdown-item>
-            <el-dropdown-item>统计查询</el-dropdown-item>
+            <el-dropdown-item>导入</el-dropdown-item>
+            <el-dropdown-item>导出</el-dropdown-item>
           </el-dropdown-menu>
           <div slot="houseNum">
             <div class="word-filter">
-              <span class="filter-name">车牌号:</span>
+              <span class="filter-name">车位号:</span>
               <el-input class="input-filter" size="small"></el-input>
             </div>
             <div class="word-filter">
-              <span class="filter-name">时间段:</span>
-              <el-date-picker
-                size="small"
-                class="input-filter"
-                v-model="TimeRange"
-                type="datetimerange"
-                range-separator="-"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-              ></el-date-picker>
+              <span class="filter-name">状&nbsp;&nbsp;&nbsp;&nbsp;态:</span>
+              <el-select v-model="status" placeholder="请选择" class="input-filter" size="small">
+                <el-option label="全部" value="all"></el-option>
+                <el-option label="占用" value="busy"></el-option>
+                <el-option label="空闲" value="free"></el-option>
+              </el-select>
             </div>
           </div>
         </action-header>
@@ -37,7 +32,7 @@
       <el-col :span="rowSpan.row2" class="table-col">
         <div class="rightContent">
           <el-table
-            :data="cardList"
+            :data="tableData"
             stripe
             class="demo-block"
             highlight-current-row
@@ -48,9 +43,9 @@
 
             <el-table-column type="index" label="序号" width="50"></el-table-column>
 
-            <el-table-column prop="name" label="车牌号">
+            <el-table-column prop="name" label="车位号">
               <template slot-scope="scope">
-                <span class="serial-num">{{scope.row.carNum}}</span>
+                <span class="serial-num">{{scope.row.car_num}}</span>
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start">
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
@@ -63,36 +58,11 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="car" label="车辆品牌"></el-table-column>
-
-            <el-table-column prop="type" label="是否校内">
-              <template slot-scope="scope">
-                <el-tag
-                  size="small"
-                  style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
-                  :type="scope.row.type === 1 ? 'success' : 'danger'"
-                  @click="editType(scope.row)"
-                >{{ scope.row.type === 1 ? "是" : "否" }}</el-tag>
-              </template>
-            </el-table-column>
-
-            <el-table-column prop="car" label="车辆颜色"></el-table-column>
-
-            <el-table-column prop="car" label="车主信息"></el-table-column>
-
-            <el-table-column prop="createDate" label="抓拍时间"></el-table-column>
-
-            <el-table-column prop="img" label="最近抓拍图片">
-              <template slot-scope="scope">
-                <img
-                  class="capture-img"
-                  @mouseout="imgVisible=false"
-                  @mouseover="imgVisible=true,bigImg=scope.row.img"
-                  :src="scope.row.img"
-                  alt
-                />
-              </template>
-            </el-table-column>
+            <el-table-column prop="name" align="center" label="业主"></el-table-column>
+            <el-table-column prop="belong_car" align="center" label="绑定车辆"></el-table-column>
+            <el-table-column prop="type" align="center" label="类型"></el-table-column>
+            <el-table-column prop="status" align="center" label="状态"></el-table-column>
+            <el-table-column prop="rent" align="center" label="租客"></el-table-column>
           </el-table>
         </div>
 
@@ -106,8 +76,13 @@
         </div>
       </el-col>
     </el-row>
-
-    <ImageMagni :centerDialogVisible="imgVisible" bigTitle="抓拍图片" :bigImg="bigImg" />
+    <el-dialog title="提示" :visible.sync="dialogCreate" width="30%" :before-close="handleClose">
+      <span>这是车位管理新增</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogCreate = false">取 消</el-button>
+        <el-button type="primary" @click="dialogCreate = false">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -117,64 +92,43 @@ import { Getter, Action, Mutation } from "vuex-class";
 import mixin from "@/config/minxins";
 
 const ActionHeader = () => import("@/components/ActionHeader.vue");
-const ImageMagni = () => import("@/components/BigImg/index.vue");
 const DataTree = () => import("@/components/DataTree.vue");
 
 @Component({
   mixins: [mixin],
   components: {
     ActionHeader,
-    ImageMagni,
     DataTree
   }
 })
 export default class CardManage extends Vue {
-  private cardList: Array<Object> = [
+  private tableData: Array<Object> = [
     {
-      name: "1-1-105",
-      houseRelative: "业主",
-      carNum: "川1256489",
-      createDate: "2019-9-26",
-      img: require("@/assets/car.png"),
-      type: 1,
-      showMenu: false,
-      car: "--"
+      car_num: "川A 12345",
+      name: "范特西",
+      belong_car: 1,
+      type: "私家车",
+      status: "空闲",
+      rent: "张三",
+      showMenu: false
     },
     {
-      name: "1-1-105",
-      houseRelative: "业主",
-      carNum: "川1256489",
-      createDate: "2019-9-26",
-      img: require("@/assets/car.png"),
-      type: 1,
-      showMenu: false,
-      car: "--"
-    },
-    {
-      name: "1-1-105",
-      houseRelative: "业主",
-      carNum: "川1256489",
-      createDate: "2019-9-26",
-      img: require("@/assets/car.png"),
-      type: 2,
-      showMenu: false,
-      car: "--"
+      car_num: "川A 54321",
+      name: "范特东",
+      belong_car: 1,
+      type: "公车",
+      status: "占用",
+      rent: "李四",
+      showMenu: false
     }
   ];
-
+  status: string = "all";
   private rowSpan: any = {
     row1: 4,
     row2: 20
   };
-
-  private TimeRange: any = "";
-
   private menuControl1: String = "menu-control";
   private menuControl2: String = "menu-visible";
-
-  private imgVisible: Boolean = false; // 控制放大图片的visible
-  private bigImg: String = ""; // 保存放大图片的地址
-
   private form: Object = {
     name: "",
     region: "",
@@ -188,7 +142,6 @@ export default class CardManage extends Vue {
 
   private dialogFormVisible: Boolean = false;
   private formLabelWidth: String = "120px";
-
   editType(item) {
     /**@description 修改状态 */
     console.log(item);
@@ -242,7 +195,7 @@ export default class CardManage extends Vue {
 .fun-btn {
   position: absolute;
   left: -64px;
-  top: 28%;
+  top: 26%;
   .iconfont {
     font-size: 19px;
     color: #8091a5;
