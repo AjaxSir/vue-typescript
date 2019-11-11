@@ -53,28 +53,32 @@ fetchData(page: number): void {
     this.fetchData(page)
   }
   /**
-   *
-   * @param id 需要删除的id数据
-   * @param url 需要请求的地址
+   * table内的操作
+   * @param action
    */
-  deleteRow(url: string) {
-    MessageBox.confirm('此操作将永久删除该文件, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        deleteRow(url).then((res: any) => {
-          Message({
-            type: 'success',
-            message: '删除成功!'
+  commandClick(action:string):void {
+    switch (action) {
+      case 'update' :
+        this.dialogCreate = true
+        break
+      case 'delete':
+          MessageBox.confirm('此操作将永久删除该列表, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            deleteRow('url').then((res: any) => {
+              Message({
+                type: 'success',
+                message: '删除成功!'
+              });
+            })
+          }).catch(() => {
+            Message({
+              type: 'info',
+              message: '已取消删除'
+            });
           });
-        })
-      }).catch(() => {
-        Message({
-          type: 'info',
-          message: '已取消删除'
-        });
-      });
+    }
   }
-  // 待补充
 }
