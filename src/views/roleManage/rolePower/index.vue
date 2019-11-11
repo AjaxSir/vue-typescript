@@ -34,39 +34,70 @@
 
             <el-table-column type="index" label="序号" width="50"></el-table-column>
 
-            <el-table-column prop="name" label="角色" align="center">
+            <el-table-column prop="name" class="serial-num" label="角色" align="center">
               <template slot-scope="scope">
                 <span>{{scope.row.name}}</span>
-                <!-- <el-button style="padding:0px;" type="text" @click="queryIdetity">{{scope.row.name}}</el-button> -->
-                <!-- <div class="fun-btn">
-                  <el-dropdown trigger="click" placement="bottom-start">
+                <div class="fun-btn">
+                  <el-dropdown trigger="click" placement="bottom-start" @command='commandClick'>
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
                     <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item>修改</el-dropdown-item>
-                      <el-dropdown-item>删除</el-dropdown-item>
+                      <el-dropdown-item command='update'>修改</el-dropdown-item>
+                      <el-dropdown-item command='delete'>删除</el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
-                </div>-->
+                </div>
               </template>
             </el-table-column>
 
-            <el-table-column prop="xb" align="center" label="权限"></el-table-column>
+            <el-table-column prop="xb" align="center" label="权限">
+              <template slot-scope="{row}">
+                <el-button type='text' @click='dialogTableVisible = true'>{{ row.xb }}</el-button>
+              </template>
+
+            </el-table-column>
 
             <el-table-column prop="xq" label="备注" align="center"></el-table-column>
 
             <el-table-column prop="tjsj" label="创建时间" align="center"></el-table-column>
-
-            <el-table-column prop align="center" label="操作" width="160px">
-              <template slot-scope="scope">
-                <el-button type="primary" size="small" plain>修改</el-button>
-                <el-button type="success" size="small" plain>删除</el-button>
-              </template>
-            </el-table-column>
           </el-table>
         </div>
         <el-pagination style="margin-top:10px;" background layout="prev, pager, next" :total="2"></el-pagination>
       </el-col>
     </el-row>
+    <!-- 权限弹框 -->
+    <el-dialog  class="dialog-rewrite" title="权限修改" :visible.sync="dialogTableVisible">
+      <el-table :data="roleData">
+        <el-table-column align="center" label="权限名称" width="200">
+          <template slot-scope="{row}">
+            {{ row.meta.title }}
+          </template>
+        </el-table-column>
+        <el-table-column align="center" label="增加" >
+         <template slot-scope="{row}">
+            <el-checkbox @change='changeStatus(row)' v-model="row.AddStatus"></el-checkbox>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" label="删除">
+          <template slot-scope="{row}">
+            <el-checkbox @change='changeStatus(row)' v-model="row.DeleteStatus"></el-checkbox>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" label="修改">
+          <template slot-scope="{row}">
+            <el-checkbox @change='changeStatus(row)' v-model="row.UpdateStatus"></el-checkbox>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" label="查看">
+          <template slot-scope="{row}">
+            <el-checkbox :disabled="row.lookDisabled" v-model="row.LookStatus"></el-checkbox>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogTableVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogTableVisible = false">保 存</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -76,13 +107,11 @@ import { Getter, Action, Mutation } from "vuex-class";
 import mixin from "@/config/minxins";
 
 const ActionHeader = () => import("@/components/ActionHeader.vue");
-const DataTree = () => import("@/components/DataTree.vue");
 
 @Component({
   mixins: [mixin],
   components: {
-    ActionHeader,
-    DataTree
+    ActionHeader
   }
 })
 export default class InformIssue extends Vue {
@@ -90,20 +119,28 @@ export default class InformIssue extends Vue {
     {
       name: "XXXXX111",
       zb: "男",
-      xb: "--",
+      xb: "管理员",
       zp: "--",
       xq: "张三",
       tjsj: "2019/8/21",
-      type: 1
+      type: 1,
+      showMenu: false
     }
   ];
-  private rowSpan: any = {
-    row1: 4,
-    row2: 20
-  };
-
+  private roleData: Array<Object> = []
   private dialogLibrary: any = false;
-
+  mounted() {
+    const Route = [].concat(this.$router['options'].routes)
+    Route.shift()
+    Route.forEach((ele:any) => {
+      ele.AddStatus = false
+      ele.DeleteStatus = false
+      ele.UpdateStatus = false
+      ele.LookStatus = false
+      ele.lookDisabled = false // 当有其他权限存在时 查看权限必须有
+    })
+    this.roleData = Route
+  }
   private form: Object = {
     name: "",
     region: "",
@@ -117,24 +154,10 @@ export default class InformIssue extends Vue {
 
   private dialogFormVisible: Boolean = false;
   private formLabelWidth: String = "120px";
-
-  editType(item) {
-    /**@description 修改状态 */
-    console.log(item);
-    // this.dialogFormVisible = true;
-  }
-
-  enterRowChange(row, column, cell, event) {
-    /**@description hover enter tab 行 */
-    row.showMenu = true;
-  }
-
-  leaveRowChange(row) {
-    /**@description hover leave tab 行 */
-    row.showMenu = false;
-  }
-  queryIdetity() {
-    this.dialogLibrary = true;
+  private dialogTableVisible: boolean = false;
+  changeStatus(row) {
+    row.LookStatus = row.AddStatus || row.UpdateStatus || row.DeleteStatus
+    row.lookDisabled = row.AddStatus || row.UpdateStatus || row.DeleteStatus
   }
 }
 </script>
@@ -179,17 +202,8 @@ td {
   border-bottom-right-radius: 20px;
   position: relative;
 }
-
-// .icon-class {
-//   font-size: 12px;
-//   color: #e7eaeb;
-//   cursor: pointer;
-//   line-height: 48px;
-//   position: absolute;
-//   left: -1px;
-// }
-
 .capture-img {
   width: 60px;
 }
+
 </style>

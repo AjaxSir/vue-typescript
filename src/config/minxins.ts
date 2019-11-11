@@ -47,6 +47,25 @@ fetchData(page: number): void {
   }
   /**
    *
+   * @param row
+   * @param column
+   * @param cell
+   * @param event
+   */
+  enterRowChange(row, column, cell, event) {
+    /**@description hover enter tab 行 */
+    row.showMenu = true;
+  }
+  /**
+   *
+   * @param row
+   */
+  leaveRowChange(row) {
+    /**@description hover leave tab 行 */
+    row.showMenu = false;
+  }
+  /**
+   *
    * @param page 翻页页码
    */
   pageChange(page: number) {

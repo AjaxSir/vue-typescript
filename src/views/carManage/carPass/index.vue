@@ -41,13 +41,13 @@
             @cell-mouse-enter="enterRowChange"
             @cell-mouse-leave="leaveRowChange"
           >
-            <el-table-column type="selection" width="50"></el-table-column>
+            <el-table-column align='center' type="selection" width="50"></el-table-column>
 
-            <el-table-column type="index" label="序号" width="50"></el-table-column>
+            <el-table-column align='center' type="index" label="序号" width="50"></el-table-column>
 
-            <el-table-column prop="name" label="车牌号">
+            <el-table-column align='center' prop="name" label="车牌号">
               <template slot-scope="scope">
-                <span class="serial-num">{{scope.row.carNum}}</span>
+                <el-button @click='showCarDetails(scope.row)' type='text' class="serial-num">{{scope.row.carNum}}</el-button>
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start" @command='commandClick'>
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
@@ -60,9 +60,9 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="car" label="车辆品牌"></el-table-column>
+            <el-table-column align='center' prop="car" label="车辆品牌"></el-table-column>
 
-            <el-table-column prop="type" label="是否校内">
+            <el-table-column align='center' prop="type" label="是否校内">
               <template slot-scope="scope">
                 <el-tag
                   size="small"
@@ -73,13 +73,13 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="car" label="车辆颜色"></el-table-column>
+            <el-table-column align='center' prop="car" label="车辆颜色"></el-table-column>
 
-            <el-table-column prop="car" label="车主信息"></el-table-column>
+            <el-table-column align='center' prop="car" label="车主信息"></el-table-column>
 
-            <el-table-column prop="createDate" label="抓拍时间"></el-table-column>
+            <el-table-column align='center' prop="createDate" label="抓拍时间"></el-table-column>
 
-            <el-table-column prop="img" label="最近抓拍图片">
+            <el-table-column align='center' prop="img" label="最近抓拍图片">
               <template slot-scope="scope">
                 <img
                   class="capture-img"
@@ -96,7 +96,37 @@
         <el-pagination style="margin-top:10px;" background layout="prev, pager, next" :total="2"></el-pagination>
       </el-col>
     </el-row>
-
+    <el-dialog class="dialog-rewrite" :title="CarDialogForm.name" :visible.sync="detailDialogVisible">
+      <el-tabs type="card" v-model="activeName">
+        <el-tab-pane label="车主信息" name="first">
+          <el-form label-width='100px' :model="CarDialogForm">
+            <el-form-item label="车主信息:">
+              <span>{{CarDialogForm.houseRelative}}</span>
+            </el-form-item>
+            <el-form-item label="电话:">
+              <span>--</span>
+            </el-form-item>
+            <el-form-item label="车牌:">
+              <span>{{CarDialogForm.carNum}}</span>
+            </el-form-item>
+            <el-form-item label="所属单元信息:">
+              <span>{{CarDialogForm.name}}</span>
+            </el-form-item>
+          </el-form>
+        </el-tab-pane>
+        <el-tab-pane label="详细信息" name="second">
+          <el-table :data="carDetailsTable" style="width: 100%">
+            <el-table-column align="center" prop="name" label="姓名" width="150px"></el-table-column>
+            <el-table-column align="center" prop="date" label="通行时间" width="150px"></el-table-column>
+            <el-table-column align="center" prop="address" label="通行地址"></el-table-column>
+            <el-table-column align="center" prop="address" label="抓拍图片"></el-table-column>
+          </el-table>
+        </el-tab-pane>
+      </el-tabs>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="detailDialogVisible = false">确 定</el-button>
+      </span>
+    </el-dialog>
     <ImageMagni :centerDialogVisible="imgVisible" bigTitle="抓拍图片" :bigImg="bigImg" />
   </div>
 </template>
@@ -152,13 +182,12 @@ export default class CardManage extends Vue {
 
 
   private TimeRange: any = "";
-
-  private menuControl1: String = "menu-control";
-  private menuControl2: String = "menu-visible";
-
+  activeName: string = 'first'
+  carDetailsTable: Array<Object> = [] // 详细信息记录
   private imgVisible: Boolean = false; // 控制放大图片的visible
   private bigImg: String = ""; // 保存放大图片的地址
-
+  CarDialogForm: Object = {} // 车主详细信息
+  detailDialogVisible: boolean = false // 详细信息dialog弹框
   private form: Object = {
     name: "",
     region: "",
@@ -170,23 +199,13 @@ export default class CardManage extends Vue {
     desc: ""
   };
 
-  private dialogFormVisible: Boolean = false;
-  private formLabelWidth: String = "120px";
-
+  showCarDetails(row) {
+    this.detailDialogVisible = true
+    this.CarDialogForm = Object.assign({}, row)
+  }
   editType(item) {
     /**@description 修改状态 */
     console.log(item);
-    // this.dialogFormVisible = true;
-  }
-
-  enterRowChange(row, column, cell, event) {
-    /**@description hover enter tab 行 */
-    row.showMenu = true;
-  }
-
-  leaveRowChange(row) {
-    /**@description hover leave tab 行 */
-    row.showMenu = false;
   }
 }
 </script>
