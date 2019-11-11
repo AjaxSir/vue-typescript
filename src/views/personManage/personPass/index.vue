@@ -21,11 +21,8 @@
       </el-col>
     </el-row>
     <el-row :gutter="10">
-      <el-col :span="rowSpan.row1">
-        <data-tree />
-      </el-col>
 
-      <el-col :span="rowSpan.row2" class="table-col">
+      <el-col :span="24" class="table-col">
         <div class="rightContent">
           <el-table
             :data="cardList"
@@ -43,11 +40,11 @@
               <template slot-scope="scope">
                 <span class="serial-num">{{scope.row.carNum}}</span>
                 <div class="fun-btn">
-                  <el-dropdown trigger="click" placement="bottom-start">
+                  <el-dropdown trigger="click" placement="bottom-start" @command='commandClick'>
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
                     <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item>修改</el-dropdown-item>
-                      <el-dropdown-item>删除</el-dropdown-item>
+                      <el-dropdown-item command='update'>修改</el-dropdown-item>
+                      <el-dropdown-item command='delete'>删除</el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
                 </div>
@@ -88,12 +85,6 @@
           </el-table>
           <el-pagination style="margin-top:10px;" background layout="prev, pager, next" :total="2"></el-pagination>
         </div>
-        <div :class="rowSpan.row1===4 ? menuControl1 : menuControl2" @click="menuVisible">
-          <p class="close-menu">
-            <i v-if="rowSpan.row1===4" class="iconfont icon-left icon-class"></i>
-            <i v-else class="iconfont icon-zuo icon-class"></i>
-          </p>
-        </div>
       </el-col>
     </el-row>
 
@@ -108,14 +99,12 @@ import mixin from "@/config/minxins";
 
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 const ImageMagni = () => import("@/components/BigImg/index.vue");
-const DataTree = () => import("@/components/DataTree.vue");
 
 @Component({
   mixins: [mixin],
   components: {
     ActionHeader,
-    ImageMagni,
-    DataTree
+    ImageMagni
   }
 })
 export default class CardManage extends Vue {
@@ -152,10 +141,6 @@ export default class CardManage extends Vue {
     }
   ];
 
-  private rowSpan: any = {
-    row1: 4,
-    row2: 20
-  };
   deviceStatus: String = "all";
   private menuControl1: String = "menu-control";
   private menuControl2: String = "menu-visible";
@@ -191,21 +176,6 @@ export default class CardManage extends Vue {
   leaveRowChange(row) {
     /**@description hover leave tab 行 */
     row.showMenu = false;
-  }
-
-  menuVisible() {
-    /**@description 控制楼栋 */
-    if (this.rowSpan.row1 === 4) {
-      this.rowSpan = {
-        row1: 0,
-        row2: 24
-      };
-    } else {
-      this.rowSpan = {
-        row1: 4,
-        row2: 20
-      };
-    }
   }
 }
 </script>

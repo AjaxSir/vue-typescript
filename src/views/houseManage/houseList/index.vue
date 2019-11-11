@@ -48,11 +48,11 @@
               <template slot-scope="scope">
                 <span>{{scope.row.name}}</span>
                 <div class="fun-btn">
-                  <el-dropdown trigger="click" placement="bottom-start">
+                  <el-dropdown trigger="click" placement="bottom-start" @command='commandClick'>
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
                     <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item>修改</el-dropdown-item>
-                      <el-dropdown-item>删除</el-dropdown-item>
+                      <el-dropdown-item command='update'>修改</el-dropdown-item>
+                      <el-dropdown-item command='delete'>删除</el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
                 </div>

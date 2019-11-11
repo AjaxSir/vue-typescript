@@ -28,11 +28,8 @@
         </ActionHeader>
       </el-col>
     </el-row>
-    <el-row :gutter="20">
-      <el-col :span="4">
-        <DataTree />
-      </el-col>
-      <el-col :span="20">
+    <el-row :gutter="10">
+      <el-col :span="24">
         <div class="rightContent">
           <el-table :data="list_data" border>
             <el-table-column type="selection" align="center"></el-table-column>
@@ -88,13 +85,11 @@ import { Component, Prop, Vue, Mixins } from "vue-property-decorator";
 import { Getter, Action, Mutation } from "vuex-class";
 import mixin from "@/config/minxins";
 const ActionHeader = () => import("@/components/ActionHeader.vue");
-const DataTree = () => import("@/components/DataTree.vue");
 const DiaLog = () => import("@/components/dialog.vue");
 @Component({
   mixins: [mixin],
   components: {
     ActionHeader,
-    DataTree,
     DiaLog
   }
 })

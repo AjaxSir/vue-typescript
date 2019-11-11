@@ -23,19 +23,41 @@
       >
         <span>{{ node.label }}</span>
         <div class="fun-btn">
-          <el-dropdown trigger="click" placement="bottom-start">
+          <el-dropdown @command='commandTreeClick' trigger="click" placement="bottom-start">
             <i v-show="node.id===showMenu" class="iconfont icon-menu"></i>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>创建</el-dropdown-item>
-              <el-dropdown-item>修改</el-dropdown-item>
-              <el-dropdown-item>
-                <span @click="deleteHouse">删除</span>
-              </el-dropdown-item>
+              <el-dropdown-item :command='commandObj("create", node)'>创建</el-dropdown-item>
+              <el-dropdown-item :command='commandObj("update", node)'>修改</el-dropdown-item>
+              <el-dropdown-item :command='commandObj("delete", node)'>删除</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </div>
       </span>
     </el-tree>
+    <!-- 楼栋dialog -->
+    <el-dialog width="500px" :title="HouseForm.title" :visible.sync="HouseVisible">
+      <el-form :model="HouseForm">
+        <el-form-item label="楼栋名称:" label-width="80px">
+          <el-input v-model="HouseForm.name" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="HouseVisible = false">取 消</el-button>
+        <el-button type="primary" @click="HouseVisible = false">确 定</el-button>
+      </div>
+    </el-dialog>
+    <!-- 权限dialog -->
+    <el-dialog width="500px" title="收货地址" :visible.sync="RoleVisible">
+      <el-form :model="RoleForm">
+        <el-form-item label="楼栋名称:" label-width="80px">
+          <el-input v-model="RoleForm.name" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="RoleVisible = false">取 消</el-button>
+        <el-button type="primary" @click="RoleVisible = false">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -100,7 +122,20 @@ export default class DataTree extends Vue {
   // private data: Array<Object> =
 
   @Prop({ default: true }) needAction: any;
-
+  // 楼栋表单
+  HouseForm: object = {
+    name: '',
+    title: '创建楼栋'
+  }
+  // 楼栋dialog状态
+  HouseVisible:boolean = false
+  // 权限表单
+  RoleForm: object = {
+    name: '',
+    title: '创建权限'
+  }
+  // 权限dialog状态
+  RoleVisible:boolean = false
   handleNodeClick(data) {
     /**@description */
     // console.log(data);
@@ -114,10 +149,18 @@ export default class DataTree extends Vue {
   MouseLeave(val) {
     this.showMenu = 0;
   }
-
-  deleteHouse() {
-    /**@description 删除房屋 */
-  this.$confirm('此操作将永久删除该目标, 是否继续?', '提示', {
+  /**
+   *
+   */
+  commandTreeClick(treeData) {
+    switch (treeData.action) {
+      case 'update' :
+        this.HouseVisible = true
+        this.HouseForm['title'] = '修改楼栋'
+        this.HouseForm['name'] = treeData.node.label
+        break
+      case 'delete' :
+        this.$confirm('此操作将永久删除该目标, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
@@ -132,8 +175,23 @@ export default class DataTree extends Vue {
             message: '已取消删除'
           });
         });
-      }
+        break
+      case 'create' :
+        this.HouseForm['title'] = '创建楼栋'
+        this.HouseVisible = true
+        break
+    }
   }
+  /**
+   *  返回执行的操作及id
+   */
+  commandObj(action, node) {
+    return {
+      action,
+      node
+    }
+  }
+}
 </script>
 
 <style>

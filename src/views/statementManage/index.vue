@@ -8,7 +8,7 @@
               <div class="fun-data">
                 <div class="data-statistics" v-for="(item, index) in route.children" :key="index">
                   <div class="fun-title">
-                    <router-link v-if="item.meta && item.meta.title" :to="route.path + '/' + item.path">
+                    <router-link v-if="item.meta && item.meta.title" :to='item.path'>
                       <div class="item">
                         <div class="sing-svg" :style="{backgroundColor: item.meta.bg_color}">
                           <i v-if="item.meta && item.meta.icon" :class="['iconfont', item.meta.icon]"></i>
@@ -31,20 +31,112 @@ import { Component, Vue } from "vue-property-decorator";
 const ActionManage = () => import('@/views/dashboard/components/actionManage.vue')
 @Component
 export default class InformIssue extends Vue {
-  showRoutes:Array<string> = ['traffic', 'person', 'house', 'device'] // 需要显示的路由
-  private ArrRoute: Array<object> = []
-  getRoutes() {
-    this.$router['options'].routes.forEach(element => {
-      if (this.showRoutes.includes(element.name)) {
-        this.ArrRoute.push(element)
+  // showRoutes:Array<string> = ['traffic', 'person', 'house', 'device'] // 统计报表项
+  private ArrRoute: Array<object> = [{
+    meta: {
+      title: '车辆'
+    },
+    children: [
+      {
+        meta: {
+          title: '车辆通行次数统计',
+          bg_color: '#DF788D',
+          icon: 'icon-zhuzhai'
+        },
+        path: ''
+      },
+      {
+        meta: {
+          title: '访客车辆进出次数排序统计',
+          bg_color: '#e17f5a',
+          icon: 'icon-zhuzhai'
+        },
+        path: ''
       }
-    })
-    const [a, b, c, d] = this.ArrRoute
-    this.ArrRoute = [c, b, a, d]
-  }
-  mounted() {
-    this.getRoutes()
-  }
+    ]
+  },
+  {
+    meta: {
+      title: '人员'
+    },
+    children: [
+      {
+        meta: {
+          title: '人员通行统计',
+          bg_color: '#2c7fec',
+          icon: 'icon-zhuzhai'
+        },
+        path: ''
+      },
+      {
+        meta: {
+          title: '访客次数排序统计',
+          bg_color: '#976041',
+          icon: 'icon-zhuzhai'
+        },
+        path: ''
+      },
+      {
+        meta: {
+          title: '陌生人次数统计排序',
+          bg_color: '#bec037',
+          icon: 'icon-zhuzhai'
+        },
+        path: ''
+      }
+    ]
+  },
+  {
+    meta: {
+      title: '住宅统计'
+    },
+    children: [
+      {
+        meta: {
+          title: '单元楼进出次数统计',
+          bg_color: '#8FA8C7',
+          icon: 'icon-zhuzhai'
+        },
+        path: ''
+      },
+      {
+        meta: {
+          title: '出入口进出次数统计',
+          bg_color: '#83c9a6',
+          icon: 'icon-zhuzhai'
+        },
+        path: ''
+      }
+    ]
+  },
+  {
+    meta: {
+      title: '设备'
+    },
+    children: [
+      {
+        meta: {
+          title: '通行次数排序统计',
+          bg_color: '#DF788D',
+          icon: 'icon-zhuzhai'
+        },
+        path: ''
+      }
+    ]
+  }]
+  // getRoutes() {
+    // this.$router['options'].routes.forEach(element => {
+    //   if (this.showRoutes.includes(element.name)) {
+    //     this.ArrRoute.push(element)
+    //   }
+    // })
+    // const [a, b, c, d] = this.ArrRoute
+    // this.ArrRoute = [c, b, a, d]
+
+  // }
+  // mounted() {
+  //   this.getRoutes()
+  // }
 }
 </script>
 

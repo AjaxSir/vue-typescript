@@ -4,7 +4,9 @@
           <NavMenu @MenuStatus='changeStatus' />
         </div>
         <div class="routerView">
-          <router-view />
+          <transition  name='fade' mode="out-in">
+            <router-view />
+          </transition>
         </div>
 
   </div>
@@ -50,4 +52,17 @@ export default class AppMain extends Vue{
 .routerView{
   flex: 1;
 }
+
+ .fade-enter{
+        opacity: 0;
+    }
+    .fade-enter-active{
+        transition: opacity .5s;
+    }
+    .fade-leave{
+        opacity: 1;
+    }
+    .fade-leave-active{
+        opacity: 0;
+        transition: opacity .5s;}
 </style>
