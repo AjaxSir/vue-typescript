@@ -87,6 +87,7 @@ a:hover {
 
 .dialog-rewrite .el-dialog .el-dialog__body {
   padding: 0;
+  // padding-left: 20px;
 }
 
 
@@ -99,4 +100,17 @@ a:hover {
   margin-top: 20px;
   display: flex;
   justify-content: flex-end;
+}
+
+.detai-info {
+  //目标详情统一样式
+  font-size: 18px;
+  line-height: 40px;
+  padding-left: 20px;
+}
+
+.capture-img {
+  //图片统一样式
+  width: 30px;
+  height: 30px;
 }
