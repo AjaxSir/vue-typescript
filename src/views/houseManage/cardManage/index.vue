@@ -42,7 +42,11 @@
 
             <el-table-column class="serial-num" prop="name" label="编号">
               <template slot-scope="scope">
-                <span>{{scope.row.name}}</span>
+                <el-button
+                  style="padding:0px;"
+                  type="text"
+                  @click="queryIdetity(scope.row)"
+                >{{scope.row.name}}</el-button>
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start" @command='commandClick'>
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
@@ -57,7 +61,7 @@
 
             <el-table-column prop="houseRelative" label="关联房屋"></el-table-column>
 
-            <el-table-column prop="createDate" label="创建"></el-table-column>
+            <el-table-column prop="createDate" label="创建时间"></el-table-column>
 
             <el-table-column prop="createDate" label="最近刷卡时间"></el-table-column>
             <el-table-column prop="type" label="状态">
@@ -71,14 +75,36 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="createDate" label="日平均刷卡次数"></el-table-column>
-
-            <el-table-column prop="createDate" label="周平均刷卡次数"></el-table-column>
+            <el-table-column prop="num" label="累计刷卡次数"></el-table-column>
           </el-table>
           <el-pagination style="margin-top:10px;" background layout="prev, pager, next" :total="2"></el-pagination>
         </div>
       </el-col>
     </el-row>
+
+    <el-dialog
+      class="dialog-rewrite"
+      :title="'编号: '+ detailDialog.name"
+      :visible.sync="dialogFormVisible"
+    >
+      <el-tabs type="card" v-model="activeName" @tab-click="handleClick">
+        <el-tab-pane label="详细信息" name="详细信息">
+          <p class="detai-info">关联房屋:{{detailDialog.houseRelative}}</p>
+          <p class="detai-info">最近刷卡时间:{{detailDialog.createDate}}</p>
+        </el-tab-pane>
+        <el-tab-pane label="通行记录" name="通行记录">
+          <el-table :data="dtailTable" style="width: 100%">
+            <el-table-column prop="name" label="姓名" width="150px"></el-table-column>
+            <el-table-column prop="date" label="通行时间" width="150px"></el-table-column>
+            <el-table-column prop="address" label="通行地址"></el-table-column>
+          </el-table>
+        </el-tab-pane>
+      </el-tabs>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" size="small" @click="dialogFormVisible = false">确 定</el-button>
+      </span>
+    </el-dialog>
+
     <el-dialog title="提示" :visible.sync="dialogCreate" width="30%" :before-close="handleClose">
       <span>这是门禁卡管理新增</span>
       <span slot="footer" class="dialog-footer">
@@ -106,32 +132,36 @@ const ActionHeader = () => import("@/components/ActionHeader.vue");
 export default class CardManage extends Vue {
   private cardList: Array<Object> = [
     {
-      name: "张三",
-      houseRelative: "10",
+      name: "0000001",
+      houseRelative: "1-1-203",
       createDate: "2019-9-26",
       type: 2,
-      showMenu: false
+      showMenu: false,
+      num: "--"
     },
     {
-      name: "张三",
-      houseRelative: "10",
+      name: "00000002",
+      houseRelative: "1-1-203",
       createDate: "2019-9-26",
       type: 1,
-      showMenu: false
+      showMenu: false,
+      num: "--"
     },
     {
-      name: "张三",
-      houseRelative: "10",
+      name: "00000003",
+      houseRelative: "1-1-203",
       createDate: "2019-9-26",
       type: 1,
-      showMenu: false
+      showMenu: false,
+      num: "--"
     },
     {
-      name: "张三",
-      houseRelative: "10",
+      name: "00000004",
+      houseRelative: "1-1-203",
       createDate: "2019-9-26",
       type: 1,
-      showMenu: false
+      showMenu: false,
+      num: "--"
     }
   ];
   TimeRange: Array<string> = [];
@@ -150,6 +180,34 @@ export default class CardManage extends Vue {
   private formLabelWidth: String = "120px";
   private dialogCreate: Boolean = false; // 新增弹出表单
 
+  private detailDialog: Object = {
+    //查看目标详情
+    name: ""
+  };
+  private activeName: String = "详细信息";
+  private dtailTable: Array<Object> =[
+    {
+      date: "2016-05-02";
+      name: "王小虎";
+      address: "上海市普陀区金沙江路 1518 弄";
+    },
+    {
+      date: "2016-05-04";
+      name: "王小虎";
+      address: "上海市普陀区金沙江路 1517 弄";
+    },
+    {
+      date: "2016-05-01";
+      name: "王小虎";
+      address: "上海市普陀区金沙江路 1519 弄";
+    },
+    {
+      date: "2016-05-03";
+      name: "王小虎";
+      address: "上海市普陀区金沙江路 1516 弄";
+    }
+  ];
+
   editType(item) {
     /**@description 修改状态 */
     console.log(item);
@@ -164,6 +222,28 @@ export default class CardManage extends Vue {
   leaveRowChange(row) {
     /**@description hover leave tab 行 */
     row.showMenu = false;
+  }
+
+  handleClick() {}
+
+  queryIdetity(row) {
+    this.detailDialog = row;
+    this.dialogFormVisible = true;
+  }
+
+  menuVisible() {
+    /**@description 控制楼栋 */
+    if (this.rowSpan.row1 === 4) {
+      this.rowSpan = {
+        row1: 0,
+        row2: 24
+      };
+    } else {
+      this.rowSpan = {
+        row1: 4,
+        row2: 20
+      };
+    }
   }
 }
 </script>

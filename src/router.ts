@@ -36,7 +36,7 @@ export const constantRouterMap = [{
     path: 'chart',
     component: _import_('houseManage/houseChart/index'),
     meta: {
-      title: '房屋管理-楼控视图',
+      title: '楼控视图',
       icon: 'icon-loudong',
       bg_color: '#e17f5a'
     }
@@ -45,7 +45,7 @@ export const constantRouterMap = [{
     path: 'list',
     component: _import_('houseManage/houseList/index'),
     meta: {
-      title: '房屋管理-列表视图',
+      title: '列表视图',
       icon: 'icon-fangwufangchan',
       bg_color: '#2c7fec'
     }
@@ -84,7 +84,7 @@ export const constantRouterMap = [{
     path: 'owner',
     component: _import_('personManage/ownerManage/index'),
     meta: {
-      title: '人员管理 - 住户管理',
+      title: '住户管理',
       icon: 'icon-yonghu',
       bg_color: '#83c9a6'
     }
@@ -93,7 +93,7 @@ export const constantRouterMap = [{
     path: 'property',
     component: _import_('personManage/propertyManage/index'),
     meta: {
-      title: '人员管理 - 物业管理',
+      title: '物业管理',
       icon: 'icon-wuyeguanli',
       bg_color: '#6197d4'
     }
@@ -103,7 +103,7 @@ export const constantRouterMap = [{
     path: 'vistormanage',
     component: _import_('personManage/vistorManage/index'),
     meta: {
-      title: '人员管理 - 访客管理',
+      title: '访客管理',
       icon: 'icon-fangkeguanli',
       bg_color: '#796273'
     }
@@ -142,7 +142,7 @@ export const constantRouterMap = [{
     path: 'carManage',
     component: _import_('carManage/carList/index'),
     meta: {
-      title: '车辆管理 - 车辆名单',
+      title: '车辆名单',
       icon: 'icon-cheliangpaiban',
       bg_color: '#68e0c6'
     }
@@ -151,7 +151,7 @@ export const constantRouterMap = [{
     path: 'carPass',
     component: _import_('carManage/carPass/index'),
     meta: {
-      title: '车辆管理 - 通行记录',
+      title: '通行记录',
       icon: 'icon-cheliangdangan',
       bg_color: '#57d87e'
     }
@@ -160,7 +160,7 @@ export const constantRouterMap = [{
     path: 'carport',
     component: _import_('carManage/carVisitor/index'),
     meta: {
-      title: '车辆管理 - 访客车辆',
+      title: '访客车辆',
       icon: 'icon-renxiangcheliangshouquan',
       bg_color: '#60c92f'
     }
@@ -244,7 +244,7 @@ export const constantRouterMap = [{
     path: 'manager',
     component: _import_('roleManage/manager/index'),
     meta: {
-      title: '系统设置 - 管理员',
+      title: '管理员',
       icon: 'monitor'
     }
   },
@@ -253,7 +253,7 @@ export const constantRouterMap = [{
     path: 'rolePower',
     component: _import_('roleManage/rolePower/index'),
     meta: {
-      title: '系统设置 - 角色权限',
+      title: '角色权限',
       icon: 'monitor'
     }
   }, {
@@ -261,7 +261,7 @@ export const constantRouterMap = [{
     path: 'community',
     component: _import_('roleManage/community/index'),
     meta: {
-      title: '系统设置 - 小区',
+      title: '小区',
       icon: 'monitor'
     }
   }]

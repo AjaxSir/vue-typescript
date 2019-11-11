@@ -36,17 +36,28 @@
             <el-table-column type="index" width="60" align="center" label="编号"></el-table-column>
             <el-table-column prop="name" align="center" label="姓名">
               <template slot-scope="{ row }">
-                <el-tag @click="showDetail(row)">{{ row.name }}</el-tag>
+                <el-button style="padding:0px;" type="text" @click="showDetail(row)">{{row.name }}</el-button>
               </template>
             </el-table-column>
-            <el-table-column prop="age" align="center" label="年龄"></el-table-column>
+            <el-table-column prop="phone" align="center" label="电话"></el-table-column>
             <el-table-column prop="sex" align="center" label="性别"></el-table-column>
-            <el-table-column prop="phone" align="center" label="联系电话"></el-table-column>
-            <el-table-column prop="house_info" align="center" label="房屋信息"></el-table-column>
-            <el-table-column prop="expire_time" align="center" label="过期时间"></el-table-column>
-            <el-table-column prop="far_door" align="center" label="远程开门"></el-table-column>
+            <el-table-column prop="img" label="人脸">
+              <template slot-scope="scope">
+                <img
+                  class="capture-img"
+                  @mouseout="imgVisible=false"
+                  @mouseover="imgVisible=true,bigImg=scope.row.img"
+                  :src="scope.row.img"
+                  alt
+                />
+              </template>
+            </el-table-column>
             <el-table-column prop="car" align="center" label="访客车辆"></el-table-column>
-            <el-table-column prop="main_linker" align="center" label="是否主联系人"></el-table-column>
+            <el-table-column prop="car" align="center" label="邀请访客"></el-table-column>
+            <el-table-column prop="house_info" align="center" label="房屋信息"></el-table-column>
+            <el-table-column prop="far_door" align="center" label="远程开门"></el-table-column>
+            <el-table-column prop="far_door" align="center" label="用户类型"></el-table-column>
+            <el-table-column prop="expire_time" align="center" label="过期时间"></el-table-column>
             <el-table-column prop="status" align="center" label="状态"></el-table-column>
             <el-table-column prop="detail" align="center" label="备注"></el-table-column>
             <el-table-column prop="create_time" align="center" label="创建时间"></el-table-column>
@@ -57,20 +68,43 @@
       </el-col>
     </el-row>
 
-    <el-dialog :title="Dialog.name" :visible.sync="dialogFormVisible">
-      <el-tabs v-model="activeName" @tab-click="handleClick">
-        <el-tab-pane label="用户管理" name="first">详细信息</el-tab-pane>
-        <el-tab-pane label="配置管理" name="second">进出单元记录</el-tab-pane>
-        <el-tab-pane label="角色管理" name="third">进出小区记录</el-tab-pane>
-        <el-tab-pane label="定时任务补偿" name="fourth">车辆信息</el-tab-pane>
-        <el-tab-pane label="房屋信息" name="fivw">房屋信息</el-tab-pane>
-        <el-tab-pane label="证件信息" name="six">证件信息</el-tab-pane>
-        <el-tab-pane label="人脸库信息" name="seven">人脸库信息</el-tab-pane>
+    <el-dialog class="dialog-rewrite" :title="detailDialog.name" :visible.sync="dialogFormVisible">
+      <el-tabs type="card" v-model="activeName" @tab-click="handleClick">
+        <el-tab-pane label="详细信息" name="first">
+          <p class="detai-info">关联房屋:{{detailDialog.houseRelative}}</p>
+          <p class="detai-info">最近刷卡时间:{{detailDialog.createDate}}</p>
+        </el-tab-pane>
+        <el-tab-pane label="通行记录" name="second">
+          <el-table :data="dtailTable" style="width: 100%">
+            <el-table-column prop="name" label="姓名" width="150px"></el-table-column>
+            <el-table-column prop="date" label="通行时间" width="150px"></el-table-column>
+            <el-table-column prop="address" label="通行地址"></el-table-column>
+          </el-table>
+        </el-tab-pane>
+        <el-tab-pane label="车辆信息" name="third">
+          <el-table :data="carDtailTable" style="width: 100%">
+            <el-table-column prop="date" label="车牌号"></el-table-column>
+            <el-table-column prop="name" label="所属房屋"></el-table-column>
+          </el-table>
+        </el-tab-pane>
+        <el-tab-pane label="房屋信息" name="fivw">
+          <el-table :data="houseDtailTable" style="width: 100%">
+            <el-table-column prop="name" label="房屋"></el-table-column>
+            <el-table-column prop="date" label="类型"></el-table-column>
+          </el-table>
+        </el-tab-pane>
+        <el-tab-pane label="人脸库信息" name="seven">
+          <el-table :data="faceDtailTable" style="width: 100%">
+            <el-table-column prop="name" label="姓名"></el-table-column>
+            <el-table-column prop="date" label="性别"></el-table-column>
+          </el-table>
+        </el-tab-pane>
       </el-tabs>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
       </span>
     </el-dialog>
+
     <el-dialog title="提示" :visible.sync="dialogCreate" width="30%" :before-close="handleClose">
       <span>这是业主管理新增</span>
       <span slot="footer" class="dialog-footer">
@@ -78,6 +112,8 @@
         <el-button type="primary" @click="dialogCreate = false">确 定</el-button>
       </span>
     </el-dialog>
+
+    <BigImg :centerDialogVisible="imgVisible" bigTitle="抓拍图片" :bigImg="bigImg" />
   </div>
 </template>
 <script lang="ts">
@@ -86,11 +122,13 @@ import { Getter, Action, Mutation } from "vuex-class";
 import mixin from "@/config/minxins";
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 const DiaLog = () => import("@/components/dialog.vue");
+const BigImg = () => import("@/components/BigImg/index.vue");
 @Component({
   mixins: [mixin],
   components: {
     ActionHeader,
-    DiaLog
+    DiaLog,
+    BigImg
   }
 })
 export default class OwnerManage extends Vue {
@@ -110,20 +148,81 @@ export default class OwnerManage extends Vue {
       main_linker: "是",
       status: "已住",
       detail: "租户",
-      create_time: "2019/10/1"
+      create_time: "2019/10/1",
+      img: require("@/assets/4075389faf0c20cf430ce772c3afa47.png")
     }
   ];
   UserType: string = "owner";
-  private Dialog: Object = {
+  private detailDialog: Object = {
     name: ""
   };
+
+  private imgVisible: Boolean = false; // 控制放大图片的visible
+  private bigImg: String = ""; // 保存放大图片的地址
+
+  private dtailTable: Array<Object> =[
+    {
+      date: "2016-05-02";
+      name: "王小虎";
+      address: "上海市普陀区金沙江路 1518 弄";
+    },
+    {
+      date: "2016-05-04";
+      name: "王小虎";
+      address: "上海市普陀区金沙江路 1517 弄";
+    },
+    {
+      date: "2016-05-01";
+      name: "王小虎";
+      address: "上海市普陀区金沙江路 1519 弄";
+    },
+    {
+      date: "2016-05-03";
+      name: "王小虎";
+      address: "上海市普陀区金沙江路 1516 弄";
+    }
+  ];
+
+  private carDtailTable: Array<Object> =[
+    {
+      date: "川AXXXX";
+      name: "XXXXX";
+    },
+    {
+       date: "川AXXXX";
+      name: "XXXXX";
+    },
+    {
+      date: "川AXXXX";
+      name: "XXXXX";
+    },
+    {
+      date: "川AXXXX";
+      name: "XXXXX";
+    }
+  ];
+
+  private houseDtailTable: Array<Object> =[
+    {
+      date: "业主";
+      name: "1-1-101";
+    }
+  ];
+
+  private faceDtailTable: Array<Object> =[
+    {
+      date: "男";
+      name: "zhangsan";
+    }
+  ];
+
   handleClick() {}
   /**
    * row 列表数据
    */
   showDetail(row) {
     this.dialogFormVisible = true;
-    this.Dialog = Object.assign(this.Dialog, row);
+    this.detailDialog = Object.assign(this.detailDialog, row);
   }
 }
 </script>

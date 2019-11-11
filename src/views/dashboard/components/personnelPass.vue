@@ -8,9 +8,12 @@
       </div>
       <div>
         <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
+          <el-tab-pane label="图表" name="图表">
+            <line-chart :chartData="chartData"></line-chart>
+          </el-tab-pane>
           <el-tab-pane label="列表" name="列表">
             <div class="table-margin">
-              <el-table :data="tableData" stripe border  height="250">
+              <el-table :data="tableData" stripe border height="250">
                 <el-table-column prop="type" label="类型" width="60px"></el-table-column>
                 <el-table-column prop="house" label="房屋" width="60px"></el-table-column>
                 <el-table-column prop="phone" label="电话"></el-table-column>
@@ -25,9 +28,6 @@
 
               <el-button class="button-list" type="primary" plain size="small">查看更多</el-button>
             </div>
-          </el-tab-pane>
-          <el-tab-pane label="图表" name="图表">
-            <line-chart :chartData="chartData"></line-chart>
           </el-tab-pane>
         </el-tabs>
         <!-- <pie-chart :chartData="chartData"></pie-chart> -->

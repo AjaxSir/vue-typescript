@@ -61,7 +61,15 @@
 
             <el-table-column prop="houseRelative" label="所属单元"></el-table-column>
 
-            <el-table-column prop="createDate" label="房屋编号"></el-table-column>
+            <el-table-column prop="createDate" label="房屋编号">
+              <template slot-scope="scope">
+                <el-button
+                  style="padding:0px;"
+                  type="text"
+                  @click="queryIdetity(scope.row)"
+                >{{scope.row.createDate}}</el-button>
+              </template>
+            </el-table-column>
 
             <el-table-column prop="num" label="注册人数"></el-table-column>
 
@@ -94,6 +102,36 @@
         </div>
       </el-col>
     </el-row>
+
+    <el-dialog
+      class="dialog-rewrite"
+      :title="'编号: '+ detailDialog.name"
+      :visible.sync="dialogFormVisible"
+    >
+      <el-tabs type="card" v-model="activeName" @tab-click="handleClick">
+        <el-tab-pane label="详细信息" name="详细信息">
+          <p class="detai-info">关联房屋:{{detailDialog.houseRelative}}</p>
+          <p class="detai-info">最近刷卡时间:{{detailDialog.createDate}}</p>
+        </el-tab-pane>
+        <el-tab-pane label="门禁设备" name="门禁设备">
+          <el-table :data="doorDevice" style="width: 100%">
+            <el-table-column prop="date" label="编号"></el-table-column>
+            <el-table-column prop="name" label="单元信息"></el-table-column>
+          </el-table>
+        </el-tab-pane>
+        <el-tab-pane label="在住人员" name="在住人员">
+          <el-table :data="dtailTable" style="width: 100%">
+            <el-table-column prop="name" label="姓名"></el-table-column>
+            <el-table-column prop="date" label="年龄"></el-table-column>
+            <el-table-column prop="address" label="房屋"></el-table-column>
+          </el-table>
+        </el-tab-pane>
+      </el-tabs>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" size="small" @click="dialogFormVisible = false">确 定</el-button>
+      </span>
+    </el-dialog>
+
     <el-dialog title="提示" :visible.sync="dialogCreate" width="30%" :before-close="handleClose">
       <span>这是房屋管理-列表视图的新增</span>
       <span slot="footer" class="dialog-footer">
@@ -179,6 +217,43 @@ export default class CardManage extends Vue {
   private formLabelWidth: String = "120px";
   private dialogCreate: Boolean = false; // 新增弹出表单
 
+    private detailDialog: Object = {
+    //查看目标详情
+    name: ""
+  };
+  private activeName: String = "详细信息";
+  private dtailTable: Array<Object> =[
+    {
+      date: "30";
+      name: "王小虎";
+      address: "1-1-620";
+    },
+    {
+      date: "20";
+      name: "王小虎";
+     address: "1-1-620";
+    },
+    {
+      date: "20";
+      name: "王小虎";
+     address: "1-1-620";
+    },
+    {
+      date: "63";
+      name: "王小虎";
+      address: "1-1-620";
+    }
+  ];
+
+    private doorDevice: Array<Object> =[
+    {
+      date: "100000003";
+      name: "东区-1栋-1-1";
+    }
+  ];
+
+
+
   editType(item) {
     /**@description 修改状态 */
     console.log(item);
@@ -194,6 +269,14 @@ export default class CardManage extends Vue {
     /**@description hover leave tab 行 */
     row.showMenu = false;
   }
+
+  handleClick() {}
+
+  queryIdetity(row) {
+    this.detailDialog = row;
+    this.dialogFormVisible = true;
+  }
+
   menuVisible() {
     /**@description 控制楼栋 */
     if (this.rowSpan.row1 === 4) {
