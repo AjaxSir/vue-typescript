@@ -88,7 +88,7 @@ const DataTree = () => import("@/components/DataTree.vue");
 export default class InformIssue extends Vue {
   private cardList: Array<Object> = [
     {
-      name: "XXXXX",
+      name: "XXXXX111",
       zb: "男",
       xb: "--",
       zp: "--",
