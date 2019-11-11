@@ -160,59 +160,59 @@ export default class OwnerManage extends Vue {
   private imgVisible: Boolean = false; // 控制放大图片的visible
   private bigImg: String = ""; // 保存放大图片的地址
 
-  private dtailTable: Array<Object> =[
+  private dtailTable: Array<Object> = [
     {
-      date: "2016-05-02";
-      name: "王小虎";
-      address: "上海市普陀区金沙江路 1518 弄";
+      date: "2016-05-02",
+      name: "王小虎",
+      address: "上海市普陀区金沙江路 1518 弄"
     },
     {
-      date: "2016-05-04";
-      name: "王小虎";
-      address: "上海市普陀区金沙江路 1517 弄";
+      date: "2016-05-04",
+      name: "王小虎",
+      address: "上海市普陀区金沙江路 1517 弄"
     },
     {
-      date: "2016-05-01";
-      name: "王小虎";
-      address: "上海市普陀区金沙江路 1519 弄";
+      date: "2016-05-02",
+      name: "王小虎",
+      address: "上海市普陀区金沙江路 1518 弄"
     },
     {
-      date: "2016-05-03";
-      name: "王小虎";
-      address: "上海市普陀区金沙江路 1516 弄";
+      date: "2016-05-04",
+      name: "王小虎",
+      address: "上海市普陀区金沙江路 1517 弄"
     }
   ];
 
   private carDtailTable: Array<Object> =[
     {
-      date: "川AXXXX";
-      name: "XXXXX";
+      date: "川AXXXX",
+      name: "XXXXX"
     },
     {
-       date: "川AXXXX";
-      name: "XXXXX";
+      date: "川AXXXX",
+      name: "XXXXX"
     },
     {
-      date: "川AXXXX";
-      name: "XXXXX";
+      date: "川AXXXX",
+      name: "XXXXX"
     },
     {
-      date: "川AXXXX";
-      name: "XXXXX";
+      date: "川AXXXX",
+      name: "XXXXX"
     }
   ];
 
   private houseDtailTable: Array<Object> =[
     {
-      date: "业主";
-      name: "1-1-101";
+      date: "业主",
+      name: "1-1-101"
     }
   ];
 
   private faceDtailTable: Array<Object> =[
     {
-      date: "男";
-      name: "zhangsan";
+      date: "男",
+      name: "zhangsan"
     }
   ];
 

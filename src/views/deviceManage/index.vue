@@ -31,13 +31,13 @@
             @cell-mouse-enter="enterRowChange"
             @cell-mouse-leave="leaveRowChange"
           >
-            <el-table-column type="selection" width="50"></el-table-column>
+            <el-table-column align="center" type="selection" width="50"></el-table-column>
 
-            <el-table-column type="index" label="序号" width="50"></el-table-column>
+            <el-table-column align="center" type="index" label="序号" width="50"></el-table-column>
 
-            <el-table-column prop="name" label="设备编号" width="90">
+            <el-table-column align="center" prop="name" label="设备编号" width="90">
               <template slot-scope="scope">
-                <span class="serial-num">{{scope.row.name}}</span>
+                <el-button @click='showDetails(scope.row)' type='text'>{{scope.row.name}}</el-button>
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start" @command='commandClick'>
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
@@ -50,15 +50,15 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="houseRelative" label="单元信息"></el-table-column>
+            <el-table-column align="center" prop="houseRelative" label="单元信息"></el-table-column>
 
-            <el-table-column prop="carNum" label="设备型号"></el-table-column>
+            <el-table-column align="center" prop="carNum" label="设备型号"></el-table-column>
 
-            <el-table-column prop="createDate" label="上线时间" width="160"></el-table-column>
+            <el-table-column align="center" prop="createDate" label="上线时间" width="160"></el-table-column>
 
-            <el-table-column prop="num" label="故障次数"></el-table-column>
+            <el-table-column align="center" prop="num" label="故障次数"></el-table-column>
 
-            <el-table-column prop="type" label="状态">
+            <el-table-column align="center" prop="type" label="状态">
               <template slot-scope="scope">
                 <el-tag
                   size="small"
@@ -69,12 +69,46 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="createDate" label="创建时间" width="160"></el-table-column>
+            <el-table-column align="center" prop="createDate" label="创建时间" width="220"></el-table-column>
           </el-table>
         </div>
         <el-pagination style="margin-top:10px;" background layout="prev, pager, next" :total="2"></el-pagination>
       </el-col>
     </el-row>
+    <el-dialog class="dialog-rewrite" :title="detailDialogForm.name" :visible.sync="detailDialogVisible">
+      <el-tabs type="card" v-model="activeName">
+        <el-tab-pane label="详细信息" name="first">
+          <el-form label-width='100px' :model="detailDialogForm">
+            <el-form-item label="所属单元信息:">
+              <span>{{detailDialogForm.houseRelative}}</span>
+            </el-form-item>
+            <el-form-item label="状态:">
+              <span>{{detailDialogForm.type === 1 ? "连线中" : "离线中"}}</span>
+            </el-form-item>
+            <el-form-item label="门禁类型:">
+              <span>{{detailDialogForm.carNum}}</span>
+            </el-form-item>
+            <el-form-item label="上线时间:">
+              <span>{{detailDialogForm.createDate}}</span>
+            </el-form-item>
+            <el-form-item label="创建时间:">
+              <span>{{detailDialogForm.createDate}}</span>
+            </el-form-item>
+          </el-form>
+        </el-tab-pane>
+        <el-tab-pane label="门禁记录" name="second">
+          <el-table :data="doorRecordTable" style="width: 100%">
+            <el-table-column align="center" prop="name" label="姓名" width="150px"></el-table-column>
+            <el-table-column align="center" prop="date" label="通行时间" width="150px"></el-table-column>
+            <el-table-column align="center" prop="address" label="通行地址"></el-table-column>
+            <el-table-column align="center" prop="address" label="抓拍图片"></el-table-column>
+          </el-table>
+        </el-tab-pane>
+      </el-tabs>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="detailDialogVisible = false">确 定</el-button>
+      </span>
+    </el-dialog>
     <el-dialog title="提示" :visible.sync="dialogCreate" width="30%" :before-close="handleClose">
       <span>这是设备管理新增</span>
       <span slot="footer" class="dialog-footer">
@@ -129,35 +163,22 @@ export default class CardManage extends Vue {
     }
   ];
   deviceStatus: String = "all";
-
-  private form: Object = {
-    name: "",
-    region: "",
-    date1: "",
-    date2: "",
-    delivery: false,
-    type: [],
-    resource: "",
-    desc: ""
-  };
-
-  private dialogFormVisible: Boolean = false;
+  activeName: string = 'first'
+  detailDialogVisible: boolean = false // 设备详情dialog弹框状态
   private formLabelWidth: String = "120px";
+  detailDialogForm: Object = {}
+  doorRecordTable: Array<Object> = [] // 设备抓拍的通行记录
+  /**
+   * 查看设备详情
+   */
+  showDetails(row) {
+    this.detailDialogVisible = true
+    this.detailDialogForm = Object.assign({}, row)
+  }
 
   editType(item) {
     /**@description 修改状态 */
     console.log(item);
-    // this.dialogFormVisible = true;
-  }
-
-  enterRowChange(row, column, cell, event) {
-    /**@description hover enter tab 行 */
-    row.showMenu = true;
-  }
-
-  leaveRowChange(row) {
-    /**@description hover leave tab 行 */
-    row.showMenu = false;
   }
 }
 </script>

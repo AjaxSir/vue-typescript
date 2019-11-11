@@ -187,24 +187,24 @@ export default class CardManage extends Vue {
   private activeName: String = "详细信息";
   private dtailTable: Array<Object> =[
     {
-      date: "2016-05-02";
-      name: "王小虎";
-      address: "上海市普陀区金沙江路 1518 弄";
+      date: "2016-05-02",
+      name: "王小虎",
+      address: "上海市普陀区金沙江路 1518 弄"
     },
     {
-      date: "2016-05-04";
-      name: "王小虎";
-      address: "上海市普陀区金沙江路 1517 弄";
+      date: "2016-05-04",
+      name: "王小虎",
+      address: "上海市普陀区金沙江路 1517 弄"
     },
     {
-      date: "2016-05-01";
-      name: "王小虎";
-      address: "上海市普陀区金沙江路 1519 弄";
+      date: "2016-05-02",
+      name: "王小虎",
+      address: "上海市普陀区金沙江路 1518 弄"
     },
     {
-      date: "2016-05-03";
-      name: "王小虎";
-      address: "上海市普陀区金沙江路 1516 弄";
+      date: "2016-05-04",
+      name: "王小虎",
+      address: "上海市普陀区金沙江路 1517 弄"
     }
   ];
 
@@ -229,21 +229,6 @@ export default class CardManage extends Vue {
   queryIdetity(row) {
     this.detailDialog = row;
     this.dialogFormVisible = true;
-  }
-
-  menuVisible() {
-    /**@description 控制楼栋 */
-    if (this.rowSpan.row1 === 4) {
-      this.rowSpan = {
-        row1: 0,
-        row2: 24
-      };
-    } else {
-      this.rowSpan = {
-        row1: 4,
-        row2: 20
-      };
-    }
   }
 }
 </script>
