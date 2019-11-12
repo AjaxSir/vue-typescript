@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-row>
       <el-col :span="24">
-        <action-header :dialogCreate.sync="dialogCreate" :total="1">
+        <action-header :btnStatus='2' :dialogCreate.sync="dialogCreate" :total="1">
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>导出</el-dropdown-item>
           </el-dropdown-menu>
@@ -34,11 +34,10 @@
               <template slot-scope="scope">
                 <el-button style="padding:0px;" type="text" @click="queryIdetity">{{scope.row.name}}</el-button>
                 <div class="fun-btn">
-                  <el-dropdown trigger="click" placement="bottom-start">
+                  <el-dropdown @command='commandClick' trigger="click" placement="bottom-start">
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
                     <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item>修改</el-dropdown-item>
-                      <el-dropdown-item>删除</el-dropdown-item>
+                      <el-dropdown-item :command='returnCommand("whiteList", scope.row)'>加入白名单</el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
                 </div>
@@ -100,15 +99,12 @@ export default class CardManage extends Vue {
       zp:
         "http://192.168.3.19:8089/gcxuYFkPVzC2GLb2JGppLR/ea74acb14304ec41369f44ed18219dc.jpg",
       xq: "详情",
-      tjsj: "2019/8/21"
+      tjsj: "2019/8/21",
+      showMenu: false
     }
   ];
   private imgVisible: Boolean = false;
   bigImg: String = "";
-  private rowSpan: any = {
-    row1: 4,
-    row2: 20
-  };
 
   private dialogLibrary: any = false;
 

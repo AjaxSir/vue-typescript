@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-row>
       <el-col :span="24">
-        <action-header :total="1">
+        <action-header :btnStatus='2' :total="1">
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>导入</el-dropdown-item>
             <el-dropdown-item>导出</el-dropdown-item>
@@ -39,7 +39,7 @@
             <el-table-column prop="name" label="设备编号">
               <template slot-scope="scope">
                 <span class="serial-num">{{scope.row.carNum}}</span>
-                <div class="fun-btn">
+                <!-- <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start" @command='commandClick'>
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
                     <el-dropdown-menu slot="dropdown">
@@ -47,7 +47,7 @@
                       <el-dropdown-item command='delete'>删除</el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
-                </div>
+                </div> -->
               </template>
             </el-table-column>
 

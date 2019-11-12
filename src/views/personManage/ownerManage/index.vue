@@ -31,12 +31,24 @@
     <el-row :gutter="10">
       <el-col :span="24">
         <div class="rightContent">
-          <el-table :data="list_data" border>
+          <el-table :data="list_data" border
+          highlight-current-row
+            @cell-mouse-enter="enterRowChange"
+            @cell-mouse-leave="leaveRowChange">
             <el-table-column type="selection" align="center"></el-table-column>
             <el-table-column type="index" width="60" align="center" label="编号"></el-table-column>
-            <el-table-column prop="name" align="center" label="姓名">
-              <template slot-scope="{ row }">
+            <el-table-column align="center" class="serial-num" label="姓名">
+              <template slot-scope="{row}">
                 <el-button style="padding:0px;" type="text" @click="showDetail(row)">{{row.name }}</el-button>
+                <div class="fun-btn">
+                  <el-dropdown trigger="click" placement="bottom-start" @command='commandClick'>
+                    <i v-show="row.showMenu" class="iconfont icon-menu"></i>
+                    <el-dropdown-menu slot="dropdown">
+                      <el-dropdown-item :command='returnCommand("update", row)'>修改</el-dropdown-item>
+                      <el-dropdown-item :command='returnCommand("delete", row)'>删除</el-dropdown-item>
+                    </el-dropdown-menu>
+                  </el-dropdown>
+                </div>
               </template>
             </el-table-column>
             <el-table-column prop="phone" align="center" label="电话"></el-table-column>
@@ -106,7 +118,20 @@
     </el-dialog>
 
     <el-dialog title="提示" :visible.sync="dialogCreate" width="30%" :before-close="handleClose">
-      <span>这是业主管理新增</span>
+      <el-form :model="Form" :rules="rules" ref='Forms' label-width="90px">
+        <el-form-item label="姓名:"  prop='name'>
+          <el-input v-model="Form.name" placeholder='输入姓名'></el-input>
+        </el-form-item>
+        <el-form-item label="电话:"  prop='phone'>
+          <el-input v-model="Form.phone" placeholder='输入电话'></el-input>
+        </el-form-item>
+        <el-form-item label="房屋信息:"  prop='house_info'>
+          <el-input v-model="Form.house_info" placeholder='输入房屋信息'></el-input>
+        </el-form-item>
+        <el-form-item label="备注:"  prop='detail'>
+          <el-input v-model="Form.detail" placeholder='输入备注'></el-input>
+        </el-form-item>
+      </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogCreate = false">取 消</el-button>
         <el-button type="primary" @click="dialogCreate = false">确 定</el-button>
@@ -149,14 +174,25 @@ export default class OwnerManage extends Vue {
       status: "已住",
       detail: "租户",
       create_time: "2019/10/1",
-      img: require("@/assets/4075389faf0c20cf430ce772c3afa47.png")
+      img: require("@/assets/4075389faf0c20cf430ce772c3afa47.png"),
+      showMenu: false
     }
   ];
   UserType: string = "owner";
   private detailDialog: Object = {
     name: ""
   };
-
+  Form: any = {
+    name: '',
+    phone: '',
+    house_info: '',
+    detail: ''
+  }
+  rules: any = {
+    name: [
+            { required: true, message: '请输入需关联的房屋', trigger: 'blur' }
+          ]
+  }
   private imgVisible: Boolean = false; // 控制放大图片的visible
   private bigImg: String = ""; // 保存放大图片的地址
 
@@ -235,5 +271,16 @@ export default class OwnerManage extends Vue {
 .rightContent {
   flex: 1;
   box-shadow: 0px 6px 5px 0px lightgray;
+}
+
+.fun-btn {
+  position: absolute;
+  left: -64px;
+  top: 12px;
+  .iconfont {
+    font-size: 19px;
+    color: #8091a5;
+    cursor: pointer;
+  }
 }
 </style>

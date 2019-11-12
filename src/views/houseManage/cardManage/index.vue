@@ -9,16 +9,12 @@
           </el-dropdown-menu>
           <div slot="houseNum">
             <div class="word-filter">
-              <span class="filter-name">时间段:</span>
-              <el-date-picker
-                class="input-filter"
-                size="small"
-                v-model="TimeRange"
-                type="datetimerange"
-                range-separator="-"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-              ></el-date-picker>
+              <span class="filter-name">房屋:</span>
+              <el-input class="input-filter" size="small"></el-input>
+            </div>
+            <div class="word-filter">
+              <span class="filter-name">卡号:</span>
+              <el-input class="input-filter" size="small"></el-input>
             </div>
           </div>
         </action-header>
@@ -38,9 +34,9 @@
           >
             <el-table-column type="selection" width="50"></el-table-column>
 
-            <el-table-column type="index" label="序号" width="50"></el-table-column>
+            <el-table-column align="center" type="index" label="序号" width="50"></el-table-column>
 
-            <el-table-column class="serial-num" prop="name" label="编号">
+            <el-table-column align="center" class="serial-num" prop="name" label="卡号">
               <template slot-scope="scope">
                 <el-button
                   style="padding:0px;"
@@ -51,20 +47,21 @@
                   <el-dropdown trigger="click" placement="bottom-start" @command='commandClick'>
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
                     <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item command='update'>修改</el-dropdown-item>
-                      <el-dropdown-item command='delete'>删除</el-dropdown-item>
+                      <el-dropdown-item :command='returnCommand("update", scope.row)'>修改</el-dropdown-item>
+                      <el-dropdown-item :command='returnCommand("delete", scope.row)'>删除</el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
                 </div>
               </template>
             </el-table-column>
 
-            <el-table-column prop="houseRelative" label="关联房屋"></el-table-column>
+            <el-table-column align="center" prop="houseRelative" label="关联房屋"></el-table-column>
 
-            <el-table-column prop="createDate" label="创建时间"></el-table-column>
+            <el-table-column align="center" prop="createDate" label="创建时间"></el-table-column>
 
-            <el-table-column prop="createDate" label="最近刷卡时间"></el-table-column>
-            <el-table-column prop="type" label="状态">
+            <el-table-column align="center" prop="createDate" label="最近刷卡时间"></el-table-column>
+            <el-table-column align="center" prop="createDate" label="过期时间"></el-table-column>
+            <el-table-column align="center" prop="type" label="状态">
               <template slot-scope="scope">
                 <el-tag
                   size="small"
@@ -75,7 +72,7 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="num" label="累计刷卡次数"></el-table-column>
+            <el-table-column align="center" prop="num" label="累计刷卡次数"></el-table-column>
           </el-table>
           <el-pagination style="margin-top:10px;" background layout="prev, pager, next" :total="2"></el-pagination>
         </div>
@@ -87,16 +84,16 @@
       :title="'编号: '+ detailDialog.name"
       :visible.sync="dialogFormVisible"
     >
-      <el-tabs type="card" v-model="activeName" @tab-click="handleClick">
+      <el-tabs type="card" v-model="activeName">
         <el-tab-pane label="详细信息" name="详细信息">
           <p class="detai-info">关联房屋:{{detailDialog.houseRelative}}</p>
           <p class="detai-info">最近刷卡时间:{{detailDialog.createDate}}</p>
         </el-tab-pane>
         <el-tab-pane label="通行记录" name="通行记录">
           <el-table :data="dtailTable" style="width: 100%">
-            <el-table-column prop="name" label="姓名" width="150px"></el-table-column>
-            <el-table-column prop="date" label="通行时间" width="150px"></el-table-column>
-            <el-table-column prop="address" label="通行地址"></el-table-column>
+            <el-table-column align="center" prop="name" label="姓名" width="150px"></el-table-column>
+            <el-table-column align="center" prop="date" label="通行时间" width="150px"></el-table-column>
+            <el-table-column align="center" prop="address" label="通行地址"></el-table-column>
           </el-table>
         </el-tab-pane>
       </el-tabs>
@@ -106,13 +103,23 @@
     </el-dialog>
 
     <el-dialog title="提示" :visible.sync="dialogCreate" width="30%" :before-close="handleClose">
-      <span>这是门禁卡管理新增</span>
+      <el-form :model="Form" :rules="rules" ref='Forms' label-width="110px">
+        <el-form-item label="需关联的房屋:"  prop='name'>
+          <el-input v-model="Form.name" placeholder='需关联的房屋'></el-input>
+        </el-form-item>
+        <el-form-item label="过期时间:"  prop='time'>
+          <el-date-picker
+            v-model="Form.time"
+            type="date"
+            placeholder="选择过期日期">
+          </el-date-picker>
+        </el-form-item>
+      </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogCreate = false">取 消</el-button>
+        <el-button @click="handleClose">取 消</el-button>
         <el-button type="primary" @click="dialogCreate = false">确 定</el-button>
       </span>
     </el-dialog>
-    <!-- <dialog-form :dialogCreate.sync="dialogCreate" /> -->
   </div>
 </template>
 
@@ -165,17 +172,15 @@ export default class CardManage extends Vue {
     }
   ];
   TimeRange: Array<string> = [];
-  private form: Object = {
-    name: "",
-    region: "",
-    date1: "",
-    date2: "",
-    delivery: false,
-    type: [],
-    resource: "",
-    desc: ""
-  };
-
+  Form: any = {
+    name: '',
+    time: ''
+  }
+  rules: any = {
+    name: [
+            { required: true, message: '请输入需关联的房屋', trigger: 'blur' }
+          ]
+  }
   private dialogFormVisible: Boolean = false;
   private formLabelWidth: String = "120px";
   private dialogCreate: Boolean = false; // 新增弹出表单
@@ -213,19 +218,6 @@ export default class CardManage extends Vue {
     console.log(item);
     // this.dialogFormVisible = true;
   }
-
-  enterRowChange(row, column, cell, event) {
-    /**@description hover enter tab 行 */
-    row.showMenu = true;
-  }
-
-  leaveRowChange(row) {
-    /**@description hover leave tab 行 */
-    row.showMenu = false;
-  }
-
-  handleClick() {}
-
   queryIdetity(row) {
     this.detailDialog = row;
     this.dialogFormVisible = true;

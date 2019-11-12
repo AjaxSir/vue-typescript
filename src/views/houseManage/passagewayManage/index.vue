@@ -2,15 +2,11 @@
   <div class="app-container">
     <el-row>
       <el-col :span="24">
-        <action-header :total="1">
+        <action-header :dialogCreate.sync="dialogCreate" :total="1">
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>统计信息</el-dropdown-item>
           </el-dropdown-menu>
           <div slot="houseNum">
-            <!-- <span class="word-filter">
-              发布对象:
-              <el-input class="word-filter" size="small"></el-input>
-            </span>-->
             <div class="word-filter">
               <span class="filter-name">发布对象:</span>
               <el-input class="input-filter" size="small"></el-input>
@@ -57,6 +53,17 @@
         <el-pagination style="margin-top:10px;" background layout="prev, pager, next" :total="2"></el-pagination>
       </el-col>
     </el-row>
+    <el-dialog title="提示" :visible.sync="dialogCreate" width="30%" :before-close="handleClose">
+      <el-form :model="Form" :rules="rules" ref='Forms' label-width="110px">
+        <el-form-item label="出入口名称:"  prop='name'>
+          <el-input v-model="Form.name" placeholder='输入出入口名称'></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="handleClose">取 消</el-button>
+        <el-button type="primary" @click="dialogCreate = false">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -83,11 +90,15 @@ export default class InformIssue extends Vue {
       xb: "1000000",
     }
   ];
-  private rowSpan: any = {
-    row1: 4,
-    row2: 20
-  };
-
+  // 新增dialog弹框信息
+  Form: any = {
+    name: ''
+  }
+  rules: any = {
+    name: [
+            { required: true, message: '请输入需关联的房屋', trigger: 'blur' }
+          ]
+  }
   private dialogLibrary: any = false;
 
   private form: Object = {
