@@ -26,8 +26,11 @@
       </el-col>
     </el-row>
     <el-row :gutter="10">
+      <el-col :span="rowSpan.row1">
+        <data-tree />
+      </el-col>
 
-      <el-col :span="24" class="table-col">
+      <el-col :span="rowSpan.row2" class="table-col">
         <div class="rightContent">
           <el-table
             :data="cardList"
@@ -90,6 +93,12 @@
             <el-table-column prop="num" label="备注"></el-table-column>
           </el-table>
           <el-pagination style="margin-top:10px;" background layout="prev, pager, next" :total="2"></el-pagination>
+        </div>
+        <div :class="rowSpan.row1===4 ? menuControl1 : menuControl2" @click="menuVisible">
+          <p class="close-menu">
+            <i v-if="rowSpan.row1===4" class="iconfont icon-left icon-class"></i>
+            <i v-else class="iconfont icon-zuo icon-class"></i>
+          </p>
         </div>
       </el-col>
     </el-row>
@@ -185,7 +194,13 @@ export default class CardManage extends Vue {
     }
   ];
   TimeRange: Array<string> = [];
+  private rowSpan: any = {
+    row1: 4,
+    row2: 20
+  };
 
+  private menuControl1: String = "menu-control";
+  private menuControl2: String = "menu-visible";
 
   private form: Object = {
     name: "",
@@ -209,31 +224,31 @@ export default class CardManage extends Vue {
   private activeName: String = "详细信息";
   private dtailTable: Array<Object> =[
     {
-      date: "30",
-      name: "王小虎",
-      address: "1-1-620"
+      date: "30";
+      name: "王小虎";
+      address: "1-1-620";
     },
     {
-      date: "30",
-      name: "王小虎",
-      address: "1-1-620"
+      date: "20";
+      name: "王小虎";
+     address: "1-1-620";
     },
     {
-      date: "30",
-      name: "王小虎",
-      address: "1-1-620"
+      date: "20";
+      name: "王小虎";
+     address: "1-1-620";
     },
     {
-      date: "30",
-      name: "王小虎",
-      address: "1-1-620"
+      date: "63";
+      name: "王小虎";
+      address: "1-1-620";
     }
   ];
 
     private doorDevice: Array<Object> =[
     {
-      date: "100000003",
-      name: "东区-1栋-1-1"
+      date: "100000003";
+      name: "东区-1栋-1-1";
     }
   ];
 
@@ -260,6 +275,21 @@ export default class CardManage extends Vue {
   queryIdetity(row) {
     this.detailDialog = row;
     this.dialogFormVisible = true;
+  }
+
+  menuVisible() {
+    /**@description 控制楼栋 */
+    if (this.rowSpan.row1 === 4) {
+      this.rowSpan = {
+        row1: 0,
+        row2: 24
+      };
+    } else {
+      this.rowSpan = {
+        row1: 4,
+        row2: 20
+      };
+    }
   }
 }
 </script>

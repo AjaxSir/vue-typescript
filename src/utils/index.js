@@ -35,6 +35,15 @@ export function parseTime(time, cFormat) {
   return time_str;
 }
 
+export function weekDate() {
+  const end = new Date()
+  const start = new Date()
+  start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+  var s = parseTime(new Date(start))
+  var e = parseTime(new Date(end))
+  return [s, e]
+}
+
 // 日期格式化
 export function formatTime(datetime) {
   let Y, M, D, W, H, Min, S;

@@ -4,7 +4,6 @@
       <el-col :span="24">
         <action-header :dialogCreate.sync="dialogCreate" :total="1">
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>导入</el-dropdown-item>
             <el-dropdown-item>导出</el-dropdown-item>
           </el-dropdown-menu>
           <div slot="houseNum">
@@ -39,7 +38,7 @@
 
             <el-table-column type="index" label="序号" width="50"></el-table-column>
 
-            <el-table-column prop="name" label="所属房屋">
+            <!-- <el-table-column prop="name" label="所属房屋">
               <template slot-scope="scope">
                 <span class="serial-num">{{scope.row.name}}</span>
                 <div class="fun-btn">
@@ -52,11 +51,19 @@
                   </el-dropdown>
                 </div>
               </template>
+            </el-table-column>-->
+
+            <el-table-column prop="name" label="车主"></el-table-column>
+
+            <el-table-column prop="carNum" label="车牌号">
+              <template slot-scope="scope">
+                <el-button
+                  @click="showCarDetails(scope.row)"
+                  type="text"
+                  class="serial-num"
+                >{{scope.row.carNum}}</el-button>
+              </template>
             </el-table-column>
-
-            <el-table-column prop="houseRelative" label="类型"></el-table-column>
-
-            <el-table-column prop="carNum" label="车牌号"></el-table-column>
 
             <el-table-column prop="createDate" label="最近一次访问"></el-table-column>
 
@@ -82,6 +89,8 @@
                 >{{ scope.row.type === 1 ? "正常" : "异常" }}</el-tag>
               </template>
             </el-table-column>
+
+            <el-table-column prop="houseRelative" label="备注"></el-table-column>
           </el-table>
         </div>
 
@@ -95,11 +104,71 @@
         </div>-->
       </el-col>
     </el-row>
-    <el-dialog title="提示" :visible.sync="dialogCreate" width="30%" :before-close="handleClose">
-      <span>这是车辆管理新增</span>
+    <!-- 车辆新增或修改 -->
+    <el-dialog
+      :title="roleTitle==='0' ? '新增' :'修改'"
+      :visible.sync="dialogCreate"
+      width="500px"
+      :before-close="handleClose"
+    >
+      <el-form ref="form" :model="roleForm" label-width="80px">
+        <el-form-item label="车主">
+          <el-input v-model="roleForm.name"></el-input>
+        </el-form-item>
+        <el-form-item label="车牌">
+          <el-input v-model="roleForm.carNum"></el-input>
+        </el-form-item>
+
+        <el-form-item label="备注">
+          <el-input type="textarea" v-model="roleForm.desc"></el-input>
+        </el-form-item>
+      </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogCreate = false">取 消</el-button>
         <el-button type="primary" @click="dialogCreate = false">确 定</el-button>
+      </span>
+    </el-dialog>
+    <!-- 目标详情 -->
+    <el-dialog
+      class="dialog-rewrite"
+      :title="CarDialogForm.name"
+      :visible.sync="detailDialogVisible"
+    >
+      <el-tabs type="card" v-model="activeName">
+        <el-tab-pane label="车辆详情" name="first">
+          <el-form label-width="100px" :model="CarDialogForm">
+            <el-form-item label="车牌:">
+              <span>{{CarDialogForm.carNum}}</span>
+            </el-form-item>
+            <el-form-item label="车辆品牌:">
+              <span>--</span>
+            </el-form-item>
+            <el-form-item label="车辆颜色:">
+              <span>--</span>
+            </el-form-item>
+          </el-form>
+        </el-tab-pane>
+        <el-tab-pane label="车主信息" name="second">
+          <el-form label-width="100px" :model="CarDialogForm">
+            <el-form-item label="车主:">
+              <span>{{CarDialogForm.name}}</span>
+            </el-form-item>
+            <el-form-item label="电话:">
+              <span>--</span>
+            </el-form-item>
+          </el-form>
+        </el-tab-pane>
+        <el-tab-pane label="通行记录" name="thirdly">
+          <el-table :data="carDetailsTable" style="width: 100%">
+            <el-table-column align="center" prop="name" label="姓名" width="150px"></el-table-column>
+            <el-table-column align="center" prop="date" label="通行时间" width="150px"></el-table-column>
+            <el-table-column align="center" prop="address" label="通行地址"></el-table-column>
+            <el-table-column align="center" prop="address" label="抓拍图片"></el-table-column>
+          </el-table>
+        </el-tab-pane>
+      </el-tabs>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="detailDialogVisible = false">确 定</el-button>
       </span>
     </el-dialog>
     <ImageMagni :centerDialogVisible="imgVisible" bigTitle="抓拍图片" :bigImg="bigImg" />
@@ -126,7 +195,7 @@ const DataTree = () => import("@/components/DataTree.vue");
 export default class CardManage extends Vue {
   private cardList: Array<Object> = [
     {
-      name: "1-1-105",
+      name: "zhang3",
       houseRelative: "业主",
       carNum: "川1256489",
       createDate: "2019-9-26",
@@ -135,7 +204,7 @@ export default class CardManage extends Vue {
       showMenu: false
     },
     {
-      name: "1-1-105",
+      name: "zhang3",
       houseRelative: "业主",
       carNum: "川1256489",
       createDate: "2019-9-26",
@@ -144,7 +213,7 @@ export default class CardManage extends Vue {
       showMenu: false
     },
     {
-      name: "1-1-105",
+      name: "zhang3",
       houseRelative: "业主",
       carNum: "川1256489",
       createDate: "2019-9-26",
@@ -176,6 +245,19 @@ export default class CardManage extends Vue {
   private dialogFormVisible: Boolean = false;
   private formLabelWidth: String = "120px";
 
+  private CarDialogForm: Object = {}; // 车主详细信息
+  private detailDialogVisible: boolean = false; // 详细信息dialog弹框
+  private activeName: string = "first";
+  private carDetailsTable: Array<Object> = [];
+  private dialogCreate: Boolean = false; // 新增或修改弹出表单
+  private roleTitle: String = "0";
+
+  private roleForm: Object = {
+    name: null,
+    carNum: null,
+    desc: null
+  };
+
   editType(item) {
     /**@description 修改状态 */
     console.log(item);
@@ -190,6 +272,11 @@ export default class CardManage extends Vue {
   leaveRowChange(row) {
     /**@description hover leave tab 行 */
     row.showMenu = false;
+  }
+
+  showCarDetails(row) {
+    this.detailDialogVisible = true;
+    this.CarDialogForm = Object.assign({}, row);
   }
 }
 </script>
