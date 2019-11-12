@@ -4,9 +4,12 @@
       <el-col :span="24">
         <action-header :btnStatus="false" :total="1">
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>进出次数排序</el-dropdown-item>
-            <el-dropdown-item>滞留时间排序</el-dropdown-item>
-            <el-dropdown-item>统计查询</el-dropdown-item>
+            <div @click="handleStatistics('统计查询')">
+              <el-dropdown-item>统计查询</el-dropdown-item>
+            </div>
+            <div @click="handleStatistics('访客次数排序排序')">
+              <el-dropdown-item>访客次数排序排序</el-dropdown-item>
+            </div>
           </el-dropdown-menu>
           <div slot="houseNum">
             <div class="word-filter">
@@ -30,7 +33,6 @@
       </el-col>
     </el-row>
     <el-row :gutter="10">
-
       <el-col :span="24" class="table-col">
         <div class="rightContent">
           <el-table
@@ -41,28 +43,32 @@
             @cell-mouse-enter="enterRowChange"
             @cell-mouse-leave="leaveRowChange"
           >
-            <el-table-column align='center' type="selection" width="50"></el-table-column>
+            <el-table-column align="center" type="selection" width="50"></el-table-column>
 
-            <el-table-column align='center' type="index" label="序号" width="50"></el-table-column>
+            <el-table-column align="center" type="index" label="序号" width="50"></el-table-column>
 
-            <el-table-column align='center' prop="name" label="车牌号">
+            <el-table-column align="center" prop="name" label="车牌号">
               <template slot-scope="scope">
-                <el-button @click='showCarDetails(scope.row)' type='text' class="serial-num">{{scope.row.carNum}}</el-button>
+                <el-button
+                  @click="showCarDetails(scope.row)"
+                  type="text"
+                  class="serial-num"
+                >{{scope.row.carNum}}</el-button>
                 <div class="fun-btn">
-                  <el-dropdown trigger="click" placement="bottom-start" @command='commandClick'>
+                  <el-dropdown trigger="click" placement="bottom-start" @command="commandClick">
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
                     <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item command='update'>修改</el-dropdown-item>
-                      <el-dropdown-item command='delete'>删除</el-dropdown-item>
+                      <el-dropdown-item command="update">修改</el-dropdown-item>
+                      <el-dropdown-item command="delete">删除</el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
                 </div>
               </template>
             </el-table-column>
 
-            <el-table-column align='center' prop="car" label="车辆品牌"></el-table-column>
+            <el-table-column align="center" prop="car" label="车辆品牌"></el-table-column>
 
-            <el-table-column align='center' prop="type" label="是否校内">
+            <el-table-column align="center" prop="type" label="是否校内">
               <template slot-scope="scope">
                 <el-tag
                   size="small"
@@ -73,13 +79,13 @@
               </template>
             </el-table-column>
 
-            <el-table-column align='center' prop="car" label="车辆颜色"></el-table-column>
+            <el-table-column align="center" prop="car" label="车辆颜色"></el-table-column>
 
-            <el-table-column align='center' prop="car" label="车主信息"></el-table-column>
+            <el-table-column align="center" prop="car" label="车主信息"></el-table-column>
 
-            <el-table-column align='center' prop="createDate" label="抓拍时间"></el-table-column>
+            <el-table-column align="center" prop="createDate" label="抓拍时间"></el-table-column>
 
-            <el-table-column align='center' prop="img" label="最近抓拍图片">
+            <el-table-column align="center" prop="img" label="最近抓拍图片">
               <template slot-scope="scope">
                 <img
                   class="capture-img"
@@ -96,10 +102,14 @@
         <el-pagination style="margin-top:10px;" background layout="prev, pager, next" :total="2"></el-pagination>
       </el-col>
     </el-row>
-    <el-dialog class="dialog-rewrite" :title="CarDialogForm.name" :visible.sync="detailDialogVisible">
+    <el-dialog
+      class="dialog-rewrite"
+      :title="CarDialogForm.name"
+      :visible.sync="detailDialogVisible"
+    >
       <el-tabs type="card" v-model="activeName">
         <el-tab-pane label="车主信息" name="first">
-          <el-form label-width='100px' :model="CarDialogForm">
+          <el-form label-width="100px" :model="CarDialogForm">
             <el-form-item label="车主信息:">
               <span>{{CarDialogForm.houseRelative}}</span>
             </el-form-item>
@@ -128,6 +138,7 @@
       </span>
     </el-dialog>
     <ImageMagni :centerDialogVisible="imgVisible" bigTitle="抓拍图片" :bigImg="bigImg" />
+    <StatisticDataDialog :formShowStatistic.sync="dialogStatisticData" :fromTitle="fromTitle" />
   </div>
 </template>
 
@@ -138,12 +149,14 @@ import mixin from "@/config/minxins";
 
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 const ImageMagni = () => import("@/components/BigImg/index.vue");
+const StatisticDataDialog = () => import("./components/statisticDataDialog.vue");
 
 @Component({
   mixins: [mixin],
   components: {
     ActionHeader,
-    ImageMagni
+    ImageMagni,
+    StatisticDataDialog
   }
 })
 export default class CardManage extends Vue {
@@ -180,14 +193,13 @@ export default class CardManage extends Vue {
     }
   ];
 
-
   private TimeRange: any = "";
-  activeName: string = 'first'
-  carDetailsTable: Array<Object> = [] // 详细信息记录
+  activeName: string = "first";
+  carDetailsTable: Array<Object> = []; // 详细信息记录
   private imgVisible: Boolean = false; // 控制放大图片的visible
   private bigImg: String = ""; // 保存放大图片的地址
-  CarDialogForm: Object = {} // 车主详细信息
-  detailDialogVisible: boolean = false // 详细信息dialog弹框
+  CarDialogForm: Object = {}; // 车主详细信息
+  detailDialogVisible: boolean = false; // 详细信息dialog弹框
   private form: Object = {
     name: "",
     region: "",
@@ -198,14 +210,20 @@ export default class CardManage extends Vue {
     resource: "",
     desc: ""
   };
+  private fromTitle: String = "统计查询"; // dialog Title
+  private dialogStatisticData: Boolean = false; // 统计dialog
 
   showCarDetails(row) {
-    this.detailDialogVisible = true
-    this.CarDialogForm = Object.assign({}, row)
+    this.detailDialogVisible = true;
+    this.CarDialogForm = Object.assign({}, row);
   }
   editType(item) {
     /**@description 修改状态 */
     console.log(item);
+  }
+  handleStatistics(val) {
+    this.fromTitle = val;
+    this.dialogStatisticData = true;
   }
 }
 </script>
