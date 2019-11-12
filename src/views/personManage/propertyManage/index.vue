@@ -48,8 +48,8 @@
         <el-pagination style="margin-top:10px;" background layout="prev, pager, next" :total="2"></el-pagination>
       </el-col>
     </el-row>
-    <el-dialog :title="Dialog.name" :visible.sync="dialogCreate">
-      <el-tabs v-model="activeName" @tab-click="handleClick">
+    <el-dialog :title="Dialog.name" :visible.sync="dialogFormVisible">
+      <el-tabs v-model="activeName">
         <el-tab-pane label="用户管理" name="first">详细信息</el-tab-pane>
         <el-tab-pane label="配置管理" name="second">进出单元记录</el-tab-pane>
         <el-tab-pane label="角色管理" name="third">进出小区记录</el-tab-pane>
@@ -59,6 +59,27 @@
         <el-tab-pane label="人脸库信息" name="seven">人脸库信息</el-tab-pane>
       </el-tabs>
       <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+      </span>
+    </el-dialog>
+
+    <el-dialog title="提示" :visible.sync="dialogCreate" width="30%" :before-close="handleClose">
+      <el-form :model="Form" :rules="rules" ref='Forms' label-width="90px">
+        <el-form-item label="姓名:"  prop='name'>
+          <el-input v-model="Form.name" placeholder='输入姓名'></el-input>
+        </el-form-item>
+        <el-form-item label="电话:"  prop='phone'>
+          <el-input v-model="Form.phone" placeholder='输入电话'></el-input>
+        </el-form-item>
+        <el-form-item label="年龄:"  prop='age'>
+          <el-input v-model="Form.age" placeholder='输入房屋信息'></el-input>
+        </el-form-item>
+        <el-form-item label="备注:"  prop='detail'>
+          <el-input v-model="Form.detail" placeholder='输入备注'></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogCreate = false">取 消</el-button>
         <el-button type="primary" @click="dialogCreate = false">确 定</el-button>
       </span>
     </el-dialog>
@@ -94,6 +115,17 @@ export default class PropertyManage extends Vue {
       create_time: "2019/10/1"
     }
   ];
+  Form: any = {
+    name: '',
+    phone: '',
+    age: '',
+    detail: ''
+  }
+  rules: any = {
+    name: [
+            { required: true, message: '请输入需关联的房屋', trigger: 'blur' }
+          ]
+  }
   private Dialog: Object = {
     name: ""
   };

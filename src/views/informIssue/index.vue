@@ -218,9 +218,9 @@ export default class InformIssue extends Vue {
   }
   allChoose() {
     /**@description 全选 */
-    this.meetingData.limitHouse = [];
+    this.meetingData['limitHouse'] = [];
     this.meetingLoc.map(item => {
-      this.meetingData.limitHouse.push(item.id);
+      this.meetingData['limitHouse'].push(item['id']);
     });
   }
 }

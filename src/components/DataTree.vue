@@ -71,19 +71,33 @@ export default class DataTree extends Vue {
     return [
     {
       id: 1,
-      label: "一级 1",
+      label: "东区",
       children: [
         {
           id: 4,
-          label: "二级 1-1",
+          label: "1栋",
           children: [
             {
               id: 9,
-              label: "三级 1-1-1"
+              label: "1-1 单元"
             },
             {
               id: 10,
-              label: "三级 1-1-2"
+              label: "1-2 单元"
+            }
+          ]
+        },
+        {
+          id: 5,
+          label: "2栋",
+          children: [
+            {
+              id: 9,
+              label: "2-1 单元"
+            },
+            {
+              id: 10,
+              label: "2-2 单元"
             }
           ]
         }
@@ -91,33 +105,18 @@ export default class DataTree extends Vue {
     },
     {
       id: 2,
-      label: "一级 2",
+      label: "西区",
       children: [
         {
           id: 5,
-          label: "二级 2-1"
+          label: "4栋"
         },
         {
           id: 6,
-          label: "二级 2-2"
+          label: "5栋"
         }
       ]
-    },
-    {
-      id: 3,
-      label: "一级 3",
-      children: [
-        {
-          id: 7,
-          label: "二级 3-1"
-        },
-        {
-          id: 8,
-          label: "二级 3-2"
-        }
-      ]
-    }
-  ] // 必须是函数式返回
+    }] // 必须是函数式返回
   } }) TreeData: Array<Object>
   // private data: Array<Object> =
 

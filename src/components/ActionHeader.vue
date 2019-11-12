@@ -2,13 +2,14 @@
   对表格的操作组件
   total 传入的数据总条数
   pageSize 每页的数据条数
+  btnStatus: 0 表示没有创建 导出按钮 1 创建按钮 2 导出按钮
  -->
 <template>
   <el-row type="flex" class="row-bg">
     <el-col :span="12">
       <div class="leftAction">
         <el-button
-          v-if="btnStatus"
+          v-if="btnStatus === 1"
           class="createBtn"
           type="primary"
           size="small"
@@ -16,7 +17,7 @@
           @click="handleHouse"
         >创建</el-button>
         <el-button
-          v-else
+          v-else-if="btnStatus === 2"
           class="createBtn"
           type="primary"
           size="small"
@@ -94,7 +95,7 @@ import { Component, Prop, Vue, Mixins, Watch } from "vue-property-decorator";
 export default class ActionManage extends Vue {
   @Prop() private total: any; // 显示总共多少条记录
   @Prop() dialogCreate: Boolean; // 创建弹框状态 公用
-  @Prop({ default: true }) btnStatus: Boolean; // true 表示新增框 false 表示导出
+  @Prop({ default: 1 }) btnStatus: Number; //  btnStatus: 0 表示没有创建导出按钮 1 创建按钮 2 导出按钮
   private visible: boolean = false; // 数据显示条数dialog状态
   private size: string = "10"; // 默认每页显示10条
   private levelList: Object = {}; // 当前路由的子路由

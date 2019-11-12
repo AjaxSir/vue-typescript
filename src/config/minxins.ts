@@ -19,6 +19,7 @@ public orderBy: Object = {
     prop: "", // 需要的根据什么排序
     order: "descending" // ascending 表示升序，descending 表示降序
 }
+public Form:Object = {} // 新增修改弹框表单信息
 public TreeData: Array<Object> = []
 public list_data: Array<Object> = [];
 fetchData(page: number): void {
@@ -43,6 +44,7 @@ fetchData(page: number): void {
    * @param page 关闭新增框
    */
   handleClose() {
+    this.$refs['Forms']['resetFields']();
     this.dialogCreate = false
   }
   /**
@@ -71,13 +73,43 @@ fetchData(page: number): void {
   pageChange(page: number) {
     this.fetchData(page)
   }
+  // 区分执行的操作
+  returnCommand(action:string, row:object) {
+    return {
+      action,
+      row
+    }
+  }
+  // exportPassList(this.pageForm).then(res => {
+  //   this.exportFunc('通行记录.xls', res.data)
+  // })
+  // 导出excel函数
+  exportFunc(fileName:string, data: any):void {
+    var blob = new Blob([data])
+    if ('download' in document.createElement('a')) {
+      // 非IE下载
+      const elink = document.createElement('a')
+      elink.download = fileName
+      elink.style.display = 'none'
+      // elink.href = '/static/file/school_format.xls'
+      elink.href = URL.createObjectURL(blob)
+      document.body.appendChild(elink)
+      elink.click()
+      URL.revokeObjectURL(elink.href) // 释放URL 对象
+      document.body.removeChild(elink)
+    } else {
+      // IE10+下载
+      navigator.msSaveBlob(blob, fileName)
+    }
+  }
   /**
    * table内的操作
    * @param action
    */
-  commandClick(action:string):void {
-    switch (action) {
+  commandClick(options: Object):void {
+    switch (options['action']) {
       case 'update' :
+        this.Form = Object.assign(this.Form, options['row'])
         this.dialogCreate = true
         break
       case 'delete':
@@ -98,6 +130,26 @@ fetchData(page: number): void {
               message: '已取消删除'
             });
           });
+          break
+       case 'whiteList':
+          MessageBox.confirm('此操作将添加该用户至白名单, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            deleteRow('url').then((res: any) => {
+              Message({
+                type: 'success',
+                message: '添加成功!'
+              });
+            })
+          }).catch(() => {
+            Message({
+              type: 'info',
+              message: '已取消添加'
+            });
+          });
+          break
     }
   }
 }

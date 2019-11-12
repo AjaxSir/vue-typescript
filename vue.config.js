@@ -15,7 +15,8 @@ module.exports = {
           "^/v1": "/v1"
         }
       }
-    }
+    },
+    host: '192.168.3.108'
   },
   // 生产环境 sourceMap
   productionSourceMap: false,

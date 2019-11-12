@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-row>
       <el-col :span="24">
-        <action-header :dialogCreate.sync="dialogCreate" :total="1">
+        <action-header :btnStatus='0' :total="1">
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>导入</el-dropdown-item>
             <el-dropdown-item>导出</el-dropdown-item>
@@ -132,14 +132,13 @@
       </span>
     </el-dialog>
 
-    <el-dialog title="提示" :visible.sync="dialogCreate" width="30%" :before-close="handleClose">
+    <!-- <el-dialog title="提示" :visible.sync="dialogCreate" width="30%" :before-close="handleClose">
       <span>这是房屋管理-列表视图的新增</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogCreate = false">取 消</el-button>
         <el-button type="primary" @click="dialogCreate = false">确 定</el-button>
       </span>
-    </el-dialog>
-    <!-- <dialog-form :dialogCreate.sync="dialogCreate" /> -->
+    </el-dialog> -->
   </div>
 </template>
 
@@ -215,7 +214,6 @@ export default class CardManage extends Vue {
 
   private dialogFormVisible: Boolean = false;
   private formLabelWidth: String = "120px";
-  private dialogCreate: Boolean = false; // 新增弹出表单
 
     private detailDialog: Object = {
     //查看目标详情
@@ -224,31 +222,31 @@ export default class CardManage extends Vue {
   private activeName: String = "详细信息";
   private dtailTable: Array<Object> =[
     {
-      date: "30";
-      name: "王小虎";
-      address: "1-1-620";
+      date: "30",
+      name: "王小虎",
+      address: "1-1-620"
     },
     {
-      date: "20";
-      name: "王小虎";
-     address: "1-1-620";
+      date: "30",
+      name: "王小虎",
+      address: "1-1-620"
     },
     {
-      date: "20";
-      name: "王小虎";
-     address: "1-1-620";
+      date: "30",
+      name: "王小虎",
+      address: "1-1-620"
     },
     {
-      date: "63";
-      name: "王小虎";
-      address: "1-1-620";
+      date: "30",
+      name: "王小虎",
+      address: "1-1-620"
     }
   ];
 
     private doorDevice: Array<Object> =[
     {
-      date: "100000003";
-      name: "东区-1栋-1-1";
+      date: "100000003",
+      name: "东区-1栋-1-1"
     }
   ];
 
