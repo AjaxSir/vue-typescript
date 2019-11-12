@@ -2,15 +2,11 @@
   <div class="app-container">
     <el-row>
       <el-col :span="24">
-        <action-header :total="1">
+        <action-header :dialogCreate.sync="dialogCreate" :total="1">
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>导出</el-dropdown-item>
           </el-dropdown-menu>
           <div slot="houseNum">
-            <!-- <span class="word-filter">
-              发布对象:
-              <el-input class="word-filter" size="small"></el-input>
-            </span>-->
             <div class="word-filter">
               <span class="filter-name">发布对象:</span>
               <el-input class="input-filter" size="small"></el-input>
@@ -74,6 +70,55 @@
         <el-pagination style="margin-top:10px;" background layout="prev, pager, next" :total="2"></el-pagination>
       </el-col>
     </el-row>
+    <!-- 通知发布 -->
+    <el-dialog
+      class="image-dialod"
+      title="发布通知"
+      :visible.sync="dialogCreate"
+      :close-on-click-modal="false"
+      :before-close="handleClose"
+    >
+      <el-form
+        ref="dataForm"
+        :model="meetingData"
+        label-position="right"
+        label-width="100px"
+        style="width: 300px; margin-left:70px;"
+      >
+        <el-form-item class="phone-input" label="标题: " prop="title">
+          <el-input style="width:310px" v-model="meetingData.title"></el-input>
+        </el-form-item>
+
+        <el-form-item class="phone-input" label="发送对象: " prop="limitHouse">
+          <el-select
+            style="width:310px;"
+            v-model="meetingData.limitHouse"
+            multiple
+            placeholder="请选择发布对象"
+          >
+            <el-option
+              v-for="item in meetingLoc"
+              :key="item.id"
+              :label="item.name + '-' + item.unit"
+              :value="item.id"
+            ></el-option>
+            <div class="handle-btn">
+              <el-button type="primary" size="mini" plain @click="allChoose">全选</el-button>
+              <el-button type="warning" size="mini" plain @click="meetingData.limitHouse=[]">重选</el-button>
+            </div>
+          </el-select>
+        </el-form-item>
+
+        <el-form-item class="phone-input" style="width:410px" label="内容: " prop="content">
+          <el-input type="textarea" :rows="9" placeholder="请输入通知内容" v-model="meetingData.content"></el-input>
+        </el-form-item>
+      </el-form>
+
+      <div slot="footer" class="dialog-footer">
+        <el-button type="info" @click="handleClose">取消</el-button>
+        <el-button type="primary" @click="handleClose">发布</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -124,6 +169,31 @@ export default class InformIssue extends Vue {
 
   private dialogFormVisible: Boolean = false;
   private formLabelWidth: String = "120px";
+  private dialogCreate: Boolean = false; // 新增或修改弹出表单
+  private roleTitle: String = "0";
+  private meetingData: Object = {
+    limitHouse: [],
+    content: "",
+    title: ""
+  };
+
+  private meetingLoc: Array<Object> = [
+    {
+      id: "0",
+      name: "北门",
+      unit: "1-1-102"
+    },
+    {
+      id: "1",
+      name: "北门",
+      unit: "1-1-102"
+    },
+    {
+      id: "2",
+      name: "北门",
+      unit: "1-1-102"
+    }
+  ];
 
   editType(item) {
     /**@description 修改状态 */
@@ -142,6 +212,16 @@ export default class InformIssue extends Vue {
   }
   queryIdetity() {
     this.dialogLibrary = true;
+  }
+  handleClose() {
+    this.dialogCreate = false;
+  }
+  allChoose() {
+    /**@description 全选 */
+    this.meetingData.limitHouse = [];
+    this.meetingLoc.map(item => {
+      this.meetingData.limitHouse.push(item.id);
+    });
   }
 }
 </script>
@@ -198,5 +278,11 @@ td {
 
 .capture-img {
   width: 60px;
+}
+.handle-btn {
+  width: 100%;
+  text-align: right;
+  padding-right: 20px;
+  margin: 10px 0;
 }
 </style>

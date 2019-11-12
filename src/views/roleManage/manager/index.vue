@@ -2,15 +2,11 @@
   <div class="app-container">
     <el-row>
       <el-col :span="24">
-        <action-header :total="1">
+        <action-header :dialogCreate.sync="dialogCreate" :total="1">
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>导出</el-dropdown-item>
           </el-dropdown-menu>
           <div slot="houseNum">
-            <!-- <span class="word-filter">
-              发布对象:
-              <el-input class="word-filter" size="small"></el-input>
-            </span>-->
             <div class="word-filter">
               <span class="filter-name">发布对象:</span>
               <el-input class="input-filter" size="small"></el-input>
@@ -34,16 +30,15 @@
 
             <el-table-column type="index" label="序号" width="50"></el-table-column>
 
-            <el-table-column prop="name" label="账号名" align="center">
+            <el-table-column prop="name" class="serial-num" label="账号名" align="center">
               <template slot-scope="scope">
-                <!-- <el-button style="padding:0px;" type="text" @click="queryIdetity">{{scope.row.name}}</el-button> -->
                 <span>{{scope.row.name}}</span>
                 <div class="fun-btn">
-                  <el-dropdown trigger="click" placement="bottom-start">
+                  <el-dropdown trigger="click" placement="bottom-start" @command="commandClick">
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
                     <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item>修改</el-dropdown-item>
-                      <el-dropdown-item>删除</el-dropdown-item>
+                      <el-dropdown-item command="update">重置密码</el-dropdown-item>
+                      <el-dropdown-item command="delete">删除</el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
                 </div>
@@ -60,6 +55,35 @@
         <el-pagination style="margin-top:10px;" background layout="prev, pager, next" :total="2"></el-pagination>
       </el-col>
     </el-row>
+    <!-- 新增或修改 -->
+    <el-dialog
+      :title="roleTitle==='0' ? '新增' :'重置密码'"
+      :visible.sync="dialogCreate"
+      width="40%"
+      :before-close="handleClose"
+    >
+      <el-form ref="form" :model="roleForm" label-width="80px">
+        <el-form-item v-if="roleTitle==='0'" label="账号名">
+          <el-input v-model="roleForm.name"></el-input>
+        </el-form-item>
+        <el-form-item v-if="roleTitle==='0'" label="角色">
+          <el-select v-model="roleForm.region" placeholder="请选择角色">
+            <el-option label="管理员" value="guanliyuan"></el-option>
+            <el-option label="普通用户" value="putong"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item v-if="roleTitle==='0'" label="备注">
+          <el-input type="textarea" v-model="roleForm.desc"></el-input>
+        </el-form-item>
+        <el-form-item v-if="roleTitle==='1'" label="新密码">
+          <el-input v-model="roleForm.newPassword"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="handleClose">取 消</el-button>
+        <el-button type="primary" @click="handleClose">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -87,7 +111,8 @@ export default class InformIssue extends Vue {
       zp: "--",
       xq: "--",
       tjsj: "--",
-      type: 1
+      type: 1,
+      showMenu: false
     }
   ];
   private rowSpan: any = {
@@ -110,6 +135,14 @@ export default class InformIssue extends Vue {
 
   private dialogFormVisible: Boolean = false;
   private formLabelWidth: String = "120px";
+  private dialogCreate: Boolean = false; // 新增或修改弹出表单
+  private roleTitle: String = "0";
+  private roleForm: Object = {
+    name: null,
+    region: null,
+    desc: null,
+    newPassword: null
+  };
 
   editType(item) {
     /**@description 修改状态 */
@@ -117,17 +150,37 @@ export default class InformIssue extends Vue {
     // this.dialogFormVisible = true;
   }
 
-  enterRowChange(row, column, cell, event) {
-    /**@description hover enter tab 行 */
-    row.showMenu = true;
-  }
-
-  leaveRowChange(row) {
-    /**@description hover leave tab 行 */
-    row.showMenu = false;
-  }
   queryIdetity() {
     this.dialogLibrary = true;
+  }
+  commandClick(val) {
+    if (val === "update") {
+      this.roleTitle = "1";
+      this.dialogCreate = true;
+    } else {
+      this.$confirm("此操作将永久删除该数据, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          this.$message({
+            type: "success",
+            message: "删除成功!"
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
+    }
+  }
+
+  handleClose() {
+    this.roleTitle = "0";
+    this.dialogCreate = false;
   }
 }
 </script>
@@ -154,7 +207,7 @@ td {
 .fun-btn {
   position: absolute;
   left: -64px;
-  top: 12px;
+  top: 6px;
   .iconfont {
     font-size: 19px;
     color: #8091a5;
