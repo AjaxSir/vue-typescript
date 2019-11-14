@@ -3,7 +3,26 @@
     <div class="fun-data">
       <div class="data-statistics" v-for="(item, index) in routes" :key="index">
         <div class="fun-title" v-if="!item.hidden && item.children">
-          <router-link v-if="item.meta && item.meta.title" :to="item.redirect">
+          <div @click='showChildren(item.children, item.meta.title, item.path)' v-if="item.meta && item.meta.title">
+            <div class="item">
+              <div class="sing-svg" :style="{backgroundColor: item.meta.bg_color}">
+                <i v-if="item.meta && item.meta.icon" :class="['iconfont', item.meta.icon]"></i>
+              </div>
+              <p class="item-text" v-if="item.meta && item.meta.title">{{ item.meta.title }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <el-dialog
+      :title="title"
+      :visible.sync="dialogVisible"
+      width="500px"
+      style='overflow: hidden'
+      :before-close="handleClose">
+      <div class="data-statistics childMenu" v-for="(item, index) in childrenRoute" :key="index">
+        <div class="fun-title" v-if="!item.hidden">
+          <router-link v-if="item.meta && item.meta.title" :to='{path: item.parentPath + "/" + item.path}'>
             <div class="item">
               <div class="sing-svg" :style="{backgroundColor: item.meta.bg_color}">
                 <i v-if="item.meta && item.meta.icon" :class="['iconfont', item.meta.icon]"></i>
@@ -13,16 +32,30 @@
           </router-link>
         </div>
       </div>
-    </div>
+    </el-dialog>
   </div>
 </template>
 
-<script>
-export default {
-  computed: {
-    routes() {
-      return this.$router.options.routes;
+<script lang='ts'>
+import { Component, Vue } from 'vue-property-decorator'
+@Component
+export default class ActionManage extends Vue {
+  dialogVisible: boolean = false
+  title: string = ''
+  childrenRoute: Array<Object> = []
+  get routes() {
+      return [].concat(this.$router['options'].routes)
     }
+  handleClose() {
+    this.dialogVisible = false
+  }
+  showChildren(childRoute: Array<Object>, title: string, parentPath: string) {
+    this.title = title
+    childRoute.forEach(element => {
+      element['parentPath'] = parentPath
+    });
+    this.childrenRoute = childRoute
+    this.dialogVisible = true
   }
 };
 </script>
@@ -48,7 +81,7 @@ p {
 .fun-data {
   display: flex;
   flex-wrap: wrap;
-  padding: 46px 10px 5px 10px;
+  // padding: 46px 10px 5px 10px;
 }
 
 .data-statistics {
@@ -60,19 +93,24 @@ p {
 .fun-title {
   font-size: 14px;
   white-space: nowrap;
+  &:hover{
+    cursor: pointer;
+  }
 }
 
 .item-text {
-  font-size: 17px;
-  line-height: 68px;
-  margin-left: 20px;
+  font-size: 16px;
+  margin-top:5px;
+  text-align: center;
+  // line-height: 68px;
+  // margin-left: 20px;
 }
 
 .item {
   font-size: 14px;
-  display: flex;
-  border: 1px solid #e6e6e6;
-  padding: 0 15px 0 0;
+  // display: flex;
+  // border: 1px solid #e6e6e6;
+  padding: 0;
   background: #f9f9f9;
   margin: 5px 21px;
   border-radius: 6px;
@@ -85,12 +123,15 @@ p {
 }
 
 .sing-svg {
-  width: 80px;
+  width: 100px;
   text-align: center;
-  line-height: 80px;
-  height: 80px;
+  line-height: 100px;
+  height: 100px;
   box-shadow: 0 12px 20px -10px rgba(244, 67, 54, 0.28),
     0 4px 20px 0 rgba(0, 0, 0, 0.12), 0 7px 8px -5px rgba(244, 67, 54, 0.2);
   border-radius: 5px;
+}
+.childMenu{
+  display: inline-block;
 }
 </style>

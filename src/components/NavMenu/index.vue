@@ -10,9 +10,9 @@
           <i :class="['iconfont', routes.meta.icon]"></i>
           <span v-if='isCollapse' slot="title">{{ routes.meta.title }}</span>
         </template>
-        <el-menu-item-group v-if='routes.children && routes.alwaysShow'>
+        <el-menu-item-group v-if='routes.children'>
           <router-link v-for='(children, indexChildren) in routes.children' :key='indexChildren' :to='routes.path + "/" + children.path'>
-            <el-menu-item :class='[locRoute.indexOf(children.path) !== -1 ? "activeLink": ""]'>{{ children.meta.title }}</el-menu-item>
+            <el-menu-item v-if='!children.meta.hidden' :class='[locRoute.indexOf(children.path) !== -1 ? "activeLink": ""]'>{{ children.meta.title }}</el-menu-item>
           </router-link>
         </el-menu-item-group>
     </el-submenu>

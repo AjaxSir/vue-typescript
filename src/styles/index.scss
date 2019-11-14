@@ -118,3 +118,13 @@ img {
 .el-menu-item-group__title{
   padding: 0px !important;
 }
+.el-submenu__title{
+
+  border-bottom: 1px solid #409EFF;
+}
+.el-menu-item{
+  border-bottom: 1px solid lightgray;
+}
+.el-menu-item .is-active{
+  color: white;
+}
