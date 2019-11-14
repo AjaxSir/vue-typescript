@@ -36,6 +36,7 @@ export default class BigImg extends Vue{
 }
 .big-image {
   width: 200px;
+  height: 200px;;
   vertical-align: middle;
 }
 </style>

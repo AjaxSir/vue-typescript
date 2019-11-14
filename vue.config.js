@@ -20,7 +20,7 @@ module.exports = {
   },
   // 生产环境 sourceMap
   productionSourceMap: false,
-
+  baseUrl: './',
   chainWebpack(config) {
     // set svg-sprite-loader
     config.module
