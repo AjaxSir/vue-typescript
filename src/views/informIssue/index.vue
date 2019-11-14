@@ -48,15 +48,15 @@
 
             <el-table-column prop="xb" align="center" label="发布内容"></el-table-column>
 
-            <el-table-column prop="xq" label="发布对象" align="center"></el-table-column>
+            <!-- <el-table-column prop="xq" label="发布对象" align="center"></el-table-column> -->
 
             <el-table-column prop="xq" label="创建时间" align="center"></el-table-column>
 
             <el-table-column prop="tjsj" label="发布时间" align="center"></el-table-column>
 
-            <el-table-column prop="zp" label="到达情况" align="center"></el-table-column>
+            <!-- <el-table-column prop="zp" label="到达情况" align="center"></el-table-column> -->
 
-            <el-table-column prop="type" label="状态">
+            <el-table-column prop="type" align="center" label="状态">
               <template slot-scope="scope">
                 <el-tag
                   size="small"

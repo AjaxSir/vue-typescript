@@ -20,7 +20,32 @@ export const constantRouterMap = [{
       icon: 'monitor'
     }
   }]
-}, {
+},
+{
+  path: '/screen',
+  name: 'screen',
+  component: Layout,
+  redirect: '/screen/statistics',
+  alwaysShow: true,
+  meta: {
+    title: '大屏统计',
+    icon: 'icon-tongji',
+    bg_color: '#DF788D',
+  },
+  children: [
+    {
+      name: 'statistics',
+      path: 'statistics',
+      component: _import_('screenStatistics/index'),
+      meta: {
+        title: '数据统计',
+        icon: 'icon-loudong',
+        bg_color: '#e17f5a'
+      }
+    }
+  ]
+},
+{
   path: '/house',
   name: 'house',
   component: Layout,
@@ -123,6 +148,16 @@ export const constantRouterMap = [{
     meta: {
       title: '陌生人管理',
       icon: 'icon-icon-',
+      bg_color: '#b63a9b'
+    }
+  },
+  {
+    name: 'focus',
+    path: 'focus',
+    component: _import_('personManage/focusPeople/index'),
+    meta: {
+      title: '关注人员',
+      icon: 'icon-wodeguanzhu',
       bg_color: '#b63a9b'
     }
   }]
@@ -265,27 +300,28 @@ export const constantRouterMap = [{
       icon: 'monitor'
     }
   }]
-}, {
-  path: '/big',
-  name: 'big',
-  component: Layout,
-  redirect: '/big/screen',
-  alwaysShow: true,
-  meta: {
-    title: '大屏统计',
-    icon: 'icon-daping',
-    bg_color: '#bf5d76',
-  },
-  children: [{
-    name: 'screen',
-    path: 'screen',
-    component: _import_('bigScreen/index'),
-    meta: {
-      title: '大屏统计',
-      icon: 'monitor'
-    }
-  }]
 },
+//  {
+//   path: '/big',
+//   name: 'big',
+//   component: Layout,
+//   redirect: '/big/screen',
+//   alwaysShow: true,
+//   meta: {
+//     title: '大屏统计',
+//     icon: 'icon-daping',
+//     bg_color: '#bf5d76',
+//   },
+//   children: [{
+//     name: 'screen',
+//     path: 'screen',
+//     component: _import_('bigScreen/index'),
+//     meta: {
+//       title: '大屏统计',
+//       icon: 'monitor'
+//     }
+//   }]
+// },
 {
   path: '/statementManage',
   name: 'statementManage',
@@ -303,6 +339,36 @@ export const constantRouterMap = [{
     component: _import_('statementManage/index'),
     meta: {
       title: '报表管理',
+      icon: 'monitor'
+    }
+  }]
+},
+{
+  path: '/vistor',
+  name: 'vistor',
+  component: Layout,
+  redirect: '/vistor/register',
+  alwaysShow: true,
+  meta: {
+    title: '访客登记',
+    icon: 'icon-fangkeshuxing',
+    bg_color: '#798384',
+  },
+  children: [{
+    name: 'register',
+    path: 'register',
+    component: _import_('vistor/register/index'),
+    meta: {
+      title: '访客登记',
+      icon: 'monitor'
+    }
+  },
+  {
+    name: 'record',
+    path: 'record',
+    component: _import_('vistor/record/index'),
+    meta: {
+      title: '访客登记记录',
       icon: 'monitor'
     }
   }]

@@ -1,6 +1,6 @@
 <template>
 <!-- :collapse="isCollapse" -->
-  <el-menu key='menu' class="el-menu-vertical-demo"
+  <el-menu :unique-opened='true' key='menu' class="el-menu-vertical-demo"
   @open="handleOpen" @close="handleClose"
   :collapse="!isCollapse"
   >
@@ -12,7 +12,7 @@
         </template>
         <el-menu-item-group v-if='routes.children && routes.alwaysShow'>
           <router-link v-for='(children, indexChildren) in routes.children' :key='indexChildren' :to='routes.path + "/" + children.path'>
-            <el-menu-item >{{ children.meta.title }}</el-menu-item>
+            <el-menu-item :class='[locRoute.indexOf(children.path) !== -1 ? "activeLink": ""]'>{{ children.meta.title }}</el-menu-item>
           </router-link>
         </el-menu-item-group>
     </el-submenu>
@@ -26,7 +26,7 @@
 
 
 <script lang="ts">
-import { Component, Vue, Emit } from 'vue-property-decorator';
+import { Component, Vue, Emit, Watch } from 'vue-property-decorator';
 @Component
 export default class NavMenu extends Vue{
   isCollapse: boolean = true
@@ -35,14 +35,16 @@ export default class NavMenu extends Vue{
     this.isCollapse = !this.isCollapse
     return this.isCollapse
   }
-
+  locRoute: string = ''
   get Routes() {
     const route = [].concat(this.$router['options'].routes) // [ ...route ] = this.$router['options'].routes
     route.splice(0, 1)
     return route
   }
-
-
+  @Watch('$route', { immediate: true })
+  routeChange(n, o) {
+    this.locRoute = n.path
+  }
   handleOpen() {}
   handleClose() {}
 
@@ -56,5 +58,9 @@ i{
 }
 .el-menu-vertical-demo:not(.el-menu--collapse){
   width: 240px;
+}
+.activeLink{
+  background-color: #409EFF !important;
+  color: white;
 }
 </style>

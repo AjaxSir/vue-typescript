@@ -47,15 +47,15 @@
             <el-table-column class="serial-num" prop="name" label="所属楼栋">
               <template slot-scope="scope">
                 <span>{{scope.row.name}}</span>
-                <div class="fun-btn">
+                <!-- <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start" @command='commandClick'>
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
                     <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item command='update'>修改</el-dropdown-item>
-                      <el-dropdown-item command='delete'>删除</el-dropdown-item>
+                      <el-dropdown-item :command='returnCommand("update", scope.row)'>修改</el-dropdown-item>
+                      <el-dropdown-item :command='returnCommand("delete", scope.row)'>删除</el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
-                </div>
+                </div> -->
               </template>
             </el-table-column>
 

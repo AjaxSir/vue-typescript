@@ -100,27 +100,28 @@ p {
 }
 .navbar {
   height: 40px;
-  line-height: 40px;
+  line-height: 30px;
   margin: 0 20px;
   border-radius: 0px !important;
   display: flex;
   align-items: flex-end;
   .style-line {
-    height: 40px;
+    height: 30px;
     width: 2px;
+    margin-bottom: 8px;
     margin-right: 2px;
     background: RGB(86, 97, 161);
   }
   .style-lineA {
-    height: 33px;
+    height: 23px;
     background: RGB(78, 128, 164);
   }
   .style-lineB {
-    height: 26px;
+    height: 16px;
     background: RGB(71, 154, 166);
   }
   .style-lineC {
-    height: 20px;
+    height: 10px;
     background: RGB(64, 182, 168);
   }
 }
