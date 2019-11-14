@@ -16,11 +16,12 @@ module.exports = {
         }
       }
     },
-    host: '192.168.3.108'
+    host: 'localhost'
   },
   // 生产环境 sourceMap
   productionSourceMap: false,
-  baseUrl: './',
+  publicPath: process.env.NODE_ENV === "production" ? "./" : "/",
+  assetsDir: 'public',
   chainWebpack(config) {
     // set svg-sprite-loader
     config.module

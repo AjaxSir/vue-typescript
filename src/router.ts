@@ -259,7 +259,8 @@ export const constantRouterMap = [{
     component: _import_('informIssue/index'),
     meta: {
       title: '通知发布',
-      icon: 'monitor'
+      icon: 'icon-tongzhi',
+      bg_color: '#231d75'
     }
   }]
 },
@@ -280,7 +281,8 @@ export const constantRouterMap = [{
     component: _import_('roleManage/manager/index'),
     meta: {
       title: '管理员',
-      icon: 'monitor'
+      icon: 'icon-guanliyuan',
+      bg_color: '#e17f5a'
     }
   },
   {
@@ -289,7 +291,8 @@ export const constantRouterMap = [{
     component: _import_('roleManage/rolePower/index'),
     meta: {
       title: '角色权限',
-      icon: 'monitor'
+      bg_color: '#7f7dae',
+      icon: 'icon-quanxian'
     }
   }, {
     name: 'community',
@@ -297,7 +300,8 @@ export const constantRouterMap = [{
     component: _import_('roleManage/community/index'),
     meta: {
       title: '小区',
-      icon: 'monitor'
+      bg_color: '#b63a9b',
+      icon: 'icon-xiaoqu'
     }
   }]
 },
@@ -339,7 +343,8 @@ export const constantRouterMap = [{
     component: _import_('statementManage/index'),
     meta: {
       title: '报表管理',
-      icon: 'monitor'
+      bg_color: '#bf5d76',
+      icon: 'icon-icon-p_mrpbaobiao'
     }
   }]
 },
@@ -360,7 +365,8 @@ export const constantRouterMap = [{
     component: _import_('vistor/register/index'),
     meta: {
       title: '访客登记',
-      icon: 'monitor'
+      icon: 'icon-fangkeshuxing',
+      bg_color: '#bf5d76',
     }
   },
   {
@@ -369,7 +375,9 @@ export const constantRouterMap = [{
     component: _import_('vistor/record/index'),
     meta: {
       title: '访客登记记录',
-      icon: 'monitor'
+      icon: 'icon-jilu',
+      bg_color: '#796273',
+      hidden: true
     }
   }]
 },
