@@ -69,7 +69,7 @@
         <el-table-column align="center" label="权限名称" width="200">
           <template slot-scope="{row}">{{ row.meta.title }}</template>
         </el-table-column>
-        <el-table-column align="center" label="增加">
+        <!-- <el-table-column align="center" label="增加">
           <template slot-scope="{row}">
             <el-checkbox @change="changeStatus(row)" v-model="row.AddStatus"></el-checkbox>
           </template>
@@ -78,7 +78,7 @@
           <template slot-scope="{row}">
             <el-checkbox @change="changeStatus(row)" v-model="row.DeleteStatus"></el-checkbox>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column align="center" label="修改">
           <template slot-scope="{row}">
             <el-checkbox @change="changeStatus(row)" v-model="row.UpdateStatus"></el-checkbox>
@@ -157,8 +157,8 @@ export default class InformIssue extends Vue {
     const Route = [].concat(this.$router["options"].routes);
     Route.shift();
     Route.forEach((ele: any) => {
-      ele.AddStatus = false;
-      ele.DeleteStatus = false;
+      // ele.AddStatus = false;
+      // ele.DeleteStatus = false;
       ele.UpdateStatus = false;
       ele.LookStatus = false;
       ele.lookDisabled = false; // 当有其他权限存在时 查看权限必须有
@@ -188,8 +188,8 @@ export default class InformIssue extends Vue {
   };
 
   changeStatus(row) {
-    row.LookStatus = row.AddStatus || row.UpdateStatus || row.DeleteStatus;
-    row.lookDisabled = row.AddStatus || row.UpdateStatus || row.DeleteStatus;
+    row.LookStatus = row.UpdateStatus
+    row.lookDisabled = row.UpdateStatus
   }
 
   commandClick(val) {

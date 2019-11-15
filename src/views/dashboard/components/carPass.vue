@@ -54,35 +54,35 @@ export default class openDoor extends Vue {
           house: "1-1-1",
           phone: " 川AL5643",
           img: require("../../../assets/car1.png"),
-          date: "2016-05-02"
+          date: "2016-05-02 12:00:00"
         },
         {
           type: "业主",
           house: "1-1-1",
           phone: " 川AL5643",
           img: require("../../../assets/car1.png"),
-          date: "2016-05-02"
+          date: "2016-05-02 12:00:00"
         },
         {
           type: "业主",
           house: "1-1-1",
           phone: " 川AL5643",
           img: require("../../../assets/car1.png"),
-          date: "2016-05-02"
+          date: "2016-05-02 12:00:00"
         },
         {
           type: "业主",
           house: "1-1-1",
           phone: " 川AL5643",
           img: require("../../../assets/car1.png"),
-          date: "2016-05-02"
+          date: "2016-05-02 12:00:00"
         },
         {
           type: "业主",
           house: "1-1-1",
           phone: " 川AL5643",
           img: require("../../../assets/car1.png"),
-          date: "2016-05-02"
+          date: "2016-05-02 12:00:00"
         }
       ]
 
@@ -136,6 +136,12 @@ ul li{
   height: 50px;
   line-height: 50px;
   text-align: center;
+  &:first-child {
+    width:10%;
+  }
+  &:last-child {
+    width:30%;
+  }
 }
 .scene-header {
   padding: 10px 10px 2px 10px;

@@ -4,8 +4,13 @@
   @open="handleOpen" @close="handleClose"
   :collapse="!isCollapse"
   >
-
-    <el-submenu v-for='(routes, index) in Routes' :key='index' :index="String(index)">
+    <el-menu-item @click='toBigScreen' index="0">
+      <!-- <router-link to='/screen/statistics'> -->
+        <i class="iconfont icon-tongji"></i>
+        <span slot="title">大屏统计</span>
+      <!-- </router-link> -->
+    </el-menu-item>
+    <el-submenu v-for='(routes, index) in Routes' :key='index + 1' :index="String(index)">
         <template v-if='routes.alwaysShow' slot="title">
           <i :class="['iconfont', routes.meta.icon]"></i>
           <span v-if='isCollapse' slot="title">{{ routes.meta.title }}</span>
@@ -16,7 +21,23 @@
           </router-link>
         </el-menu-item-group>
     </el-submenu>
-    <el-menu-item @click='toggleMenu' index="4">
+    <el-menu-item @click='tostatementManage' :class='[locRoute.indexOf("statementManage") !== -1 ? "activeLink": ""]' index="74">
+        <i class="iconfont icon-chart"></i>
+        <span slot="title">报表管理</span>
+    </el-menu-item>
+    <el-menu-item  @click='todevice' :class='[locRoute.indexOf("device") !== -1 ? "activeLink": ""]' index="41">
+        <i class="iconfont icon-shexiangtou1"></i>
+        <span slot="title">设备管理</span>
+    </el-menu-item>
+    <el-menu-item  @click='toinform' :class='[locRoute.indexOf("inform") !== -1 ? "activeLink": ""]' index="11">
+        <i class="iconfont icon-tongzhi"></i>
+        <span slot="title">通知管理</span>
+    </el-menu-item>
+    <el-menu-item @click='toVistorRegister' :class='[locRoute.indexOf("vistor") !== -1 ? "activeLink": ""]' index="10">
+        <i class="iconfont icon-fangkeshuxing"></i>
+        <span slot="title">访客登记</span>
+    </el-menu-item>
+    <el-menu-item class='showHidden' @click='toggleMenu' index="4">
       <i v-if='!isCollapse' class="el-icon-arrow-right"></i>
       <i v-else class="el-icon-arrow-left"></i>
       <span slot="title">{{ !isCollapse ? '展开' : '收起' }}</span>
@@ -38,7 +59,9 @@ export default class NavMenu extends Vue{
   locRoute: string = ''
   get Routes() {
     const route = [].concat(this.$router['options'].routes) // [ ...route ] = this.$router['options'].routes
-    route.splice(0, 1)
+    // route.splice(0, 2)&& route.splice(4, 2)
+    route.splice(0, 2) && route.splice(3, 2) && route.splice(4, 2)
+
     return route
   }
   @Watch('$route', { immediate: true })
@@ -47,6 +70,31 @@ export default class NavMenu extends Vue{
   }
   handleOpen() {}
   handleClose() {}
+  toBigScreen() {
+    this.$router.replace({
+      path: '/screen/statistics'
+    })
+  }
+  toVistorRegister() {
+    this.$router.replace({
+      path: '/vistor/register'
+    })
+  }
+  tostatementManage() {
+    this.$router.replace({
+      path: '/statementManage/info'
+    })
+  }
+  toinform() {
+    this.$router.replace({
+      path: '/inform/issue'
+    })
+  }
+  todevice() {
+    this.$router.replace({
+      path: '/device/_manage'
+    })
+  }
 
 }
 </script>
@@ -57,10 +105,11 @@ i{
   margin-right: 15px;
 }
 .el-menu-vertical-demo:not(.el-menu--collapse){
-  width: 240px;
+  width: 160px;
 }
 .activeLink{
   background-color: #409EFF !important;
   color: white;
 }
+
 </style>

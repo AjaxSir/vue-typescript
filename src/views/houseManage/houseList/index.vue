@@ -113,12 +113,6 @@
           <p class="detai-info">关联房屋:{{detailDialog.houseRelative}}</p>
           <p class="detai-info">最近刷卡时间:{{detailDialog.createDate}}</p>
         </el-tab-pane>
-        <el-tab-pane label="门禁设备" name="门禁设备">
-          <el-table :data="doorDevice" style="width: 100%">
-            <el-table-column prop="date" label="编号"></el-table-column>
-            <el-table-column prop="name" label="单元信息"></el-table-column>
-          </el-table>
-        </el-tab-pane>
         <el-tab-pane label="在住人员" name="在住人员">
           <el-table :data="dtailTable" style="width: 100%">
             <el-table-column prop="name" label="姓名"></el-table-column>
@@ -131,14 +125,6 @@
         <el-button type="primary" size="small" @click="dialogFormVisible = false">确 定</el-button>
       </span>
     </el-dialog>
-
-    <!-- <el-dialog title="提示" :visible.sync="dialogCreate" width="30%" :before-close="handleClose">
-      <span>这是房屋管理-列表视图的新增</span>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogCreate = false">取 消</el-button>
-        <el-button type="primary" @click="dialogCreate = false">确 定</el-button>
-      </span>
-    </el-dialog> -->
   </div>
 </template>
 

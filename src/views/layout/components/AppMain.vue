@@ -21,7 +21,6 @@ import NavMenu from '@/components/NavMenu/index.vue';
 })
 export default class AppMain extends Vue{
   get status (): boolean {
-    console.log(this.$route.name)
     const whiteList = ['dashboard', 'statistics']
     return !whiteList.includes(this.$route.name as string)
   }
@@ -31,7 +30,7 @@ export default class AppMain extends Vue{
       dom.style.width = '64px'
     } else {
       const dom = document.getElementById('navMenu') as HTMLElement
-      dom.style.width = '240px'
+      dom.style.width = '170px'
     }
   }
 }
@@ -48,11 +47,12 @@ export default class AppMain extends Vue{
   height: calc(100vh - 151px);
   overflow: auto;
   flex: none;
-  width: 240px;
+  width: 179px;
   // box-shadow: 2px 0px 10px 2px lightgray;
 }
 .routerView{
   flex: 1;
+  margin-left: 20px;
 }
 
  .fade-enter{

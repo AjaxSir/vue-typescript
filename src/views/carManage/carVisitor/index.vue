@@ -11,6 +11,14 @@
               <span class="filter-name">车位号:</span>
               <el-input class="input-filter" size="small"></el-input>
             </div>
+             <div class="word-filter">
+              <span class="filter-name">有效日期:</span>
+              <el-date-picker
+                v-model="timeRange"
+                type="date"
+                placeholder="选择日期">
+              </el-date-picker>
+            </div>
             <div class="word-filter">
               <span class="filter-name">状&nbsp;&nbsp;&nbsp;&nbsp;态:</span>
               <el-select v-model="status" placeholder="请选择" class="input-filter" size="small">
@@ -120,35 +128,13 @@ export default class CardManage extends Vue {
     }
   ];
   private status: String = "all";
-
-
-  private form: Object = {
-    name: "",
-    region: "",
-    date1: "",
-    date2: "",
-    delivery: false,
-    type: [],
-    resource: "",
-    desc: ""
-  };
-
+  timeRange: String = ''
   private dialogFormVisible: Boolean = false;
   private formLabelWidth: String = "120px";
   editType(item) {
     /**@description 修改状态 */
     console.log(item);
     // this.dialogFormVisible = true;
-  }
-
-  enterRowChange(row, column, cell, event) {
-    /**@description hover enter tab 行 */
-    row.showMenu = true;
-  }
-
-  leaveRowChange(row) {
-    /**@description hover leave tab 行 */
-    row.showMenu = false;
   }
 }
 </script>
