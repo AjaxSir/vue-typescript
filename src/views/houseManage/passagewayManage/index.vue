@@ -2,16 +2,16 @@
   <div class="app-container">
     <el-row>
       <el-col :span="24">
-        <action-header :dialogCreate.sync="dialogCreate" :total="1">
+        <action-header :filterStatus='false' :dialogCreate.sync="dialogCreate" :total="1">
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>统计信息</el-dropdown-item>
           </el-dropdown-menu>
-          <div slot="houseNum">
+          <!-- <div slot="houseNum">
             <div class="word-filter">
               <span class="filter-name">发布对象:</span>
               <el-input class="input-filter" size="small"></el-input>
             </div>
-          </div>
+          </div> -->
         </action-header>
       </el-col>
     </el-row>
@@ -30,15 +30,15 @@
 
             <el-table-column type="index" label="序号" width="50"></el-table-column>
 
-            <el-table-column prop="name" label="出入口名称" align="center">
+            <el-table-column  class="serial-num" prop="name" label="出入口名称" align="center">
               <template slot-scope="scope">
                 <span>{{scope.row.name}}</span>
                 <div class="fun-btn">
-                  <el-dropdown trigger="click" placement="bottom-start">
+                  <el-dropdown @command='commandClick' trigger="click" placement="bottom-start">
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
                     <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item>修改</el-dropdown-item>
-                      <el-dropdown-item>删除</el-dropdown-item>
+                      <el-dropdown-item :command='returnCommand("update", scope.row)'>修改</el-dropdown-item>
+                      <el-dropdown-item :command='returnCommand("delete", scope.row)'>删除</el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
                 </div>
@@ -48,6 +48,7 @@
             <el-table-column prop="xb" align="center" label="累计进入人数"></el-table-column>
 
             <el-table-column prop="xq" label="累计出人数" align="center"></el-table-column>
+            <el-table-column prop="detail" label="备注" align="center"></el-table-column>
           </el-table>
         </div>
         <el-pagination style="margin-top:10px;" background layout="prev, pager, next" :total="2"></el-pagination>
@@ -57,6 +58,9 @@
       <el-form :model="Form" :rules="rules" ref='Forms' label-width="110px">
         <el-form-item label="出入口名称:"  prop='name'>
           <el-input v-model="Form.name" placeholder='输入出入口名称'></el-input>
+        </el-form-item>
+        <el-form-item label="备注:"  prop='detail'>
+          <el-input v-model="Form.detail" placeholder='输入备注信息'></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -86,13 +90,16 @@ export default class InformIssue extends Vue {
   private cardList: Array<Object> = [
     {
       name: "东大门",
-      xq: "1000",
+      xq: "100011",
       xb: "1000000",
+      showMenu: false,
+      detail: '11'
     }
   ];
   // 新增dialog弹框信息
   Form: any = {
-    name: ''
+    name: '',
+    detail: ''
   }
   rules: any = {
     name: [
@@ -158,7 +165,7 @@ td {
 .fun-btn {
   position: absolute;
   left: -64px;
-  top: 12px;
+  top: 8px;
   .iconfont {
     font-size: 19px;
     color: #8091a5;

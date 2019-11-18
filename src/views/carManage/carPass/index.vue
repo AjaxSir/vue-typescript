@@ -17,16 +17,43 @@
               <el-input class="input-filter" size="small"></el-input>
             </div>
             <div class="word-filter">
-              <span class="filter-name">时间段:</span>
+              <span class="filter-name">日期范围:</span>
               <el-date-picker
-                size="small"
-                class="input-filter"
-                v-model="TimeRange"
-                type="datetimerange"
-                range-separator="-"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-              ></el-date-picker>
+                v-model="TimeRange[0]"
+                type="date"
+                placeholder="选择日期">
+              </el-date-picker>
+              至
+              <el-date-picker
+                v-model="TimeRange[1]"
+                type="date"
+                placeholder="选择日期">
+              </el-date-picker>
+            </div>
+            <div class="word-filter">
+              <span class="filter-name">时间范围:</span>
+              <el-date-picker
+                v-model="time[0]"
+                type="date"
+                placeholder="选择日期">
+              </el-date-picker>
+              至
+              <el-date-picker
+                v-model="time[1]"
+                type="date"
+                placeholder="选择日期">
+              </el-date-picker>
+            </div>
+            <div class="word-filter">
+              <span class="filter-name">车辆类型:</span>
+              <el-select v-model="carType" placeholder="请选择">
+                <el-option
+                  v-for="item in carTypeList"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
             </div>
           </div>
         </action-header>
@@ -193,11 +220,27 @@ export default class CardManage extends Vue {
     }
   ];
 
-  private TimeRange: any = "";
+  private TimeRange: Array<string> = ['', '']; // 日期范围
+  private time:Array<string> = ['', ''] // 时间范围
   activeName: string = "first";
   carDetailsTable: Array<Object> = []; // 详细信息记录
   private imgVisible: Boolean = false; // 控制放大图片的visible
   private bigImg: String = ""; // 保存放大图片的地址
+  carTypeList: Array<Object> = [
+    {
+      label: '常驻',
+      value: '1'
+    },
+    {
+      label: '暂时',
+      value: '2'
+    },
+    {
+      label: '所有',
+      value: '0'
+    }
+  ]
+  carType: string = '0' // 车辆类型
   CarDialogForm: Object = {}; // 车主详细信息
   detailDialogVisible: boolean = false; // 详细信息dialog弹框
   private form: Object = {

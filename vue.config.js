@@ -21,7 +21,7 @@ module.exports = {
   // 生产环境 sourceMap
   productionSourceMap: false,
   publicPath: process.env.NODE_ENV === "production" ? "./" : "/",
-  assetsDir: 'public',
+  assetsDir: 'static',
   chainWebpack(config) {
     // set svg-sprite-loader
     config.module

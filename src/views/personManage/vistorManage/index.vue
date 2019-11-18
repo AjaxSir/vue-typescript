@@ -5,12 +5,12 @@
         <ActionHeader :btnStatus="2" :total="1">
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>进出次数排序</el-dropdown-item>
-            <el-dropdown-item>滞留时间排序</el-dropdown-item>
+            <!-- <el-dropdown-item>滞留时间排序</el-dropdown-item> -->
             <el-dropdown-item>次数统计</el-dropdown-item>
           </el-dropdown-menu>
           <div slot="houseNum">
             <div class="word-filter">
-              <span class="filter-name">受访人:</span>
+              <span class="filter-name">单元号:</span>
               <el-input class="input-filter" size="small"></el-input>
             </div>
           </div>

@@ -4,7 +4,6 @@
       <el-col :span="24">
         <action-header :dialogCreate.sync="dialogCreate" :total="1">
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>导入</el-dropdown-item>
             <el-dropdown-item>导出</el-dropdown-item>
           </el-dropdown-menu>
           <div slot="houseNum">
@@ -47,7 +46,7 @@
                   <el-dropdown trigger="click" placement="bottom-start" @command='commandClick'>
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
                     <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item :command='returnCommand("update", scope.row)'>修改</el-dropdown-item>
+                      <el-dropdown-item :command='returnCommand("update", scope.row)'>挂失</el-dropdown-item>
                       <el-dropdown-item :command='returnCommand("delete", scope.row)'>删除</el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>

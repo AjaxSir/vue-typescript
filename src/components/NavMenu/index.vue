@@ -4,12 +4,7 @@
   @open="handleOpen" @close="handleClose"
   :collapse="!isCollapse"
   >
-    <el-menu-item @click='toBigScreen' index="0">
-      <!-- <router-link to='/screen/statistics'> -->
-        <i class="iconfont icon-tongji"></i>
-        <span slot="title">大屏统计</span>
-      <!-- </router-link> -->
-    </el-menu-item>
+
     <el-submenu v-for='(routes, index) in Routes' :key='index + 1' :index="String(index)">
         <template v-if='routes.alwaysShow' slot="title">
           <i :class="['iconfont', routes.meta.icon]"></i>
@@ -21,10 +16,7 @@
           </router-link>
         </el-menu-item-group>
     </el-submenu>
-    <el-menu-item @click='tostatementManage' :class='[locRoute.indexOf("statementManage") !== -1 ? "activeLink": ""]' index="74">
-        <i class="iconfont icon-chart"></i>
-        <span slot="title">报表管理</span>
-    </el-menu-item>
+
     <el-menu-item  @click='todevice' :class='[locRoute.indexOf("device") !== -1 ? "activeLink": ""]' index="41">
         <i class="iconfont icon-shexiangtou1"></i>
         <span slot="title">设备管理</span>
@@ -36,6 +28,16 @@
     <el-menu-item @click='toVistorRegister' :class='[locRoute.indexOf("vistor") !== -1 ? "activeLink": ""]' index="10">
         <i class="iconfont icon-fangkeshuxing"></i>
         <span slot="title">访客登记</span>
+    </el-menu-item>
+    <el-menu-item @click='tostatementManage' :class='[locRoute.indexOf("statementManage") !== -1 ? "activeLink": ""]' index="74">
+        <i class="iconfont icon-chart"></i>
+        <span slot="title">报表管理</span>
+    </el-menu-item>
+    <el-menu-item @click='toBigScreen' index="0">
+      <!-- <router-link to='/screen/statistics'> -->
+        <i class="iconfont icon-tongji"></i>
+        <span slot="title">大屏统计</span>
+      <!-- </router-link> -->
     </el-menu-item>
     <el-menu-item class='showHidden' @click='toggleMenu' index="4">
       <i v-if='!isCollapse' class="el-icon-arrow-right"></i>
@@ -60,7 +62,7 @@ export default class NavMenu extends Vue{
   get Routes() {
     const route = [].concat(this.$router['options'].routes) // [ ...route ] = this.$router['options'].routes
     // route.splice(0, 2)&& route.splice(4, 2)
-    route.splice(0, 2) && route.splice(3, 2) && route.splice(4, 2)
+    route.splice(0, 1) && route.splice(4, 1) && route.splice(3, 1) && route.splice(4, 3)
 
     return route
   }
