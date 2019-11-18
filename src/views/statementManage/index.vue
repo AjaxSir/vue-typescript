@@ -160,7 +160,7 @@ export default class InformIssue extends Vue {
     z-index: 99;
   }
 }
-$size: 48px;
+$size: 24px;
 $color: #ffffff;
 
 p {
@@ -180,7 +180,7 @@ p {
 .fun-data {
   display: flex;
   flex-wrap: wrap;
-  padding: 46px 10px 5px 10px;
+  padding: 10px 0px 0px 0px;
 }
 
 .data-statistics {
@@ -192,21 +192,28 @@ p {
 .fun-title {
   font-size: 14px;
   white-space: nowrap;
+  &:hover{
+    cursor: pointer;
+  }
 }
 
 .item-text {
-  font-size: 17px;
-  line-height: 68px;
-  margin-left: 20px;
+  font-size: 12px;
+  margin-top:5px;
+  text-align: center;
+  // line-height: 68px;
+  // margin-left: 20px;
 }
 
 .item {
   font-size: 14px;
-  display: flex;
-  border: 1px solid #e6e6e6;
-  padding: 0 15px 0 0;
+  text-align:center;
+  width:120px;
+  // display: flex;
+  // border: 1px solid #e6e6e6;
+  padding: 0;
   background: #f9f9f9;
-  margin: 5px 21px;
+  margin: 5px 10px;
   border-radius: 6px;
   background: #fff;
 }
@@ -217,12 +224,16 @@ p {
 }
 
 .sing-svg {
-  width: 80px;
+  width: 60px;
   text-align: center;
-  line-height: 80px;
-  height: 80px;
+  line-height: 60px;
+  margin: 0 auto;
+  height: 60px;
   box-shadow: 0 12px 20px -10px rgba(244, 67, 54, 0.28),
     0 4px 20px 0 rgba(0, 0, 0, 0.12), 0 7px 8px -5px rgba(244, 67, 54, 0.2);
   border-radius: 5px;
+}
+.childMenu{
+  display: inline-block;
 }
 </style>

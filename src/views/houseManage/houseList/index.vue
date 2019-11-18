@@ -2,14 +2,14 @@
   <div class="app-container">
     <el-row>
       <el-col :span="24">
-        <action-header :btnStatus='0' :total="1">
+        <action-header :houseStatus='true' :btnStatus='0' :total="1">
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>导入</el-dropdown-item>
             <el-dropdown-item>导出</el-dropdown-item>
             <el-dropdown-item>统计信息</el-dropdown-item>
           </el-dropdown-menu>
           <div slot="houseNum">
-            <div class="word-filter">
+            <!-- <div class="word-filter">
               <span class="filter-name">时间段:</span>
               <el-date-picker
                 class="input-filter"
@@ -20,6 +20,26 @@
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
               ></el-date-picker>
+            </div> -->
+            <div class="word-filter">
+              <span class="filter-name">房屋编号:</span>
+              <el-input class="input-filter" placeholder='输入房屋编号筛选' size="small"></el-input>
+            </div>
+            <div class="word-filter">
+              <span class="filter-name">进出次数:</span>
+              <el-input class="input-filter" style='width:80px' size="small"></el-input>
+              &nbsp;&nbsp;&nbsp;至&nbsp;&nbsp;&nbsp;
+              <el-input class="input-filter" style='width:80px' size="small"></el-input>&nbsp;&nbsp;&nbsp;次
+            </div>
+            <div class="word-filter">
+              <span class="filter-name">访客次数:</span>
+              <el-input class="input-filter" style='width:80px' size="small"></el-input>
+              &nbsp;&nbsp;&nbsp;至&nbsp;&nbsp;&nbsp;
+              <el-input class="input-filter" style='width:80px' size="small"></el-input>&nbsp;&nbsp;&nbsp;次
+            </div>
+            <div class="word-filter">
+              <span class="filter-name">所属楼层:</span>
+              <el-input class="input-filter" placeholder='输入房屋楼层筛选' size="small"></el-input>
             </div>
           </div>
         </action-header>
@@ -47,15 +67,17 @@
             <el-table-column class="serial-num" prop="name" label="所属楼栋">
               <template slot-scope="scope">
                 <span>{{scope.row.name}}</span>
-                <!-- <div class="fun-btn">
+                <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start" @command='commandClick'>
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
                     <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item :command='returnCommand("update", scope.row)'>修改</el-dropdown-item>
+                      <el-dropdown-item :command='returnCommand("update", scope.row)'>远程开门</el-dropdown-item>
                       <el-dropdown-item :command='returnCommand("delete", scope.row)'>删除</el-dropdown-item>
+                      <el-dropdown-item :command='returnCommand("delete", scope.row)'>批量删除</el-dropdown-item>
+                      <el-dropdown-item :command='returnCommand("delete", scope.row)'>编辑信息</el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
-                </div> -->
+                </div>
               </template>
             </el-table-column>
 

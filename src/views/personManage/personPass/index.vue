@@ -4,16 +4,47 @@
       <el-col :span="24">
         <action-header :btnStatus='2' :total="1">
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>导入</el-dropdown-item>
-            <el-dropdown-item>导出</el-dropdown-item>
+            <el-dropdown-item>统计信息</el-dropdown-item>
           </el-dropdown-menu>
           <div slot="houseNum">
             <div class="word-filter">
-              <span class="filter-name">状态:</span>
-              <el-select class="input-filter" size="small" v-model="deviceStatus" placeholder="请选择">
+              <span class="filter-name">单元楼:</span>
+              <el-input class="input-filter" size="small"></el-input>
+            </div>
+             <div class="word-filter">
+              <span class="filter-name">姓名:</span>
+              <el-input class="input-filter" size="small"></el-input>
+            </div>
+             <div class="word-filter">
+              <span class="filter-name">时间段:</span>
+              <el-date-picker
+                style='width:140px'
+                v-model="timeRange[0]"
+                type="date"
+                placeholder="选择日期">
+              </el-date-picker>
+              &nbsp;&nbsp;&nbsp; -- &nbsp;&nbsp;&nbsp;
+              <el-date-picker
+              style='width:140px'
+                v-model="timeRange[1]"
+                type="date"
+                placeholder="选择日期">
+              </el-date-picker>
+            </div>
+            <div class="word-filter">
+              <span class="filter-name">通行方式:</span>
+              <el-select class="input-filter" size="small" v-model="passType" placeholder="请选择">
                 <el-option label="全部" value="all"></el-option>
-                <el-option label="离线" value="offline"></el-option>
-                <el-option label="在线" value="online"></el-option>
+                <el-option label="蓝牙" value="blueTeeth"></el-option>
+                <el-option label="刷脸" value="face"></el-option>
+              </el-select>
+            </div>
+            <div class="word-filter">
+              <span class="filter-name">类型:</span>
+              <el-select class="input-filter" size="small" v-model="personType" placeholder="请选择">
+                <el-option label="全部" value="all"></el-option>
+                <el-option label="住户" value="house"></el-option>
+                <el-option label="租客" value="rent"></el-option>
               </el-select>
             </div>
           </div>
@@ -147,7 +178,9 @@ export default class CardManage extends Vue {
 
   private imgVisible: Boolean = false; // 控制放大图片的visible
   private bigImg: String = ""; // 保存放大图片的地址
-
+  timeRange: Array<string> = ['', ''] // 时间
+  personType: String = 'all' // 用户类型
+  passType: String = 'all' // 通行方式
   private form: Object = {
     name: "",
     region: "",

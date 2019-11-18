@@ -7,6 +7,12 @@
     <div class="treeHeader">
       <i class="iconfont icon-shuji"></i>
       所有
+      <el-dropdown class='dropdownAll' @command='commandTreeClick' trigger="click" placement="bottom-start">
+        <i class="iconfont icon-menu"></i>
+        <el-dropdown-menu v-if='type === "house"' slot="dropdown">
+          <el-dropdown-item :command='commandObj("addGroup", {})'>添加子分组</el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
     </div>
     <el-tree
       :data="TreeData"
@@ -25,25 +31,103 @@
         <div class="fun-btn">
           <el-dropdown @command='commandTreeClick' trigger="click" placement="bottom-start">
             <i v-show="node.id===showMenu" class="iconfont icon-menu"></i>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item :command='commandObj("create", node)'>创建</el-dropdown-item>
-              <el-dropdown-item :command='commandObj("update", node)'>修改</el-dropdown-item>
+            <el-dropdown-menu v-if='type === "house"' slot="dropdown">
+              <el-dropdown-item :command='commandObj("addGroup", node)'>添加子分组</el-dropdown-item>
+              <el-dropdown-item :command='commandObj("addUnit", node)'>添加单元楼</el-dropdown-item>
+              <el-dropdown-item :command='commandObj("updateGroup", node)'>修改分组</el-dropdown-item>
+              <el-dropdown-item :command='commandObj("delete", node)'>删除分组</el-dropdown-item>
+            </el-dropdown-menu>
+            <el-dropdown-menu v-if='type === "role"' slot="dropdown">
+              <el-dropdown-item :command='commandObj("addRoleGroup", node)'>创建权限组</el-dropdown-item>
+              <el-dropdown-item :command='commandObj("updateRole", node)'>修改</el-dropdown-item>
               <el-dropdown-item :command='commandObj("delete", node)'>删除</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </div>
       </span>
     </el-tree>
-    <!-- 楼栋dialog -->
-    <el-dialog width="500px" :title="HouseForm.title" :visible.sync="HouseVisible">
+    <!-- 楼栋dialog添加分组 -->
+    <el-dialog width="500px" class='formDialog' title="添加分组" :visible.sync="HouseVisible">
       <el-form :model="HouseForm">
-        <el-form-item label="楼栋名称:" label-width="80px">
-          <el-input v-model="HouseForm.name" autocomplete="off"></el-input>
+        <el-form-item label="序号:" label-width="80px">
+          <el-input v-model="HouseForm.number" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="序号单位:" label-width="80px">
+          <el-select v-model="HouseForm.orderUnit" placeholder="请选择">
+            <el-option
+              v-for="item in orderUnitList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="别名:" label-width="80px">
+          <el-input v-model="HouseForm.otherName" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="备注:" label-width="80px">
+          <el-input v-model="HouseForm.detail" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="HouseVisible = false">取 消</el-button>
         <el-button type="primary" @click="HouseVisible = false">确 定</el-button>
+        <el-button type="warning" @click="HouseVisible = false">批量添加</el-button>
+        <el-button @click="HouseVisible = false">取 消</el-button>
+
+      </div>
+    </el-dialog>
+    <!-- 楼栋dialog添加单元楼 -->
+    <el-dialog width="500px"  class='formDialog' title="添加单元楼" :visible.sync="HouseUnitVisible">
+      <el-form :model="UnitForm">
+        <el-form-item label="所属分组:" label-width="80px">
+          <el-select v-model="UnitForm.orderGroup" placeholder="请选择">
+            <el-option
+              v-for="item in groupUnitList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="序号:" label-width="80px">
+          <el-input style='width:50px' v-model="UnitForm.min" autocomplete="off"></el-input> -
+          <el-input style='width:50px' v-model="UnitForm.max" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="序号单元:" label-width="80px">
+          <el-input class='input' v-model="UnitForm.orderUnit" autocomplete="off"></el-input> <el-button @click='showUnitSetting = !showUnitSetting' type='text'>序号单元设置</el-button>
+          <div v-if='showUnitSetting'>
+             <el-tag
+              :key="index"
+              v-for="(tag, index) in Tags"
+              closable
+              :disable-transitions="false"
+              @close="deleteTag(tag, index)">
+              {{tag.label}}
+            </el-tag>
+            <el-input
+              class="input-new-tag"
+              v-if="newTag"
+              v-model="newTagValue"
+              ref="saveTagInput"
+              size="small"
+              @keyup.enter.native="handleInputConfirm"
+              @blur="handleInputConfirm"
+            >
+            </el-input>
+            <el-button v-else class="button-new-tag" size="small" @click="showInput">新增单元</el-button>
+          </div>
+
+        </el-form-item>
+        <el-form-item label="楼层数:" label-width="80px">
+          <el-input v-model="HouseForm.floors" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="每层户数:" label-width="80px">
+          <el-input v-model="HouseForm.households" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="HouseUnitVisible = false">确 定</el-button>
+        <el-button @click="HouseUnitVisible = false">取 消</el-button>
       </div>
     </el-dialog>
     <!-- 权限dialog -->
@@ -67,6 +151,7 @@ import { Getter, Action, Mutation } from "vuex-class";
 @Component
 export default class DataTree extends Vue {
   private showMenu: Number = 0;
+  @Prop({ default: 'house' }) type: string;
   @Prop({default: () => {
     return [
     {
@@ -121,18 +206,78 @@ export default class DataTree extends Vue {
   // private data: Array<Object> =
 
   @Prop({ default: true }) needAction: any;
-  // 楼栋表单
+  // 单位表单
   HouseForm: object = {
-    name: '',
-    title: '创建楼栋'
+    number: '', // 序号
+    orderUnit: '1',
+    otherName: '',
+    detail: ''
   }
-  // 楼栋dialog状态
+  // 楼栋表单
+  UnitForm: object = {
+    orderGroup: '', // 所属分组
+    min: '', // 最小序号
+    max: '', // 最大序号
+    orderUnit: '', // 序号单元
+    floors: '', // 楼层数
+    households: '' // 每层户数
+  }
+  // 序号单位数组
+  orderUnitList: Array<object> = [
+    {
+      value: '1',
+      label: '期'
+    },
+    {
+      value: '2',
+      label: '栋'
+    },
+    {
+      value: '3',
+      label: '区'
+    }
+  ]
+  // 单元分组
+  groupUnitList: Array<object> = [
+    {
+      value: '1',
+      label: '#1'
+    },
+    {
+      value: '2',
+      label: '#2'
+    },
+    {
+      value: '3',
+      label: '#3'
+    }
+  ]
+  // 楼栋dialog添加分组状态
   HouseVisible:boolean = false
+   // 楼栋dialog添加楼栋状态
+  HouseUnitVisible:boolean = false
   // 权限表单
   RoleForm: object = {
     name: '',
     title: '创建权限'
   }
+  // 查看已有单元设置状态
+  showUnitSetting: boolean = false
+    // 单位序号设置 数组
+  Tags: Array<object> = [
+    {
+      label: '期',
+      value: '1'
+    },
+    {
+      label: '栋',
+      value: '2'
+    }
+  ]
+  // 新增序号单元input框状态
+  newTag: boolean = false
+  // 新增单元的值
+  newTagValue: string = ''
   // 权限dialog状态
   RoleVisible:boolean = false
   handleNodeClick(data) {
@@ -140,11 +285,31 @@ export default class DataTree extends Vue {
     // console.log(data);
     // data.showMenu = !data.showMenu;
   }
-
+  /**
+   * 删除序号单元
+   */
+  deleteTag(tag, index) {
+    this.Tags.splice(index, 1)
+  }
   MouseNnter(val) {
     this.showMenu = val;
   }
-
+  /**
+   * 新增单元序号
+   */
+  handleInputConfirm() {
+    this.newTag = false
+    this.Tags.push({
+      label: this.newTagValue,
+      value: this.newTagValue
+    })
+  }
+  /**
+   * 显示新增序号单元框
+   */
+  showInput() {
+    this.newTag = true
+  }
   MouseLeave(val) {
     this.showMenu = 0;
   }
@@ -153,10 +318,8 @@ export default class DataTree extends Vue {
    */
   commandTreeClick(treeData) {
     switch (treeData.action) {
-      case 'update' :
+      case 'addGroup' :
         this.HouseVisible = true
-        this.HouseForm['title'] = '修改楼栋'
-        this.HouseForm['name'] = treeData.node.label
         break
       case 'delete' :
         this.$confirm('此操作将永久删除该目标, 是否继续?', '提示', {
@@ -175,8 +338,10 @@ export default class DataTree extends Vue {
           });
         });
         break
-      case 'create' :
-        this.HouseForm['title'] = '创建楼栋'
+      case 'addUnit' :
+        this.HouseUnitVisible = true
+        break
+      case 'updateGroup':
         this.HouseVisible = true
         break
     }
@@ -207,7 +372,7 @@ export default class DataTree extends Vue {
 .content {
   width: 100%;
   height: 70vh;
-  text-align: center;
+  text-align: left;
   border: 1px solid #ebeef5;
 }
 .treeHeader {
@@ -216,8 +381,23 @@ export default class DataTree extends Vue {
   text-align: left;
   text-indent: 1em;
   line-height: 40px;
+  position:relative;
   i {
     font-size: 20px;
+  }
+  .icon-menu{
+    display: none;
+
+  }
+  .dropdownAll{
+    width:10px;
+    height: 10px;
+    position:absolute;
+    right: 30px;
+    top: 0px;
+  }
+  &:hover .icon-menu{
+    display:block;
   }
 }
 .custom-tree-node {
@@ -238,5 +418,13 @@ export default class DataTree extends Vue {
     color: #8091a5;
     cursor: pointer;
   }
+}
+.formDialog{
+  .input{
+    width:220px;
+  }
+}
+.input-new-tag{
+  width:120px;
 }
 </style>

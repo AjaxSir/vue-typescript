@@ -32,7 +32,7 @@
             <el-table-column type="index" width="60" align="center" label="编号"></el-table-column>
             <el-table-column prop="name" align="center" label="姓名">
               <template slot-scope="{ row }">
-                <el-tag @click="showDetail(row)">{{ row.name }}</el-tag>
+                <el-button type='text' @click="showDetail(row)">{{ row.name }}</el-button>
               </template>
             </el-table-column>
             <el-table-column prop="age" align="center" label="年龄"></el-table-column>
@@ -50,13 +50,10 @@
     </el-row>
     <el-dialog :title="Dialog.name" :visible.sync="dialogFormVisible">
       <el-tabs v-model="activeName">
-        <el-tab-pane label="用户管理" name="first">详细信息</el-tab-pane>
-        <el-tab-pane label="配置管理" name="second">进出单元记录</el-tab-pane>
-        <el-tab-pane label="角色管理" name="third">进出小区记录</el-tab-pane>
-        <el-tab-pane label="定时任务补偿" name="fourth">车辆信息</el-tab-pane>
-        <el-tab-pane label="房屋信息" name="fivw">房屋信息</el-tab-pane>
-        <el-tab-pane label="证件信息" name="six">证件信息</el-tab-pane>
-        <el-tab-pane label="人脸库信息" name="seven">人脸库信息</el-tab-pane>
+        <el-tab-pane label="详细信息" name="first">详细信息</el-tab-pane>
+        <el-tab-pane label="通行记录" name="second">通行记录</el-tab-pane>
+        <el-tab-pane label="车辆信息" name="third">车辆信息</el-tab-pane>
+        <el-tab-pane label="人脸库信息" name="fourth">人脸库信息</el-tab-pane>
       </el-tabs>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>

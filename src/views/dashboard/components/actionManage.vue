@@ -33,7 +33,7 @@
       :before-close="handleClose">
       <div class="data-statistics childMenu" v-for="(item, index) in childrenRoute" :key="index">
         <div class="fun-title" v-if="!item.hidden">
-          <router-link v-if="item.meta && item.meta.title" :to='{path: item.parentPath + "/" + item.path}'>
+          <router-link v-if="item.meta && !item.meta.hidden && item.meta.title" :to='{path: item.parentPath + "/" + item.path}'>
             <div class="item">
               <div class="sing-svg" :style="{backgroundColor: item.meta.bg_color}">
                 <i v-if="item.meta && item.meta.icon" :class="['iconfont', item.meta.icon]"></i>

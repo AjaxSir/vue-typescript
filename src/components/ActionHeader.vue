@@ -24,8 +24,8 @@
           icon="el-icon-download"
           @click="exportTable"
         >导出</el-button>
-        <el-dropdown size="small" @click="handleClick">
-          <el-button size="small" style="border-color: #409EFF; color: #409EFF;">
+        <el-dropdown v-if='moreStatus' size="small" @click="handleClick">
+          <el-button  size="small" style="border-color: #409EFF; color: #409EFF;">
             更多菜单
             <i class="el-icon-arrow-down el-icon--right"></i>
           </el-button>
@@ -36,23 +36,18 @@
 
     <el-col :span="12" justify="end">
       <div class="rightAction">
-        <el-dropdown trigger="click">
+        <el-dropdown v-if='houseStatus' trigger="click">
           <span class="el-dropdown-link">
             <i style="font-size:16px;" class="iconfont icon-appstore-o"></i>
           </span>
           <el-dropdown-menu>
-            <el-dropdown-item
-              command="a"
-              v-for="item in levelList.children"
-              :key="item.path"
-              :disabled="matched[1] && matched[1].name === item.name"
-            >
-              <router-link :to="levelList.path + '/' + item.path">{{item.meta.title}}</router-link>
+            <el-dropdown-item command="a">
+              <router-link to="/house/chart">楼控视图</router-link>
             </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
 
-        <div class="content">
+        <div v-if='filterStatus' class="content">
           <span @click="visibleFilter = !visibleFilter">
             <i class="iconfont icon-filtration"></i>
             过滤
@@ -96,6 +91,9 @@ export default class ActionManage extends Vue {
   @Prop() private total: any; // 显示总共多少条记录
   @Prop() dialogCreate: Boolean; // 创建弹框状态 公用
   @Prop({ default: 1 }) btnStatus: Number; //  btnStatus: 0 表示没有创建导出按钮 1 创建按钮 2 导出按钮
+  @Prop({ default:false }) houseStatus: boolean // 住宅管理才显示
+  @Prop({ default:true }) filterStatus: boolean // 是否需要显示过滤条件
+  @Prop({ default: true }) moreStatus:boolean // 是否显示更多菜单
   private visible: boolean = false; // 数据显示条数dialog状态
   private size: string = "10"; // 默认每页显示10条
   private levelList: Object = {}; // 当前路由的子路由

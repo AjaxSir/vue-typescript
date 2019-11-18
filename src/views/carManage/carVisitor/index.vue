@@ -2,30 +2,31 @@
   <div class="app-container">
     <el-row>
       <el-col :span="24">
-        <action-header :dialogCreate.sync="dialogCreate" :btnStatus="false" :total="1">
+        <action-header
+        :houseStatus='false'
+        :dialogCreate.sync="dialogCreate"
+        :btnStatus="2"
+        :moreStatus='false'
+        :total="1">
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>导入</el-dropdown-item>
           </el-dropdown-menu>
           <div slot="houseNum">
             <div class="word-filter">
-              <span class="filter-name">车位号:</span>
+              <span class="filter-name">车牌号:</span>
               <el-input class="input-filter" size="small"></el-input>
             </div>
-             <div class="word-filter">
-              <span class="filter-name">有效日期:</span>
-              <el-date-picker
-                v-model="timeRange"
-                type="date"
-                placeholder="选择日期">
-              </el-date-picker>
+            <div class="word-filter">
+              <span class="filter-name">车主姓名:</span>
+              <el-input class="input-filter" size="small"></el-input>
             </div>
             <div class="word-filter">
-              <span class="filter-name">状&nbsp;&nbsp;&nbsp;&nbsp;态:</span>
-              <el-select v-model="status" placeholder="请选择" class="input-filter" size="small">
-                <el-option label="全部" value="all"></el-option>
-                <el-option label="占用" value="busy"></el-option>
-                <el-option label="空闲" value="free"></el-option>
-              </el-select>
+              <span class="filter-name">邀请人:</span>
+              <el-input class="input-filter" size="small"></el-input>
+            </div>
+            <div class="word-filter">
+              <span class="filter-name">联系电话:</span>
+              <el-input class="input-filter" size="small"></el-input>
             </div>
           </div>
         </action-header>
@@ -127,8 +128,6 @@ export default class CardManage extends Vue {
       showMenu: false
     }
   ];
-  private status: String = "all";
-  timeRange: String = ''
   private dialogFormVisible: Boolean = false;
   private formLabelWidth: String = "120px";
   editType(item) {

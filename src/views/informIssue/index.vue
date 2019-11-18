@@ -74,6 +74,7 @@
     <el-dialog
       class="image-dialod"
       title="发布通知"
+      width='600px'
       :visible.sync="dialogCreate"
       :close-on-click-modal="false"
       :before-close="handleClose"
@@ -83,7 +84,7 @@
         :model="meetingData"
         label-position="right"
         label-width="100px"
-        style="width: 300px; margin-left:70px;"
+        style=""
       >
         <el-form-item class="phone-input" label="标题: " prop="title">
           <el-input style="width:310px" v-model="meetingData.title"></el-input>

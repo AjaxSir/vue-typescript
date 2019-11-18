@@ -28,7 +28,7 @@
       <el-col :span="24" class="table-col">
         <div class="rightContent">
           <el-table
-            :data="cardList"
+            :data="deviceList"
             stripe
             class="demo-block"
             highlight-current-row
@@ -129,7 +129,7 @@
         :model="deciceForm"
         label-position="right"
         label-width="100px"
-        style="width: 300px; margin-left:70px;"
+
       >
         <el-form-item class="phone-input" label="设备名称: " prop="title">
           <el-input style="width:310px" v-model="deciceForm.title"></el-input>
@@ -149,10 +149,12 @@
               :value="item.id"
             ></el-option>
           </el-select>
+          <el-button type='text'>地图选点</el-button>
         </el-form-item>
 
         <el-form-item class="phone-input" label="绑定设备: " prop="title">
           <el-input style="width:310px" v-model="deciceForm.title"></el-input>
+          <el-button type='text' @click='deviceBindingVisible = true'>设备绑定</el-button>
         </el-form-item>
         <el-form-item class="phone-input" label="效验码: " prop="verification">
           <el-input v-model="deciceForm.verification" placeholder="请输入效验码"></el-input>
@@ -162,6 +164,58 @@
         <el-button @click="handleClose">取 消</el-button>
         <el-button type="primary" @click="handleClose">确 定</el-button>
       </span>
+    </el-dialog>
+    <!-- 设备绑定 -->
+    <el-dialog width='600px' title="设备绑定" :visible.sync="deviceBindingVisible">
+      <el-form :model="deciceForm">
+        <el-form-item label="选择设备:" :label-width="formLabelWidth">
+          <el-select
+            style="width:310px;"
+            v-model="deciceForm.limitHouse"
+            multiple
+            placeholder="请选择发布对象"
+          >
+            <el-option
+              v-for="item in meetingLoc"
+              :key="item.id"
+              :label="item.name + '-' + item.unit"
+              :value="item.id"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="设备区分:" :label-width="formLabelWidth">
+         住宅
+        </el-form-item>
+      </el-form>
+      <el-table
+        :data="deviceBindingData"
+        style="width: 100%">
+        <el-table-column
+          type='index'
+          label="序号"
+          align='center'
+          width="50">
+        </el-table-column>
+        <el-table-column
+          prop="name"
+          align='center'
+          label="名称">
+        </el-table-column>
+        <el-table-column
+          prop="status"
+          align='center'
+          label="状态">
+        </el-table-column>
+        <el-table-column
+          prop="address"
+          align='center'
+          label="操作">
+        </el-table-column>
+      </el-table>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="deviceBindingVisible = false">取 消</el-button>
+        <el-button type="primary" @click="deviceBindingVisible = false">确 定</el-button>
+      </div>
     </el-dialog>
   </div>
 </template>
@@ -180,7 +234,7 @@ const ActionHeader = () => import("@/components/ActionHeader.vue");
   }
 })
 export default class CardManage extends Vue {
-  private cardList: Array<Object> = [
+  private deviceList: Array<Object> = [
     {
       name: "123",
       houseRelative: "东区-1栋-1-1",
@@ -217,7 +271,7 @@ export default class CardManage extends Vue {
   doorRecordTable: Array<Object> = []; // 设备抓拍的通行记录
   private dialogCreate: Boolean = false; // 新增或修改弹出表单
   private roleTitle: String = "0";
-  private deciceForm: Object = {
+  private deciceForm: Object = { // 创建设备表单
     name: null,
     region: null,
     desc: null,
@@ -240,7 +294,17 @@ export default class CardManage extends Vue {
       unit: "1-1-102"
     }
   ];
-
+  deviceBindingVisible: boolean = false // 设备绑定dialog状态
+  deviceBindingData: Array<Object> = [
+    {
+      name: '1期-1栋-2单元',
+      status: '在线'
+    },
+    {
+      name: '1期-2栋-2单元',
+      status: '离线'
+    }
+  ]
   /**
    * 查看设备详情
    */

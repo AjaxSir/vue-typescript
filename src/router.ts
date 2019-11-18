@@ -22,30 +22,6 @@ export const constantRouterMap = [{
   }]
 },
 {
-  path: '/screen',
-  name: 'screen',
-  component: Layout,
-  redirect: '/screen/statistics',
-  alwaysShow: true,
-  meta: {
-    title: '大屏统计',
-    icon: 'icon-tongji',
-    bg_color: '#DF788D',
-  },
-  children: [
-    {
-      name: 'statistics',
-      path: 'statistics',
-      component: _import_('screenStatistics/index'),
-      meta: {
-        title: '数据统计',
-        icon: 'icon-loudong',
-        bg_color: '#e17f5a'
-      }
-    }
-  ]
-},
-{
   path: '/house',
   name: 'house',
   component: Layout,
@@ -63,14 +39,15 @@ export const constantRouterMap = [{
     meta: {
       title: '楼控视图',
       icon: 'icon-loudong',
-      bg_color: '#e17f5a'
+      bg_color: '#e17f5a',
+      hidden: true
     }
   }, {
     name: 'list',
     path: 'list',
     component: _import_('houseManage/houseList/index'),
     meta: {
-      title: '列表视图',
+      title: '住宅管理',
       icon: 'icon-fangwufangchan',
       bg_color: '#2c7fec'
     }
@@ -109,7 +86,7 @@ export const constantRouterMap = [{
     path: 'owner',
     component: _import_('personManage/ownerManage/index'),
     meta: {
-      title: '住户管理',
+      title: '住户人员管理',
       icon: 'icon-yonghu',
       bg_color: '#83c9a6'
     }
@@ -303,6 +280,16 @@ export const constantRouterMap = [{
       bg_color: '#b63a9b',
       icon: 'icon-xiaoqu'
     }
+  },
+  {
+    name: 'warningLink',
+    path: 'warningLink',
+    component: _import_('roleManage/warningLink/index'),
+    meta: {
+      title: '预警联系人',
+      bg_color: '#b63a9b',
+      icon: 'icon-xiaoqu'
+    }
   }]
 },
 //  {
@@ -326,28 +313,6 @@ export const constantRouterMap = [{
 //     }
 //   }]
 // },
-{
-  path: '/statementManage',
-  name: 'statementManage',
-  component: Layout,
-  redirect: '/statementManage/info',
-  alwaysShow: true,
-  meta: {
-    title: '报表管理',
-    icon: 'icon-chart',
-    bg_color: '#798384',
-  },
-  children: [{
-    name: 'info',
-    path: 'info',
-    component: _import_('statementManage/index'),
-    meta: {
-      title: '报表管理',
-      bg_color: '#bf5d76',
-      icon: 'icon-icon-p_mrpbaobiao'
-    }
-  }]
-},
 {
   path: '/vistor',
   name: 'vistor',
@@ -380,6 +345,52 @@ export const constantRouterMap = [{
       hidden: true
     }
   }]
+},
+{
+  path: '/statementManage',
+  name: 'statementManage',
+  component: Layout,
+  redirect: '/statementManage/info',
+  alwaysShow: true,
+  meta: {
+    title: '报表管理',
+    icon: 'icon-chart',
+    bg_color: '#798384',
+  },
+  children: [{
+    name: 'info',
+    path: 'info',
+    component: _import_('statementManage/index'),
+    meta: {
+      title: '报表管理',
+      bg_color: '#bf5d76',
+      icon: 'icon-icon-p_mrpbaobiao'
+    }
+  }]
+},
+{
+  path: '/screen',
+  name: 'screen',
+  component: Layout,
+  redirect: '/screen/statistics',
+  alwaysShow: true,
+  meta: {
+    title: '大屏统计',
+    icon: 'icon-tongji',
+    bg_color: '#DF788D',
+  },
+  children: [
+    {
+      name: 'statistics',
+      path: 'statistics',
+      component: _import_('screenStatistics/index'),
+      meta: {
+        title: '数据统计',
+        icon: 'icon-loudong',
+        bg_color: '#e17f5a'
+      }
+    }
+  ]
 },
   //---------------------------
   // {
@@ -514,7 +525,7 @@ export const constantRouterMap = [{
 ]
 
 export default new Router({
-  mode: 'history',
+  // mode: 'history',
   routes: constantRouterMap,
   // scrollBehavior: () => ({
   //   y: 0

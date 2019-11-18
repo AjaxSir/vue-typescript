@@ -78,6 +78,8 @@ a:hover {
 
 .filter-name {
   white-space: nowrap;
+  display:inline-block;
+  min-width: 60px;
 }
 
 .input-filter {

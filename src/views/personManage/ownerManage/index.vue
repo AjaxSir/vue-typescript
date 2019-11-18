@@ -24,6 +24,10 @@
                 <el-option label="业主" value="owner"></el-option>
               </el-select>
             </div>
+            <div class="word-filter">
+              <span class="filter-name">房号:</span>
+              <el-input class="input-filter" size="small"></el-input>
+            </div>
           </div>
         </ActionHeader>
       </el-col>
