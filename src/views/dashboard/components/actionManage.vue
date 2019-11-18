@@ -3,7 +3,7 @@
     <div class="fun-data">
       <div class="data-statistics" v-for="(item, index) in routes" :key="index">
         <div class="fun-title" v-if="!item.hidden && item.children">
-          <div @click='showChildren(item.children, item.meta.title, item.path)' v-if="item.meta && item.meta.title">
+          <div @click='showChildren(item.children, item.meta.title, item.path)' v-if="item.meta && item.meta.title && !noDialog(item.name)">
             <div class="item">
               <div class="sing-svg" :style="{backgroundColor: item.meta.bg_color}">
                 <i v-if="item.meta && item.meta.icon" :class="['iconfont', item.meta.icon]"></i>
@@ -11,10 +11,21 @@
               <p class="item-text" v-if="item.meta && item.meta.title">{{ item.meta.title }}</p>
             </div>
           </div>
+          <div v-else>
+            <div class="item">
+              <router-link :to="{name: item.name}">
+                <div class="sing-svg" :style="{backgroundColor: item.meta.bg_color}">
+                  <i v-if="item.meta && item.meta.icon" :class="['iconfont', item.meta.icon]"></i>
+                </div>
+                <p class="item-text" v-if="item.meta && item.meta.title">{{ item.meta.title }}</p>
+              </router-link>
+            </div>
+          </div>
         </div>
       </div>
     </div>
     <el-dialog
+    center
       :title="title"
       :visible.sync="dialogVisible"
       width="500px"
@@ -56,6 +67,11 @@ export default class ActionManage extends Vue {
     });
     this.childrenRoute = childRoute
     this.dialogVisible = true
+  }
+  // 大屏统计 报表管理 访客登记 不需弹框
+  noDialog(routeName) {
+    const noDialogList = ['screen', 'statementManage', 'vistor', 'inform', 'device']
+    return noDialogList.includes(routeName)
   }
 };
 </script>

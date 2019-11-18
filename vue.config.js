@@ -16,7 +16,7 @@ module.exports = {
         }
       }
     },
-    host: 'localhost'
+    host: '192.168.3.108'
   },
   // 生产环境 sourceMap
   productionSourceMap: false,
