@@ -1,7 +1,7 @@
 // import axiosConfig from './axios';
 import { Vue, Mixins, Component } from "vue-property-decorator";
 import { MessageBox, Message } from 'element-ui';
-import { deleteRow } from "./../api/common"
+// import { deleteRow } from "./../api/common"
 declare module 'vue/types/vue' {
     interface Vue {
         fetchData(method: any, url: string, ...arg: any): void;  // 记得声明一下，要不然会报错 Property 'methodFromMixins' does not exist on type 'App'.
@@ -118,12 +118,12 @@ fetchData(page: number): void {
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            deleteRow('url').then((res: any) => {
-              Message({
-                type: 'success',
-                message: '删除成功!'
-              });
-            })
+            // deleteRow('url').then((res: any) => {
+            //   Message({
+            //     type: 'success',
+            //     message: '删除成功!'
+            //   });
+            // })
           }).catch(() => {
             Message({
               type: 'info',
@@ -137,12 +137,12 @@ fetchData(page: number): void {
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            deleteRow('url').then((res: any) => {
-              Message({
-                type: 'success',
-                message: '添加成功!'
-              });
-            })
+            // deleteRow('url').then((res: any) => {
+            //   Message({
+            //     type: 'success',
+            //     message: '添加成功!'
+            //   });
+            // })
           }).catch(() => {
             Message({
               type: 'info',
