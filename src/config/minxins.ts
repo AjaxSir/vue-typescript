@@ -1,20 +1,24 @@
 // import axiosConfig from './axios';
 import { Vue, Mixins, Component } from "vue-property-decorator";
 import { MessageBox, Message } from 'element-ui';
+import _axios from '@/plugins/axios.js'
 // import { deleteRow } from "./../api/common"
 declare module 'vue/types/vue' {
     interface Vue {
-        fetchData(method: any, url: string, ...arg: any): void;  // 记得声明一下，要不然会报错 Property 'methodFromMixins' does not exist on type 'App'.
+        fetchData(option: object): void;  // 记得声明一下，要不然会报错 Property 'methodFromMixins' does not exist on type 'App'.
+        page: object,
+        initForm: object
     }
   }
 @Component
 export default class GlobalMimins extends Vue{
 public page: any =  {
     total: 1,
-    current: 1,
-    size: 10
+    page: 1,
+    limit: 10,
+    offset: 0,
 }
-public dialogCreate: Boolean = false
+public dialogCreate: any = false
 public orderBy: Object = {
     prop: "", // 需要的根据什么排序
     order: "descending" // ascending 表示升序，descending 表示降序
@@ -22,23 +26,38 @@ public orderBy: Object = {
 public Form:Object = {} // 新增修改弹框表单信息
 public TreeData: Array<Object> = []
 public list_data: Array<Object> = [];
-fetchData(page: number): void {
-    // axiosConfig({
-    //     method,
-    //     url,
-    //     ...arg
-    // }).then(res => {
-    //     console.log(res, "back")
-    // })
-  }
-  /**
-   *
-   * @param size 每页数据条数
-   */
-  sizeChange(size: number) {
-    this.page.size = size
-    this.fetchData(1)
-  }
+initForm: object = {
+  url: '',
+  method: 'get',
+  params: {}
+}
+deleteForm: object = {
+  url: '',
+  method: 'delete'
+}
+mounted() {
+  this.fetchData(this.initForm).then((res: any) => {
+    if(res.data && res.data.data) {
+      this.page.total = res.data.data.total
+      res.data.data.records.forEach((ele: object) => {
+        ele['showMenu'] = false
+      })
+      this.list_data = res.data.data.records
+    }
+  })
+  // this.commandClick({action: 'delete'})
+}
+
+fetchData(option: object) {
+  console.log('mixins获取数据')
+  return _axios(option)
+}
+/**
+ * 打开创建框
+ */
+OpenCreate() {
+  this.dialogCreate = true
+}
   /**
    *
    * @param page 关闭新增框
@@ -71,7 +90,9 @@ fetchData(page: number): void {
    * @param page 翻页页码
    */
   pageChange(page: number) {
-    this.fetchData(page)
+    this.page.page = page
+    // this.page.offset = ( page - 1 ) * this.page.limit
+    this.fetchData(this.initForm)
   }
   // 区分执行的操作
   returnCommand(action:string, row:object) {
@@ -102,6 +123,13 @@ fetchData(page: number): void {
       navigator.msSaveBlob(blob, fileName)
     }
   }
+  // 删除某行或多行数据 id 可能为字符串 也可能维数组
+  deleteRow(option: object) {
+    if(option['id'] instanceof Array && option['id'].length === 1) {
+      option['id'] = option['id'][0]
+    }
+    return _axios(option)
+  }
   /**
    * table内的操作
    * @param action
@@ -118,12 +146,8 @@ fetchData(page: number): void {
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            // deleteRow('url').then((res: any) => {
-            //   Message({
-            //     type: 'success',
-            //     message: '删除成功!'
-            //   });
-            // })
+            console.log('删除')
+            this.deleteRow(this.deleteForm)
           }).catch(() => {
             Message({
               type: 'info',

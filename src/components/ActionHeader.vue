@@ -55,7 +55,7 @@
           <transition name="el-zoom-in-top">
             <div v-show="visibleFilter" class="filterDialog">
               <slot name="houseNum"></slot>
-              <el-button class="fliterBtn" type="primary" plain size="small">筛选</el-button>
+              <el-button @click='emitFetchData' class="fliterBtn" type="primary" plain size="small">筛选</el-button>
             </div>
           </transition>
         </div>
@@ -67,7 +67,7 @@
         <transition name="el-zoom-in-top">
           <div v-show="visible" class="setting">
             <span>每页显示:</span>
-            <el-select style="width:100px;margin-left:10px" v-model="size" placeholder="请选择">
+            <el-select @change='sizeChange' style="width:100px;margin-left:10px" v-model="size" placeholder="请选择">
               <el-option
                 v-for="item in pageSize"
                 :key="item.value"
@@ -83,22 +83,27 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Mixins, Watch } from "vue-property-decorator";
+import { Component, Prop, Vue, Mixins, Watch, Emit } from "vue-property-decorator";
+import mixin from "@/config/minxins";
+
 @Component({
+  mixins: [mixin],
   components: {}
 })
 export default class ActionManage extends Vue {
   @Prop() private total: any; // 显示总共多少条记录
-  @Prop() dialogCreate: Boolean; // 创建弹框状态 公用
   @Prop({ default: 1 }) btnStatus: Number; //  btnStatus: 0 表示没有创建导出按钮 1 创建按钮 2 导出按钮
   @Prop({ default:false }) houseStatus: boolean // 住宅管理才显示
   @Prop({ default:true }) filterStatus: boolean // 是否需要显示过滤条件
   @Prop({ default: true }) moreStatus:boolean // 是否显示更多菜单
+  @Prop({ default: () => { return {} } }) initFormHeader:object // 初始化的地址 方式
+  @Prop({ default: () => { return {} } }) filterForm:object // 筛选条件
   private visible: boolean = false; // 数据显示条数dialog状态
   private size: string = "10"; // 默认每页显示10条
   private levelList: Object = {}; // 当前路由的子路由
   private matched: Array<Object> = []; // 获取当前路由
   visibleFilter: Boolean = false; // 筛选dialog状态狂
+  dialogCreate: Boolean = false
   private pageSize: Array<Object> = [
     // 数据显示条数数组
     {
@@ -122,16 +127,35 @@ export default class ActionManage extends Vue {
   created() {
     this.getRouter();
   }
-
+  fetchData() {
+    return Promise.resolve({})
+  }
   handleHouse() {
     /** @description 创建楼栋 */
-    // this.dialogCreate = true;
     this.$emit("update:dialogCreate", true);
   }
   // 导出
   exportTable() {}
-  fetchData(t) {}
-
+  /**
+   * 筛选按钮
+   */
+  @Emit('fetchData')
+  emitFetchData() {
+    this.initFormHeader['params'] = Object.assign(this.initFormHeader['params'], this.filterForm)
+    return this.initFormHeader
+  }
+    /**
+   *
+   * @param size 每页数据条数
+   */
+  @Emit('fetchData')
+  sizeChange(size: number) {
+    this.page['limit'] = size
+    this.page['page'] = 1
+    this.initFormHeader['params'] = Object.assign(this.initFormHeader['params'], this.page)
+    // this.$emit('fetchData', this.initFormHeader)
+    return this.initFormHeader
+  }
   getRouter() {
     this.matched = this.$route.matched.filter(item => item.name);
     const first = this.matched[0];
