@@ -2,9 +2,11 @@
   <div class="app-container">
     <el-row>
       <el-col :span="24">
-        <action-header :dialogCreate.sync="dialogCreate" :total="1">
+        <action-header
+        :dialogCreate.sync="dialogCreate"
+        :filterStatus='false'
+        :total="1">
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>导入</el-dropdown-item>
             <el-dropdown-item>导出</el-dropdown-item>
           </el-dropdown-menu>
           <div slot="houseNum">
@@ -46,7 +48,7 @@
                   <el-dropdown trigger="click" placement="bottom-start" @command="commandClick">
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
                     <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item command="update">修改</el-dropdown-item>
+                      <el-dropdown-item command="update">重新绑定</el-dropdown-item>
                       <el-dropdown-item command="delete">删除</el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
@@ -59,8 +61,9 @@
             <el-table-column align="center" prop="carNum" label="设备型号"></el-table-column>
 
             <el-table-column align="center" prop="createDate" label="上线时间" width="160"></el-table-column>
+            <el-table-column align="center" prop="createDate" label="离线时间" width="160"></el-table-column>
 
-            <el-table-column align="center" prop="num" label="故障次数"></el-table-column>
+            <el-table-column align="center" prop="num" label="设备说明"></el-table-column>
 
             <el-table-column align="center" prop="type" label="状态">
               <template slot-scope="scope">
@@ -73,7 +76,7 @@
               </template>
             </el-table-column>
 
-            <el-table-column align="center" prop="createDate" label="创建时间" width="220"></el-table-column>
+            <el-table-column align="center" prop="createDate" label="绑定时间" width="220"></el-table-column>
           </el-table>
         </div>
         <el-pagination style="margin-top:10px;" background layout="prev, pager, next" :total="2"></el-pagination>
@@ -155,6 +158,9 @@
         <el-form-item class="phone-input" label="绑定设备: " prop="title">
           <el-input style="width:310px" v-model="deciceForm.title"></el-input>
           <el-button type='text' @click='deviceBindingVisible = true'>设备绑定</el-button>
+        </el-form-item>
+        <el-form-item class="phone-input" label="设备说明: " prop="title">
+          <el-input style="width:310px" v-model="deciceForm.info"></el-input>
         </el-form-item>
         <el-form-item class="phone-input" label="效验码: " prop="verification">
           <el-input v-model="deciceForm.verification" placeholder="请输入效验码"></el-input>
@@ -275,7 +281,8 @@ export default class CardManage extends Vue {
     name: null,
     region: null,
     desc: null,
-    verification: null
+    verification: null,
+    info: ''
   };
   private meetingLoc: Array<Object> = [
     {
