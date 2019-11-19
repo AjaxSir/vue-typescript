@@ -3,8 +3,10 @@
     <el-row>
       <el-col :span="24">
         <action-header
+        :initFormHeader='initForm'
+        @fetchData='fetchData'
+        :filterForm='filterForm'
         :dialogCreate.sync="dialogCreate"
-        :filterStatus='false'
         :total="1">
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>导出</el-dropdown-item>
@@ -12,7 +14,7 @@
           <div slot="houseNum">
             <span class="word-filter">
               <span class="filter-name">状态:</span>
-              <el-select v-model="deviceStatus" placeholder="请选择" class="input-filter" size="small">
+              <el-select v-model="filterForm.deviceStatus" placeholder="请选择" class="input-filter" size="small">
                 <el-option label="全部" value="all"></el-option>
                 <el-option label="离线" value="offline"></el-option>
                 <el-option label="在线" value="online"></el-option>
@@ -20,7 +22,7 @@
             </span>
             <span class="word-filter">
               <span class="filter-name">位置:</span>
-              <el-input class="input-filter" size="small"></el-input>
+              <el-input class="input-filter" v-model='filterForm.loc' size="small"></el-input>
             </span>
           </div>
         </action-header>
@@ -30,7 +32,7 @@
       <el-col :span="24" class="table-col">
         <div class="rightContent">
           <el-table
-            :data="deviceList"
+            :data="list_data"
             stripe
             class="demo-block"
             highlight-current-row
@@ -48,8 +50,8 @@
                   <el-dropdown trigger="click" placement="bottom-start" @command="commandClick">
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
                     <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item command="update">重新绑定</el-dropdown-item>
-                      <el-dropdown-item command="delete">删除</el-dropdown-item>
+                      <el-dropdown-item :command="returnCommand('rebind', scope.row)">重新绑定</el-dropdown-item>
+                      <el-dropdown-item :command="returnCommand('delete', scope.row)">删除</el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
                 </div>
@@ -71,7 +73,6 @@
                   size="small"
                   style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
                   :type="scope.row.type === 1 ? 'success' : 'danger'"
-                  @click="editType(scope.row)"
                 >{{ scope.row.type === 1 ? "连线中" : "离线中" }}</el-tag>
               </template>
             </el-table-column>
@@ -239,43 +240,27 @@ const ActionHeader = () => import("@/components/ActionHeader.vue");
     ActionHeader
   }
 })
-export default class CardManage extends Vue {
-  private deviceList: Array<Object> = [
-    {
-      name: "123",
-      houseRelative: "东区-1栋-1-1",
-      carNum: "XX门禁",
-      createDate: "2019-10-10 12:12:12",
-      type: 1,
-      showMenu: false,
-      num: 0
-    },
-    {
-      name: "123",
-      houseRelative: "东区-1栋-1-1",
-      carNum: "XX门禁",
-      createDate: "2019-10-10 12:12:12",
-      type: 2,
-      showMenu: false,
-      num: 0
-    },
-    {
-      name: "123",
-      houseRelative: "东区-1栋-1-1",
-      carNum: "XX门禁",
-      createDate: "2019-10-10 12:12:12",
-      type: 1,
-      showMenu: false,
-      num: 0
+export default class DeviceManage extends Vue {
+  filterForm: object = {
+    loc: '',
+    deviceStatus: 'all'
+  } // 筛选条件
+  initForm:object = {
+    url: '/admin/dev-manage',
+    method: 'get'
+  }
+  deleteForm: object = {
+    url: '/admin/dev-manage',
+    method: 'delete',
+    params: {
+      id: '111'
     }
-  ];
-  deviceStatus: String = "all";
+  }
   activeName: string = "first";
   detailDialogVisible: boolean = false; // 设备详情dialog弹框状态
   private formLabelWidth: String = "120px";
-  detailDialogForm: Object = {};
+  detailDialogForm: Object = {}; // 设备详情
   doorRecordTable: Array<Object> = []; // 设备抓拍的通行记录
-  private dialogCreate: Boolean = false; // 新增或修改弹出表单
   private roleTitle: String = "0";
   private deciceForm: Object = { // 创建设备表单
     name: null,
@@ -312,6 +297,9 @@ export default class CardManage extends Vue {
       status: '离线'
     }
   ]
+  created() {
+    this.initForm['params'] = Object.assign(this.initForm['params'], this.page, this.filterForm) // 合并参数
+  }
   /**
    * 查看设备详情
    */
@@ -319,38 +307,9 @@ export default class CardManage extends Vue {
     this.detailDialogVisible = true;
     this.detailDialogForm = Object.assign({}, row);
   }
-
-  editType(item) {
-    /**@description 修改状态 */
-    console.log(item);
-  }
-  commandClick(val) {
-    if (val === "update") {
-      this.roleTitle = "1";
-      this.dialogCreate = true;
-    } else {
-      this.$confirm("此操作将永久删除该数据, 是否继续?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      })
-        .then(() => {
-          this.$message({
-            type: "success",
-            message: "删除成功!"
-          });
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消删除"
-          });
-        });
-    }
-  }
   handleClose() {
     this.roleTitle = "0";
-    this.dialogCreate = false;
+    this['dialogCreate'] = false
   }
 }
 </script>
