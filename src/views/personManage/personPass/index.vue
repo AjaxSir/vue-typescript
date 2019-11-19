@@ -127,7 +127,7 @@
 import { Component, Prop, Vue, Mixins } from "vue-property-decorator";
 import { Getter, Action, Mutation } from "vuex-class";
 import mixin from "@/config/minxins";
-
+import { passList } from '@/api/peopleApi.ts'
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 const ImageMagni = () => import("@/components/BigImg/index.vue");
 
@@ -194,7 +194,12 @@ export default class CardManage extends Vue {
 
   private dialogFormVisible: Boolean = false;
   private formLabelWidth: String = "120px";
-
+  created() {
+    console.log(1)
+    passList().then(res => {
+      console.log(res)
+    })
+  }
   editType(item) {
     /**@description 修改状态 */
     console.log(item);
