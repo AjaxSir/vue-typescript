@@ -54,48 +54,56 @@
               </template>
             </el-table-column>-->
 
-            <el-table-column prop="name" label="车主"></el-table-column>
+            <el-table-column prop="ownerUserName" label="车主"></el-table-column>
 
-            <el-table-column prop="carNum" label="车牌号">
+            <el-table-column prop="carNo" label="车牌号">
               <template slot-scope="scope">
                 <el-button
                   @click="showCarDetails(scope.row)"
                   type="text"
                   class="serial-num"
-                >{{scope.row.carNum}}</el-button>
+                >{{scope.row.carNo}}</el-button>
               </template>
             </el-table-column>
 
-            <el-table-column prop="createDate" label="最近一次访问"></el-table-column>
+            <el-table-column prop="lastInTime" label="最近一次访问"></el-table-column>
 
-            <el-table-column prop="img" label="最近抓拍图片">
+            <el-table-column prop="lastInPhoto" label="最近抓拍图片">
               <template slot-scope="scope">
                 <img
                   class="capture-img"
                   @mouseout="imgVisible=false"
-                  @mouseover="imgVisible=true,bigImg=scope.row.img"
-                  :src="scope.row.img"
+                  @mouseover="imgVisible=true,bigImg=scope.row.lastInPhoto"
+                  :src="scope.row.lastInPhoto"
                   alt
                 />
               </template>
             </el-table-column>
 
-            <el-table-column prop="type" label="状态">
+            <el-table-column prop="status" label="状态">
               <template slot-scope="scope">
                 <el-tag
                   size="small"
                   style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
-                  :type="scope.row.type === 1 ? 'success' : 'danger'"
+                  :type="scope.row.status? 'success' : 'danger'"
                   @click="editType(scope.row)"
-                >{{ scope.row.type === 1 ? "正常" : "异常" }}</el-tag>
+                >{{ scope.row.status ? "正常" : "异常" }}</el-tag>
               </template>
             </el-table-column>
 
-            <el-table-column prop="houseRelative" label="备注"></el-table-column>
+            <el-table-column prop="note" label="备注"></el-table-column>
           </el-table>
         </div>
-
-        <el-pagination style="margin-top:10px;" background layout="prev, pager, next" :total="2"></el-pagination>
+        <el-pagination
+          background
+          style="margin-top:10px;"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :page-size="listQuery.limit"
+          :current-page="listShow.page"
+          layout="total, prev, pager, next, slot"
+          :total="listShow.total"
+        ></el-pagination>
 
         <!-- <div :class="rowSpan.row1===4 ? menuControl1 : menuControl2" @click="menuVisible">
           <p class="close-menu">
@@ -111,22 +119,71 @@
       :visible.sync="dialogCreate"
       width="500px"
       :before-close="handleClose"
+      :close-on-click-modal="false"
     >
-      <el-form ref="form" :model="roleForm" label-width="80px">
-        <el-form-item label="车主">
-          <el-input v-model="roleForm.name"></el-input>
+      <el-form
+        ref="dataForm"
+        :model="createForm[0]"
+        :rules="rules"
+        label-position="right"
+        label-width="80px"
+        style="margin-right:40px;"
+      >
+        <el-form-item
+          prop="ownerPhone"
+          :show-message="showMessage"
+          :error="errorMessage.ownerPhone"
+          label="电话"
+        >
+          <el-autocomplete
+            style="width:340px"
+            v-model="createForm[0].ownerPhone"
+            :disabled="nameDisabled"
+            placeholder="请输入用户电话"
+            popper-class="my-autocomplete"
+            :fetch-suggestions="querySearch"
+            @select="handleSelectWatchlist"
+          >
+            <template slot-scope="{ item }">
+              <div class="name">{{ item.value }}</div>
+              <span class="addr">姓名:{{ item.name ? item.name : '未知'}}</span>
+            </template>
+          </el-autocomplete>
         </el-form-item>
-        <el-form-item label="车牌">
-          <el-input v-model="roleForm.carNum"></el-input>
+
+        <el-form-item label="姓名">
+          <el-input :disabled="true" v-model="createForm[0].ownerUserName"></el-input>
+        </el-form-item>
+
+        <el-form-item
+          label="车牌"
+          prop="carNo"
+          :show-message="showMessage"
+          :error="errorMessage.carNo"
+        >
+          <el-input v-model="createForm[0].carNo"></el-input>
+        </el-form-item>
+
+        <el-form-item
+          label="品牌"
+          prop="modal"
+          :show-message="showMessage"
+          :error="errorMessage.modal"
+        >
+          <el-input v-model="createForm[0].modal"></el-input>
+        </el-form-item>
+
+        <el-form-item label="车型">
+          <el-input v-model="createForm[0].carType"></el-input>
         </el-form-item>
 
         <el-form-item label="备注">
-          <el-input type="textarea" v-model="roleForm.desc"></el-input>
+          <el-input type="textarea" v-model="createForm[0].note"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogCreate = false">取 消</el-button>
-        <el-button type="primary" @click="dialogCreate = false">确 定</el-button>
+        <el-button @click="handleClose">取 消</el-button>
+        <el-button type="primary" @click="createCar">确 定</el-button>
       </span>
     </el-dialog>
     <!-- 目标详情 -->
@@ -180,6 +237,7 @@
 import { Component, Prop, Vue, Mixins } from "vue-property-decorator";
 import { Getter, Action, Mutation } from "vuex-class";
 import mixin from "@/config/minxins";
+import { carList, queryCarPhone, addCar } from "@/api/carApi.ts";
 
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 const ImageMagni = () => import("@/components/BigImg/index.vue");
@@ -194,35 +252,17 @@ const DataTree = () => import("@/components/DataTree.vue");
   }
 })
 export default class CardManage extends Vue {
-  private cardList: Array<Object> = [
-    {
-      name: "zhang3",
-      houseRelative: "业主",
-      carNum: "川1256489",
-      createDate: "2019-9-26",
-      img: require("../../../assets/car1.png"),
-      type: 1,
-      showMenu: false
-    },
-    {
-      name: "zhang3",
-      houseRelative: "业主",
-      carNum: "川1256489",
-      createDate: "2019-9-26",
-      img: require("../../../assets/car1.png"),
-      type: 1,
-      showMenu: false
-    },
-    {
-      name: "zhang3",
-      houseRelative: "业主",
-      carNum: "川1256489",
-      createDate: "2019-9-26",
-      img: require("../../../assets/car1.png"),
-      type: 2,
-      showMenu: false
-    }
-  ];
+  private listQuery: Object = {
+    //获取车辆名单列表及根据条件进行查询
+    page: 1,
+    limit: 10
+  };
+  private listShow: Object = {
+    //获取车辆名单列表及根据条件进行查询
+    total: 0
+  };
+
+  private cardList: Array<Object> = [];
 
   private rowSpan: any = {
     row1: 4,
@@ -253,11 +293,144 @@ export default class CardManage extends Vue {
   private dialogCreate: Boolean = false; // 新增或修改弹出表单
   private roleTitle: String = "0";
 
-  private roleForm: Object = {
-    name: null,
-    carNum: null,
-    desc: null
+  private createForm: Array<Object> = [
+    {
+      ownerPhone: "", //车主电话
+      ownerUserName: "", //车主
+      scenceUserId: "", //车主id
+      carNo: "", //车牌号
+      carType: "", //车型
+      // id: "string",
+      modal: "", //品牌
+      note: "" //备注
+    }
+  ];
+  private rules: Object = {
+    // 表单验证
+    ownerPhone: [
+      { required: true, message: "请输入车主电话", trigger: "blur" }
+    ],
+    carNo: [{ required: true, message: "请输入车牌号", trigger: "blur" }],
+    modal: [{ required: true, message: "请输入车辆品牌", trigger: "blur" }]
   };
+  private showMessage: Boolean = true; //是否显示表单错误信息
+  private errorMessage: Object = {
+    // 表单错误信息
+    ownerPhone: "",
+    carNo: ""
+  };
+  private nameDisabled: Boolean = false;
+  private restaurants: Array<Object> = [];
+
+  created() {
+    this.fetchData();
+  }
+
+  async fetchData() {
+    /** @description 获取车辆名单列表
+     * @augments listQuery: 参数
+     */
+    const { data } = await carList(this.listQuery);
+    this.cardList = data.data.records;
+    this.listShow.total = data.data.total;
+  }
+
+  handleSizeChange(val) {
+    /** @description 修改每页显示条数
+     * @augments val: 每页显示条数
+     */
+    this.listQuery.limit = val;
+    this.fetchData();
+  }
+
+  handleCurrentChange(val) {
+    /** @description 处理翻页事件
+     * @augments val: 页数
+     */
+    this.listQuery.page = val;
+    this.fetchData();
+  }
+
+  async querySearch(queryString, cb) {
+    if (
+      queryString === "" ||
+      (this.restaurants.length === 1 &&
+        queryString !== this.restaurants[0].value)
+    ) {
+      this.createForm[0].ownerUserName = "";
+      this.nameDisabled = false;
+    }
+    if (queryString.length >= 7) {
+      await this.fetchWatchList(queryString);
+    }
+    // 调用 callback 返回建议列表的数据
+    cb(this.restaurants);
+    if (this.restaurants.length === 1 && this.restaurants[0].value) {
+      if (queryString === this.restaurants[0].value) {
+        this.handleSelectWatchlist(this.restaurants[0]);
+      }
+    }
+  }
+
+  async fetchWatchList(name) {
+    const { data } = await queryCarPhone(name);
+    this.restaurants = data.data.map(item => {
+      return {
+        value: item.phone,
+        name: item.name,
+        scenceUserId: item.id
+      };
+    });
+  }
+
+  handleSelectWatchlist(item) {
+    this.createForm[0].ownerPhone = item.value;
+    if (item.name) {
+      this.createForm[0].ownerUserName = item.name;
+      this.nameDisabled = true;
+    } else {
+      this.createForm[0].userName = null;
+      this.nameDisabled = false;
+    }
+  }
+
+  createCar() {
+    /**@description 新增车辆处理 */
+    this.$refs["dataForm"].validate(valid => {
+      if (valid) {
+        var form = [
+          {
+            ...this.createForm[0],
+            scenceUserId: this.restaurants[0].scenceUserId
+          }
+        ];
+        addCar(form)
+          .then(res => {
+            this.handleClose();
+            this.fetchData();
+            this.nameDisabled = false;
+            this.$notify({
+              type: "success",
+              title: "成功",
+              message: "添加车辆成功"
+            });
+          })
+          .catch(err => {
+            console.log(err.response);
+            // const { data } = err.response;
+            // for (const k in data) {
+            //   this.errorMessage[k] = data[k][0];
+            // }
+          });
+      }
+    });
+  }
+
+  handleClose() {
+    /** @description 关闭新增/修改diolog */
+    this.dialogCreate = false;
+    this.$refs["dataForm"].resetFields();
+  }
 
   editType(item) {
     /**@description 修改状态 */
