@@ -9,18 +9,6 @@
             <el-dropdown-item>统计信息</el-dropdown-item>
           </el-dropdown-menu>
           <div slot="houseNum">
-            <!-- <div class="word-filter">
-              <span class="filter-name">时间段:</span>
-              <el-date-picker
-                class="input-filter"
-                size="small"
-                v-model="TimeRange"
-                type="datetimerange"
-                range-separator="-"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-              ></el-date-picker>
-            </div> -->
             <div class="word-filter">
               <span class="filter-name">房屋编号:</span>
               <el-input class="input-filter" placeholder='输入房屋编号筛选' size="small"></el-input>
@@ -47,13 +35,15 @@
     </el-row>
     <el-row :gutter="10">
       <el-col :span="rowSpan.row1">
-        <data-tree />
+        <data-tree
+        @getHouseTreeData='getHouseTreeData'
+        :TreeData='TreeData' />
       </el-col>
 
       <el-col :span="rowSpan.row2" class="table-col">
         <div class="rightContent">
           <el-table
-            :data="cardList"
+            :data="list_data"
             stripe
             class="demo-block"
             highlight-current-row
@@ -154,7 +144,7 @@
 import { Component, Prop, Vue, Mixins } from "vue-property-decorator";
 import { Getter, Action, Mutation } from "vuex-class";
 import mixin from "@/config/minxins";
-
+import { getHouseTreeData } from '@/api/houseApi.ts'
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 const DataTree = () => import("@/components/DataTree.vue");
 
@@ -166,64 +156,17 @@ const DataTree = () => import("@/components/DataTree.vue");
   }
 })
 export default class CardManage extends Vue {
-  private cardList: Array<Object> = [
-    {
-      name: "西区-1栋",
-      houseRelative: "1-1",
-      createDate: "1-1-201",
-      num: "--",
-      type: 2,
-      showMenu: false
-    },
-    {
-      name: "西区-1栋",
-      houseRelative: "1-1",
-      createDate: "1-1-201",
-      num: "--",
-      type: 1,
-      showMenu: false
-    },
-    {
-      name: "西区-1栋",
-      houseRelative: "1-1",
-      createDate: "1-1-201",
-      num: "--",
-      type: 1,
-      showMenu: false
-    },
-    {
-      name: "西区-1栋",
-      houseRelative: "1-1",
-      createDate: "1-1-201",
-      num: "--",
-      type: 1,
-      showMenu: false
-    }
-  ];
-  TimeRange: Array<string> = [];
   private rowSpan: any = {
     row1: 4,
     row2: 20
   };
-
+  TreeData: Array<Object> = [] // 树形结构数据
   private menuControl1: String = "menu-control";
   private menuControl2: String = "menu-visible";
 
-  private form: Object = {
-    name: "",
-    region: "",
-    date1: "",
-    date2: "",
-    delivery: false,
-    type: [],
-    resource: "",
-    desc: ""
-  };
-
   private dialogFormVisible: Boolean = false;
-  private formLabelWidth: String = "120px";
 
-    private detailDialog: Object = {
+  private detailDialog: Object = {
     //查看目标详情
     name: ""
   };
@@ -250,30 +193,19 @@ export default class CardManage extends Vue {
       address: "1-1-620"
     }
   ];
-
-    private doorDevice: Array<Object> =[
-    {
-      date: "100000003",
-      name: "东区-1栋-1-1"
-    }
-  ];
-
-
-
+  getHouseTreeData() {
+    console.log('执行')
+    getHouseTreeData().then((res: Object) => {
+      this.TreeData = res['data']['data']
+    })
+  }
+  created() {
+    this.getHouseTreeData()
+  }
   editType(item) {
     /**@description 修改状态 */
     console.log(item);
     // this.dialogFormVisible = true;
-  }
-
-  enterRowChange(row, column, cell, event) {
-    /**@description hover enter tab 行 */
-    row.showMenu = true;
-  }
-
-  leaveRowChange(row) {
-    /**@description hover leave tab 行 */
-    row.showMenu = false;
   }
 
   handleClick() {}

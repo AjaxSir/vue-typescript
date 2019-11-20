@@ -24,7 +24,7 @@
       <el-col :span="24" class="table-col">
         <div class="rightContent">
           <el-table
-            :data="cardList"
+            :data="list_data"
             stripe
             class="demo-block"
             highlight-current-row
@@ -47,7 +47,7 @@
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
                     <el-dropdown-menu slot="dropdown">
                       <el-dropdown-item :command='returnCommand("update", scope.row)'>挂失</el-dropdown-item>
-                      <el-dropdown-item :command='returnCommand("delete", scope.row)'>删除</el-dropdown-item>
+                      <el-dropdown-item :command='returnCommand("delete", scope.row)'>批量删除</el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
                 </div>
@@ -70,8 +70,9 @@
                 >{{ scope.row.type === 1 ? "正常" : "异常" }}</el-tag>
               </template>
             </el-table-column>
-
+            <el-table-column align="center" prop="num" label="进出"></el-table-column>
             <el-table-column align="center" prop="num" label="累计刷卡次数"></el-table-column>
+
           </el-table>
           <el-pagination style="margin-top:10px;" background layout="prev, pager, next" :total="2"></el-pagination>
         </div>
@@ -136,41 +137,6 @@ const ActionHeader = () => import("@/components/ActionHeader.vue");
   }
 })
 export default class CardManage extends Vue {
-  private cardList: Array<Object> = [
-    {
-      name: "0000001",
-      houseRelative: "1-1-203",
-      createDate: "2019-9-26",
-      type: 2,
-      showMenu: false,
-      num: "--"
-    },
-    {
-      name: "00000002",
-      houseRelative: "1-1-203",
-      createDate: "2019-9-26",
-      type: 1,
-      showMenu: false,
-      num: "--"
-    },
-    {
-      name: "00000003",
-      houseRelative: "1-1-203",
-      createDate: "2019-9-26",
-      type: 1,
-      showMenu: false,
-      num: "--"
-    },
-    {
-      name: "00000004",
-      houseRelative: "1-1-203",
-      createDate: "2019-9-26",
-      type: 1,
-      showMenu: false,
-      num: "--"
-    }
-  ];
-  TimeRange: Array<string> = [];
   Form: any = {
     name: '',
     time: ''
@@ -181,13 +147,19 @@ export default class CardManage extends Vue {
           ]
   }
   private dialogFormVisible: Boolean = false;
-  private formLabelWidth: String = "120px";
-  private dialogCreate: Boolean = false; // 新增弹出表单
 
   private detailDialog: Object = {
     //查看目标详情
     name: ""
   };
+  filterForm: Object = {
+    houseName: '',
+    cardNo: ''
+  }
+  initForm: Object = {
+    url: 'admin/hsDoorCard/list',
+    method: 'get'
+  }
   private activeName: String = "详细信息";
   private dtailTable: Array<Object> =[
     {
@@ -220,6 +192,9 @@ export default class CardManage extends Vue {
   queryIdetity(row) {
     this.detailDialog = row;
     this.dialogFormVisible = true;
+  }
+  created() {
+    this.initForm['params'] = Object.assign(this.initForm['params'], this.page, this.filterForm) // 合并参数
   }
 }
 </script>

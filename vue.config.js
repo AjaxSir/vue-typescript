@@ -9,10 +9,17 @@ module.exports = {
   devServer: {
     proxy: {
       "/v1": {
-        target: "http://192.168.3.122:8080",
+        target: "http://192.168.3.122:8080", // 开波
         changeOrigin: true,
         pathRewrite: {
           "^/v1": "/"
+        }
+      },
+      "/v2": {
+        target: "http://192.168.3.197:8080", // 向阳
+        changeOrigin: true,
+        pathRewrite: {
+          "^/v2": "/"
         }
       }
     },

@@ -17,6 +17,7 @@
     <el-tree
       :data="TreeData"
       node-key="id"
+      :props='dataFormate'
       default-expand-all
       :expand-on-click-node="false"
       @node-click="handleNodeClick"
@@ -35,7 +36,7 @@
               <el-dropdown-item :command='commandObj("addGroup", node)'>添加子分组</el-dropdown-item>
               <el-dropdown-item :command='commandObj("addUnit", node)'>添加单元楼</el-dropdown-item>
               <el-dropdown-item :command='commandObj("updateGroup", node)'>修改分组</el-dropdown-item>
-              <el-dropdown-item :command='commandObj("delete", node)'>删除分组</el-dropdown-item>
+              <el-dropdown-item :command='commandObj("deleteGroup", node)'>删除分组</el-dropdown-item>
             </el-dropdown-menu>
             <el-dropdown-menu v-if='type === "role"' slot="dropdown">
               <el-dropdown-item :command='commandObj("addRoleGroup", node)'>创建权限组</el-dropdown-item>
@@ -47,13 +48,13 @@
       </span>
     </el-tree>
     <!-- 楼栋dialog添加分组 -->
-    <el-dialog width="500px" class='formDialog' title="添加分组" :visible.sync="HouseVisible">
-      <el-form :model="HouseForm">
-        <el-form-item label="序号:" label-width="80px">
-          <el-input v-model="HouseForm.number" autocomplete="off"></el-input>
+    <el-dialog width="500px" class='formDialog' :title="HouseForm.title" :visible.sync="HouseVisible">
+      <el-form ref='HouseForm' :rules='HouseRules' :model="HouseForm">
+        <el-form-item label="序号:" prop='serialNumber' label-width="80px">
+          <el-input v-model="HouseForm.serialNumber" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="序号单位:" label-width="80px">
-          <el-select v-model="HouseForm.orderUnit" placeholder="请选择">
+        <el-form-item label="序号单位:" prop='serialNumberUnit' label-width="80px">
+          <el-select v-model="HouseForm.serialNumberUnit" placeholder="请选择">
             <el-option
               v-for="item in orderUnitList"
               :key="item.value"
@@ -62,15 +63,15 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="别名:" label-width="80px">
-          <el-input v-model="HouseForm.otherName" autocomplete="off"></el-input>
+        <el-form-item label="别名:" prop='name' label-width="80px">
+          <el-input v-model="HouseForm.name" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="备注:" label-width="80px">
-          <el-input v-model="HouseForm.detail" autocomplete="off"></el-input>
+        <el-form-item label="备注:" prop='note' label-width="80px">
+          <el-input v-model="HouseForm.note" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="HouseVisible = false">确 定</el-button>
+        <el-button type="primary" @click="GroupAction">确 定</el-button>
         <el-button type="warning" @click="HouseVisible = false">批量添加</el-button>
         <el-button @click="HouseVisible = false">取 消</el-button>
 
@@ -148,6 +149,8 @@
 <script lang="ts">
 import { Component, Prop, Vue, Mixins } from "vue-property-decorator";
 import { Getter, Action, Mutation } from "vuex-class";
+import { addHouseGroup, deleteHouseGroup, updateHouseGroup } from '@/api/houseApi.ts'
+import { Message } from 'element-ui';
 @Component
 export default class DataTree extends Vue {
   private showMenu: Number = 0;
@@ -204,14 +207,31 @@ export default class DataTree extends Vue {
     }] // 必须是函数式返回
   } }) TreeData: Array<Object>
   // private data: Array<Object> =
-
+@Prop({ default: () => {
+  return {
+    children: 'sonBuildGroups',
+    label: 'name'
+  }
+ } }) dataFormate: Object
   @Prop({ default: true }) needAction: any;
-  // 单位表单
+  nodeAction: string = '' // 记录执行的操作
+  // 分组校验规则
+  HouseRules: Object = {
+    name: [
+            { required: true, message: '请输入别名', trigger: 'blur' }
+          ],
+    serialNumber: [
+            { required: true, message: '请输入序号', trigger: 'blur' }
+          ]
+  }
+  // 新增分组表单
   HouseForm: object = {
-    number: '', // 序号
-    orderUnit: '1',
-    otherName: '',
-    detail: ''
+    serialNumber: '', // 序号
+    serialNumberUnit: '区',
+    name: '',
+    note: '',
+    parentId: '',
+    title: '添加子分组'
   }
   // 楼栋表单
   UnitForm: object = {
@@ -225,15 +245,15 @@ export default class DataTree extends Vue {
   // 序号单位数组
   orderUnitList: Array<object> = [
     {
-      value: '1',
+      value: '期',
       label: '期'
     },
     {
-      value: '2',
+      value: '栋',
       label: '栋'
     },
     {
-      value: '3',
+      value: '区',
       label: '区'
     }
   ]
@@ -280,23 +300,45 @@ export default class DataTree extends Vue {
   newTagValue: string = ''
   // 权限dialog状态
   RoleVisible:boolean = false
-  handleNodeClick(data) {
-    /**@description */
-    // console.log(data);
-    // data.showMenu = !data.showMenu;
+  /** 新增或修改分组信息 */
+  GroupAction() {
+    if (this.nodeAction === 'addGroup') {
+      addHouseGroup(this.HouseForm).then(res => {
+        if (res.data.code === 200) {
+          Message({
+            type: 'success',
+            message: '新增成功'
+          })
+          this.$emit('getHouseTreeData')
+          this.HouseVisible = false
+        }
+      })
+    } else if (this.nodeAction === 'updateGroup') {
+      updateHouseGroup(this.HouseForm).then(res => {
+        if (res.data.code === 200) {
+          Message({
+            type: 'success',
+            message: '修改成功'
+          })
+          this.$emit('getHouseTreeData')
+          this.HouseVisible = false
+        }
+      })
+
+    }
   }
-  /**
-   * 删除序号单元
-   */
+  handleNodeClick(data) {
+    /**@description 树节点点击事件 */
+  }
+  /*** 删除序号单元 */
   deleteTag(tag, index) {
     this.Tags.splice(index, 1)
   }
+  /**显示更多操作图标 */
   MouseNnter(val) {
     this.showMenu = val;
   }
-  /**
-   * 新增单元序号
-   */
+  /*** 新增单元序号 */
   handleInputConfirm() {
     this.newTag = false
     this.Tags.push({
@@ -304,9 +346,7 @@ export default class DataTree extends Vue {
       value: this.newTagValue
     })
   }
-  /**
-   * 显示新增序号单元框
-   */
+  /*** 显示新增序号单元框*/
   showInput() {
     this.newTag = true
   }
@@ -314,23 +354,36 @@ export default class DataTree extends Vue {
     this.showMenu = 0;
   }
   /**
-   *
+   * action 分类
    */
   commandTreeClick(treeData) {
+    this.nodeAction = treeData.action
     switch (treeData.action) {
       case 'addGroup' :
+        this.HouseForm['title'] = '添加子分组'
+        this.HouseForm['parentId'] = '698289b4c26cfec132cac43c1c2784d2'
         this.HouseVisible = true
+        this.$nextTick(() => {
+          this.$refs['HouseForm']['resetFields']()
+        })
         break
-      case 'delete' :
+      case 'deleteGroup' :
         this.$confirm('此操作将永久删除该目标, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          });
+          deleteHouseGroup(treeData.node.data.id).then((res: any) => {
+            if (res.data.code === 200) {
+              this.$message({
+                type: 'success',
+                message: '删除成功!'
+              });
+              this.$emit('getHouseTreeData')
+              this.HouseVisible = false
+            }
+          })
+
         }).catch(() => {
           this.$message({
             type: 'info',
@@ -343,6 +396,8 @@ export default class DataTree extends Vue {
         break
       case 'updateGroup':
         this.HouseVisible = true
+        this.HouseForm['title'] = '修改子分组'
+        this.HouseForm = Object.assign(this.HouseForm, treeData.node.data)
         break
     }
   }

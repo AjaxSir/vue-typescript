@@ -138,7 +138,9 @@
         <el-form-item class="phone-input" label="设备名称: " prop="title">
           <el-input style="width:310px" v-model="deciceForm.title"></el-input>
         </el-form-item>
-
+        <el-form-item class="phone-input" label="设备进出: " prop="title">
+          <el-input style="width:310px" v-model="deciceForm.inOut"></el-input>
+        </el-form-item>
         <el-form-item class="phone-input" label="设备地址: " prop="limitHouse">
           <el-select
             style="width:310px;"
@@ -267,7 +269,8 @@ export default class DeviceManage extends Vue {
     region: null,
     desc: null,
     verification: null,
-    info: ''
+    info: '',
+    inOut: ''
   };
   private meetingLoc: Array<Object> = [
     {
