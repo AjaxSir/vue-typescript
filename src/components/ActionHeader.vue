@@ -150,7 +150,7 @@ export default class ActionManage extends Vue {
    */
   @Emit('fetchData')
   sizeChange(size: number) {
-    this.page['limit'] = size
+    this.page['size'] = size
     this.page['page'] = 1
     this.initFormHeader['params'] = Object.assign(this.initFormHeader['params'], this.page)
     // this.$emit('fetchData', this.initFormHeader)

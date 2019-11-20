@@ -15,7 +15,7 @@ export default class GlobalMimins extends Vue{
 public page: any =  {
     total: 1,
     page: 1,
-    limit: 10,
+    size: 10,
     offset: 0,
 }
 public dialogCreate: any = false

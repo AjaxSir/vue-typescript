@@ -140,7 +140,7 @@ export default class PersonPass extends Vue {
     userType: 'all'
   }
   initForm: object = {
-    url: 'admin/people-pass/',
+    url: '/admin/people-pass/',
     method: 'get'
   }
   pickOptionStart:object = {}
