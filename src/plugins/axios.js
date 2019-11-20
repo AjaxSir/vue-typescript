@@ -45,9 +45,10 @@ _axios.interceptors.response.use(
     }
   },
   function(error) {
+    const { data } = error.response;
     Message({
       type: 'warning',
-      message: '请求出错!'
+      message: `请求出错! ${data.message}`
     });
     return Promise.reject(error);
   }

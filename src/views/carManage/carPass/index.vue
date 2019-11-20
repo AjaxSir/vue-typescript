@@ -2,7 +2,15 @@
   <div class="app-container">
     <el-row>
       <el-col :span="24">
-        <action-header :btnStatus="false" :total="1">
+        <action-header
+          :initFormHeader="initForm"
+          @fetchData="fetchData"
+          :filterForm="filterForm"
+          :btnStatus="2"
+          :exportUrl="'/v1/admin/car-pass/export/'"
+          :exportName="'车辆通行记录'"
+          :total="page.total"
+        >
           <el-dropdown-menu slot="dropdown">
             <div @click="handleStatistics('统计查询')">
               <el-dropdown-item>统计查询</el-dropdown-item>
@@ -14,45 +22,34 @@
           <div slot="houseNum">
             <div class="word-filter">
               <span class="filter-name">车牌号:</span>
-              <el-input class="input-filter" size="small"></el-input>
+              <el-input class="input-filter" size="small" v-model="filterForm.carNo"></el-input>
             </div>
             <div class="word-filter">
-              <span class="filter-name">日期范围:</span>
+              <span class="filter-name">时间段:</span>
               <el-date-picker
-                v-model="TimeRange[0]"
+                style="width:165px"
+                :picker-options="pickOptionStart"
+                v-model="filterForm.startTime"
                 type="date"
-                placeholder="选择日期">
-              </el-date-picker>
-              至
+                placeholder="选择日期"
+              ></el-date-picker>&nbsp;&nbsp;至&nbsp;&nbsp;
               <el-date-picker
-                v-model="TimeRange[1]"
+                style="width:165px"
+                v-model="filterForm.endTime"
+                :picker-options="pickOptionEnd"
                 type="date"
-                placeholder="选择日期">
-              </el-date-picker>
-            </div>
-            <div class="word-filter">
-              <span class="filter-name">时间范围:</span>
-              <el-date-picker
-                v-model="time[0]"
-                type="date"
-                placeholder="选择日期">
-              </el-date-picker>
-              至
-              <el-date-picker
-                v-model="time[1]"
-                type="date"
-                placeholder="选择日期">
-              </el-date-picker>
+                placeholder="选择日期"
+              ></el-date-picker>
             </div>
             <div class="word-filter">
               <span class="filter-name">车辆类型:</span>
-              <el-select v-model="carType" placeholder="请选择">
+              <el-select v-model="filterForm.isVisitCar" placeholder="请选择">
                 <el-option
                   v-for="item in carTypeList"
                   :key="item.value"
                   :label="item.label"
-                  :value="item.value">
-                </el-option>
+                  :value="item.value"
+                ></el-option>
               </el-select>
             </div>
           </div>
@@ -63,7 +60,8 @@
       <el-col :span="24" class="table-col">
         <div class="rightContent">
           <el-table
-            :data="cardList"
+            v-loading="showLoading"
+            :data="list_data"
             stripe
             class="demo-block"
             highlight-current-row
@@ -74,13 +72,13 @@
 
             <el-table-column align="center" type="index" label="序号" width="50"></el-table-column>
 
-            <el-table-column align="center" prop="name" label="车牌号">
+            <el-table-column align="center" prop="carNo" label="车牌号">
               <template slot-scope="scope">
                 <el-button
                   @click="showCarDetails(scope.row)"
                   type="text"
                   class="serial-num"
-                >{{scope.row.carNum}}</el-button>
+                >{{scope.row.carNo}}</el-button>
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start" @command="commandClick">
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
@@ -93,9 +91,9 @@
               </template>
             </el-table-column>
 
-            <el-table-column align="center" prop="car" label="车辆品牌"></el-table-column>
-
-            <el-table-column align="center" prop="type" label="是否校内">
+            <!-- <el-table-column align="center" prop="modal" label="车辆品牌"></!-->
+            -->
+            <el-table-column align="center" prop="type" label="访客通行">
               <template slot-scope="scope">
                 <el-tag
                   size="small"
@@ -106,19 +104,22 @@
               </template>
             </el-table-column>
 
-            <el-table-column align="center" prop="car" label="车辆颜色"></el-table-column>
+            <!-- <el-table-column align="center" prop="car" label="车辆颜色"></el-table-column> -->
 
-            <el-table-column align="center" prop="car" label="车主信息"></el-table-column>
+            <el-table-column align="center" prop="ownerName" label="车主姓名"></el-table-column>
+            <el-table-column align="center" prop="ownerPhone" label="车主电话"></el-table-column>
 
-            <el-table-column align="center" prop="createDate" label="抓拍时间"></el-table-column>
+            <el-table-column align="center" prop="passTime" label="抓拍时间"></el-table-column>
 
-            <el-table-column align="center" prop="img" label="最近抓拍图片">
+            <el-table-column align="center" prop="photos" label="最近抓拍图片">
               <template slot-scope="scope">
                 <img
                   class="capture-img"
+                  width="30px"
+                  height="30px"
                   @mouseout="imgVisible=false"
-                  @mouseover="imgVisible=true,bigImg=scope.row.img"
-                  :src="scope.row.img"
+                  @mouseover="imgVisible=true,bigImg=scope.row.photos"
+                  :src="scope.row.photos"
                   alt
                 />
               </template>
@@ -126,7 +127,13 @@
           </el-table>
         </div>
 
-        <el-pagination style="margin-top:10px;" background layout="prev, pager, next" :total="2"></el-pagination>
+        <el-pagination
+          @current-change="pageChange"
+          style="margin-top:10px;"
+          background
+          layout="prev, pager, next"
+          :total="page.total"
+        ></el-pagination>
       </el-col>
     </el-row>
     <el-dialog
@@ -176,7 +183,8 @@ import mixin from "@/config/minxins";
 
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 const ImageMagni = () => import("@/components/BigImg/index.vue");
-const StatisticDataDialog = () => import("./components/statisticDataDialog.vue");
+const StatisticDataDialog = () =>
+  import("./components/statisticDataDialog.vue");
 
 @Component({
   mixins: [mixin],
@@ -187,60 +195,36 @@ const StatisticDataDialog = () => import("./components/statisticDataDialog.vue")
   }
 })
 export default class CardManage extends Vue {
-  private cardList: Array<Object> = [
-    {
-      name: "1-1-105",
-      houseRelative: "业主",
-      carNum: "川1256489",
-      createDate: "2019-9-26",
-      img: require("@/assets/car.png"),
-      type: 1,
-      showMenu: false,
-      car: "--"
-    },
-    {
-      name: "1-1-105",
-      houseRelative: "业主",
-      carNum: "川1256489",
-      createDate: "2019-9-26",
-      img: require("@/assets/car.png"),
-      type: 1,
-      showMenu: false,
-      car: "--"
-    },
-    {
-      name: "1-1-105",
-      houseRelative: "业主",
-      carNum: "川1256489",
-      createDate: "2019-9-26",
-      img: require("@/assets/car.png"),
-      type: 2,
-      showMenu: false,
-      car: "--"
-    }
-  ];
-
-  private TimeRange: Array<string> = ['', '']; // 日期范围
-  private time:Array<string> = ['', ''] // 时间范围
+  filterForm: object = {
+    carNo: null,
+    startTime: null,
+    endTime: null,
+    isVisitCar: null
+  }; //根据关键字查询
+  initForm: object = {
+    url: "/admin/car-pass/",
+    method: "get"
+  };
+  private TimeRange: Array<string> = ["", ""]; // 日期范围
   activeName: string = "first";
   carDetailsTable: Array<Object> = []; // 详细信息记录
   private imgVisible: Boolean = false; // 控制放大图片的visible
   private bigImg: String = ""; // 保存放大图片的地址
   carTypeList: Array<Object> = [
     {
-      label: '常驻',
-      value: '1'
+      label: "常驻",
+      value: false
     },
     {
-      label: '暂时',
-      value: '2'
+      label: "访客",
+      value: true
     },
     {
-      label: '所有',
-      value: '0'
+      label: "所有",
+      value: null
     }
-  ]
-  carType: string = '0' // 车辆类型
+  ];
+  carType: string = "0"; // 车辆类型
   CarDialogForm: Object = {}; // 车主详细信息
   detailDialogVisible: boolean = false; // 详细信息dialog弹框
   private form: Object = {
@@ -255,6 +239,41 @@ export default class CardManage extends Vue {
   };
   private fromTitle: String = "统计查询"; // dialog Title
   private dialogStatisticData: Boolean = false; // 统计dialog
+
+  pickOptionStart: object = {}; //按照时间段查询的开始时间
+  pickOptionEnd: object = {}; //按照时间段查询的结束时间
+
+  mounted() {
+    const _this = this;
+    this.pickOptionStart = {
+      disabledDate(time) {
+        if (_this.filterForm["endTime"] !== "") {
+          return (
+            time.getTime() > Date.now() ||
+            time.getTime() > _this.filterForm["endTime"]
+          );
+        } else {
+          return time.getTime() > Date.now();
+        }
+      }
+    };
+    this.pickOptionEnd = {
+      disabledDate(time) {
+        return (
+          time.getTime() < _this.filterForm["startTime"] ||
+          time.getTime() > Date.now()
+        );
+      }
+    };
+  }
+
+  created() {
+    this.initForm["params"] = Object.assign(
+      this.initForm["params"],
+      this.page,
+      this.filterForm
+    ); // 合并参数
+  }
 
   showCarDetails(row) {
     this.detailDialogVisible = true;
