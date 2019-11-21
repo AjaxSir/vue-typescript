@@ -93,7 +93,7 @@
                 <el-tag
                   size="small"
                   style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
-                  :type="scope.row.status? 'success' : 'danger'"
+                  :type="scope.row.status=='1'? 'success' : 'danger'"
                   @click="editType(scope.row)"
                 >{{ scope.row.status && scope.row.status =='1' ? "正常" : "禁用" }}</el-tag>
               </template>
@@ -106,7 +106,8 @@
           @current-change="pageChange"
           style="margin-top:10px;"
           background
-          layout="prev, pager, next"
+          layout="prev, pager, next,total"
+          :page-size="page.limit"
           :total="page.total"
         ></el-pagination>
 
@@ -194,14 +195,15 @@
     <!-- 目标详情 -->
     <el-dialog
       class="dialog-rewrite"
-      :title="CarDialogForm.ownerUserName?CarDialogForm.ownerUserName:'未知'"
+      :title="'车牌: ' + CarDialogForm.carNo?CarDialogForm.carNo:'未知'"
       :visible.sync="detailDialogVisible"
+      :before-close="handleClose"
     >
       <el-tabs type="card" v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="车辆详情" name="first">
           <el-form label-width="130px" :model="CarDialogForm">
             <el-form-item style="margin-bottom:0" label="车牌:">
-              <span>{{CarDialogForm.carNo ? CarDialogForm .carNo :'--'}}</span>
+              <span>{{CarDialogForm.carNo ? CarDialogForm.carNo :'--'}}</span>
             </el-form-item>
             <el-form-item style="margin-bottom:0" label="车辆品牌:">
               <span>{{CarDialogForm.modal ? CarDialogForm.modal : '--'}}</span>
@@ -242,12 +244,27 @@
           </el-form>
         </el-tab-pane>
         <el-tab-pane label="车主信息" name="second">
-          <el-form label-width="100px" :model="CarDialogForm">
-            <el-form-item style="margin-bottom:0" label="车主:">
-              <span>{{CarDialogForm.name}}</span>
+          <el-form label-width="100px" v-model="carUserDetail">
+            <el-form-item style="margin-bottom:0" label="姓名:">
+              <span>{{carUserDetail.name}}</span>
+            </el-form-item>
+            <el-form-item style="margin-bottom:0" label="性别:">
+              <span>{{carUserDetail.sex}}</span>
+            </el-form-item>
+            <el-form-item style="margin-bottom:0" label="年龄:">
+              <span>{{carUserDetail.age}}</span>
             </el-form-item>
             <el-form-item style="margin-bottom:0" label="电话:">
-              <span>--</span>
+              <span>{{carUserDetail.phone}}</span>
+            </el-form-item>
+            <el-form-item style="margin-bottom:0" label="证件类型:">
+              <span>{{carUserDetail.cardName}}</span>
+            </el-form-item>
+            <el-form-item style="margin-bottom:0" label="身份证:">
+              <span>{{carUserDetail.cardNo}}</span>
+            </el-form-item>
+            <el-form-item style="margin-bottom:0" label="备注:">
+              <span>{{carUserDetail.note}}</span>
             </el-form-item>
           </el-form>
         </el-tab-pane>
@@ -304,10 +321,11 @@ import { Component, Prop, Vue, Mixins } from "vue-property-decorator";
 import { Getter, Action, Mutation } from "vuex-class";
 import mixin from "@/config/minxins";
 import {
-  queryCarPhone,
-  addCar,
-  getTargrtRecord,
-  getTargetUser
+  queryCarPhone, //根据手机号模糊查询用户
+  addCar, //新增
+  editCar, //修改
+  getTargrtRecord, //获取目标车辆通行记录
+  getTargetUser //获取目标车辆车主信息
 } from "@/api/carApi.ts";
 
 const ActionHeader = () => import("@/components/ActionHeader.vue");
@@ -328,31 +346,26 @@ export default class CardManage extends Vue {
     row1: 4,
     row2: 20
   };
-
   private imgVisible: Boolean = false; // 控制放大图片的visible
   private bigImg: String = ""; // 保存放大图片的地址
-
-  private form: Object = {
-    name: "",
-    region: "",
-    date1: "",
-    date2: "",
-    delivery: false,
-    type: [],
-    resource: "",
-    desc: ""
-  };
+  // private form: Object = {
+  //   name: "",
+  //   region: "",
+  //   date1: "",
+  //   date2: "",
+  //   delivery: false,
+  //   type: [],
+  //   resource: "",
+  //   desc: ""
+  // };
 
   private dialogFormVisible: Boolean = false;
   private formLabelWidth: String = "120px";
 
-  private CarDialogForm: Object = {}; // 车主详细信息
-  private detailDialogVisible: boolean = false; // 详细信息dialog弹框
-  private activeName: string = "first";
   private dialogCreate: Boolean = false; // 新增或修改弹出表单
-  private roleTitle: String = "0";
-
+  private roleTitle: String = "0"; //新增/修改的 dialog Title
   private createForm: Array<Object> = [
+    //新增/修改表单字段
     {
       ownerPhone: "", //车主电话
       ownerUserName: "", //车主
@@ -378,16 +391,21 @@ export default class CardManage extends Vue {
     ownerPhone: "",
     carNo: ""
   };
-  private nameDisabled: Boolean = false;
+  private detailDialogVisible: boolean = false; // 详细信息dialog弹框
+  private activeName: string = "first"; //目标车辆详细信息 tab Title
+  private nameDisabled: Boolean = false; //模糊查询电话后姓名栏目为不可编辑
   private restaurants: Array<Object> = [];
+  private passList: Array<Object> = []; // 车辆名单目标通行记录
+  private passTarget: Boolean = true; //目标车辆通行记录的loadding
+  private CarDialogForm: Object = {}; // 车辆详细信息
+  private carUserDetail: Object = {}; //车主详细信息
 
   initForm: object = {
+    //获取车辆列表url
     url: "/admin/usr-car/",
     method: "get"
   };
 
-  private passList: Array<Object> = []; // 车辆名单目标通行记录
-  private passTarget: Boolean = true;
   private listQuery: Object = {
     // 车辆管理名单目标通行记录翻页
     total: 0,
@@ -408,9 +426,9 @@ export default class CardManage extends Vue {
     if (
       queryString === "" ||
       (this.restaurants.length === 1 &&
-        queryString !== this.restaurants[0].value)
+        queryString !== this.restaurants[0]["value"])
     ) {
-      this.createForm[0].ownerUserName = "";
+      this.createForm[0]["ownerUserName"] = "";
       this.nameDisabled = false;
     }
     if (queryString.length >= 7) {
@@ -418,8 +436,8 @@ export default class CardManage extends Vue {
     }
     // 调用 callback 返回建议列表的数据
     cb(this.restaurants);
-    if (this.restaurants.length === 1 && this.restaurants[0].value) {
-      if (queryString === this.restaurants[0].value) {
+    if (this.restaurants.length === 1 && this.restaurants[0]["value"]) {
+      if (queryString === this.restaurants[0]["value"]) {
         this.handleSelectWatchlist(this.restaurants[0]);
       }
     }
@@ -438,24 +456,24 @@ export default class CardManage extends Vue {
   }
 
   handleSelectWatchlist(item) {
-    this.createForm[0].ownerPhone = item.value;
+    this.createForm[0]["ownerPhone"] = item.value;
     if (item.name) {
-      this.createForm[0].ownerUserName = item.name;
+      this.createForm[0]["ownerUserName"] = item.name;
       this.nameDisabled = true;
     } else {
-      this.createForm[0].userName = null;
+      this.createForm[0]["userName"] = null;
       this.nameDisabled = false;
     }
   }
 
   createCar() {
     /**@description 新增车辆处理 */
-    this.$refs["dataForm"].validate(valid => {
+    this.$refs["dataForm"]["validate"](valid => {
       if (valid) {
         var form = [
           {
             ...this.createForm[0],
-            scenceUserId: this.restaurants[0].scenceUserId
+            scenceUserId: this.restaurants[0]["scenceUserId"]
           }
         ];
         addCar(form).then(res => {
@@ -479,8 +497,10 @@ export default class CardManage extends Vue {
 
   handleClose() {
     /** @description 关闭新增/修改diolog */
-    this.dialogCreate = false;
-    this.$refs["dataForm"].resetFields();
+    this.dialogCreate = false; //车辆新增dialog
+    this.detailDialogVisible = false; //车辆详情dialog
+    this.activeName = "first";
+    this.$refs["dataForm"]["resetFields"]();
   }
 
   editType(item) {
@@ -508,7 +528,7 @@ export default class CardManage extends Vue {
     /** @description 处理目标车辆通行记录翻页事件
      * @augments val: 页数
      */
-    this.listQuery.page = val;
+    this.listQuery["page"] = val;
     this.fetchPass();
   }
 
@@ -524,17 +544,21 @@ export default class CardManage extends Vue {
   async fetchPass() {
     /**@description 查看车辆管理名单目标通行记录 */
     this.passTarget = true;
-    const info = { ...this.listQuery, carId: this.CarDialogForm.id };
+    const info = { ...this.listQuery, carId: this.CarDialogForm["id"] };
     const { data } = await getTargrtRecord(info);
     this.passList = data.data.records;
-    this.listQuery.total = data.data.total;
+    this.listQuery["total"] = data.data.total;
     this.passTarget = false;
   }
 
   async fetchUser() {
     /**@description 查看车辆管理名单用户详情 */
-    const { data } = await getTargetUser(this.CarDialogForm.scenceUserId);
-    console.log(data);
+    try {
+      const { data } = await getTargetUser(this.CarDialogForm["scenceUserId"]);
+      this.carUserDetail = data.data.user;
+    } catch (err) {
+      console.log(err.response);
+    }
   }
 }
 </script>

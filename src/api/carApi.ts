@@ -1,5 +1,7 @@
 import _axios from "../plugins/axios";
 
+
+
 //车辆用户查询
 export function queryCarPhone(phone) {
   return _axios({
@@ -16,6 +18,15 @@ export function addCar(data) {
   return _axios({
     url: '/admin/usr-car/batch-add/',
     method: 'post',
+    data
+  })
+}
+
+//修改车辆
+export function editCar(data) {
+  return _axios({
+    url: '/admin/usr-car',
+    method: 'put',
     data
   })
 }

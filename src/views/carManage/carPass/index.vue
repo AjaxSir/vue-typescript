@@ -15,9 +15,9 @@
             <div @click="handleStatistics('统计查询')">
               <el-dropdown-item>统计查询</el-dropdown-item>
             </div>
-            <div @click="handleStatistics('访客次数排序排序')">
+            <!-- <div @click="handleStatistics('访客次数排序排序')">
               <el-dropdown-item>访客次数排序排序</el-dropdown-item>
-            </div>
+            </div>-->
           </el-dropdown-menu>
           <div slot="houseNum">
             <div class="word-filter">
@@ -27,23 +27,27 @@
             <div class="word-filter">
               <span class="filter-name">时间段:</span>
               <el-date-picker
+                size="small"
                 style="width:165px"
                 :picker-options="pickOptionStart"
                 v-model="filterForm.startTime"
-                type="date"
+                type="datetime"
+                value-format="yyyy-MM-dd HH:mm:ss"
                 placeholder="选择日期"
-              ></el-date-picker>&nbsp;&nbsp;至&nbsp;&nbsp;
+              ></el-date-picker>&nbsp;&nbsp;-&nbsp;&nbsp;
               <el-date-picker
+                size="small"
                 style="width:165px"
                 v-model="filterForm.endTime"
                 :picker-options="pickOptionEnd"
-                type="date"
+                type="datetime"
+                value-format="yyyy-MM-dd HH:mm:ss"
                 placeholder="选择日期"
               ></el-date-picker>
             </div>
             <div class="word-filter">
               <span class="filter-name">车辆类型:</span>
-              <el-select v-model="filterForm.isVisitCar" placeholder="请选择">
+              <el-select size="small" v-model="filterForm.isVisitCar" placeholder="请选择">
                 <el-option
                   v-for="item in carTypeList"
                   :key="item.value"
@@ -93,14 +97,14 @@
 
             <!-- <el-table-column align="center" prop="modal" label="车辆品牌"></!-->
             -->
-            <el-table-column align="center" prop="type" label="访客通行">
+            <el-table-column align="center" prop="isVisitCar" label="访客通行">
               <template slot-scope="scope">
                 <el-tag
                   size="small"
                   style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
-                  :type="scope.row.type === 1 ? 'success' : 'danger'"
+                  :type="scope.row.isVisitCar? 'success' : 'danger'"
                   @click="editType(scope.row)"
-                >{{ scope.row.type === 1 ? "是" : "否" }}</el-tag>
+                >{{ scope.row.isVisitCar? "是" : "否" }}</el-tag>
               </template>
             </el-table-column>
 
@@ -131,45 +135,56 @@
           @current-change="pageChange"
           style="margin-top:10px;"
           background
-          layout="prev, pager, next"
+          layout="prev, pager, next,total"
+          :page-size="page.limit"
           :total="page.total"
         ></el-pagination>
       </el-col>
     </el-row>
     <el-dialog
       class="dialog-rewrite"
-      :title="CarDialogForm.name"
+      :title="'车牌: ' + CarDialogForm.carNo"
       :visible.sync="detailDialogVisible"
+      :before-close="handleClose"
+      :close-on-click-modal="false"
     >
       <el-tabs type="card" v-model="activeName">
         <el-tab-pane label="车主信息" name="first">
           <el-form label-width="100px" :model="CarDialogForm">
-            <el-form-item label="车主信息:">
-              <span>{{CarDialogForm.houseRelative}}</span>
+            <el-form-item style="margin-bottom:0" label="姓名:">
+              <span>{{CarDialogForm.ownerName}}</span>
             </el-form-item>
-            <el-form-item label="电话:">
-              <span>--</span>
-            </el-form-item>
-            <el-form-item label="车牌:">
-              <span>{{CarDialogForm.carNum}}</span>
-            </el-form-item>
-            <el-form-item label="所属单元信息:">
-              <span>{{CarDialogForm.name}}</span>
+            <el-form-item style="margin-bottom:0" label="电话:">
+              <span>{{CarDialogForm.ownerPhone}}</span>
             </el-form-item>
           </el-form>
         </el-tab-pane>
         <el-tab-pane label="详细信息" name="second">
-          <el-table :data="carDetailsTable" style="width: 100%">
-            <el-table-column align="center" prop="name" label="姓名" width="150px"></el-table-column>
-            <el-table-column align="center" prop="date" label="通行时间" width="150px"></el-table-column>
-            <el-table-column align="center" prop="address" label="通行地址"></el-table-column>
-            <el-table-column align="center" prop="address" label="抓拍图片"></el-table-column>
-          </el-table>
+          <el-form label-width="100px" :model="CarDialogForm">
+            <el-form-item style="margin-bottom:0" label="访客通行:">
+              <span>{{CarDialogForm.isVisitCar ? '是':'否'}}</span>
+            </el-form-item>
+            <el-form-item style="margin-bottom:0" label="通行类型:">
+              <span>{{CarDialogForm.inOut}}</span>
+            </el-form-item>
+            <el-form-item style="margin-bottom:0" label="通行时间:">
+              <span>{{CarDialogForm.passTime}}</span>
+            </el-form-item>
+            <el-form-item style="margin-bottom:0" label="抓拍照片:">
+              <img
+                class="capture-img"
+                @mouseout="imgVisible=false"
+                @mouseover="imgVisible=true,bigImg=CarDialogForm.photos"
+                :src="CarDialogForm.photos"
+                alt
+              />
+            </el-form-item>
+          </el-form>
         </el-tab-pane>
       </el-tabs>
-      <span slot="footer" class="dialog-footer">
+      <!-- <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="detailDialogVisible = false">确 定</el-button>
-      </span>
+      </span>-->
     </el-dialog>
     <ImageMagni :centerDialogVisible="imgVisible" bigTitle="抓拍图片" :bigImg="bigImg" />
     <StatisticDataDialog :formShowStatistic.sync="dialogStatisticData" :fromTitle="fromTitle" />
@@ -196,21 +211,26 @@ const StatisticDataDialog = () =>
 })
 export default class CardManage extends Vue {
   filterForm: object = {
-    carNo: null,
-    startTime: null,
-    endTime: null,
-    isVisitCar: null
+    carNo: null, //车牌
+    startTime: null, //时间段开始时间
+    endTime: null, //时间段结束时间
+    isVisitCar: null //车辆类型
   }; //根据关键字查询
   initForm: object = {
+    //获取车辆列表url
     url: "/admin/car-pass/",
     method: "get"
   };
-  private TimeRange: Array<string> = ["", ""]; // 日期范围
-  activeName: string = "first";
-  carDetailsTable: Array<Object> = []; // 详细信息记录
   private imgVisible: Boolean = false; // 控制放大图片的visible
   private bigImg: String = ""; // 保存放大图片的地址
+  private activeName: string = "first"; ////目标车辆详细信息 tab Title
+  CarDialogForm: Object = {}; // 车主详细信息
+  detailDialogVisible: boolean = false; // 详细信息dialog弹框
+  private fromTitle: String = "统计查询"; // dialog Title
+  private dialogStatisticData: Boolean = false; // 统计dialog
+
   carTypeList: Array<Object> = [
+    //车辆类型筛选
     {
       label: "常驻",
       value: false
@@ -224,25 +244,8 @@ export default class CardManage extends Vue {
       value: null
     }
   ];
-  carType: string = "0"; // 车辆类型
-  CarDialogForm: Object = {}; // 车主详细信息
-  detailDialogVisible: boolean = false; // 详细信息dialog弹框
-  private form: Object = {
-    name: "",
-    region: "",
-    date1: "",
-    date2: "",
-    delivery: false,
-    type: [],
-    resource: "",
-    desc: ""
-  };
-  private fromTitle: String = "统计查询"; // dialog Title
-  private dialogStatisticData: Boolean = false; // 统计dialog
-
   pickOptionStart: object = {}; //按照时间段查询的开始时间
   pickOptionEnd: object = {}; //按照时间段查询的结束时间
-
   mounted() {
     const _this = this;
     this.pickOptionStart = {
@@ -276,16 +279,26 @@ export default class CardManage extends Vue {
   }
 
   showCarDetails(row) {
+    /**@description 查看目标详情 */
     this.detailDialogVisible = true;
     this.CarDialogForm = Object.assign({}, row);
   }
+
   editType(item) {
     /**@description 修改状态 */
     console.log(item);
   }
+
   handleStatistics(val) {
+    /**@description 统计查询 */
     this.fromTitle = val;
     this.dialogStatisticData = true;
+  }
+
+  handleClose() {
+    /** @description 关闭diolog */
+    this.detailDialogVisible = false; //车辆详情dialog
+    this.activeName = "first";
   }
 }
 </script>
@@ -352,6 +365,7 @@ export default class CardManage extends Vue {
 }
 
 .capture-img {
-  width: 60px;
+  width: 30px;
+  height: 30px;
 }
 </style>
