@@ -1,5 +1,5 @@
 // import axiosConfig from './axios';
-import { Vue, Mixins, Component } from "vue-property-decorator";
+import { Vue, Component } from "vue-property-decorator";
 import { MessageBox, Message } from 'element-ui';
 import _axios from '@/plugins/axios.js'
 // import { deleteRow } from "./../api/common"
@@ -15,7 +15,7 @@ export default class GlobalMimins extends Vue {
   public page: any = {
     total: 1,
     page: 1,
-    size: 10,
+    limit: 10,
   }
   public dialogCreate: any = false
   public showLoading: any = true
@@ -26,6 +26,7 @@ export default class GlobalMimins extends Vue {
   public Form: Object = {} // 新增修改弹框表单信息
   public TreeData: Array<Object> = []
   public list_data: Array<Object> = [];
+  updateArray: Array<string> = [] /// 行内需要修改的状态
   initForm: object = {
     url: '',
     method: 'get',
@@ -51,11 +52,14 @@ export default class GlobalMimins extends Vue {
       if (res.data && res.data.data) {
         this.page.total = res.data.data.total
         res.data.data.records.forEach((ele: object) => {
+          this.updateArray.forEach((itemStatus: string) => {
+            ele[itemStatus] = false
+          })
           ele['showMenu'] = false
         })
         this.list_data = res.data.data.records
         this.showLoading = false
-          ;
+        console.log(this.list_data)
       }
     })
   }
@@ -108,18 +112,15 @@ export default class GlobalMimins extends Vue {
       row
     }
   }
-  // exportPassList(this.pageForm).then(res => {
-  //   this.exportFunc('通行记录.xls', res.data)
-  // })
-  // 导出excel函数
-  exportFunc(fileName: string, data: any): void {
+  // 导出excel函数 处理数据
+  exportFunc(fileName: string, url: string): void {
     // var blob = new Blob([data])
     if ('download' in document.createElement('a')) {
       // 非IE下载
       const elink = document.createElement('a')
       elink.download = fileName
       elink.style.display = 'none'
-      elink.href = data
+      elink.href = url
       // elink.href =URL.createObjectURL(blob)
       document.body.appendChild(elink)
       elink.click()
@@ -127,15 +128,17 @@ export default class GlobalMimins extends Vue {
       document.body.removeChild(elink)
     } else {
       // IE10+下载
-      navigator.msSaveBlob(blob, fileName)
+      navigator.msSaveBlob(Blob, fileName)
     }
   }
-  // 删除某行或多行数据 id 可能为字符串 也可能维数组
+  // 删除某行或多行数据
   deleteRow(option: object) {
-    if (option['id'] instanceof Array && option['id'].length === 1) {
-      option['id'] = option['id'][0]
-    }
-    return _axios(option)
+    return _axios(option).then(res => {
+      if (res.data.code === 200) {
+        this.$message.success('删除成功')
+        this.fetchData(this.initForm)
+      }
+    })
   }
   /**
    * table内的操作
@@ -148,12 +151,18 @@ export default class GlobalMimins extends Vue {
         this.dialogCreate = true
         break
       case 'delete':
+        if (!this.deleteForm['data'].length) {
+          Message({
+            type: 'warning',
+            message: '请选择需要删除的选项！'
+          });
+          return
+        }
         MessageBox.confirm('此操作将永久删除该列表, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          console.log('删除')
           this.deleteRow(this.deleteForm)
         }).catch(() => {
           Message({

@@ -23,7 +23,7 @@
           size="small"
           @click="exportTable"
         >导出</el-button>
-        <el-dropdown v-if="moreStatus" size="small" @click="handleClick">
+        <el-dropdown v-if="moreStatus" size="small" @command="handleClick">
           <el-button size="small" style="border-color: #409EFF; color: #409EFF;">
             更多菜单
             <i class="el-icon-arrow-down el-icon--right"></i>
@@ -102,6 +102,7 @@ import {
   Emit
 } from "vue-property-decorator";
 import mixin from "@/config/minxins";
+import qs from 'qs'
 
 @Component({
   mixins: [mixin],
@@ -168,11 +169,6 @@ export default class ActionManage extends Vue {
     /** @description 创建楼栋 */
     this.$emit("update:dialogCreate", true);
   }
-  // 导出
-  exportTable() {
-    console.log(123)
-    this["exportFunc"](this.exportName, this.exportUrl);
-  }
   /**
    * 筛选按钮
    */
@@ -209,8 +205,15 @@ export default class ActionManage extends Vue {
       }
     }
   }
-
-  handleClick() {}
+  // 更多菜单下的操作
+  handleClick(val) {
+    switch (val) {
+      case 'export':
+        const filterUrl = qs.stringify(this.initFormHeader['params'])
+        console.log(this.exportUrl + '/?' + filterUrl)
+        this['exportFunc'](this.exportName, this.exportUrl + '/?' + filterUrl)
+    }
+  }
 }
 </script>
 

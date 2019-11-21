@@ -35,5 +35,53 @@ export function updateHouseGroup(data: Object) {
 }
 
 /*******门禁卡管理*********/
-// 获取门禁卡列表
-// export function doorCardList（） {}
+// 门禁卡启用与禁用
+export function changeCardStstus(status: string, id: string) {
+  return _axios({
+    url: status === '-2' ? '/admin/hsDoorCard/limit' : '/admin/hsDoorCard/recover',
+    method: 'put',
+    params: {
+      id
+    }
+  })
+}
+// 创建门禁卡
+export function createCard(form: object) {
+  return _axios({
+    url: '/admin/hsDoorCard',
+    method: 'post',
+    data: {
+      ...form
+    }
+  })
+}
+// 门禁卡过期时间修改
+export function cardvalidDateChange(params: object) {
+  return _axios({
+    url: '/admin/hsDoorCard/changeValidDate',
+    method: 'put',
+    params
+  })
+}
+// 获取指定门禁卡的同行记录
+export function theCardPassList(params: object) {
+  return _axios({
+    url: '/admin/people-pass/card',
+    method: 'get',
+    params: {
+      ...params,
+      limit: 10
+    }
+  })
+}
+//***********房屋管理********** */
+// 通过关键字查询房屋列表 搜索建议框
+export function searchSuggestHouse(keys: string) {
+  return _axios({
+    url: '/admin/hsHouse/byKey',
+    method: 'get',
+    params: {
+      keys
+    }
+  })
+}

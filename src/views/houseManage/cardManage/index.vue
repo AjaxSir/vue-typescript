@@ -2,18 +2,27 @@
   <div class="app-container">
     <el-row>
       <el-col :span="24">
-        <action-header :dialogCreate.sync="dialogCreate" :total="1">
+        <action-header
+        :dialogCreate.sync="dialogCreate"
+        :initFormHeader='initForm'
+        @fetchData='fetchData'
+        exportUrl='/v1/admin/hsDoorCard/export'
+        exportName='门禁卡.xls'
+        :filterForm='filterForm'
+        :total="page.total">
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>导出</el-dropdown-item>
+            <el-dropdown-item command='export'>
+              导出
+              </el-dropdown-item>
           </el-dropdown-menu>
           <div slot="houseNum">
             <div class="word-filter">
               <span class="filter-name">房屋:</span>
-              <el-input class="input-filter" size="small"></el-input>
+              <el-input class="input-filter" v-model='filterForm.houseName' size="small"></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">卡号:</span>
-              <el-input class="input-filter" size="small"></el-input>
+              <el-input class="input-filter" v-model='filterForm.cardNo' size="small"></el-input>
             </div>
           </div>
         </action-header>
@@ -27,26 +36,27 @@
             :data="list_data"
             stripe
             class="demo-block"
+            v-loading='showLoading'
             highlight-current-row
             @cell-mouse-enter="enterRowChange"
+            @selection-change="handleSelectionChange"
             @cell-mouse-leave="leaveRowChange"
           >
             <el-table-column type="selection" width="50"></el-table-column>
 
             <el-table-column align="center" type="index" label="序号" width="50"></el-table-column>
 
-            <el-table-column align="center" class="serial-num" prop="name" label="卡号">
+            <el-table-column align="center" class="serial-num" prop="cardNo" label="卡号">
               <template slot-scope="scope">
                 <el-button
                   style="padding:0px;"
                   type="text"
                   @click="queryIdetity(scope.row)"
-                >{{scope.row.name}}</el-button>
+                >{{scope.row.cardNo}}</el-button>
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start" @command='commandClick'>
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
                     <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item :command='returnCommand("update", scope.row)'>挂失</el-dropdown-item>
                       <el-dropdown-item :command='returnCommand("delete", scope.row)'>批量删除</el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
@@ -54,40 +64,75 @@
               </template>
             </el-table-column>
 
-            <el-table-column align="center" prop="houseRelative" label="关联房屋"></el-table-column>
+            <el-table-column align="center" width='300' prop="houseName" label="关联房屋"></el-table-column>
 
-            <el-table-column align="center" prop="createDate" label="创建时间"></el-table-column>
+            <el-table-column align="center" prop="createTime" label="创建时间"></el-table-column>
 
-            <el-table-column align="center" prop="createDate" label="最近刷卡时间"></el-table-column>
-            <el-table-column align="center" prop="createDate" label="过期时间"></el-table-column>
-            <el-table-column align="center" prop="type" label="状态">
+            <el-table-column align="center" prop="lastUseTime" label="最近刷卡时间">
               <template slot-scope="scope">
-                <el-tag
-                  size="small"
-                  style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
-                  :type="scope.row.type === 1 ? 'success' : 'danger'"
-                  @click="editType(scope.row)"
-                >{{ scope.row.type === 1 ? "正常" : "异常" }}</el-tag>
+                {{ scope.row.lastUseTime || '--' }}
               </template>
             </el-table-column>
-            <el-table-column align="center" prop="num" label="进出"></el-table-column>
-            <el-table-column align="center" prop="num" label="累计刷卡次数"></el-table-column>
+            <el-table-column align="center" prop="validDate" label="过期时间">
+              <template slot-scope="scope">
+                <el-tag class='rowUpdate'
+                @click='scope.row.validDateStatus = !scope.row.validDateStatus'
+                v-if='!scope.row.validDateStatus'>{{ scope.row.validDate }}</el-tag>
+                <el-date-picker
+                  v-else
+                  v-model="scope.row.validDate"
+                  type="date"
+                  @change='validDateChange($event, scope.row.id)'
+                  placeholder="选择日期">
+                </el-date-picker>
+              </template>
+            </el-table-column>
+            <el-table-column align="center" prop="status" label="状态">
+              <template slot-scope="scope">
+                <el-tag
+                  v-if='!scope.row.cardStatus'
+                  size="small"
+                  style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
+                  :type="scope.row.status === '0' ? 'success' : 'danger'"
+                  @click="scope.row.cardStatus = !scope.row.cardStatus"
+                >{{ scope.row.status === '0' ? "正常" : (scope.row.status === '-2' ? "禁用" : "过期" )  }}</el-tag>
+                <el-select @change='cardStatusChange($event, scope.row.id)' v-else v-model="scope.row.status" placeholder="请选择">
+                  <el-option label="正常" value="0"> </el-option>
+                  <el-option label="禁用" value="-2"> </el-option>
+                  <!-- <el-option label="过期" value="-1"> </el-option> -->
+                </el-select>
+              </template>
+            </el-table-column>
+            <!-- <el-table-column align="center" prop="count" label="进出"></el-table-column> -->
+            <el-table-column align="center" width='110' prop="count" label="累计刷卡次数"></el-table-column>
 
           </el-table>
-          <el-pagination style="margin-top:10px;" background layout="prev, pager, next" :total="2"></el-pagination>
+          <el-pagination
+           @current-change='pageChange'
+           style="margin-top:10px;" background layout="prev, pager, next" :total="page.total"></el-pagination>
         </div>
       </el-col>
     </el-row>
 
     <el-dialog
       class="dialog-rewrite"
-      :title="'编号: '+ detailDialog.name"
+      :title="'编号: '+ detailDialog.cardNo"
+      width="700px"
       :visible.sync="dialogFormVisible"
     >
       <el-tabs type="card" v-model="activeName">
         <el-tab-pane label="详细信息" name="详细信息">
-          <p class="detai-info">关联房屋:{{detailDialog.houseRelative}}</p>
-          <p class="detai-info">最近刷卡时间:{{detailDialog.createDate}}</p>
+          <p class="detai-info">关联房屋:&nbsp;&nbsp;&nbsp;{{detailDialog.houseName}}</p>
+          <p class="detai-info">最近刷卡时间:&nbsp;&nbsp;&nbsp;{{detailDialog.lastUseTime || '- -'}}</p>
+          <p class="detai-info">创建时间:&nbsp;&nbsp;&nbsp;{{detailDialog.createTime}}</p>
+          <p class="detai-info">过期时间:&nbsp;&nbsp;&nbsp;{{detailDialog.validDate}}</p>
+          <p class="detai-info">状态:&nbsp;&nbsp;&nbsp;
+            <el-tag
+                  size="small"
+                  style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
+                  :type="detailDialog.status === '0' ? 'success' : 'danger'"
+                >{{ detailDialog.status === '0' ? "正常" : "禁用" }}</el-tag>
+          </p>
         </el-tab-pane>
         <el-tab-pane label="通行记录" name="通行记录">
           <el-table :data="dtailTable" style="width: 100%">
@@ -95,6 +140,12 @@
             <el-table-column align="center" prop="date" label="通行时间" width="150px"></el-table-column>
             <el-table-column align="center" prop="address" label="通行地址"></el-table-column>
           </el-table>
+          <el-pagination
+            background
+            @current-change='getTheCardPassList'
+            layout="prev, pager, next"
+            :total="theCardPassListForm.total">
+          </el-pagination>
         </el-tab-pane>
       </el-tabs>
       <span slot="footer" class="dialog-footer">
@@ -102,14 +153,28 @@
       </span>
     </el-dialog>
 
-    <el-dialog title="提示" :visible.sync="dialogCreate" width="30%" :before-close="handleClose">
+    <el-dialog title="创建门禁卡" :visible.sync="dialogCreate" width="30%" :before-close="handleClose">
       <el-form :model="Form" :rules="rules" ref='Forms' label-width="110px">
-        <el-form-item label="需关联的房屋:"  prop='name'>
-          <el-input v-model="Form.name" placeholder='需关联的房屋'></el-input>
+        <el-form-item label="卡号:"  prop='cardNo'>
+          <el-input v-model="Form.cardNo" placeholder='输入卡号'></el-input>
         </el-form-item>
-        <el-form-item label="过期时间:"  prop='time'>
+         <el-form-item label="需关联的房屋:"  prop='houseId'>
+          <el-autocomplete
+            popper-class="my-autocomplete"
+            v-model="Form.houseName"
+            :fetch-suggestions="querySearch"
+            placeholder="请输入内容"
+            :trigger-on-focus="false"
+            @select="handleSelect"
+          >
+            <template slot-scope="{ item }">
+              <div class="value">{{ item.name }}</div>
+            </template>
+          </el-autocomplete>
+        </el-form-item>
+        <el-form-item label="过期时间:"  prop='validDate'>
           <el-date-picker
-            v-model="Form.time"
+            v-model="Form.validDate"
             type="date"
             placeholder="选择过期日期">
           </el-date-picker>
@@ -117,7 +182,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose">取 消</el-button>
-        <el-button type="primary" @click="dialogCreate = false">确 定</el-button>
+        <el-button type="primary" @click="createdCardConfirm">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -127,7 +192,12 @@
 import { Component, Prop, Vue, Mixins } from "vue-property-decorator";
 import { Getter, Action, Mutation } from "vuex-class";
 import mixin from "@/config/minxins";
-
+import { changeCardStstus,
+ createCard,
+ searchSuggestHouse,
+ cardvalidDateChange,
+ theCardPassList } from '@/api/houseApi.ts'
+import { formatTimeObj } from '@/utils'
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 
 @Component({
@@ -138,8 +208,10 @@ const ActionHeader = () => import("@/components/ActionHeader.vue");
 })
 export default class CardManage extends Vue {
   Form: any = {
-    name: '',
-    time: ''
+    cardNo: '',
+    validDate: '',
+    houseName: '',
+    houseId: ''
   }
   rules: any = {
     name: [
@@ -147,11 +219,14 @@ export default class CardManage extends Vue {
           ]
   }
   private dialogFormVisible: Boolean = false;
-
+  theCardPassListForm: object = {
+    page: 1,
+    id: '',
+    total: 1
+  }
   private detailDialog: Object = {
     //查看目标详情
-    name: ""
-  };
+    };
   filterForm: Object = {
     houseName: '',
     cardNo: ''
@@ -160,38 +235,94 @@ export default class CardManage extends Vue {
     url: 'admin/hsDoorCard/list',
     method: 'get'
   }
+  deleteForm: Object = {
+    url: '/admin/hsDoorCard',
+    method: 'delete',
+    data: []
+  }
+  updateArray: Array<string> = ['cardStatus', 'validDateStatus']
   private activeName: String = "详细信息";
-  private dtailTable: Array<Object> =[
-    {
-      date: "2016-05-02",
-      name: "王小虎",
-      address: "上海市普陀区金沙江路 1518 弄"
-    },
-    {
-      date: "2016-05-04",
-      name: "王小虎",
-      address: "上海市普陀区金沙江路 1517 弄"
-    },
-    {
-      date: "2016-05-02",
-      name: "王小虎",
-      address: "上海市普陀区金沙江路 1518 弄"
-    },
-    {
-      date: "2016-05-04",
-      name: "王小虎",
-      address: "上海市普陀区金沙江路 1517 弄"
-    }
-  ];
+  private dtailTable: Array<Object> =[];
 
-  editType(item) {
-    /**@description 修改状态 */
-    console.log(item);
-    // this.dialogFormVisible = true;
+  // 获取需要操作的数据列表
+  handleSelectionChange(val) {
+    this.deleteForm['data'] = []
+    val.forEach(ele => {
+      this.deleteForm['data'].push(ele.id)
+    })
+  }
+  /// 修改门禁卡过期时间
+  validDateChange(date: string, id: string) {
+    date = formatTimeObj(date)
+    cardvalidDateChange({date, id}).then((res: any) => {
+      if(res.data.code === 200) {
+        this.$message.success('修改过期时间成功')
+        this.fetchData(this.initForm)
+      }
+    })
+  }
+   // 修改门禁卡状态
+  cardStatusChange(status: string, id: string) {
+    this.$confirm(`此操作将改变当前门禁卡为${status === '0' ? '正常' : '禁用'}状态, 是否继续?`, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          changeCardStstus(status, id).then(res => {
+            if (res.data.code === 200) {
+              this.$message.success(`${status === '0' ? '恢复' : '禁用'}成功`)
+              this.fetchData(this.initForm)
+            }
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
+  }
+  // 选择搜索建议列表某项 并赋值
+  handleSelect(val: object) {
+    this.Form.houseId = val['id']
+    this.Form.houseName = val['name']
+  }
+  // 获取当前输入的值
+  querySearch(string: string, cb) {
+    let result = []
+    searchSuggestHouse(string).then(res => {
+      if (res.data.data) {
+        result = res.data.data
+        result.splice(10)
+        cb(result)
+      }
+    })
+  }
+  // 创建门禁卡
+  createdCardConfirm() {
+    this.Form.validDate = formatTimeObj(this.Form.validDate)
+    createCard(this.Form).then(res => {
+      if (res.data.code === 200) {
+              this.$message.success(`创建成功`)
+              this.fetchData(this.initForm)
+               this['dialogCreate'] = false
+            }
+    })
   }
   queryIdetity(row) {
     this.detailDialog = row;
     this.dialogFormVisible = true;
+    this.getTheCardPassList(1, row.id)
+  }
+  // 获取指定门禁卡的同行记录
+  getTheCardPassList(page: number, id?: string) {
+    this.theCardPassListForm['id'] = id ? id : this.theCardPassListForm['id']
+    this.theCardPassListForm['page'] = page
+    theCardPassList(this.theCardPassListForm).then((res: any) => {
+      if (res.data.code === 200) {
+        this.dtailTable = res.data.data.records
+        this.theCardPassListForm['total'] = res.data.data.total
+      }
+    })
   }
   created() {
     this.initForm['params'] = Object.assign(this.initForm['params'], this.page, this.filterForm) // 合并参数
@@ -258,5 +389,24 @@ export default class CardManage extends Vue {
   line-height: 48px;
   position: absolute;
   left: -1px;
+}
+.my-autocomplete {
+  li {
+    line-height: normal;
+    padding: 7px;
+
+    .value {
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+    .id {
+      font-size: 12px;
+      color: #b4b4b4;
+    }
+
+    .highlighted .addr {
+      color: #ddd;
+    }
+  }
 }
 </style>
