@@ -92,7 +92,7 @@ export function formatTime(datetime) {
 }
 
 // 日期格式化
-export function formatTimeObj(datetime) {
+export function formatTimeObj(datetime, type = 'day') {
   if (!datetime) return "";
   let Y, M, D, W, H, Min, S;
   let date = new Date(datetime);
@@ -105,7 +105,26 @@ export function formatTimeObj(datetime) {
   H = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
   Min = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
   S = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
-  return (
+  // return (
+  //   Y.toString() +
+  //   "-" +
+  //   M.toString() +
+  //   "-" +
+  //   D +
+  //   " " +
+  //   H.toString() +
+  //   ":" +
+  //   Min.toString() +
+  //   ":" +
+  //   S.toString()
+  // );
+  return type === 'day' ? (
+    Y.toString() +
+    "-" +
+    M.toString() +
+    "-" +
+    D
+  ) : (
     Y.toString() +
     "-" +
     M.toString() +
@@ -117,7 +136,7 @@ export function formatTimeObj(datetime) {
     Min.toString() +
     ":" +
     S.toString()
-  );
+  )
 }
 
 // 今日时间格式化

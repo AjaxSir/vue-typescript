@@ -7,3 +7,4 @@ export function login(data: Object) {
         data
     })
 }
+

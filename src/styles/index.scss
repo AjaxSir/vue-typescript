@@ -138,3 +138,8 @@ img {
 .el-menu-item.showHidden{
   color: #303133 !important;
 }
+.rowUpdate{
+  &:hover{
+    cursor: pointer;
+  }
+}
