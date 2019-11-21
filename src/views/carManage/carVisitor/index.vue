@@ -2,31 +2,90 @@
   <div class="app-container">
     <el-row>
       <el-col :span="24">
+        <!--
+          houseStatus: 住宅管理是否显示
+          initFormHeader: 初始化的地址 方式
+          fetchData: 筛选后重新init
+          filterForm: 关键字查询条件
+          dialogCreate:新增弹出框
+          btnStatus:2为显示导出按钮 1为显示新增按钮
+          moreStatus:是否显示 更多菜单 按钮
+          exportUrl:导出路径
+          exportName:导出文件名
+          total:总条数
+        -->
         <action-header
-        :houseStatus='false'
-        :dialogCreate.sync="dialogCreate"
-        :btnStatus="2"
-        :moreStatus='false'
-        :total="1">
+          :houseStatus="false"
+          :initFormHeader="initForm"
+          @fetchData="fetchData"
+          :filterForm="filterForm"
+          :btnStatus="2"
+          :moreStatus="false"
+          :exportUrl="'/v1/admin/usr-visit-car/export/'"
+          :exportName="'访客车辆记录'"
+          :total="page.total"
+        >
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>导入</el-dropdown-item>
           </el-dropdown-menu>
           <div slot="houseNum">
             <div class="word-filter">
-              <span class="filter-name">车牌号:</span>
-              <el-input class="input-filter" size="small"></el-input>
+              <span class="filter-name">车&nbsp;牌&nbsp;号&nbsp;:</span>
+              <el-input class="input-filter" size="small" v-model="filterForm.carNo"></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">车主姓名:</span>
-              <el-input class="input-filter" size="small"></el-input>
+              <el-input class="input-filter" size="small" v-model="filterForm.ownerUserName"></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">邀请人:</span>
-              <el-input class="input-filter" size="small"></el-input>
+              <el-input class="input-filter" size="small" v-model="filterForm.visitName"></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">联系电话:</span>
-              <el-input class="input-filter" size="small"></el-input>
+              <el-input class="input-filter" size="small" v-model="filterForm.ownerPhone"></el-input>
+            </div>
+            <div class="word-filter">
+              <span class="filter-name">有效时间:</span>
+              <el-date-picker
+                size="small"
+                style="width:165px"
+                :picker-options="pickOptionStart"
+                v-model="filterForm.startInvalidDate"
+                type="datetime"
+                value-format="yyyy-MM-dd HH:mm:ss"
+                placeholder="选择日期"
+              ></el-date-picker>&nbsp;&nbsp;-&nbsp;&nbsp;
+              <el-date-picker
+                size="small"
+                style="width:165px"
+                :picker-options="pickOptionEnd"
+                v-model="filterForm.endInvalidDate"
+                type="datetime"
+                value-format="yyyy-MM-dd HH:mm:ss"
+                placeholder="选择日期"
+              ></el-date-picker>
+            </div>
+            <div class="word-filter">
+              <span class="filter-name">创建时间:</span>
+              <el-date-picker
+                size="small"
+                style="width:165px"
+                :picker-options="pickOptionStart"
+                v-model="filterForm.startCreateTime"
+                type="datetime"
+                value-format="yyyy-MM-dd HH:mm:ss"
+                placeholder="选择日期"
+              ></el-date-picker>&nbsp;&nbsp;-&nbsp;&nbsp;
+              <el-date-picker
+                size="small"
+                style="width:165px"
+                :picker-options="pickOptionEnd"
+                v-model="filterForm.endCreateTime"
+                type="datetime"
+                value-format="yyyy-MM-dd HH:mm:ss"
+                placeholder="选择日期"
+              ></el-date-picker>
             </div>
           </div>
         </action-header>
@@ -36,7 +95,7 @@
       <el-col :span="24" class="table-col">
         <div class="rightContent">
           <el-table
-            :data="tableData"
+            :data="list_data"
             stripe
             class="demo-block"
             highlight-current-row
@@ -47,42 +106,50 @@
 
             <el-table-column type="index" label="序号" width="50"></el-table-column>
 
-            <el-table-column prop="name" label="邀请人">
+            <el-table-column prop="visitName" label="邀请人">
               <template slot-scope="scope">
-                <span class="serial-num">{{scope.row.name}}</span>
+                <span class="serial-num">{{scope.row.visitName}}</span>
                 <div class="fun-btn">
-                  <el-dropdown trigger="click" placement="bottom-start" @command='commandClick'>
+                  <el-dropdown trigger="click" placement="bottom-start" @command="commandClick">
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
                     <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item command='update'>修改</el-dropdown-item>
-                      <el-dropdown-item command='delete'>删除</el-dropdown-item>
+                      <el-dropdown-item command="update">修改</el-dropdown-item>
+                      <el-dropdown-item command="delete">删除</el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
                 </div>
               </template>
             </el-table-column>
 
-            <el-table-column prop="car_num" align="center" label="车牌号"></el-table-column>
-            <el-table-column prop="phone" align="center" label="联系电话"></el-table-column>
-            <el-table-column prop="zName" align="center" label="车主姓名"></el-table-column>
-            <el-table-column prop="status" align="center" label="状态"></el-table-column>
-            <el-table-column prop="date" align="center" label="有效期"></el-table-column>
-            <el-table-column prop="belong_car" align="center" label="有效次数"></el-table-column>
-            <el-table-column prop="create" align="center" label="创建时间"></el-table-column>
-            <el-table-column prop="rent" align="center" label="备注"></el-table-column>
+            <el-table-column prop="carNo" align="center" label="车牌号"></el-table-column>
+            <el-table-column prop="ownerPhone" align="center" label="联系电话"></el-table-column>
+            <el-table-column prop="ownerUserName" align="center" label="车主姓名"></el-table-column>
+            <el-table-column prop="status" align="center" label="状态">
+              <template slot-scope="scope">
+                <el-tag
+                  size="small"
+                  style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
+                  :type="scope.row.status==='1' ? 'success' : 'warning'"
+                  @click="editType(scope.row)"
+                >{{ scope.row.status && scope.row.status =='1' ? "未到访" : "已到访" }}</el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column prop="invalidDate" align="center" label="有效期" min-width="100px"></el-table-column>
+            <el-table-column prop="numPeople" align="center" label="随行人数"></el-table-column>
+            <el-table-column prop="createTime" min-width="130px" align="center" label="创建时间"></el-table-column>
+            <el-table-column prop="note" align="center" label="备注"></el-table-column>
           </el-table>
+          <el-pagination
+            @current-change="pageChange"
+            style="margin-top:10px;"
+            background
+            layout="prev, pager, next,total"
+            :page-size="page.limit"
+            :total="page.total"
+          ></el-pagination>
         </div>
-
-        <el-pagination style="margin-top:10px;" background layout="prev, pager, next" :total="2"></el-pagination>
       </el-col>
     </el-row>
-    <el-dialog title="提示" :visible.sync="dialogCreate" width="30%" :before-close="handleClose">
-      <span>这是车位管理新增</span>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogCreate = false">取 消</el-button>
-        <el-button type="primary" @click="dialogCreate = false">确 定</el-button>
-      </span>
-    </el-dialog>
   </div>
 </template>
 
@@ -100,40 +167,54 @@ const ActionHeader = () => import("@/components/ActionHeader.vue");
   }
 })
 export default class CardManage extends Vue {
-  private tableData: Array<Object> = [
-    {
-      car_num: "川A 12345",
-      name: "范特西",
-      phone: "182XXXX",
-      zName: "zhang3",
-      date: "2019-11-09",
-      belong_car: 1,
-      type: "私家车",
-      status: "空闲",
-      create: "2018-02-03",
-      rent: "张三",
-      showMenu: false
-    },
-    {
-      car_num: "川A 54321",
-      name: "范特东",
-      phone: "182XXXX",
-      zName: "zhang3",
-      date: "2019-11-09",
-      belong_car: 1,
-      type: "公车",
-      status: "占用",
-      create: "2018-02-03",
-      rent: "李四",
-      showMenu: false
-    }
-  ];
-  private dialogFormVisible: Boolean = false;
-  private formLabelWidth: String = "120px";
-  editType(item) {
-    /**@description 修改状态 */
-    console.log(item);
-    // this.dialogFormVisible = true;
+  filterForm: object = {
+    carNo: null, //车牌
+    ownerPhone: null, //车主电话
+    ownerUserName: null, //车主姓名
+    visitName: null, //邀请人
+    startCreateTime: null, //创建开始时间
+    endCreateTime: null, //创建结束时间
+    startInvalidDate: null, //开始过期时间
+    endInvalidDate: null // 结束过期时间
+  }; //根据关键字查询
+  initForm: object = {
+    //获取访客车辆列表url
+    url: "/admin/usr-visit-car/",
+    method: "get"
+  };
+
+  pickOptionStart: object = {}; //按照时间段查询的开始时间
+  pickOptionEnd: object = {}; //按照时间段查询的结束时间
+  mounted() {
+    const _this = this;
+    this.pickOptionStart = {
+      disabledDate(time) {
+        if (_this.filterForm["endCreateTime"] !== "") {
+          return (
+            time.getTime() > Date.now() ||
+            time.getTime() > _this.filterForm["endCreateTime"]
+          );
+        } else {
+          return time.getTime() > Date.now();
+        }
+      }
+    };
+    this.pickOptionEnd = {
+      disabledDate(time) {
+        return (
+          time.getTime() < _this.filterForm["startCreateTime"] ||
+          time.getTime() > Date.now()
+        );
+      }
+    };
+  }
+
+  created() {
+    this.initForm["params"] = Object.assign(
+      this.initForm["params"],
+      this.page,
+      this.filterForm
+    ); // 合并参数
   }
 }
 </script>
