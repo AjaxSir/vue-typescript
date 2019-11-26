@@ -85,3 +85,12 @@ export function searchSuggestHouse(keys: string) {
     }
   })
 }
+
+//***********房屋管理********** */
+// 通过关键字查询单元楼名字
+export function searchHouse() {
+  return _axios({
+    url: '/admin/hsBuilding/query-building-name',
+    method: 'get',
+  })
+}

@@ -96,7 +96,7 @@
       <el-col :span="24">
         <div class="rightContent">
           <el-table :data="list_data" border>
-            <el-table-column type="selection" align="center"></el-table-column>
+            <!-- <el-table-column type="selection" align="center"></el-table-column> -->
             <el-table-column type="index" width="50" align="center" label="编号"></el-table-column>
 
             <el-table-column prop="name" width="70" align="center" label="姓名"></el-table-column>
@@ -109,7 +109,7 @@
 
             <el-table-column prop="vistor_type" width="101" align="center" label="访客类型">
               <template slot="header" slot-scope="scope">
-                <el-dropdown style="padding:0;" trigger="click" @command="filterFace">
+                <el-dropdown style="padding:0;" trigger="click" @command="filterType">
                   <span class="el-dropdown-link">
                     访客类型
                     <i class="el-icon-caret-bottom el-icon--right"></i>
@@ -139,6 +139,22 @@
             <el-table-column prop="buildingName" align="center" label="所属楼栋"></el-table-column>
             <el-table-column prop="houseName" align="center" label="房屋编号"></el-table-column>
             <el-table-column prop="status" align="center" label="状态">
+              <template slot="header" slot-scope="scope">
+                <el-dropdown style="padding:0;" trigger="click" @command="filterStatus">
+                  <span class="el-dropdown-link">
+                    状态
+                    <i class="el-icon-caret-bottom el-icon--right"></i>
+                  </span>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item
+                      v-for="item in selectType"
+                      :key="item.command"
+                      :command="item.command"
+                      :class="commandType===item.command ? pitchOn : unchecked"
+                    >{{item.lable}}</el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
+              </template>
               <template slot-scope="scope">
                 <span>{{statusFilter(scope.row.status)}}</span>
               </template>
@@ -161,15 +177,149 @@
         ></el-pagination>
       </el-col>
     </el-row>
-    <el-dialog :title="Dialog.name" :visible.sync="dialogFormVisible">
-      <el-tabs v-model="activeName" @tab-click="handleClick">
-        <el-tab-pane label="基本信息" name="first">基本信息</el-tab-pane>
-        <el-tab-pane label="受访人信息" name="second">受访人信息</el-tab-pane>
-        <el-tab-pane label="进出记录" name="third">进出记录</el-tab-pane>
+
+    <!-- 目标详情 -->
+    <el-dialog
+      class="dialog-rewrite"
+      :title="'访客: ' + visitorDialogForm.name ? visitorDialogForm.name : '未知'"
+      :visible.sync="detailDialogVisible"
+      :before-close="handleClose"
+    >
+      <el-tabs type="card" v-model="activeName" @tab-click="handleClick">
+        <el-tab-pane label="基本信息" name="first">
+          <el-form label-width="130px" :model="visitorDialogForm">
+            <el-row :gutter="20">
+              <el-col :span="12" class="col-line">
+                <el-form-item style="margin-bottom:0" label="访客姓名:">
+                  <span>{{visitorDialogForm.name ? visitorDialogForm.name :'--'}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="访客类型:">
+                  <span>{{visitorDialogForm.visitType ? visitorDialogForm.visitType : '--'}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="身份证号:">
+                  <span>{{visitorDialogForm.cardNo ? visitorDialogForm.cardNo :'--'}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="同行人数:">
+                  <span>{{visitorDialogForm.numPeople ? visitorDialogForm.numPeople:'--'}}</span>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item style="margin-bottom:0" label="状态:">
+                  <span>{{visitorDialogForm.status ? statusFilter(visitorDialogForm.status) :'--'}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="创建时间:">
+                  <span>{{visitorDialogForm.createTime ? visitorDialogForm.createTime :'--'}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="有效时间:">
+                  <span>{{visitorDialogForm.invalidDate ? visitorDialogForm.invalidDate :'--'}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="备注:">
+                  <span>{{visitorDialogForm.note ? visitorDialogForm.note :'--'}}</span>
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </el-form>
+        </el-tab-pane>
+        <el-tab-pane label="受访人信息" name="second">
+          <el-form label-width="100px" v-model="interUserDetail">
+            <el-row>
+              <el-col :span="12" class="col-line">
+                <el-form-item style="margin-bottom:0" label="姓名:">
+                  <span>{{interUserDetail.name}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="性别:">
+                  <span>{{interUserDetail.sex}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="年龄:">
+                  <span>{{interUserDetail.age}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="电话:">
+                  <span>{{interUserDetail.phone}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="证件类型:">
+                  <span>{{interUserDetail.cardName}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="身份证:">
+                  <span>{{interUserDetail.cardNo}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="车主备注:">
+                  <span>{{interUserDetail.note}}</span>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item style="margin-bottom:0" label="居住楼栋:">
+                  <span>{{houseInviterDetail.houseDetail ? houseInviterDetail.houseDetail.houseName : '--'}}</span>
+                </el-form-item>
+
+                <el-form-item style="margin-bottom:0" label="单元号:">
+                  <span>{{houseInviterDetail.houseDetail ? houseInviterDetail.houseDetail.buildingName: '--'}}</span>
+                </el-form-item>
+
+                <el-form-item style="margin-bottom:0" label="楼层:">
+                  <span>{{houseInviterDetail.houseDetail ? houseInviterDetail.houseDetail.storeyNum: '--'}}</span>
+                </el-form-item>
+
+                <el-form-item style="margin-bottom:0" label="房屋号:">
+                  <span>{{houseInviterDetail.houseDetail ? houseInviterDetail.houseDetail.serialNumber: '--'}}</span>
+                </el-form-item>
+
+                <el-form-item style="margin-bottom:0" label="人员类型:">
+                  <span>{{typeFilter(houseInviterDetail.type)}}</span>
+                </el-form-item>
+
+                <el-form-item style="margin-bottom:0" label="注册时间:">
+                  <span>{{houseInviterDetail.createTime}}</span>
+                </el-form-item>
+
+                <el-form-item style="margin-bottom:0" label="邀请人备注:">
+                  <span>{{houseInviterDetail.note}}</span>
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </el-form>
+        </el-tab-pane>
+        <el-tab-pane label="通行记录" name="thirdly">
+          <el-table v-loading="passTarget" :data="passList" style="width: 100%" stripe>
+            <el-table-column type="index" label="序号" width="50" align="center"></el-table-column>
+            <el-table-column align="center" prop="passTime" label="通行时间" width="150px"></el-table-column>
+            <el-table-column align="center" prop="devName" label="抓拍设备"></el-table-column>
+            <el-table-column align="center" prop="devType" label="设备类型"></el-table-column>
+            <el-table-column align="center" prop="passTime" label="通行地址" min-width="150px">
+              <template slot-scope="scope">
+                <span>{{scope.row.devAddress}} - {{scope.row.devSubAddress}}</span>
+              </template>
+            </el-table-column>
+            <el-table-column align="center" prop="passMethod" label="通行方式">
+              <template slot-scope="scope">
+                <span>{{passMethod(scope.row.passMethod)}}</span>
+              </template>
+            </el-table-column>
+            <el-table-column align="center" prop="inOut" label="通行类型">
+              <template slot-scope="scope">
+                <el-tag
+                  size="small"
+                  style="border-radius: 50px;"
+                  :type="scope.row.inOut==='进'? 'success' : 'danger'"
+                >{{ scope.row.inOut}}</el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column align="center" prop="address" label="抓拍图片">
+              <template slot-scope="scope">
+                <img :src="scope.row.photos" alt />
+              </template>
+            </el-table-column>
+          </el-table>
+          <el-pagination
+            background
+            style="margin:10px 0"
+            @current-change="handleCurrentChange"
+            :page-size="listQuery.limit"
+            :current-page="listQuery.page"
+            layout="total, prev, pager, next, slot"
+            :total="listQuery.total"
+          ></el-pagination>
+        </el-tab-pane>
       </el-tabs>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
-      </span>
     </el-dialog>
   </div>
 </template>
@@ -177,6 +327,8 @@
 import { Component, Prop, Vue, Mixins } from "vue-property-decorator";
 import { Getter, Action, Mutation } from "vuex-class";
 import mixin from "@/config/minxins";
+import { getTargetUser } from "@/api/carApi.ts"; //获取目标访客受访人信息
+import { getTargrtRecord } from "@/api/peopleApi.ts"; //获取目标车辆通行记录
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 @Component({
   mixins: [mixin],
@@ -195,7 +347,8 @@ export default class VistoryManage extends Vue {
     endCreateTime: null, //创建结束时间
     endInvalidDate: null, //有效期开始时间
     startInvalidDate: null, //有效期结束时间
-    visitType: null //访客类型
+    visitType: null, //访客类型
+    status: null //访客状态
   }; //根据关键字查询
   initForm: object = {
     //获取访客名单列表url
@@ -203,30 +356,68 @@ export default class VistoryManage extends Vue {
     method: "get"
   };
 
-  private commandType: string = "all"; //根据访客类型筛选 默认为显示全部
+  private listQuery: Object = {
+    // 访客目标通行记录翻页
+    total: 0,
+    limit: 10,
+    page: 1
+  };
+
+  private commandType: string = "all"; //根据访客类型筛选 all默认为显示全部
+  private commandStatus: String = "0"; //根据访客状态  0 默认显示为全部
   private pitchOn: string = "y"; //选中A
   private unchecked: string = "n"; //未选中
-  private activeName: string = "first";
-  private dialogFormVisible: boolean = false;
-  private title: string = "详情";
-  private Dialog: Object = {
-    name: ""
-  };
+  private interUserDetail: Object = {}; //受访人的身份详细信息
+  private houseInviterDetail: Object = {}; //受访人的房屋信息
+  private passTarget: Boolean = true; //目标访客通行记录的loadding
+  private passList: Array<Object> = []; // 访客目标通行记录
+
+  private detailDialogVisible: boolean = false; // 详细信息dialog弹框
+  private visitorDialogForm: Object = {}; // 访客详情
+  private activeName: string = "first"; //目标访客详细信息 tab Title
+  private selectType: Array<Object> = [
+    {
+      command: "0",
+      lable: "全部"
+    },
+    {
+      command: "1",
+      lable: "未开始"
+    },
+    {
+      command: "2",
+      lable: "正常"
+    },
+    {
+      command: "3",
+      lable: "已结束"
+    },
+    {
+      command: "4",
+      lable: "其他"
+    }
+  ];
 
   pickOptionStart: object = {}; //按照时间段查询的开始时间
   pickOptionEnd: object = {}; //按照时间段查询的结束时间
 
-  statusFilter(status) {
-    /** @description 状态显示过滤 */
-    switch (status) {
+  passMethod(val) {
+    /**@description 过滤通行方式 */
+    switch (val) {
       case "1":
-        return "未开始";
+        return "人脸开门";
       case "2":
-        return "正常";
+        return "二维码开门";
       case "3":
-        return "已结束";
+        return "蓝牙开门";
       case "4":
-        return "其他";
+        return "远程开门";
+      case "5":
+        return "密码开门";
+      case "6":
+        return "刷卡开门";
+      case "7":
+        return "WIFI开门";
     }
   }
 
@@ -262,12 +453,50 @@ export default class VistoryManage extends Vue {
     ); // 合并参数
   }
 
-  filterFace(command) {
+  statusFilter(status) {
+    /** @description 状态显示过滤 */
+    switch (status) {
+      case "1":
+        return "未开始";
+      case "2":
+        return "正常";
+      case "3":
+        return "已结束";
+      case "4":
+        return "其他";
+    }
+  }
+
+  typeFilter(type) {
+    /**@descripution 过滤邀请人类型*/
+    switch (type) {
+      case "1":
+        return "业主";
+        break;
+      case "2":
+        return "租户";
+        break;
+      case "3":
+        return "成员";
+        break;
+    }
+  }
+
+  filterType(command) {
     /**@description 对访客类型进行筛选 */
     this.commandType = command;
     if (command === "all") {
       this.filterForm["visitType"] = null;
     } else this.filterForm["visitType"] = command;
+    this.refreshInfo();
+  }
+
+  filterStatus(command) {
+    /**@description 对访客状态进行筛选 */
+    this.commandStatus = command;
+    if (command === "0") {
+      this.filterForm["status"] = null;
+    } else this.filterForm["status"] = command;
     this.refreshInfo();
   }
 
@@ -281,13 +510,59 @@ export default class VistoryManage extends Vue {
     this["fetchData"](this.initForm);
   }
 
-  handleClick() {}
+  async handleClick(tab) {
+    /**@description 查看车辆管理名单目标详情 */
+    if (tab.name === "second") {
+      this.fetchUser();
+    } else if (tab.name === "thirdly") {
+      this.listQuery['page'] = 1
+      this.fetchPass();
+    }
+  }
+
+  async fetchUser() {
+    /**@description 查看受访人员详情 */
+    try {
+      const { data } = await getTargetUser(
+        this.visitorDialogForm["scenceUserId"]
+      );
+      this.interUserDetail = data.data.user;
+      this.houseInviterDetail = { ...data.data.house[0] };
+    } catch (err) {
+      console.log(err.response);
+    }
+  }
+
+  async fetchPass() {
+    /**@description 查看访客通行通行记录 */
+    this.passTarget = true;
+    const info = { ...this.listQuery, id: this.visitorDialogForm["id"] };
+    const { data } = await getTargrtRecord(info);
+    this.passList = data.data.records;
+    this.listQuery["total"] = data.data.total;
+    this.passTarget = false;
+  }
+
+  handleCurrentChange(val) {
+    /** @description 处理目标访客通行记录录翻页事件
+     * @augments val: 页数
+     */
+    this.listQuery["page"] = val;
+    this.fetchPass();
+  }
   /**
    * row 列表数据
    */
   showDetail(row) {
-    this.dialogFormVisible = true;
-    this.Dialog = Object.assign(this.Dialog, row);
+    this.detailDialogVisible = true;
+    this.visitorDialogForm = Object.assign({}, row);
+    console.log(row);
+  }
+
+  handleClose() {
+    /** @description 关闭新增/修改diolog */
+    this.detailDialogVisible = false; //车辆详情dialog
+    this.activeName = "first";
   }
 }
 </script>

@@ -99,8 +99,10 @@
             stripe
             class="demo-block"
             highlight-current-row
+            v-loading="showLoading"
             @cell-mouse-enter="enterRowChange"
             @cell-mouse-leave="leaveRowChange"
+            @selection-change="handleSelectionChange"
           >
             <el-table-column type="selection" width="50"></el-table-column>
 
@@ -113,15 +115,22 @@
                   <el-dropdown trigger="click" placement="bottom-start" @command="commandClick">
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
                     <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item command="update">修改</el-dropdown-item>
-                      <el-dropdown-item command="delete">删除</el-dropdown-item>
+                      <el-dropdown-item :command="returnCommand('delete', scope.row)">批量删除</el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
                 </div>
               </template>
             </el-table-column>
 
-            <el-table-column prop="carNo" align="center" label="车牌号"></el-table-column>
+            <el-table-column prop="carNo" align="center" label="车牌号">
+              <template slot-scope="scope">
+                <el-button
+                  @click="showCarDetails(scope.row)"
+                  type="text"
+                  class="serial-num"
+                >{{scope.row.carNo}}</el-button>
+              </template>
+            </el-table-column>
             <el-table-column prop="ownerPhone" align="center" label="联系电话"></el-table-column>
             <el-table-column prop="ownerUserName" align="center" label="车主姓名"></el-table-column>
             <el-table-column prop="status" align="center" label="状态">
@@ -150,6 +159,170 @@
         </div>
       </el-col>
     </el-row>
+
+    <!-- 目标详情 -->
+    <el-dialog
+      class="dialog-rewrite"
+      :title="'车牌: ' + CarDialogForm.carNo?CarDialogForm.carNo:'未知'"
+      :visible.sync="detailDialogVisible"
+      :before-close="handleClose"
+    >
+      <el-tabs type="card" v-model="activeName" @tab-click="handleClick">
+        <el-tab-pane label="车辆详情" name="first">
+          <el-form label-width="130px" :model="CarDialogForm">
+            <el-row :gutter="20">
+              <el-col :span="12" class="col-line">
+                <el-form-item style="margin-bottom:0" label="车牌:">
+                  <span>{{CarDialogForm.carNo ? CarDialogForm.carNo :'--'}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="车辆品牌:">
+                  <span>{{CarDialogForm.modal ? CarDialogForm.modal : '--'}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="车辆型号:">
+                  <span>{{CarDialogForm.carType ? CarDialogForm.carType :'--'}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="车辆状态:">
+                  <span>{{CarDialogForm.status &&CarDialogForm.status=='1' ? '正常' :'禁用'}}</span>
+                </el-form-item>
+
+                <el-form-item style="margin-bottom:0" label="最后一次进时间:">
+                  <span>{{CarDialogForm.lastInTime ? CarDialogForm.lastInTime :'--'}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="最后一次进照片:">
+                  <img
+                    class="capture-img"
+                    @mouseout="imgVisible=false"
+                    @mouseover="imgVisible=true,bigImg=CarDialogForm.lastInPhoto"
+                    :src="CarDialogForm.lastInPhoto"
+                    alt
+                  />
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item style="margin-bottom:0" label="车主姓名:">
+                  <span>{{CarDialogForm.ownerName ? CarDialogForm.ownerName :'--'}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="车主电话:">
+                  <span>{{CarDialogForm.ownerPhone ? CarDialogForm.ownerPhone : '--'}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="随同人数:">
+                  <span>{{CarDialogForm.numPeople ? CarDialogForm.numPeople : '--'}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="备注信息:">
+                  <span>{{CarDialogForm.note ? CarDialogForm.note :'--'}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="最后一次出时间:">
+                  <span>{{CarDialogForm.lastOutTime ? CarDialogForm.lastOutTime :'--'}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="最后一次出照片:">
+                  <img
+                    class="capture-img"
+                    @mouseout="imgVisible=false"
+                    @mouseover="imgVisible=true,bigImg=CarDialogForm.lastOutPhoto"
+                    :src="CarDialogForm.lastOutPhoto"
+                    alt
+                  />
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </el-form>
+        </el-tab-pane>
+        <el-tab-pane label="邀请人信息" name="second">
+          <el-form label-width="100px" v-model="carUserDetail">
+            <el-row>
+              <el-col :span="12" class="col-line">
+                <el-form-item style="margin-bottom:0" label="姓名:">
+                  <span>{{carUserDetail.name}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="性别:">
+                  <span>{{carUserDetail.sex}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="年龄:">
+                  <span>{{carUserDetail.age}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="电话:">
+                  <span>{{carUserDetail.phone}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="证件类型:">
+                  <span>{{carUserDetail.cardName}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="身份证:">
+                  <span>{{carUserDetail.cardNo}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="车主备注:">
+                  <span>{{carUserDetail.note}}</span>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item style="margin-bottom:0" label="居住楼栋:">
+                  <span>{{carInviterDetail.houseDetail ? carInviterDetail.houseDetail.houseName : '--'}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="单元号:">
+                  <span>{{carInviterDetail.houseDetail ? carInviterDetail.houseDetail.buildingName: '--'}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="楼层:">
+                  <span>{{carInviterDetail.houseDetail ? carInviterDetail.houseDetail.storeyNum: '--'}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="房屋号:">
+                  <span>{{carInviterDetail.houseDetail ? carInviterDetail.houseDetail.serialNumber: '--'}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="人员类型:">
+                  <span>{{filterType(carInviterDetail.type)}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="注册时间:">
+                  <span>{{carInviterDetail.createTime}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="邀请人备注:">
+                  <span>{{carInviterDetail.note}}</span>
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </el-form>
+        </el-tab-pane>
+        <el-tab-pane label="通行记录" name="thirdly">
+          <el-table v-loading="passTarget" :data="passList" style="width: 100%" stripe>
+            <el-table-column type="index" label="序号" width="50" align="center"></el-table-column>
+            <el-table-column align="center" prop="carNo" label="车牌号"></el-table-column>
+            <el-table-column align="center" prop="passTime" label="通行时间" width="150px"></el-table-column>
+            <el-table-column align="center" prop="address" label="访客通行">
+              <template slot-scope="scope">
+                <el-tag
+                  size="small"
+                  style="border-radius: 50px;"
+                  :type="scope.row.isVisitCar? 'success' : 'danger'"
+                >{{ scope.row.isVisitCar ? '是' : '否' }}</el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column align="center" prop="inOut" label="通行类型">
+              <template slot-scope="scope">
+                <el-tag
+                  size="small"
+                  style="border-radius: 50px;"
+                  :type="scope.row.inOut==='进'? 'success' : 'danger'"
+                >{{ scope.row.inOut}}</el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column align="center" prop="address" label="抓拍图片">
+              <template slot-scope="scope">
+                <img :src="scope.row.photos" alt />
+              </template>
+            </el-table-column>
+          </el-table>
+          <el-pagination
+            background
+            style="margin:10px 0"
+            @current-change="handleCurrentChange"
+            :page-size="listQuery.limit"
+            :current-page="listQuery.page"
+            layout="total, prev, pager, next, slot"
+            :total="listQuery.total"
+          ></el-pagination>
+        </el-tab-pane>
+      </el-tabs>
+      <!-- <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="detailDialogVisible = false">确 定</el-button>
+      </span>-->
+    </el-dialog>
   </div>
 </template>
 
@@ -157,6 +330,10 @@
 import { Component, Prop, Vue, Mixins } from "vue-property-decorator";
 import { Getter, Action, Mutation } from "vuex-class";
 import mixin from "@/config/minxins";
+import {
+  getTargrtRecord, //获取目标车辆通行记录
+  getTargetUser //获取目标车辆车主信息
+} from "@/api/carApi.ts";
 
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 
@@ -182,6 +359,28 @@ export default class CardManage extends Vue {
     url: "/admin/usr-visit-car/",
     method: "get"
   };
+
+  deleteForm: Object = {
+    //单个或批量删除
+    url: "/admin/usr-visit-car/batch-delete/",
+    method: "delete",
+    data: []
+  };
+
+  private listQuery: Object = {
+    // 车辆管理名单目标通行记录翻页
+    total: 0,
+    limit: 10,
+    page: 1
+  };
+
+  private detailDialogVisible: boolean = false; // 详细信息dialog弹框
+  private CarDialogForm: Object = {}; // 车辆详情
+  private activeName: string = "first"; //目标访客车辆详细信息 tab Title
+  private carUserDetail: Object = {}; //邀请人的身份详细信息
+  private carInviterDetail: Object = {}; //邀请人的房屋信息
+  private passTarget: Boolean = true; //目标车辆通行记录的loadding
+  private passList: Array<Object> = []; // 车辆名单目标通行记录
 
   pickOptionStart: object = {}; //按照时间段查询的开始时间
   pickOptionEnd: object = {}; //按照时间段查询的结束时间
@@ -215,6 +414,79 @@ export default class CardManage extends Vue {
       this.page,
       this.filterForm
     ); // 合并参数
+  }
+
+  filterType(type) {
+    /**@descripution 过滤邀请人类型*/
+    switch (type) {
+      case "1":
+        return "业主";
+        break;
+      case "2":
+        return "租户";
+        break;
+      case "3":
+        return "成员";
+        break;
+    }
+  }
+
+  // 获取需要操作的数据列表
+  handleSelectionChange(val) {
+    this.deleteForm["data"] = [];
+    val.forEach(ele => {
+      this.deleteForm["data"].push(ele.id);
+    });
+  }
+
+  showCarDetails(row) {
+    this.detailDialogVisible = true;
+    this.CarDialogForm = Object.assign({}, row);
+  }
+
+  async handleClick(tab) {
+    /**@description 查看车辆管理名单目标详情 */
+    if (tab.name === "second") {
+      this.fetchUser();
+    } else if (tab.name === "thirdly") {
+      this.listQuery["page"] = 1;
+      this.fetchPass();
+    }
+  }
+
+  async fetchPass() {
+    /**@description 查看车辆管理名单目标通行记录 */
+    this.passTarget = true;
+    const info = { ...this.listQuery, carId: this.CarDialogForm["id"] };
+    const { data } = await getTargrtRecord(info);
+    this.passList = data.data.records;
+    this.listQuery["total"] = data.data.total;
+    this.passTarget = false;
+  }
+
+  async fetchUser() {
+    /**@description 查看车辆管理名单用户详情 */
+    try {
+      const { data } = await getTargetUser(this.CarDialogForm["scenceUserId"]);
+      this.carUserDetail = data.data.user;
+      this.carInviterDetail = { ...data.data.house[0] };
+    } catch (err) {
+      console.log(err.response);
+    }
+  }
+
+  handleCurrentChange(val) {
+    /** @description 处理目标车辆通行记录翻页事件
+     * @augments val: 页数
+     */
+    this.listQuery["page"] = val;
+    this.fetchPass();
+  }
+
+  handleClose() {
+    /** @description 关闭新增/修改diolog */
+    this.detailDialogVisible = false; //车辆详情dialog
+    this.activeName = "first";
   }
 }
 </script>
@@ -278,9 +550,5 @@ export default class CardManage extends Vue {
   line-height: 48px;
   position: absolute;
   left: -1px;
-}
-
-.capture-img {
-  width: 60px;
 }
 </style>
