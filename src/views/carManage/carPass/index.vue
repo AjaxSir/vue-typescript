@@ -83,15 +83,15 @@
                   type="text"
                   class="serial-num"
                 >{{scope.row.carNo}}</el-button>
-                <div class="fun-btn">
+                <!-- <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start" @command="commandClick">
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
                     <el-dropdown-menu slot="dropdown">
                       <el-dropdown-item command="update">修改</el-dropdown-item>
-                      <el-dropdown-item command="delete">删除</el-dropdown-item>
+                      <el-dropdown-item :command="returnCommand('delete', scope.row)">批量删除</el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
-                </div>
+                </div>-->
               </template>
             </el-table-column>
 
@@ -109,10 +109,10 @@
             </el-table-column>
 
             <!-- <el-table-column align="center" prop="car" label="车辆颜色"></el-table-column> -->
-
+            <!-- <el-table-column align="center" prop="inOut" label="车辆类型"></el-table-column> -->
             <el-table-column align="center" prop="ownerName" label="车主姓名"></el-table-column>
             <el-table-column align="center" prop="ownerPhone" label="车主电话"></el-table-column>
-
+            <el-table-column align="center" prop="inOut" label="通行方向"></el-table-column>
             <el-table-column align="center" prop="passTime" label="抓拍时间"></el-table-column>
 
             <el-table-column align="center" prop="photos" label="最近抓拍图片">
@@ -221,6 +221,12 @@ export default class CardManage extends Vue {
     url: "/admin/car-pass/",
     method: "get"
   };
+  deleteForm: Object = {
+    //单个或批量删除
+    url: "/admin/usr-car/batch-delete/",
+    method: "delete",
+    data: []
+  };
   private imgVisible: Boolean = false; // 控制放大图片的visible
   private bigImg: String = ""; // 保存放大图片的地址
   private activeName: string = "first"; ////目标车辆详细信息 tab Title
@@ -268,6 +274,14 @@ export default class CardManage extends Vue {
         );
       }
     };
+  }
+
+  // 获取需要操作的数据列表
+  handleSelectionChange(val) {
+    this.deleteForm["data"] = [];
+    val.forEach(ele => {
+      this.deleteForm["data"].push(ele.id);
+    });
   }
 
   created() {

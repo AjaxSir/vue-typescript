@@ -59,7 +59,7 @@ export default class GlobalMimins extends Vue {
         })
         this.list_data = res.data.data.records
         this.showLoading = false
-        console.log(this.list_data)
+        console.log(this.list_data,'init')
       }
     })
   }

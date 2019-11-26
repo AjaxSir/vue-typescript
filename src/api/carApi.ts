@@ -41,7 +41,7 @@ export function getTargrtRecord(params) {
 }
 
 
-//获取目标车辆用户详细信息
+//获取目标车辆用户详细信息 || 获取目标访客车辆邀请人的详细信息
 export function getTargetUser(id) {
   return _axios({
     url: '/admin/scence-user/',
@@ -51,4 +51,3 @@ export function getTargetUser(id) {
     }
   })
 }
-
