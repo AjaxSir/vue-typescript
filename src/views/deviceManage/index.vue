@@ -233,7 +233,7 @@
 import { Component, Prop, Vue, Mixins } from "vue-property-decorator";
 import { Getter, Action, Mutation } from "vuex-class";
 import mixin from "@/config/minxins";
-
+import { createDevice } from '@/api/deviceApi.ts'
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 
 @Component({
@@ -245,10 +245,10 @@ const ActionHeader = () => import("@/components/ActionHeader.vue");
 export default class DeviceManage extends Vue {
   filterForm: object = {
     loc: '',
-    deviceStatus: 'all'
+    deviceStatus: ''
   } // 筛选条件
   initForm:object = {
-    url: '/admin/dev-manage',
+    url: '/admin/dev-manage/page-query',
     method: 'get'
   }
   deleteForm: object = {
@@ -302,6 +302,7 @@ export default class DeviceManage extends Vue {
   ]
   created() {
     this.initForm['params'] = Object.assign(this.initForm['params'], this.page, this.filterForm) // 合并参数
+    console.log(this.initForm)
   }
   /**
    * 查看设备详情

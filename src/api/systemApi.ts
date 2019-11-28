@@ -45,3 +45,12 @@ export function resetPassword(params: Object) {
      data
    })
  }
+
+ // 修改角色
+ export function updateRole(data: object) {
+   return _axios({
+     url: '/admin/usrRole',
+     method: 'put',
+     data
+   })
+ }
