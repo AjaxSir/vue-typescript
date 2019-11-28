@@ -169,6 +169,10 @@ export default class ActionManage extends Vue {
     /** @description 创建楼栋 */
     this.$emit("update:dialogCreate", true);
   }
+  // 导出
+  exportTable() {
+    this["exportFunc"](this.exportName, this.exportUrl);
+  }
   /**
    * 筛选按钮
    */

@@ -10,6 +10,17 @@
           :total="page.total"
         >
           <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item>
+              <!-- :headers="myHeaders" -->
+              <el-upload
+                :action="actionUrl"
+                :show-file-list="false"
+                :on-success="successFile"
+                :on-error="errorFile"
+              >
+                <p>导入</p>
+              </el-upload>
+            </el-dropdown-item>
             <div @click="exportFunc('车辆管理列表','/v1/admin/usr-car/export/')">
               <el-dropdown-item command="export">导出</el-dropdown-item>
             </div>
@@ -42,6 +53,7 @@
             highlight-current-row
             @cell-mouse-enter="enterRowChange"
             @cell-mouse-leave="leaveRowChange"
+            @selection-change="handleSelectionChange"
           >
             <el-table-column type="selection" width="50"></el-table-column>
 
@@ -54,15 +66,17 @@
                   <el-dropdown trigger="click" placement="bottom-start" @command="commandClick">
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
                     <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item command="update">修改</el-dropdown-item>
-                      <el-dropdown-item command="delete">删除</el-dropdown-item>
+                      <div @click="editType(scope.row)">
+                        <el-dropdown-item command="update">修改</el-dropdown-item>
+                      </div>
+                      <el-dropdown-item :command="returnCommand('delete', scope.row)">批量删除</el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
                 </div>
               </template>
             </el-table-column>
 
-            <el-table-column prop="ownerUserName" label="车主"></el-table-column>
+            <el-table-column prop="ownerName" label="车主"></el-table-column>
 
             <el-table-column prop="carNo" label="车牌号">
               <template slot-scope="scope">
@@ -90,12 +104,24 @@
 
             <el-table-column prop="status" label="状态">
               <template slot-scope="scope">
-                <el-tag
-                  size="small"
-                  style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
-                  :type="scope.row.status? 'success' : 'danger'"
-                  @click="editType(scope.row)"
-                >{{ scope.row.status && scope.row.status =='1' ? "正常" : "禁用" }}</el-tag>
+                <el-dropdown trigger="click">
+                  <span class="el-dropdown-link">
+                    <el-tag
+                      size="small"
+                      style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
+                      :type="scope.row.status=='1'? 'success' : 'danger'"
+                      @click="editStatus(scope.row.id)"
+                    >{{ scope.row.status && scope.row.status =='1' ? "正常" : "禁用" }}</el-tag>
+                  </span>
+                  <el-dropdown-menu slot="dropdown">
+                    <div @click="handleCommand('1')">
+                      <el-dropdown-item>正常</el-dropdown-item>
+                    </div>
+                    <div @click="handleCommand('2')">
+                      <el-dropdown-item>禁用</el-dropdown-item>
+                    </div>
+                  </el-dropdown-menu>
+                </el-dropdown>
               </template>
             </el-table-column>
 
@@ -106,7 +132,8 @@
           @current-change="pageChange"
           style="margin-top:10px;"
           background
-          layout="prev, pager, next"
+          layout="prev, pager, next,total"
+          :page-size="page.limit"
           :total="page.total"
         ></el-pagination>
 
@@ -118,9 +145,9 @@
         </div>-->
       </el-col>
     </el-row>
-    <!-- 车辆新增或修改 -->
+    <!-- 车辆修改 -->
     <el-dialog
-      :title="roleTitle==='0' ? '新增' :'修改'"
+      title="新增"
       :visible.sync="dialogCreate"
       width="500px"
       :before-close="handleClose"
@@ -191,17 +218,64 @@
         <el-button type="primary" @click="createCar">确 定</el-button>
       </span>
     </el-dialog>
+    <!-- 车辆修改 -->
+    <el-dialog
+      title="修改"
+      :visible.sync="dialogEdit"
+      width="500px"
+      :before-close="handleClose"
+      :close-on-click-modal="false"
+    >
+      <el-form
+        ref="dataForm"
+        :model="editForm"
+        label-position="right"
+        label-width="80px"
+        style="margin-right:40px;"
+      >
+        <el-form-item
+          label="车牌"
+          prop="carNo"
+          :show-message="showMessage"
+          :error="errorMessage.carNo"
+        >
+          <el-input v-model="editForm.carNo"></el-input>
+        </el-form-item>
+
+        <el-form-item
+          label="品牌"
+          prop="modal"
+          :show-message="showMessage"
+          :error="errorMessage.modal"
+        >
+          <el-input v-model="editForm.modal"></el-input>
+        </el-form-item>
+
+        <el-form-item label="车型">
+          <el-input v-model="editForm.carType"></el-input>
+        </el-form-item>
+
+        <el-form-item label="备注">
+          <el-input type="textarea" v-model="editForm.note"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="handleClose">取 消</el-button>
+        <el-button type="primary" @click="modifCar">确 定</el-button>
+      </span>
+    </el-dialog>
     <!-- 目标详情 -->
     <el-dialog
       class="dialog-rewrite"
-      :title="CarDialogForm.ownerUserName?CarDialogForm.ownerUserName:'未知'"
+      :title="'车牌: ' + CarDialogForm.carNo?CarDialogForm.carNo:'未知'"
       :visible.sync="detailDialogVisible"
+      :before-close="closeBtn"
     >
       <el-tabs type="card" v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="车辆详情" name="first">
           <el-form label-width="130px" :model="CarDialogForm">
             <el-form-item style="margin-bottom:0" label="车牌:">
-              <span>{{CarDialogForm.carNo ? CarDialogForm .carNo :'--'}}</span>
+              <span>{{CarDialogForm.carNo ? CarDialogForm.carNo :'--'}}</span>
             </el-form-item>
             <el-form-item style="margin-bottom:0" label="车辆品牌:">
               <span>{{CarDialogForm.modal ? CarDialogForm.modal : '--'}}</span>
@@ -242,12 +316,27 @@
           </el-form>
         </el-tab-pane>
         <el-tab-pane label="车主信息" name="second">
-          <el-form label-width="100px" :model="CarDialogForm">
-            <el-form-item style="margin-bottom:0" label="车主:">
-              <span>{{CarDialogForm.name}}</span>
+          <el-form label-width="100px" v-model="carUserDetail">
+            <el-form-item style="margin-bottom:0" label="姓名:">
+              <span>{{carUserDetail.name}}</span>
+            </el-form-item>
+            <el-form-item style="margin-bottom:0" label="性别:">
+              <span>{{carUserDetail.sex}}</span>
+            </el-form-item>
+            <el-form-item style="margin-bottom:0" label="年龄:">
+              <span>{{carUserDetail.age}}</span>
             </el-form-item>
             <el-form-item style="margin-bottom:0" label="电话:">
-              <span>--</span>
+              <span>{{carUserDetail.phone}}</span>
+            </el-form-item>
+            <el-form-item style="margin-bottom:0" label="证件类型:">
+              <span>{{carUserDetail.cardName}}</span>
+            </el-form-item>
+            <el-form-item style="margin-bottom:0" label="身份证:">
+              <span>{{carUserDetail.cardNo}}</span>
+            </el-form-item>
+            <el-form-item style="margin-bottom:0" label="备注:">
+              <span>{{carUserDetail.note}}</span>
             </el-form-item>
           </el-form>
         </el-tab-pane>
@@ -304,10 +393,11 @@ import { Component, Prop, Vue, Mixins } from "vue-property-decorator";
 import { Getter, Action, Mutation } from "vuex-class";
 import mixin from "@/config/minxins";
 import {
-  queryCarPhone,
-  addCar,
-  getTargrtRecord,
-  getTargetUser
+  queryCarPhone, //根据手机号模糊查询用户
+  addCar, //新增
+  editCar, //修改
+  getTargrtRecord, //获取目标车辆通行记录
+  getTargetUser //获取目标车辆车主信息
 } from "@/api/carApi.ts";
 
 const ActionHeader = () => import("@/components/ActionHeader.vue");
@@ -322,37 +412,21 @@ const DataTree = () => import("@/components/DataTree.vue");
     DataTree
   }
 })
-export default class CardManage extends Vue {
+export default class CarList extends Vue {
   filterForm: object = { carNo: null, ownerPhone: null, ownerUserName: null }; //根据关键字查询
   private rowSpan: any = {
     row1: 4,
     row2: 20
   };
-
   private imgVisible: Boolean = false; // 控制放大图片的visible
   private bigImg: String = ""; // 保存放大图片的地址
-
-  private form: Object = {
-    name: "",
-    region: "",
-    date1: "",
-    date2: "",
-    delivery: false,
-    type: [],
-    resource: "",
-    desc: ""
-  };
 
   private dialogFormVisible: Boolean = false;
   private formLabelWidth: String = "120px";
 
-  private CarDialogForm: Object = {}; // 车主详细信息
-  private detailDialogVisible: boolean = false; // 详细信息dialog弹框
-  private activeName: string = "first";
-  private dialogCreate: Boolean = false; // 新增或修改弹出表单
-  private roleTitle: String = "0";
-
+  private dialogCreate: Boolean = false; // 新增弹出表单
   private createForm: Array<Object> = [
+    //新增表单字段
     {
       ownerPhone: "", //车主电话
       ownerUserName: "", //车主
@@ -378,22 +452,59 @@ export default class CardManage extends Vue {
     ownerPhone: "",
     carNo: ""
   };
-  private nameDisabled: Boolean = false;
+
+  private dialogEdit: Boolean = false; // 修改弹出表单
+  private editForm: Object = {
+    //修改表单字段
+    ownerPhone: "", //车主电话
+    ownerUserName: "", //车主
+    scenceUserId: "", //车主id
+    carNo: "", //车牌号
+    carType: "", //车型
+    id: "",
+    modal: "", //品牌
+    note: "" //备注
+  };
+
+  private actionUrl: String = "/v1/admin/usr-car/batch-add/";
+  //  private myHeaders: Object = { Authorization: store.getters.bearerToken },
+  private detailDialogVisible: boolean = false; // 详细信息dialog弹框
+  private activeName: string = "first"; //目标车辆详细信息 tab Title
+  private nameDisabled: Boolean = false; //模糊查询电话后姓名栏目为不可编辑
   private restaurants: Array<Object> = [];
+  private passList: Array<Object> = []; // 车辆名单目标通行记录
+  private passTarget: Boolean = true; //目标车辆通行记录的loadding
+  private CarDialogForm: Object = {}; // 车辆详细信息
+  private carUserDetail: Object = {}; //车主详细信息
+  private notifyInstance: any; //防止notify重复多次出现提示
 
   initForm: object = {
+    //获取车辆列表url
     url: "/admin/usr-car/",
     method: "get"
   };
 
-  private passList: Array<Object> = []; // 车辆名单目标通行记录
-  private passTarget: Boolean = true;
+  deleteForm: Object = {
+    //单个或批量删除
+    url: "/admin/usr-car/batch-delete/",
+    method: "delete",
+    data: []
+  };
+
   private listQuery: Object = {
     // 车辆管理名单目标通行记录翻页
     total: 0,
     limit: 10,
     page: 1
   };
+
+  // 获取需要操作的数据列表
+  handleSelectionChange(val) {
+    this.deleteForm["data"] = [];
+    val.forEach(ele => {
+      this.deleteForm["data"].push(ele.id);
+    });
+  }
 
   created() {
     this.initForm["params"] = Object.assign(
@@ -408,9 +519,9 @@ export default class CardManage extends Vue {
     if (
       queryString === "" ||
       (this.restaurants.length === 1 &&
-        queryString !== this.restaurants[0].value)
+        queryString !== this.restaurants[0]["value"])
     ) {
-      this.createForm[0].ownerUserName = "";
+      this.createForm[0]["ownerUserName"] = "";
       this.nameDisabled = false;
     }
     if (queryString.length >= 7) {
@@ -418,8 +529,8 @@ export default class CardManage extends Vue {
     }
     // 调用 callback 返回建议列表的数据
     cb(this.restaurants);
-    if (this.restaurants.length === 1 && this.restaurants[0].value) {
-      if (queryString === this.restaurants[0].value) {
+    if (this.restaurants.length === 1 && this.restaurants[0]["value"]) {
+      if (queryString === this.restaurants[0]["value"]) {
         this.handleSelectWatchlist(this.restaurants[0]);
       }
     }
@@ -438,35 +549,31 @@ export default class CardManage extends Vue {
   }
 
   handleSelectWatchlist(item) {
-    this.createForm[0].ownerPhone = item.value;
+    this.createForm[0]["ownerPhone"] = item.value;
     if (item.name) {
-      this.createForm[0].ownerUserName = item.name;
+      this.createForm[0]["ownerUserName"] = item.name;
       this.nameDisabled = true;
     } else {
-      this.createForm[0].userName = null;
+      this.createForm[0]["userName"] = null;
       this.nameDisabled = false;
     }
   }
 
   createCar() {
     /**@description 新增车辆处理 */
-    this.$refs["dataForm"].validate(valid => {
+    this.$refs["dataForm"]["validate"](valid => {
       if (valid) {
         var form = [
           {
             ...this.createForm[0],
-            scenceUserId: this.restaurants[0].scenceUserId
+            scenceUserId: this.restaurants[0]["scenceUserId"]
           }
         ];
         addCar(form).then(res => {
           this.handleClose();
           this["fetchData"](this.initForm);
           this.nameDisabled = false;
-          this.$notify({
-            type: "success",
-            title: "成功",
-            message: "添加车辆成功"
-          });
+          this.notify("添加车辆成功");
         });
         // .catch(err => {
         //   const { data } = err.response;
@@ -477,16 +584,68 @@ export default class CardManage extends Vue {
     });
   }
 
-  handleClose() {
-    /** @description 关闭新增/修改diolog */
-    this.dialogCreate = false;
-    this.$refs["dataForm"].resetFields();
-  }
-
   editType(item) {
     /**@description 修改状态 */
-    console.log(item);
-    // this.dialogFormVisible = true;
+    for (const key in this.editForm) {
+      this.editForm[key] = item[key];
+    }
+    this.dialogEdit = true;
+  }
+
+  editStatus(val) {
+    this.editForm["id"] = val;
+  }
+
+  handleCommand(val) {
+    this.editForm["status"] = val;
+    const form = { ...this.editForm };
+    for (let key in form) {
+      if (form[key] === "") {
+        delete form[key];
+      }
+    }
+    editCar(form).then(() => {
+      this.notify("修改车辆状态成功");
+      this["fetchData"](this.initForm);
+    });
+  }
+
+  notify(val) {
+    if (this.notifyInstance) {
+      this.notifyInstance.close();
+    }
+    this.notifyInstance = this.$notify({
+      type: "success",
+      title: "成功",
+      message: val
+    });
+  }
+
+  modifCar() {
+    /**@description 修改 */
+    const form = { ...this.editForm };
+    for (let key in form) {
+      if (form[key] === "") {
+        delete form[key];
+      }
+    }
+    editCar(form).then(() => {
+      this.handleClose();
+      this["fetchData"](this.initForm);
+      this.notify("修改车辆成功");
+    });
+  }
+
+  handleClose() {
+    /** @description 关闭新增/修改dialog */
+    this.dialogCreate = false; //车辆新增dialog
+    this.dialogEdit = false; //修改dialog
+    this.$refs["dataForm"]["resetFields"]();
+  }
+
+  closeBtn() {
+    this.activeName = "first";
+    this.detailDialogVisible = false; //车辆详情dialog
   }
 
   enterRowChange(row, column, cell, event) {
@@ -508,7 +667,7 @@ export default class CardManage extends Vue {
     /** @description 处理目标车辆通行记录翻页事件
      * @augments val: 页数
      */
-    this.listQuery.page = val;
+    this.listQuery["page"] = val;
     this.fetchPass();
   }
 
@@ -517,6 +676,7 @@ export default class CardManage extends Vue {
     if (tab.name === "second") {
       this.fetchUser();
     } else if (tab.name === "thirdly") {
+      this.listQuery["page"] = 1;
       this.fetchPass();
     }
   }
@@ -524,17 +684,35 @@ export default class CardManage extends Vue {
   async fetchPass() {
     /**@description 查看车辆管理名单目标通行记录 */
     this.passTarget = true;
-    const info = { ...this.listQuery, carId: this.CarDialogForm.id };
+    const info = { ...this.listQuery, carId: this.CarDialogForm["id"] };
     const { data } = await getTargrtRecord(info);
     this.passList = data.data.records;
-    this.listQuery.total = data.data.total;
+    this.listQuery["total"] = data.data.total;
     this.passTarget = false;
   }
 
   async fetchUser() {
     /**@description 查看车辆管理名单用户详情 */
-    const { data } = await getTargetUser(this.CarDialogForm.scenceUserId);
-    console.log(data);
+    try {
+      const { data } = await getTargetUser(this.CarDialogForm["scenceUserId"]);
+      this.carUserDetail = data.data.user;
+    } catch (err) {
+      console.log(err.response);
+    }
+  }
+
+  successFile(response, file, fileList) {
+    /**@description 导入Excel 成功 */
+    this.$message({
+      message: `导入 ${file.name} 成功`,
+      type: "success"
+    });
+  }
+
+  errorFile(err, file, fileList) {
+    /**@description 导入Excel 失败 */
+    let errormsg = JSON.parse(err.message);
+    this.$message.error(`${errormsg.message}`);
   }
 }
 </script>

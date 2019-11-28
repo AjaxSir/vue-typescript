@@ -1,5 +1,7 @@
 import _axios from "../plugins/axios";
 
+
+
 //车辆用户查询
 export function queryCarPhone(phone) {
   return _axios({
@@ -20,6 +22,15 @@ export function addCar(data) {
   })
 }
 
+//修改车辆
+export function editCar(data) {
+  return _axios({
+    url: '/admin/usr-car',
+    method: 'put',
+    data
+  })
+}
+
 //获取目标车辆通行记录
 export function getTargrtRecord(params) {
   return _axios({
@@ -30,7 +41,7 @@ export function getTargrtRecord(params) {
 }
 
 
-//获取目标车辆用户详细信息
+//获取目标车辆用户详细信息 || 获取目标访客车辆邀请人的详细信息
 export function getTargetUser(id) {
   return _axios({
     url: '/admin/scence-user/',
@@ -40,4 +51,3 @@ export function getTargetUser(id) {
     }
   })
 }
-

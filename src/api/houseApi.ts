@@ -101,3 +101,10 @@ export function updateStatusNote(data: object) {
     data
   })
 }
+// 通过关键字查询单元楼名字
+export function searchHouse() {
+  return _axios({
+    url: '/admin/hsBuilding/query-building-name',
+    method: 'get',
+  })
+}
