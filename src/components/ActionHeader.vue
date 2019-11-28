@@ -21,7 +21,7 @@
           class="createBtn"
           type="primary"
           size="small"
-          @click="exportTable"
+          @click='handleClick("export")'
         >导出</el-button>
         <el-dropdown v-if="moreStatus" size="small" @command="handleClick">
           <el-button size="small" style="border-color: #409EFF; color: #409EFF;">
@@ -179,9 +179,11 @@ export default class ActionManage extends Vue {
   @Emit("fetchData")
   emitFetchData() {
     this.visibleFilter = false;
+    this.page['page'] = 1
     this.initFormHeader["params"] = Object.assign(
       this.initFormHeader["params"],
-      this.filterForm
+      this.filterForm,
+      this.page
     );
     return this.initFormHeader;
   }
@@ -213,6 +215,14 @@ export default class ActionManage extends Vue {
   handleClick(val) {
     switch (val) {
       case 'export':
+        for (let key in this.initFormHeader['params']) {
+          if (this.initFormHeader['params'][key] === '' || this.initFormHeader['params'][key] === null) {
+            console.log(key)
+            delete this.initFormHeader['params'][key]
+            // = null
+          }
+        }
+        console.log(this.initFormHeader['params'])
         const filterUrl = qs.stringify(this.initFormHeader['params'])
         console.log(this.exportUrl + '/?' + filterUrl)
         this['exportFunc'](this.exportName, this.exportUrl + '/?' + filterUrl)

@@ -50,16 +50,23 @@ export default class GlobalMimins extends Vue {
     this.showLoading = true;
     _axios(option).then((res: any) => {
       if (res.data && res.data.data) {
-        this.page.total = res.data.data.total
-        res.data.data.records.forEach((ele: object) => {
-          this.updateArray.forEach((itemStatus: string) => {
-            ele[itemStatus] = false
+        if (res.data.data.records.length) {
+          this.page.total = res.data.data.total
+          res.data.data.records.forEach((ele: object) => {
+            this.updateArray.forEach((itemStatus: string) => {
+              ele[itemStatus] = false
+            })
+            ele['showMenu'] = false
           })
-          ele['showMenu'] = false
-        })
-        this.list_data = res.data.data.records
-        this.showLoading = false
-        console.log(this.list_data,'init')
+          this.list_data = res.data.data.records
+          this.showLoading = false
+          console.log(this.list_data)
+        } else {
+          if (this.initForm['params']['page'] > 1) {
+            this.initForm['params']['page']--
+            this.fetchData(this.initForm)
+          }
+        }
       }
     })
   }
@@ -71,9 +78,12 @@ export default class GlobalMimins extends Vue {
   }
   /**
    *
-   * @param page 关闭新增框
+   * @param page 关闭新增/修改框
    */
   handleClose() {
+    for(let key in this.Form){
+      this.Form[key] = ''
+    }
     this.$refs['Forms']['resetFields']();
     this.dialogCreate = false
   }
@@ -101,6 +111,7 @@ export default class GlobalMimins extends Vue {
    * @param page 翻页页码
    */
   pageChange(page: number) {
+    this.list_data = []
     this.page.page = page
     this.initForm['params'] = Object.assign(this.initForm['params'], this.page)
     this.fetchData(this.initForm)
@@ -111,6 +122,13 @@ export default class GlobalMimins extends Vue {
       action,
       row
     }
+  }
+  // 获取需要操作的数据列表
+  handleSelectionChange(val) {
+    this.deleteForm['data'] = []
+    val.forEach((ele: Object) => {
+      this.deleteForm['data'].push(ele['id'])
+    })
   }
   // 导出excel函数 处理数据
   exportFunc(fileName: string, url: string): void {
@@ -150,6 +168,10 @@ export default class GlobalMimins extends Vue {
         this.Form = Object.assign(this.Form, options['row'])
         this.dialogCreate = true
         break
+      case 'resetPassword':
+        this['resetVisible'] = true
+        this['resetForms'] = Object.assign(this['resetForms'], options['row'])
+        break
       case 'delete':
         if (!this.deleteForm['data'].length) {
           Message({
@@ -163,6 +185,7 @@ export default class GlobalMimins extends Vue {
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
+          console.log(this.deleteForm)
           this.deleteRow(this.deleteForm)
         }).catch(() => {
           Message({

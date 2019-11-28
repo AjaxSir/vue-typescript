@@ -3,6 +3,8 @@
     <el-row>
       <el-col :span="24">
         <action-header
+        exportUrl='/v1/admin/people-pass/export'
+        exportName='人员通行.xls'
         :initFormHeader='initForm'
         @fetchData='fetchData'
         :filterForm='filterForm'
@@ -21,29 +23,40 @@
               <el-input class="input-filter" v-model='filterForm.userName' size="small"></el-input>
             </div>
              <div class="word-filter">
-              <span class="filter-name">时间段:</span>
+              <span class="filter-name">开始时间:</span>
               <el-date-picker
-                style='width:140px'
+
                 :picker-options='pickOptionStart'
-                v-model="filterForm.startTime"
-                type="date"
+                v-model="filterForm.startPassTime"
+                type="datetime"
+                format='yyyy-MM-dd HH:mm:ss'
+                 value-format="yyyy-MM-dd HH:mm:ss"
+                :clearable='false'
                 placeholder="选择日期">
               </el-date-picker>
-              &nbsp;&nbsp;&nbsp; -- &nbsp;&nbsp;&nbsp;
+            </div>
+            <div class="word-filter">
+              <span class="filter-name">结束时间:</span>
               <el-date-picker
-              style='width:140px'
-                v-model="filterForm.endTime"
+              :clearable='false'
+              format='yyyy-MM-dd HH:mm:ss'
+              value-format="yyyy-MM-dd HH:mm:ss"
+                v-model="filterForm.endPassTime"
                 :picker-options='pickOptionEnd'
-                type="date"
+                type="datetime"
                 placeholder="选择日期">
               </el-date-picker>
             </div>
             <div class="word-filter">
               <span class="filter-name">通行方式:</span>
               <el-select class="input-filter" size="small" v-model="filterForm.passMethod" placeholder="请选择">
-                <el-option label="全部" value="all"></el-option>
-                <el-option label="蓝牙" value="blueTeeth"></el-option>
-                <el-option label="刷脸" value="face"></el-option>
+                <el-option label="全部" value=""></el-option>
+                <el-option label="蓝牙" value="3"></el-option>
+                <el-option label="人脸" value="1"></el-option>
+                <el-option label="二维码" value="2"></el-option>
+                <el-option label="远程" value="4"></el-option>
+                <el-option label="密码" value="5"></el-option>
+                <el-option label="刷卡" value="6"></el-option>
               </el-select>
             </div>
             <div class="word-filter">
@@ -51,7 +64,7 @@
               <el-select class="input-filter" size="small" v-model="filterForm.userType" placeholder="请选择">
                 <el-option label="全部" value="all"></el-option>
                 <el-option label="住户" value="house"></el-option>
-                <el-option label="租客" value="rent"></el-option>
+                <el-option label="访客" value="rent"></el-option>
               </el-select>
             </div>
           </div>
@@ -65,33 +78,45 @@
           <el-table
             :data="list_data"
             stripe
+            v-loading='showLoading'
             class="demo-block"
             highlight-current-row
             @cell-mouse-enter="enterRowChange"
             @cell-mouse-leave="leaveRowChange"
           >
-
             <el-table-column type="index" align='center' label="序号" width="50"></el-table-column>
-
-            <el-table-column  align='center' prop="devId" label="设备编号">
+            <el-table-column align='center' prop="userName" label="姓名">
               <template slot-scope="scope">
-                <span class="serial-num">{{scope.row.devId}}</span>
+                <span class="serial-num">{{scope.row.name || '--'}}</span>
               </template>
             </el-table-column>
-
-            <el-table-column  align='center' prop="devId" label="单元信息"></el-table-column>
-
-            <el-table-column align='center' prop="devType" label="设备型号">
-
+            <el-table-column align='center' prop="passMethod" label="通行方式">
+              <template slot-scope="{row}">
+                <span>{{ row.passMethod | passMethod }}</span>
+              </template>
             </el-table-column>
-
-            <el-table-column align='center' prop="passTime" label="通行时间"></el-table-column>
-
-            <el-table-column align='center' prop="passMethod" label="通行方式"></el-table-column>
-
-            <el-table-column align='center' prop="userName" label="姓名"></el-table-column>
-
-            <el-table-column align='center' prop="img" label="人脸">
+            <el-table-column  align='center' prop="devId" label="设备编号">
+              <template slot-scope="scope">
+                <span class="serial-num">{{scope.row.devAddress + '--' + scope.row.devSubAddress}}</span>
+              </template>
+            </el-table-column>
+             <el-table-column align='center' prop="devType" label="设备区分"></el-table-column>
+             <el-table-column align='center' prop="devType" label="通行位置">
+               <template slot-scope="scope">
+                <span class="serial-num">{{scope.row.serialNumber}}</span>
+              </template>
+             </el-table-column>
+            <el-table-column align='center' prop="devType" label="设备型号">
+              <template slot-scope="{row}">
+                <span>{{ row.devType | devType }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column align='center' prop="devType" label="人员类型">
+              <template slot-scope="{row}">
+                <span>{{ row.isVisitor ? '访客' : '住户' }}</span>
+              </template>
+            </el-table-column>
+             <el-table-column align='center' prop="img" label="人脸">
               <template slot-scope="scope">
                 <img
                   class="capture-img"
@@ -102,6 +127,18 @@
                 />
               </template>
             </el-table-column>
+             <el-table-column align='center' prop="img" label="注册人脸">
+              <template slot-scope="scope">
+                <img
+                  class="capture-img"
+                  @mouseout="imgVisible=false"
+                  @mouseover="imgVisible=true,bigImg=scope.row.photos"
+                  :src="scope.row.photos"
+                  alt
+                />
+              </template>
+            </el-table-column>
+            <el-table-column align='center' prop="passTime" label="通行时间"> </el-table-column>
           </el-table>
           <el-pagination
           @current-change='pageChange'
@@ -115,7 +152,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Mixins } from "vue-property-decorator";
+import { Component, Prop, Vue, Mixins, Watch } from "vue-property-decorator";
 import { Getter, Action, Mutation } from "vuex-class";
 import mixin from "@/config/minxins";
 const ActionHeader = () => import("@/components/ActionHeader.vue");
@@ -126,6 +163,29 @@ const ImageMagni = () => import("@/components/BigImg/index.vue");
   components: {
     ActionHeader,
     ImageMagni
+  },
+  filters: {
+    passMethod(val: string) {
+      const data = {
+        "1": '人脸开门',
+        "2": '二维码开门',
+        "3": '蓝牙开门',
+        "4": '远程开门',
+        "5": '密码开门',
+        "6": '刷卡开门'
+      }
+      return data[val]
+    },
+    devType(val:string) {
+      const data = {
+        "1": '门禁',
+        "2": '车禁',
+        "3": '注册机',
+        "4": '访客机',
+      }
+      return data[val]
+    }
+
   }
 })
 export default class PersonPass extends Vue {
@@ -134,10 +194,11 @@ export default class PersonPass extends Vue {
   filterForm: object = {
     unitHouse: '',
     userName: '',
-    startTime: '',
-    endTime: '',
-    passMethod: 'all',
-    userType: 'all'
+    startPassTime: '',
+    endPassTime: '',
+    passMethod: '',
+    userType: 'all',
+    isVisitor: false
   }
   initForm: object = {
     url: '/admin/people-pass/',
@@ -149,8 +210,8 @@ export default class PersonPass extends Vue {
     const _this = this
     this.pickOptionStart = {
         disabledDate(time){
-        if (_this.filterForm['endTime'] !== "") {
-            return time.getTime() > Date.now() || time.getTime() > _this.filterForm['endTime'];
+        if (_this.filterForm['endPassTime'] !== "") {
+            return time.getTime() > Date.now() || time.getTime() > _this.filterForm['endPassTime'];
           } else {
             return time.getTime() > Date.now();
         }
@@ -158,11 +219,15 @@ export default class PersonPass extends Vue {
     }
     this.pickOptionEnd = {
         disabledDate(time){
-          return time.getTime() < _this.filterForm['startTime'] || time.getTime() > Date.now()
+          return time.getTime() < _this.filterForm['startPassTime'] || time.getTime() > Date.now()
       }
     }
   }
-
+  @Watch('filterForm.userType')
+  isVistorChange() {
+    const type = this.filterForm['userType']
+    this.filterForm['isVisitor'] = type === 'all' ? null : (type === 'house' ? false : true)
+  }
   created() {
     this.initForm['params'] = Object.assign(this.initForm['params'], this.page, this.filterForm) // 合并参数
   }

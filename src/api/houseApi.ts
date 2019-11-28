@@ -85,8 +85,22 @@ export function searchSuggestHouse(keys: string) {
     }
   })
 }
-
-//***********房屋管理********** */
+// 新增房屋
+export function addHouse(data: object) {
+  return _axios({
+    url:'/admin/hsHouse',
+    method: 'post',
+    data
+  })
+}
+// 修改房屋状态/备注
+export function updateStatusNote(data: object) {
+  return _axios({
+    url: '/admin/hsHouse',
+    method: 'put',
+    data
+  })
+}
 // 通过关键字查询单元楼名字
 export function searchHouse() {
   return _axios({

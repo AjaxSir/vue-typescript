@@ -88,19 +88,21 @@
               </template>
             </el-table-column>
             <el-table-column align="center" prop="status" label="状态">
-              <template slot-scope="scope">
-                <el-tag
-                  v-if='!scope.row.cardStatus'
+              <template slot-scope="{row}">
+                <el-dropdown @command="cardStatusChange"
+                trigger="click">
+                  <span class="el-dropdown-link">
+                   <el-tag
                   size="small"
                   style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
-                  :type="scope.row.status === '0' ? 'success' : 'danger'"
-                  @click="scope.row.cardStatus = !scope.row.cardStatus"
-                >{{ scope.row.status === '0' ? "正常" : (scope.row.status === '-2' ? "禁用" : "过期" )  }}</el-tag>
-                <el-select @change='cardStatusChange($event, scope.row.id)' v-else v-model="scope.row.status" placeholder="请选择">
-                  <el-option label="正常" value="0"> </el-option>
-                  <el-option label="禁用" value="-2"> </el-option>
-                  <!-- <el-option label="过期" value="-1"> </el-option> -->
-                </el-select>
+                  :type="row.status === '0' ? 'success' : 'danger'"
+                >{{ row.status === '0' ? "正常" : (row.status === '-2' ? "禁用" : "过期" )  }}</el-tag>
+                  </span>
+                  <el-dropdown-menu  slot="dropdown">
+                    <el-dropdown-item :command='ComponentCommand("0", row)'>正常</el-dropdown-item>
+                    <el-dropdown-item :command='ComponentCommand("-2", row)'>禁用</el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
               </template>
             </el-table-column>
             <!-- <el-table-column align="center" prop="count" label="进出"></el-table-column> -->
@@ -244,13 +246,13 @@ export default class CardManage extends Vue {
   private activeName: String = "详细信息";
   private dtailTable: Array<Object> =[];
 
-  // 获取需要操作的数据列表
-  handleSelectionChange(val) {
-    this.deleteForm['data'] = []
-    val.forEach(ele => {
-      this.deleteForm['data'].push(ele.id)
-    })
-  }
+  ComponentCommand(status: string, row:object) {
+      return {
+        ...row,
+        status
+      }
+    }
+
   /// 修改门禁卡过期时间
   validDateChange(date: string, id: string) {
     date = formatTimeObj(date)
@@ -262,7 +264,10 @@ export default class CardManage extends Vue {
     })
   }
    // 修改门禁卡状态
-  cardStatusChange(status: string, id: string) {
+  cardStatusChange(Obj: object) {
+    const id = Obj['id']
+    const status = Obj['status']
+    console.log(id, status)
     this.$confirm(`此操作将改变当前门禁卡为${status === '0' ? '正常' : '禁用'}状态, 是否继续?`, '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
