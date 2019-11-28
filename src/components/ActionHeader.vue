@@ -102,7 +102,7 @@ import {
   Emit
 } from "vue-property-decorator";
 import mixin from "@/config/minxins";
-import qs from 'qs'
+import qs from "qs";
 
 @Component({
   mixins: [mixin],
@@ -171,7 +171,7 @@ export default class ActionManage extends Vue {
   }
   // 导出
   exportTable() {
-    this["exportFunc"](this.exportName, this.exportUrl);
+    this["exportFunc"](this.exportName, this.exportUrl, this.filterForm);
   }
   /**
    * 筛选按钮
@@ -226,6 +226,10 @@ export default class ActionManage extends Vue {
         const filterUrl = qs.stringify(this.initFormHeader['params'])
         console.log(this.exportUrl + '/?' + filterUrl)
         this['exportFunc'](this.exportName, this.exportUrl + '/?' + filterUrl)
+      case "export":
+        const filterUrl = qs.stringify(this.initFormHeader["params"]);
+        console.log(this.exportUrl + "/?" + filterUrl);
+        this["exportFunc"](this.exportName, this.exportUrl + "/?" + filterUrl);
     }
   }
 }

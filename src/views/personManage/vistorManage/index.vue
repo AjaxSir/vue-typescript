@@ -107,7 +107,7 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="vistor_type" width="101" align="center" label="访客类型">
+            <el-table-column prop="visitType" width="101" align="center" label="访客类型">
               <template slot="header">
                 <el-dropdown style="padding:0;" trigger="click" @command="filterType">
                   <span class="el-dropdown-link">
@@ -120,18 +120,18 @@
                       :class="commandType==='all' ? pitchOn : unchecked"
                     >全部</el-dropdown-item>
                     <el-dropdown-item
-                      command="App"
+                      command="1"
                       :class="commandType==='App' ? pitchOn : unchecked"
                     >APP</el-dropdown-item>
                     <el-dropdown-item
-                      command="注册机"
-                      :class="commandType==='注册机' ? pitchOn : unchecked"
-                    >注册机</el-dropdown-item>
+                      command="2"
+                      :class="commandType==='访客机' ? pitchOn : unchecked"
+                    >访客机</el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </template>
               <template slot-scope="scope">
-                <span>{{scope.row.visitType}}</span>
+                <span>{{scope.row.visitType ==='1' ?'APP' : scope.row.visitType ==='2' ?'访客机' : '--'}}</span>
               </template>
             </el-table-column>
             <el-table-column prop="cardNo" align="center" label="身份证号"></el-table-column>
@@ -515,7 +515,7 @@ export default class VistoryManage extends Vue {
     if (tab.name === "second") {
       this.fetchUser();
     } else if (tab.name === "thirdly") {
-      this.listQuery['page'] = 1
+      this.listQuery["page"] = 1;
       this.fetchPass();
     }
   }

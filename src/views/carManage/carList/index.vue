@@ -54,6 +54,7 @@
             @cell-mouse-enter="enterRowChange"
             @cell-mouse-leave="leaveRowChange"
             @selection-change="handleSelectionChange"
+            @cell-click="cellClick"
           >
             <el-table-column type="selection" width="50"></el-table-column>
 
@@ -125,7 +126,15 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="note" label="备注"></el-table-column>
+            <el-table-column prop="note" label="备注">
+              <template slot-scope="scope">
+                <span
+                  v-if="!scope.row.carNote"
+                  @click="scope.row.carNote = !scope.row.carNote"
+                >{{scope.row.note}}</span>
+                <el-input v-else size="small" v-model="editForm.note" @blur="editNote(scope.row)"></el-input>
+              </template>
+            </el-table-column>
           </el-table>
         </div>
         <el-pagination
@@ -477,6 +486,7 @@ export default class CarList extends Vue {
   private CarDialogForm: Object = {}; // 车辆详细信息
   private carUserDetail: Object = {}; //车主详细信息
   private notifyInstance: any; //防止notify重复多次出现提示
+  updateArray: Array<string> = ["carNote"];
 
   initForm: object = {
     //获取车辆列表url
@@ -596,14 +606,22 @@ export default class CarList extends Vue {
     this.editForm["id"] = val;
   }
 
+  cellClick(row, column, event, cell) {
+    row.carNote = true;
+  }
+
+  editNote(item) {
+    /**@description 修改备注 */
+    const form = { note: this.editForm["note"], id: item.id };
+    editCar(form).then(() => {
+      this.editForm["note"] = "";
+      this.notify("修改车辆备注成功");
+      this["fetchData"](this.initForm);
+    });
+  }
+
   handleCommand(val) {
-    this.editForm["status"] = val;
-    const form = { ...this.editForm };
-    for (let key in form) {
-      if (form[key] === "") {
-        delete form[key];
-      }
-    }
+    const form = { status: val, id: this.editForm["id"] };
     editCar(form).then(() => {
       this.notify("修改车辆状态成功");
       this["fetchData"](this.initForm);

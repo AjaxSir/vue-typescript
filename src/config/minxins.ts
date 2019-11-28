@@ -18,6 +18,7 @@ export default class GlobalMimins extends Vue {
     limit: 10,
   }
   public dialogCreate: any = false
+  public notifyInstance: any; //防止notify重复多次出现提示
   public showLoading: any = true
   public orderBy: Object = {
     prop: "", // 需要的根据什么排序
@@ -67,6 +68,11 @@ export default class GlobalMimins extends Vue {
             this.fetchData(this.initForm)
           }
         }
+          ele['showMenu'] = false
+        })
+        this.list_data = res.data.data.records
+        this.showLoading = false
+        console.log(this.list_data, 'init')
       }
     })
   }
@@ -214,5 +220,20 @@ export default class GlobalMimins extends Vue {
         });
         break
     }
+  }
+
+  /**
+   * 新增成功弹出框
+   * @param action
+   */
+  notify(val) {
+    if (this.notifyInstance) {
+      this.notifyInstance.close();
+    }
+    this.notifyInstance = this.$notify({
+      type: "success",
+      title: "成功",
+      message: val
+    });
   }
 }
