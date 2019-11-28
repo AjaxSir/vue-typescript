@@ -85,3 +85,19 @@ export function searchSuggestHouse(keys: string) {
     }
   })
 }
+// 新增房屋
+export function addHouse(data: object) {
+  return _axios({
+    url:'/admin/hsHouse',
+    method: 'post',
+    data
+  })
+}
+// 修改房屋状态/备注
+export function updateStatusNote(data: object) {
+  return _axios({
+    url: '/admin/hsHouse',
+    method: 'put',
+    data
+  })
+}

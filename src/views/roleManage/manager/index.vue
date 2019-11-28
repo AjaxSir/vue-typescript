@@ -2,14 +2,14 @@
   <div class="app-container">
     <el-row>
       <el-col :span="24">
-        <action-header :dialogCreate.sync="dialogCreate" :total="1">
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>导出</el-dropdown-item>
-          </el-dropdown-menu>
+        <action-header
+        :moreStatus='false'
+        :filterStatus='false'
+        :dialogCreate.sync="dialogCreate" :total="page.total">
           <div slot="houseNum">
             <div class="word-filter">
               <span class="filter-name">发布对象:</span>
-              <el-input class="input-filter" size="small"></el-input>
+              <el-input class="input-filter" v-model='filterForm.name' size="small"></el-input>
             </div>
           </div>
         </action-header>
@@ -19,10 +19,11 @@
       <el-col :span="24" class="table-col">
         <div class="rightContent">
           <el-table
-            :data="cardList"
+            :data="list_data"
             stripe
             class="demo-block"
             highlight-current-row
+            @selection-change="handleSelectionChange"
             @cell-mouse-enter="enterRowChange"
             @cell-mouse-leave="leaveRowChange"
           >
@@ -37,51 +38,98 @@
                   <el-dropdown trigger="click" placement="bottom-start" @command="commandClick">
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
                     <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item command="update">重置密码</el-dropdown-item>
-                      <el-dropdown-item command="delete">删除</el-dropdown-item>
+                      <el-dropdown-item :command="returnCommand('update', scope.row)">修改</el-dropdown-item>
+                      <el-dropdown-item :command="returnCommand('resetPassword', scope.row)">重置密码</el-dropdown-item>
+                      <el-dropdown-item :command="returnCommand('delete', scope.row)">删除</el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
                 </div>
               </template>
             </el-table-column>
 
-            <el-table-column prop="xb" align="center" label="角色"></el-table-column>
+            <el-table-column prop="roleName" align="center" label="角色"></el-table-column>
 
-            <el-table-column prop="xq" label="备注" align="center"></el-table-column>
+            <el-table-column prop="note" label="备注" align="center">
+              <template slot-scope="{row}">
+                <span>{{ row.note || '--' }}</span>
+              </template>
+            </el-table-column>
 
-            <el-table-column prop="tjsj" label="操作" align="center"></el-table-column>
+            <el-table-column label="操作" align="center">
+              <template slot-scope="{row}">
+                <el-dropdown @command="changeStatus"
+                trigger="click">
+                  <span class="el-dropdown-link">
+                    <el-tag
+                    size="small"
+                    style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
+                    :type='row.status === "0" ? "error" : "danger" '
+                    >{{ row.status === '0' ? '使用' : '禁用' }}
+                    </el-tag>
+                  </span>
+                  <el-dropdown-menu  slot="dropdown">
+                    <el-dropdown-item :command='ComponentCommand("0", row)'>使用</el-dropdown-item>
+                    <el-dropdown-item :command='ComponentCommand("-1", row)'>禁用</el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
+              </template>
+            </el-table-column>
           </el-table>
         </div>
-        <el-pagination style="margin-top:10px;" background layout="prev, pager, next" :total="2"></el-pagination>
+        <el-pagination @current-change='pageChange' style="margin-top:10px;" background layout="prev, pager, next" :total="page.total"></el-pagination>
       </el-col>
     </el-row>
     <!-- 新增或修改 -->
     <el-dialog
-      :title="roleTitle==='0' ? '新增' :'重置密码'"
+      title="新增"
       :visible.sync="dialogCreate"
-      width="40%"
+      width="500px"
       :before-close="handleClose"
     >
-      <el-form ref="form" :model="roleForm" label-width="80px">
-        <el-form-item v-if="roleTitle==='0'" label="账号名">
-          <el-input v-model="roleForm.name"></el-input>
+      <el-form :rules='rules' ref="Forms" :model="Form" label-width="80px">
+        <el-form-item prop='name' label="账号名">
+          <el-input v-model="Form.name"></el-input>
         </el-form-item>
-        <el-form-item v-if="roleTitle==='0'" label="角色">
-          <el-select v-model="roleForm.region" placeholder="请选择角色">
-            <el-option label="管理员" value="guanliyuan"></el-option>
-            <el-option label="普通用户" value="putong"></el-option>
+        <el-form-item prop='password' v-if='!Form.id' label="新密码">
+          <el-input type='password' v-model="Form.password"></el-input>
+        </el-form-item>
+        <el-form-item prop='roleName' label="角色">
+          <el-select v-model="Form.roleName" placeholder="请选择角色">
+            <el-option v-for='(item, index) in roleList' :label="item.name" :key='index' :value="item.name"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="roleTitle==='0'" label="备注">
-          <el-input type="textarea" v-model="roleForm.desc"></el-input>
+        <el-form-item label="备注">
+          <el-input type="textarea" v-model="Form.note"></el-input>
         </el-form-item>
-        <el-form-item v-if="roleTitle==='1'" label="新密码">
-          <el-input v-model="roleForm.newPassword"></el-input>
-        </el-form-item>
+
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose">取 消</el-button>
-        <el-button type="primary" @click="handleClose">确 定</el-button>
+        <el-button type="primary" @click="addManagerConfirm">确 定</el-button>
+      </span>
+    </el-dialog>
+    <!-- 重置密码 -->
+    <el-dialog
+      title="重置密码"
+      :visible.sync="resetVisible"
+      width="500px"
+      :before-close="handleCloseReset"
+    >
+      <el-form :rules='resetRules' ref="resetForms" :model="resetForms" label-width="80px">
+        <el-form-item label="账号">
+          <span>{{ resetForms.name }}</span>
+        </el-form-item>
+        <el-form-item label="新密码">
+          <el-input type='password' placeholder="请输入修改后的密码" v-model="resetForms.newPassword "></el-input>
+        </el-form-item>
+        <el-form-item label="确认密码">
+          <el-input type='password' placeholder="请再次确认密码" v-model="resetForms.reNewPassword "></el-input>
+        </el-form-item>
+
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="handleCloseReset">取 消</el-button>
+        <el-button type="primary" @click="resetPasswordConfirm">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -91,7 +139,10 @@
 import { Component, Prop, Vue, Mixins } from "vue-property-decorator";
 import { Getter, Action, Mutation } from "vuex-class";
 import mixin from "@/config/minxins";
-
+import { addManager,
+getRoleList,
+manageStatus,
+resetPassword } from '@/api/systemApi.ts'
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 const DataTree = () => import("@/components/DataTree.vue");
 
@@ -103,84 +154,136 @@ const DataTree = () => import("@/components/DataTree.vue");
   }
 })
 export default class InformIssue extends Vue {
-  private cardList: Array<Object> = [
-    {
-      name: "XXXXX",
-      zb: "男",
-      xb: "管理员",
-      zp: "--",
-      xq: "--",
-      tjsj: "--",
-      type: 1,
-      showMenu: false
-    }
-  ];
-  private rowSpan: any = {
-    row1: 4,
-    row2: 20
-  };
-
   private dialogLibrary: any = false;
-
-  private form: Object = {
-    name: "",
-    region: "",
-    date1: "",
-    date2: "",
-    delivery: false,
-    type: [],
-    resource: "",
-    desc: ""
-  };
-
   private dialogFormVisible: Boolean = false;
-  private formLabelWidth: String = "120px";
-  private dialogCreate: Boolean = false; // 新增或修改弹出表单
   private roleTitle: String = "0";
-  private roleForm: Object = {
+  roleList: Array<object> = [] // 角色列表
+  resetVisible: boolean = false // 重置密码框状态
+  resetForms: object = {
+    newPassword: '',
+    reNewPassword: '',
+    name: ''
+  }
+  private Form: Object = {
     name: null,
-    region: null,
-    desc: null,
-    newPassword: null
+    roleId: null,
+    note: null,
+    password: null,
+    roleName: ''
   };
-
-  editType(item) {
-    /**@description 修改状态 */
-    console.log(item);
-    // this.dialogFormVisible = true;
+  rules: object = {
+    name: [
+            { required: true, message: '请输入管理员名称', trigger: 'blur' },
+            { min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'blur' }
+          ],
+    roleId: [
+            { required: true, message: '请选择管理员的角色', trigger: 'blur' }
+          ],
+    roleName: [
+            { required: true, message: '请选择管理员的角色', trigger: 'blur' }
+          ],
+    password: [
+            { required: true, message: '请输入管理员的密码', trigger: 'blur' },
+            { min: 6, max: 10, message: '长度在 6 到 10 个字符', trigger: 'blur' }
+          ]
   }
-
-  queryIdetity() {
-    this.dialogLibrary = true;
+  resetRules: object = {
+    password: [
+            { required: true, message: '请输入管理员的密码', trigger: 'blur' },
+            { min: 6, max: 10, message: '长度在 6 到 10 个字符', trigger: 'blur' }
+          ],
+    reNewPassword: [
+            { required: true, message: '请确认管理员的密码', trigger: 'blur' },
+            { min: 6, max: 10, message: '长度在 6 到 10 个字符', trigger: 'blur' }
+          ]
   }
-  commandClick(val) {
-    if (val === "update") {
-      this.roleTitle = "1";
-      this.dialogCreate = true;
-    } else {
-      this.$confirm("此操作将永久删除该数据, 是否继续?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
+  initForm: object = {
+    url: '/admin/usrUser/admin/list',
+    method: 'get'
+  }
+  filterForm: object = {
+    name: ''
+  }
+  updateArray: Array<string> = ['statusEdit'] //需要行内修改的
+  deleteForm: object = {
+    url: '/admin/usrUser/admin',
+    method: 'delete',
+    data: []
+  }
+  created() {
+    this.initForm['params'] = Object.assign(this.initForm['params'], this.page, this.filterForm) // 合并参数
+    this.fetchRoleList()
+  }
+  // 确定添加/修改管理员
+  addManagerConfirm() {
+    this.$refs['Forms']['validate']((valid) => {
+        if (valid) {
+          this.roleList.forEach(ele => {
+            if (ele['name'] === this.Form['roleName']) {
+              this.Form['roleId'] = ele['id']
+            }
+          })
+            addManager(this.Form).then(res => {
+              if(res.data.code === 200) {
+                this['fetchData'](this.initForm)
+                this.$message.success(`${this.Form['id'] ? '修改成功' : '添加成功'}`)
+              } else {
+                this.$message.error(`${this.Form['id'] ? '修改失败' : '添加失败'}`)
+              }
+              this['handleClose']()
+            })
+        }
       })
-        .then(() => {
-          this.$message({
-            type: "success",
-            message: "删除成功!"
-          });
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消删除"
-          });
-        });
+  }
+  ComponentCommand(status: string, row:object) {
+    return {
+      ...row,
+      status
     }
   }
+  // 修改管理员状态
+  changeStatus(Obj: object) {
+    manageStatus(Obj['status'], Obj['id']).then(res => {
+      if(res.data.code === 200) {
+        this.$message.success('修改成功')
+        this['fetchData'](this.initForm)
+      }
+    })
+  }
+  // 确认重置密码
+  resetPasswordConfirm() {
+    this.$refs['Forms']['validate']((valid) => {
+      if (valid) {
+        if (this.resetForms['newPassword'] !== this.resetForms['reNewPassword']) {
+          this.$message.error('两次密码不一致!')
+          return
+        }
+        const Obj = {
+          id: this.resetForms['id'],
+          newPassword: this.resetForms['newPassword']
+        }
+        resetPassword(Obj).then(res => {
+          if(res.data.code === 200) {
+            this.$message.success('修改密码成功!')
+          } else {
+            this.$message.error('修改密码失败!')
+          }
+          this.resetVisible = false
+        })
+      }
+    })
 
-  handleClose() {
-    this.roleTitle = "0";
-    this.dialogCreate = false;
+  }
+  // 关闭重置密码框
+  handleCloseReset() {
+    this.resetVisible = false
+    this.resetForms['newPassword'] = ''
+  }
+  // 获取角色列表
+  fetchRoleList() {
+    getRoleList(null).then(res => {
+      this.roleList = res.data.data
+    })
   }
 }
 </script>
