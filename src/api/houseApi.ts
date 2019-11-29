@@ -34,6 +34,65 @@ export function updateHouseGroup(data: Object) {
   })
 }
 
+// 创建单元楼
+export function addBuilding(data: object) {
+  return _axios({
+    url: '/admin/hsBuilding',
+    method: 'post',
+    data
+  })
+}
+
+// 修改单元楼
+export function updateBuilding(data: object) {
+  return _axios({
+    url: '/admin/hsBuilding',
+    method: 'put',
+    data
+  })
+}
+
+// 删除单元楼
+export function deleteBuilding(id: string) {
+  return _axios({
+    url: '/admin/hsBuilding',
+    method: 'delete',
+    params: {
+      id
+    }
+  })
+}
+
+// 获取单元楼单位
+export function getUnitList() {
+  return _axios({
+    url: '/admin/unit',
+    method: 'get'
+  })
+}
+
+// 增加单元楼单位
+export function addUnit(name:string) {
+  return _axios({
+    url: '/admin/unit',
+    method: 'post',
+    data: {
+      name
+    }
+  })
+}
+
+// 删除单元楼单位
+export function deleteUnit(id:string) {
+  return _axios({
+    url: '/admin/unit',
+    method: 'delete',
+    params: {
+      id
+    }
+  })
+}
+
 /*******门禁卡管理*********/
 // 门禁卡启用与禁用
 export function changeCardStstus(status: string, id: string) {

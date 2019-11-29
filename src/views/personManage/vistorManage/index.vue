@@ -108,7 +108,7 @@
             </el-table-column>
 
             <el-table-column prop="vistor_type" width="101" align="center" label="访客类型">
-              <template slot="header" slot-scope="scope">
+              <template slot="header">
                 <el-dropdown style="padding:0;" trigger="click" @command="filterType">
                   <span class="el-dropdown-link">
                     访客类型
@@ -139,7 +139,7 @@
             <el-table-column prop="buildingName" align="center" label="所属楼栋"></el-table-column>
             <el-table-column prop="houseName" align="center" label="房屋编号"></el-table-column>
             <el-table-column prop="status" align="center" label="状态">
-              <template slot="header" slot-scope="scope">
+              <template slot="header">
                 <el-dropdown style="padding:0;" trigger="click" @command="filterStatus">
                   <span class="el-dropdown-link">
                     状态

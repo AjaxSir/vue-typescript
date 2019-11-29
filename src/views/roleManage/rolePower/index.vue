@@ -43,7 +43,7 @@
 
             <el-table-column align="center" label="权限">
               <template>
-                 <el-button @click='dialogTableVisible = true' type='text'>查看</el-button>
+                 <el-button @click='dialogTableVisible = true' type='text'>修改权限</el-button>
               </template>
             </el-table-column>
 
@@ -90,12 +90,12 @@
       width="600px"
       :before-close="handleClose"
     >
-      <el-form ref="Forms" :model="roleForm" label-width="80px">
+      <el-form ref="Forms" :rules='rules' :model="Form" label-width="80px">
         <el-form-item label="角色名" prop='name'>
-          <el-input v-model="roleForm.name"></el-input>
+          <el-input v-model="Form.name"></el-input>
         </el-form-item>
         <el-form-item label="备注" prop='note'>
-          <el-input type="textarea" v-model="roleForm.note"></el-input>
+          <el-input type="textarea" v-model="Form.note"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -110,7 +110,7 @@
 import { Component, Prop, Vue, Mixins } from "vue-property-decorator";
 import { Getter, Action, Mutation } from "vuex-class";
 import mixin from "@/config/minxins";
-import { addRole } from '@/api/systemApi.ts'
+import { addRole, updateRole } from '@/api/systemApi.ts'
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 
 @Component({
@@ -134,10 +134,10 @@ export default class InformIssue extends Vue {
   }
 
   private dialogTableVisible: boolean = false;
-  private roleForm: Object = {
+  private Form: Object = {
     name: null,
     note: null,
-    permission: ['111']
+    permission: ['']
   };
   initForm: object = {
     url: '/admin/usrRole/page',
@@ -148,20 +148,39 @@ export default class InformIssue extends Vue {
     method: 'delete',
     data: []
   }
+  rules: object = {
+   name: [
+            { required: true, message: '请输入角色名', trigger: 'blur' }
+          ],
+  }
   changeStatus(row) {
     row.LookStatus = row.UpdateStatus
     row.lookDisabled = row.UpdateStatus
   }
   // 新增角色
   addRoleConfirm() {
-    addRole(this.roleForm).then(res => {
-      if (res.data.code === 200) {
-        this['fetchData'](this.initForm)
-        this.$message.success('新增角色成功')
+    this.$refs['Forms']['validate']((valid) => {
+      if(valid) {
+        if(!this.Form['id']) {
+          addRole(this.Form).then(res => {
+            if (res.data.code === 200) {
+              this['fetchData'](this.initForm)
+              this.$message.success('新增角色成功')
+            }
+            this['dialogCreate'] = false
+          })
+        } else {
+          updateRole(this.Form).then(res => {
+            if (res.data.code === 200) {
+              this['fetchData'](this.initForm)
+              this.$message.success('修改角色成功')
+            }
+            this['dialogCreate'] = false
+          })
+        }
       }
-
-      this['dialogCreate'] = false
     })
+
   }
   created() {
     this.initForm['params'] = Object.assign(this.initForm['params'], this.page) // 合并参数
