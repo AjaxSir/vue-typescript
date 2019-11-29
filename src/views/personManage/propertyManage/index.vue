@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-row>
       <el-col :span="24">
-        <ActionHeader
+ <ActionHeader
           :moreStatus='false'
          :dialogCreate.sync="dialogCreate" :total="page.total">
           <div slot="houseNum">

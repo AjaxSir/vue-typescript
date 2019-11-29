@@ -4,7 +4,7 @@
       <el-col :span="24">
         <action-header :total="1">
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>导出</el-dropdown-item>
+            <el-dropdown-item command="export">导出</el-dropdown-item>
           </el-dropdown-menu>
           <div slot="houseNum">
             <!-- <span class="word-filter">
@@ -159,28 +159,6 @@ td {
 }
 
 .serial-num {
-  position: relative;
-}
-
-.fun-btn {
-  position: absolute;
-  left: -64px;
-  top: 12px;
-  .iconfont {
-    font-size: 19px;
-    color: #8091a5;
-    cursor: pointer;
-  }
-}
-.table-col {
-  position: relative;
-}
-.close-menu {
-  width: 10px;
-  height: 48px;
-  background: #acb7c1;
-  border-top-right-radius: 20px;
-  border-bottom-right-radius: 20px;
   position: relative;
 }
 

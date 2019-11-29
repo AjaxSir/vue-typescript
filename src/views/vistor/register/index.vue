@@ -18,7 +18,9 @@
           >
             <span class="custom-tree-node" slot-scope="{ node }">
               <span>{{ node.label }}</span>
-              <p v-if="node.label === deviceName" class="choose-target"></p>
+              <p v-if="node.label === deviceName" class="choose-target">
+                <i class="el-icon-success"></i>
+              </p>
             </span>
           </el-tree>
         </div>
@@ -105,18 +107,18 @@
                   <el-form-item class="vistorItemForm" label="被访房屋:">
                     <el-select
                       style="width:210px"
-                      v-model="writeVisitor.buildingId"
+                      v-model="writeVisitor.houseId"
                       placeholder="请选择"
                       size="small"
                     >
                       <el-option
                         v-for="item in houseType"
-                        :key="item.buildingId"
+                        :key="item.houseId"
                         :label="item.name"
                         :value="item.value"
                       ></el-option>
                     </el-select>
-                    <!-- <el-input style="width:210px" size="small" v-model="writeVisitor.buildingId"></el-input> -->
+                    <!-- <el-input style="width:210px" size="small" v-model="writeVisitor.houseId"></el-input> -->
                   </el-form-item>
 
                   <el-form-item class="vistorItemForm" label="被访事由:">
@@ -190,8 +192,18 @@
           </div>
           <div class="imgInfo" style="margin-left:80px;">
             <el-button :disabled="deviceId ===''" type="warning" size="small" @click="cancelBtn">取消</el-button>
-            <el-button :disabled="deviceId ===''" type="primary" size="small" @click="createVisitor">确定</el-button>
-            <el-button :disabled="deviceId ===''" type="success" size="small" @click="handleLink">查看登记记录</el-button>
+            <el-button
+              :disabled="deviceId ===''"
+              type="primary"
+              size="small"
+              @click="createVisitor"
+            >确定</el-button>
+            <el-button
+              :disabled="deviceId ===''"
+              type="success"
+              size="small"
+              @click="handleLink"
+            >查看登记记录</el-button>
           </div>
         </div>
         <div :class="rowSpan.row1===4 ? menuControl1 : menuControl2" @click="menuVisible">
@@ -229,9 +241,12 @@ const DataTree = () => import("@/components/DataTree.vue");
   }
 })
 export default class VistorRegister extends Vue {
+  filterForm: object = {
+    tag: "no"
+  }; //根据关键字查询
   TreeData: Array<Object> = []; // 树形结构数据
   private nameList: Array<Object> = []; //人员
-  private houseType: Array<Object> = [{ value: "", name: "", buildingId: "" }]; //指定房屋
+  private houseType: Array<Object> = [{ value: "", name: "", houseId: "" }]; //指定房屋
   private loading: Boolean = false;
 
   private rowSpan: any = {
@@ -241,15 +256,15 @@ export default class VistorRegister extends Vue {
   private menuControl1: String = "menu-control";
   private menuControl2: String = "menu-visible";
   private startFetch: Boolean = false;
-  private deviceId: String = "";
-  private deviceName: String = "";
+  private deviceId: any = "";
+  private deviceName: any = "";
   defaultHead: string = require("@/assets/defaultHead.jpg");
 
   vistorForm: object = {}; //访客刷身份证信息
 
   writeVisitor: Object = {
     // 访客填写信息
-    buildingId: "", //被访房屋
+    houseId: "", //被访房屋
     id: "", //身份证信息id
     numPeople: 0, // 同行人数
     phone: "", // 电话
@@ -283,7 +298,13 @@ export default class VistorRegister extends Vue {
       label: "其他",
       value: "5"
     }
-  ];
+  ]; // 获取注册设备
+
+  initForm: object = {
+    //获取车辆列表url
+    url: "/admin/dev-manage/get-reg-dev/",
+    method: "get"
+  };
 
   dataFormate: Object = {
     children: "sonBuildGroups",
@@ -307,6 +328,11 @@ export default class VistorRegister extends Vue {
 
   created() {
     this.getDevice();
+    this.initForm["params"] = Object.assign(
+      this.initForm["params"],
+      this.page,
+      this.filterForm
+    ); // 合并参数
   }
 
   destroyed() {
@@ -404,9 +430,9 @@ export default class VistorRegister extends Vue {
     const { data } = await getTargetHouse({ id: select });
     this.houseType = data.data.map(item => {
       return {
-        value: item.houseDetail.buildingId,
+        value: item.houseId,
         name: item.houseDetail.locationName,
-        buildingId: item.houseDetail.buildingId
+        houseId: item.houseId
       };
     });
   }
@@ -430,6 +456,7 @@ export default class VistorRegister extends Vue {
     /**@description 取消注册 */
     cancelVisitor(this.deviceId).then(() => {
       this.vistorForm = {};
+      this.writeVisitor = {};
       this["notify"]("取消注册成功");
       this.startFetch = true;
       this.getVisitorData();
@@ -542,9 +569,6 @@ export default class VistorRegister extends Vue {
   padding-right: 8px;
 }
 .choose-target {
-  width: 5px;
-  height: 5px;
-  background-color: #f56c6c;
-  border-radius: 50%;
+  color: #20a0ff;
 }
 </style>

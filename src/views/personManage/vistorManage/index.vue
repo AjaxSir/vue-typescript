@@ -95,11 +95,31 @@
     <el-row :gutter="10">
       <el-col :span="24">
         <div class="rightContent">
-          <el-table :data="list_data" border>
-            <!-- <el-table-column type="selection" align="center"></el-table-column> -->
+          <el-table
+            v-loading="showLoading"
+            :data="list_data"
+            stripe
+            class="demo-block"
+            highlight-current-row
+            @cell-mouse-enter="enterRowChange"
+            @cell-mouse-leave="leaveRowChange"
+            @selection-change="handleSelectionChange"
+          >
+            <el-table-column type="selection" align="center"></el-table-column>
             <el-table-column type="index" width="50" align="center" label="编号"></el-table-column>
-
-            <el-table-column prop="name" width="70" align="center" label="姓名"></el-table-column>
+            <el-table-column prop="name" width="70" align="center" label="姓名">
+              <template slot-scope="scope">
+                <span>{{scope.row.name}}</span>
+                <div class="fun-btn">
+                  <el-dropdown trigger="click" placement="bottom-start" @command="commandClick">
+                    <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
+                    <el-dropdown-menu slot="dropdown">
+                      <el-dropdown-item :command="returnCommand('delete', scope.row)">批量删除</el-dropdown-item>
+                    </el-dropdown-menu>
+                  </el-dropdown>
+                </div>
+              </template>
+            </el-table-column>
             <el-table-column prop="phone" min-width="90" align="center" label="电话"></el-table-column>
             <el-table-column prop="visitName" align="center" label="受访人姓名">
               <template slot-scope="{ row }">
@@ -356,6 +376,13 @@ export default class VistoryManage extends Vue {
     method: "get"
   };
 
+  deleteForm: Object = {
+    //单个或批量删除
+    url: "/admin/usr-visitor/batch-delete/",
+    method: "delete",
+    data: []
+  };
+
   private listQuery: Object = {
     // 访客目标通行记录翻页
     total: 0,
@@ -443,6 +470,14 @@ export default class VistoryManage extends Vue {
         );
       }
     };
+  }
+
+  handleSelectionChange(val) {
+    /**@description  获取需要操作的数据列表 */
+    this.deleteForm["data"] = [];
+    val.forEach(ele => {
+      this.deleteForm["data"].push(ele.id);
+    });
   }
 
   created() {
@@ -586,5 +621,29 @@ export default class VistoryManage extends Vue {
 .n {
   color: black;
   background: #fff;
+}
+.fun-btn {
+  position: absolute;
+  left: -64px;
+  top: 30%;
+
+  .iconfont {
+    font-size: 19px;
+    color: #8091a5;
+    cursor: pointer;
+  }
+}
+
+.table-col {
+  position: relative;
+}
+
+.close-menu {
+  width: 10px;
+  height: 48px;
+  background: #acb7c1;
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+  position: relative;
 }
 </style>

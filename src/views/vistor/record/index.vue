@@ -25,11 +25,6 @@
               <span class="filter-name">联系电话:</span>
               <el-input class="input-filter" size="small" v-model="filterForm.cardNo"></el-input>
             </div>
-            <!-- <div class="word-filter">
-              <span class="filter-name">同行人数:</span>
-              <el-input style="width:165px" size="small" v-model="filterForm.minNumPeople"></el-input>&nbsp;&nbsp;-&nbsp;&nbsp;
-              <el-input style="width:165px" size="small" v-model="filterForm.maxNumPeople"></el-input>
-            </div>-->
             <div class="word-filter">
               <span class="filter-name">有效时间:</span>
               <el-date-picker
@@ -94,17 +89,41 @@
           >
             <span class="custom-tree-node" slot-scope="{ node }">
               <span>{{ node.label }}</span>
-              <p v-if="node.label === device_name" class="choose-target"></p>
+
+              <p v-if="node.label === deviceName" class="choose-target">
+                <i class="el-icon-success"></i>
+              </p>
             </span>
           </el-tree>
         </div>
       </el-col>
       <el-col :span="rowSpan.row2" class="table-col">
         <div class="rightContent">
-          <el-table :data="list_data" style="width: 100%">
+          <el-table
+            v-loading="showLoading"
+            :data="list_data"
+            stripe
+            class="demo-block"
+            highlight-current-row
+            @cell-mouse-enter="enterRowChange"
+            @cell-mouse-leave="leaveRowChange"
+            @selection-change="handleSelectionChange"
+          >
             <el-table-column type="selection" align="center" width="40"></el-table-column>
             <el-table-column type="index" label="编号" align="center" width="50"></el-table-column>
-            <el-table-column prop="name" align="center" label="姓名"></el-table-column>
+            <el-table-column prop="name" align="center" label="姓名">
+              <template slot-scope="scope">
+                <span>{{scope.row.name}}</span>
+                <div class="fun-btn">
+                  <el-dropdown trigger="click" placement="bottom-start" @command="commandClick">
+                    <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
+                    <el-dropdown-menu slot="dropdown">
+                      <el-dropdown-item :command="returnCommand('delete', scope.row)">批量删除</el-dropdown-item>
+                    </el-dropdown-menu>
+                  </el-dropdown>
+                </div>
+              </template>
+            </el-table-column>
             <el-table-column prop="phone" label="电话" align="center"></el-table-column>
             <el-table-column prop="visitName" label="受访人姓名" align="center"></el-table-column>
             <el-table-column prop="visitType" label="访客类型" align="center" width="101">
@@ -233,7 +252,7 @@ export default class VistorRegister extends Vue {
   private menuControl2: String = "menu-visible";
 
   TreeData: Array<Object> = []; // 树形结构数据
-  private device_name: String = "";
+  private deviceName: any = "";
 
   dataFormate: Object = {
     children: "sonBuildGroups",
@@ -244,6 +263,13 @@ export default class VistorRegister extends Vue {
     //获取车辆列表url
     url: "/admin/usr-visitor/",
     method: "get"
+  };
+
+  deleteForm: Object = {
+    //单个或批量删除
+    url: "/admin/usr-visitor/batch-delete/",
+    method: "delete",
+    data: []
   };
 
   private selectType: Array<Object> = [
@@ -283,10 +309,18 @@ export default class VistorRegister extends Vue {
     }
   }
 
+  handleSelectionChange(val) {
+    /**@description  获取需要操作的数据列表 */
+    this.deleteForm["data"] = [];
+    val.forEach(ele => {
+      this.deleteForm["data"].push(ele.id);
+    });
+  }
+
   created() {
     this.getDevice();
     this.filterForm["regDevId"] = this.$route.query.id;
-    this.device_name = this.$route.query.name;
+    this.deviceName = this.$route.query.name;
     this.initForm["params"] = Object.assign(
       this.initForm["params"],
       this.page,
@@ -295,6 +329,7 @@ export default class VistorRegister extends Vue {
   }
 
   async getDevice() {
+    /**@description 获取注册设备 */
     const { data } = await regDevice();
     this.TreeData = data.data;
   }
@@ -302,7 +337,7 @@ export default class VistorRegister extends Vue {
   async handleNodeClick(val) {
     /**@description 树节点点击事件 */
     this.filterForm["regDevId"] = val.id;
-    this.device_name = val.name;
+    this.deviceName = val.name;
     this.initForm["params"] = Object.assign(
       this.initForm["params"],
       this.page,
@@ -425,10 +460,7 @@ export default class VistorRegister extends Vue {
   padding-right: 8px;
 }
 .choose-target {
-  width: 5px;
-  height: 5px;
-  background-color: #f56c6c;
-  border-radius: 50%;
+  color: #20a0ff;
 }
 .el-dropdown-link {
   color: #20a0ff;
@@ -440,5 +472,30 @@ export default class VistorRegister extends Vue {
 .n {
   color: black;
   background: #fff;
+}
+
+.fun-btn {
+  position: absolute;
+  left: -64px;
+  top: 30%;
+
+  .iconfont {
+    font-size: 19px;
+    color: #8091a5;
+    cursor: pointer;
+  }
+}
+
+.table-col {
+  position: relative;
+}
+
+.close-menu {
+  width: 10px;
+  height: 48px;
+  background: #acb7c1;
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+  position: relative;
 }
 </style>
