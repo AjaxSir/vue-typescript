@@ -33,7 +33,7 @@ _axios.interceptors.response.use(
       case 400:
           Message({
             type: 'warning',
-            message: '参数传错!'
+            message: response.data.message
           });
           break
       case 500:

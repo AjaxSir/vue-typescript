@@ -12,7 +12,7 @@ export function createDevice(data: object) {
 // 获取设备列表
 export function getDeviceList(params: object){
   return _axios({
-    url: '/admin/dev-info/page-query',
+    url: '/admin/dev-manage/page-query',
     method: 'get',
     params
   })

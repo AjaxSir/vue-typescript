@@ -30,7 +30,7 @@ export default class AppMain extends Vue{
       dom.style.width = '64px'
     } else {
       const dom = document.getElementById('navMenu') as HTMLElement
-      dom.style.width = '170px'
+      dom.style.width = '177px'
     }
   }
 }
@@ -53,6 +53,7 @@ export default class AppMain extends Vue{
 .routerView{
   flex: 1;
   margin-left: 20px;
+  padding-right: 20px;
 }
 
  .fade-enter{

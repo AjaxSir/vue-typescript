@@ -1,4 +1,24 @@
 import _axios from "../plugins/axios";
+/***** 物业/用户 禁用恢复 ****** */
+export function resetDisabledUser(status: string, id: string) {
+  return _axios({
+    url: status === '1' ? '/admin/usrUser/reset' : '/admin/usrUser/disable',
+    method:'put',
+    params: {
+      id
+    }
+  })
+}
+
+// 查看用户和物业人员的通行记录
+export function getUserPropertyPass(params: object) {
+  return _axios({
+    url: '/admin/people-pass/user',
+    method: 'get',
+    params
+  })
+}
+
 //****住户相关****** */
 // 添加住户
 export function addPeople(data: Object) {
@@ -50,6 +70,17 @@ export function addPropert(data: object) {
   })
 }
 
+// 查看物业人员
+export function watchPropert(id:string) {
+  return _axios({
+    url: '/admin/usrUser/PropertyManager',
+    method: 'get',
+    params: {
+      id
+    }
+  })
+}
+
 /********** 获取权限组 ************/
 export function getRoleGroup(name: string | null) {
   return _axios({
@@ -80,3 +111,24 @@ export function deleteRoleGroup(id:string) {
     }
   })
 }
+
+// 修改全选组信息
+export function updateRoleGroup(data: object) {
+  return _axios({
+    url: '/admin/devAuthorities',
+    method: 'put',
+    data
+  })
+}
+
+// 通过id获取权限组信息
+export function getGroupInfoById(id: string){
+  return _axios({
+    url: '/admin/devAuthorities',
+    method: 'get',
+    params: {
+      id
+    }
+  })
+}
+

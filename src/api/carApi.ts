@@ -51,3 +51,15 @@ export function getTargetUser(id) {
     }
   })
 }
+
+
+// 通过id获取用户/物业的车辆信息
+export function getUserPropertyCar(id: string) {
+  return _axios({
+    url: '/admin/usr-car/byUserId',
+    method: 'get',
+    params: {
+      id
+    }
+  })
+}
