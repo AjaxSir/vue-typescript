@@ -306,6 +306,7 @@ export default class PropertyManage extends Vue {
     // 获取物业人员的车辆信息
     getUserPropertyCar(row.id).then(res => {
       this.carList = res.data.data
+      console.log(1)
     })
   }
   // 物业人员通行记录翻页
