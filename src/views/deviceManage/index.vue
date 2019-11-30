@@ -4,12 +4,14 @@
       <el-col :span="24">
         <action-header
         :initFormHeader='initForm'
+        exportUrl='/v1/admin/dev-manage/export'
+        exportName='设备导出.xls'
         @fetchData='fetchData'
         :filterForm='filterForm'
         :dialogCreate.sync="dialogCreate"
-        :total="1">
+        :total="page.total">
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>导出</el-dropdown-item>
+            <el-dropdown-item command='export'>导出</el-dropdown-item>
           </el-dropdown-menu>
           <div slot="houseNum">
             <span class="word-filter">
@@ -35,7 +37,9 @@
             :data="list_data"
             stripe
             class="demo-block"
+            v-loading='showLoading'
             highlight-current-row
+            @selection-change="handleSelectionChange"
             @cell-mouse-enter="enterRowChange"
             @cell-mouse-leave="leaveRowChange"
           >
@@ -58,29 +62,42 @@
               </template>
             </el-table-column>
 
-            <el-table-column align="center" prop="houseRelative" label="单元信息"></el-table-column>
+            <el-table-column align="center" prop="address" label="单元信息"></el-table-column>
 
-            <el-table-column align="center" prop="carNum" label="设备型号"></el-table-column>
+            <el-table-column align="center" prop="bindingType" label="设备类型">
+              <template slot-scope="{row}">
+                <span>{{ row.type | devType }}</span>
+                </template>
+            </el-table-column>
 
-            <el-table-column align="center" prop="createDate" label="上线时间" width="160"></el-table-column>
-            <el-table-column align="center" prop="createDate" label="离线时间" width="160"></el-table-column>
+            <el-table-column align="center" prop="upTime" label="上线时间" width="160"></el-table-column>
+            <el-table-column align="center" prop="downTime" label="离线时间" width="160"></el-table-column>
 
-            <el-table-column align="center" prop="num" label="设备说明"></el-table-column>
+            <el-table-column align="center" prop="note" label="设备说明">
+              <template slot-scope="{row}">
+                <span>{{ row.note || '--' }}</span>
+                </template>
+            </el-table-column>
 
             <el-table-column align="center" prop="type" label="状态">
               <template slot-scope="scope">
                 <el-tag
                   size="small"
                   style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
-                  :type="scope.row.type === 1 ? 'success' : 'danger'"
-                >{{ scope.row.type === 1 ? "连线中" : "离线中" }}</el-tag>
+                  :type="scope.row.type === '1' ? 'success' : 'danger'"
+                >{{ scope.row.type === '1' ? "连线中" : "离线中" }}</el-tag>
               </template>
             </el-table-column>
 
-            <el-table-column align="center" prop="createDate" label="绑定时间" width="220"></el-table-column>
+            <el-table-column align="center" prop="bindTime" label="绑定时间" width="220">
+              <template slot-scope="{row}">
+                <span>{{ row.bindTime || '--' }}</span>
+                </template>
+            </el-table-column>
           </el-table>
         </div>
-        <el-pagination style="margin-top:10px;" background layout="prev, pager, next" :total="2"></el-pagination>
+        <el-pagination
+         @current-change='pageChange' style="margin-top:10px;" background layout="prev, pager, next" :total="page.total"></el-pagination>
       </el-col>
     </el-row>
     <el-dialog
@@ -92,19 +109,25 @@
         <el-tab-pane label="详细信息" name="first">
           <el-form label-width="100px" :model="detailDialogForm">
             <el-form-item label="所属单元信息:">
-              <span>{{detailDialogForm.houseRelative}}</span>
+              <span>{{detailDialogForm.address}}</span>
             </el-form-item>
             <el-form-item label="状态:">
-              <span>{{detailDialogForm.type === 1 ? "连线中" : "离线中"}}</span>
+              <span>{{detailDialogForm.type === '1' ? "连线中" : "离线中"}}</span>
             </el-form-item>
             <el-form-item label="门禁类型:">
-              <span>{{detailDialogForm.carNum}}</span>
+              <span>{{detailDialogForm.type | devType}}</span>
             </el-form-item>
-            <el-form-item label="上线时间:">
-              <span>{{detailDialogForm.createDate}}</span>
+            <el-form-item label="绑定时间:">
+              <span>{{detailDialogForm.bindTime}}</span>
+            </el-form-item>
+            <el-form-item label="设备绑定时间:">
+              <span>{{detailDialogForm.bindingTime}}</span>
             </el-form-item>
             <el-form-item label="创建时间:">
               <span>{{detailDialogForm.createDate}}</span>
+            </el-form-item>
+            <el-form-item label="最后离线时间:">
+              <span>{{detailDialogForm.downTime}}</span>
             </el-form-item>
           </el-form>
         </el-tab-pane>
@@ -123,77 +146,73 @@
     </el-dialog>
     <!-- 新增或修改弹出表单 -->
     <el-dialog
+    :close-on-click-modal='false'
       :title="roleTitle==='0' ? '新增' : '修改'"
       :visible.sync="dialogCreate"
       width="640px"
       :before-close="handleClose"
     >
       <el-form
-        ref="dataForm"
-        :model="deciceForm"
+        ref="Forms"
+        :model="deviceForm"
         label-position="right"
         label-width="100px"
 
       >
-        <el-form-item class="phone-input" label="设备名称: " prop="title">
-          <el-input style="width:310px" v-model="deciceForm.title"></el-input>
+        <el-form-item class="phone-input" label="设备编号: " prop="serialNumber">
+          <el-input style="width:310px" v-model="deviceForm.serialNumber"></el-input>
         </el-form-item>
-        <el-form-item class="phone-input" label="设备进出: " prop="title">
-          <el-input style="width:310px" v-model="deciceForm.inOut"></el-input>
-        </el-form-item>
-        <el-form-item class="phone-input" label="设备地址: " prop="limitHouse">
+        <el-form-item class="phone-input" label="设备类型: " prop="type">
           <el-select
             style="width:310px;"
-            v-model="deciceForm.limitHouse"
-            multiple
-            placeholder="请选择发布对象"
+            v-model="deviceForm.type"
+            placeholder="请选择设备类型"
           >
-            <el-option
-              v-for="item in meetingLoc"
-              :key="item.id"
-              :label="item.name + '-' + item.unit"
-              :value="item.id"
-            ></el-option>
+            <el-option label="门禁" value="1"></el-option>
+            <el-option label="车禁" value="2"></el-option>
+            <el-option label="注册机" value="3"></el-option>
+            <el-option label="访客机" value="4"></el-option>
           </el-select>
-          <el-button type='text'>地图选点</el-button>
+        </el-form-item>
+        <el-form-item class="phone-input" label="设备进出: " prop="inOut">
+          <el-switch
+            v-model="deviceForm.inOut"
+            active-text="进"
+            inactive-text="出"
+            active-color="#13ce66"
+            inactive-color="#ff4949"
+            active-value="进"
+            inactive-value="出">
+          </el-switch>
+        </el-form-item>
+        <el-form-item class="phone-input" label="设备地址: " prop="address">
+          <el-input @change="getlocLat" style="width:310px" v-model="deviceForm.address"></el-input>
+          <el-button @click='mapVisible = true' type='text'>地图选点</el-button>
         </el-form-item>
 
-        <el-form-item class="phone-input" label="绑定设备: " prop="title">
-          <el-input style="width:310px" v-model="deciceForm.title"></el-input>
+        <el-form-item class="phone-input" label="绑定位置: " prop="bindingAddress">
+          <el-input style="width:310px" v-model="deviceForm.bindingAddress"></el-input>
           <el-button type='text' @click='deviceBindingVisible = true'>设备绑定</el-button>
-        </el-form-item>
-        <el-form-item class="phone-input" label="设备说明: " prop="title">
-          <el-input style="width:310px" v-model="deciceForm.info"></el-input>
-        </el-form-item>
-        <el-form-item class="phone-input" label="效验码: " prop="verification">
-          <el-input v-model="deciceForm.verification" placeholder="请输入效验码"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose">取 消</el-button>
-        <el-button type="primary" @click="handleClose">确 定</el-button>
+        <el-button type="primary" @click="confirmBind">确 定</el-button>
       </span>
     </el-dialog>
     <!-- 设备绑定 -->
-    <el-dialog width='600px' title="设备绑定" :visible.sync="deviceBindingVisible">
-      <el-form :model="deciceForm">
-        <el-form-item label="选择设备:" :label-width="formLabelWidth">
-          <el-select
-            style="width:310px;"
-            v-model="deciceForm.limitHouse"
-            multiple
-            placeholder="请选择发布对象"
-          >
-            <el-option
-              v-for="item in meetingLoc"
-              :key="item.id"
-              :label="item.name + '-' + item.unit"
-              :value="item.id"
-            ></el-option>
-          </el-select>
-        </el-form-item>
+    <el-dialog :close-on-click-modal='false' width='600px' title="设备绑定" :visible.sync="deviceBindingVisible">
+      <el-form :model="deviceForm">
         <el-form-item label="设备区分:" :label-width="formLabelWidth">
-         住宅
+          <el-select
+            @change='bindingTypeChange'
+            style="width:310px;"
+            v-model="deviceForm.bindingType"
+            placeholder="请选择设备区分"
+          >
+            <el-option label="单元楼" value="1"></el-option>
+            <el-option label="出入口" value="2"></el-option>
+          </el-select>
         </el-form-item>
       </el-form>
       <el-table
@@ -208,22 +227,46 @@
         <el-table-column
           prop="name"
           align='center'
-          label="名称">
+          label="设备名">
         </el-table-column>
         <el-table-column
-          prop="status"
+          prop="locationName"
           align='center'
-          label="状态">
+          label="地址">
+          <template slot-scope="{row}">
+            <span>{{ row.locationName || '暂无' }}</span>
+          </template>
         </el-table-column>
+        <el-table-column
+          prop="note"
+          align='center'
+          label="备注">
+           <template slot-scope="{row}">
+          <span>{{ row.note || '暂无' }}</span>
+        </template>
+        </el-table-column>
+
         <el-table-column
           prop="address"
           align='center'
           label="操作">
+          <template slot-scope="{row}">
+            <el-button :style="{ 'color': row.bindStatus ? 'red' : '#409EFF' }" type='text' @click='bindDevice(row)'>{{ row.bindStatus ? '当前绑定' : '点击绑定' }}</el-button>
+          </template>
         </el-table-column>
       </el-table>
       <div slot="footer" class="dialog-footer">
         <el-button @click="deviceBindingVisible = false">取 消</el-button>
         <el-button type="primary" @click="deviceBindingVisible = false">确 定</el-button>
+      </div>
+    </el-dialog>
+    <!-- 设备地址选择 -->
+    <el-dialog title="选取设备地址" :visible.sync="mapVisible">
+      <el-input v-model="deviceForm.address" placeholder="输入设备地址"></el-input>
+      <BaiduMap @pointClick='pointClick' :keyword='deviceForm.address' />
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="mapVisible = false">取 消</el-button>
+        <el-button type="primary" @click="mapVisible = false">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -234,12 +277,27 @@ import { Component, Prop, Vue, Mixins } from "vue-property-decorator";
 import { Getter, Action, Mutation } from "vuex-class";
 import mixin from "@/config/minxins";
 import { createDevice } from '@/api/deviceApi.ts'
+import { debounce } from '@/utils'
+import _axios from '@/plugins/axios'
+import { searchHouse, getInoutList } from '@/api/houseApi.ts'
 const ActionHeader = () => import("@/components/ActionHeader.vue");
-
+const BaiduMap = () => import('@/components/baiduMap/index.vue')
 @Component({
   mixins: [mixin],
   components: {
-    ActionHeader
+    ActionHeader,
+    BaiduMap
+  },
+  filters: {
+    devType(val:string) {
+      const data = {
+        "1": '门禁',
+        "2": '车禁',
+        "3": '注册机',
+        "4": '访客机',
+      }
+      return data[val]
+    }
   }
 })
 export default class DeviceManage extends Vue {
@@ -252,57 +310,116 @@ export default class DeviceManage extends Vue {
     method: 'get'
   }
   deleteForm: object = {
-    url: '/admin/dev-manage',
+    url: '/admin/dev-manage/batch-delete',
     method: 'delete',
-    params: {
-      id: '111'
-    }
+    data: []
   }
+  mapVisible: boolean = false // 地图显示框状态
   activeName: string = "first";
   detailDialogVisible: boolean = false; // 设备详情dialog弹框状态
   private formLabelWidth: String = "120px";
   detailDialogForm: Object = {}; // 设备详情
   doorRecordTable: Array<Object> = []; // 设备抓拍的通行记录
   private roleTitle: String = "0";
-  private deciceForm: Object = { // 创建设备表单
-    name: null,
-    region: null,
-    desc: null,
-    verification: null,
-    info: '',
-    inOut: ''
+  private deviceForm: Object = { // 创建设备表单
+    address: '',
+    bindingId:'',
+    bindingAddress: '',
+    bindingType: '1',
+    inOut: 'in',
+    latitude: '',
+    longitude:'',
+    note: '',
+    serialNumber: '',
+    subAddress: '',
+    type: '1'
   };
-  private meetingLoc: Array<Object> = [
-    {
-      id: "0",
-      name: "北门",
-      unit: "1-1-102"
-    },
-    {
-      id: "1",
-      name: "北门",
-      unit: "1-1-102"
-    },
-    {
-      id: "2",
-      name: "北门",
-      unit: "1-1-102"
-    }
-  ];
   deviceBindingVisible: boolean = false // 设备绑定dialog状态
   deviceBindingData: Array<Object> = [
-    {
-      name: '1期-1栋-2单元',
-      status: '在线'
-    },
-    {
-      name: '1期-2栋-2单元',
-      status: '离线'
-    }
   ]
   created() {
+    this.fetchBuilding()
     this.initForm['params'] = Object.assign(this.initForm['params'], this.page, this.filterForm) // 合并参数
-    console.log(this.initForm)
+  }
+    /** 获取经纬度 */
+    getlocLat() {
+      console.log(this)
+      _axios({
+        url: `/v2/`,
+        params: {
+          address: this.deviceForm['address'],
+          ak: 'vCZU88Guz4BmAODWTm8k9BP0WlwId1V0',
+          output: 'json'
+        },
+        method: 'get'
+      }).then(res => {
+        if (!res.data.status) {
+          this.deviceForm['longitude'] = res.data.result.location.lng
+          this.deviceForm['latitude'] = res.data.result.location.lat
+          console.log(this.deviceForm)
+        } else {
+          this.$message({
+            message: '没有找到对应的位置信息',
+            type: 'error'
+          })
+          this.deviceForm['longitude'] = ''
+          this.deviceForm['latitude'] = ''
+        }
+      })
+    }
+  // 点击地图选取地址
+  pointClick(Object: object) {
+    this.deviceForm['address'] = Object['province'] + Object['city'] + Object['district'] + Object['street']
+    this.deviceForm['latitude'] = Object['lat']
+    this.deviceForm['longitude'] = Object['lng']
+  }
+  // 获取单元楼列表
+  fetchBuilding() {
+    searchHouse().then(res => {
+      res.data.data.forEach(element => {
+        this.$set(element, 'bindStatus', false)
+      });
+      this.deviceBindingData = res.data.data
+    })
+  }
+  // 绑定设备
+  bindDevice(row) {
+    if (row.bindStatus) {
+      return row.bindStatus = false
+    }
+    this.deviceBindingData.forEach(ele => {
+      ele['bindStatus'] = false
+    })
+    row.bindStatus = true
+    this.deviceForm['bindingId'] = row.id
+    this.deviceForm['bindingAddress'] = row.locationName || '暂无'
+  }
+  // 获取出入口列表
+  fetchInputList() {
+    getInoutList().then(res => {
+      res.data.data.forEach(element => {
+        this.$set(element, 'bindStatus', false)
+      });
+      this.deviceBindingData = res.data.data
+    })
+  }
+  // 切换单元楼/出入口
+  bindingTypeChange(val: string) {
+    return val === '1' ? this.fetchBuilding() : this.fetchInputList()
+  }
+  // 确定绑定设备
+  confirmBind() {
+    this.$refs['Forms']["validate"](valid => {
+      if(valid) {
+        console.log(this.deviceForm)
+        // createDevice(this.deviceForm).then(res => {
+        //   if(res.data.code === 200) {
+        //     this['handleClose']()
+        //     this['fetchData'](this.initForm)
+        //   }
+        // })
+      }
+    })
   }
   /**
    * 查看设备详情
@@ -310,10 +427,6 @@ export default class DeviceManage extends Vue {
   showDetails(row) {
     this.detailDialogVisible = true;
     this.detailDialogForm = Object.assign({}, row);
-  }
-  handleClose() {
-    this.roleTitle = "0";
-    this['dialogCreate'] = false
   }
 }
 </script>

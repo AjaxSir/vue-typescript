@@ -3,8 +3,11 @@
     <el-row>
       <el-col :span="24">
         <ActionHeader
-          :moreStatus='false'
-         :dialogCreate.sync="dialogCreate" :total="page.total">
+        :initFormHeader='initForm'
+        @fetchData='fetchData'
+        :filterForm='filterForm'
+        :moreStatus='false'
+        :dialogCreate.sync="dialogCreate" :total="page.total">
           <div slot="houseNum">
             <div class="word-filter">
               <span class="filter-name">姓&nbsp;&nbsp;&nbsp;名:</span>

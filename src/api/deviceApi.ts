@@ -1,9 +1,9 @@
 import _axios from "../plugins/axios";
 
-// 创建设备
+// 绑定设备
 export function createDevice(data: object) {
   return _axios({
-    url: '/admin/dev-manage',
+    url: '/admin/dev-manage/bind',
     method: 'post',
     data
   })

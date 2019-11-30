@@ -95,7 +95,7 @@ export const constantRouterMap = [{
     path: 'property',
     component: _import_('personManage/propertyManage/index'),
     meta: {
-      title: '物业管理',
+      title: '物业人员管理',
       icon: 'icon-wuyeguanli',
       bg_color: '#6197d4'
     }

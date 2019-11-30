@@ -10,7 +10,18 @@
           :filterForm="filterForm"
         :dialogCreate.sync="dialogCreate" :total="1">
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>导入</el-dropdown-item>
+            <el-dropdown-item>
+              <el-upload
+                class="upload-demo"
+                :show-file-list='false'
+                :on-error='errorUpload'
+                :on-success='successUpload'
+                action="/v1/admin/usrUser/import"
+                >
+                <!-- <el-button size="small" type="primary">点击上传</el-button> -->
+                导入
+              </el-upload>
+            </el-dropdown-item>
             <el-dropdown-item command='export'>导出</el-dropdown-item>
             <el-dropdown-item>统计信息</el-dropdown-item>
           </el-dropdown-menu>
@@ -426,7 +437,18 @@ export default class OwnerManage extends Vue {
   created() {
     this.initForm['params'] = Object.assign(this.initForm['params'], this.page, this.filterForm) // 合并参数
   }
-  // 确定添加用户
+  // 导入失败
+  errorUpload(err) {
+    this.$message.error('导入失败')
+  }
+  // 导入成功
+  successUpload(res) {
+    if(res.code === '400') {
+      return this.$message.error(res.message)
+    }
+    this['fetchData'](this.initForm)
+  }
+// 确定添加用户
   addUserConfirm() {
     this.$refs['Forms']['validate']((valid) => {
       if(valid) {
