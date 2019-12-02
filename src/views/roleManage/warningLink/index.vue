@@ -22,7 +22,6 @@
       highlight-current-row
       @cell-mouse-enter="enterRowChange"
       @cell-mouse-leave="leaveRowChange"
-      @cell-click="cellClick"
     >
       <el-table-column type="selection" width="50"></el-table-column>
 
@@ -34,7 +33,7 @@
             <el-dropdown trigger="click" placement="bottom-start" @command="commandClick">
               <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
               <el-dropdown-menu slot="dropdown">
-                <div @click="editType(scope.row)">
+                <div @click="editTarget(scope.row)">
                   <el-dropdown-item command="update">修改</el-dropdown-item>
                 </div>
                 <div @click="deleteBtn(scope.row)">
@@ -59,7 +58,7 @@
       :page-size="page.limit"
       :total="page.total"
     ></el-pagination>
-
+    <!-- 新增预警联系人 -->
     <el-dialog
       title="新增"
       :visible.sync="dialogCreate"
@@ -108,29 +107,32 @@
           <!-- <el-input v-model="createForm.earlyGroupId" autocomplete="off"></el-input> -->
           <el-select v-model="createForm.earlyGroupId" placeholder="请选择">
             <el-option
-              v-for="item in earlyGroup"
-              :key="item.id"
-              :label="item.groupName"
-              :value="item.id"
+              v-for="tag in earlyGroup"
+              :key="tag.id"
+              :label="tag.groupName"
+              :value="tag.id"
             ></el-option>
           </el-select>
-          <el-tag
-            :key="tag"
-            v-for="tag in dynamicTags"
-            closable
-            :disable-transitions="false"
-            @close="closeTag(tag)"
-          >{{tag}}</el-tag>
-          <el-input
-            class="input-new-tag"
-            v-if="inputVisible"
-            v-model="inputValue"
-            ref="saveTagInput"
-            size="small"
-            @keyup.enter.native="handleInputConfirm"
-            @blur="handleInputConfirm"
-          ></el-input>
-          <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Tag</el-button>
+          <el-button @click="showUnitSetting = !showUnitSetting">添加分组</el-button>
+          <div v-if="showUnitSetting">
+            <el-tag
+              style="margin-left:5px"
+              :key="index"
+              v-for="(tag, index) in earlyGroup"
+              closable
+              :disable-transitions="false"
+              @close="deleteTag(tag, index)"
+            >{{tag.groupName}}</el-tag>
+            <el-input
+              class="input-new-tag"
+              v-if="newTag"
+              v-model="newTagValue"
+              ref="saveTagInput"
+              size="small"
+              @blur="handleInputConfirm"
+            ></el-input>
+            <el-button v-else class="button-new-tag" size="small" @click="showInput">新增分组</el-button>
+          </div>
         </el-form-item>
         <el-form-item label="备注:">
           <el-input v-model="createForm.note" autocomplete="off"></el-input>
@@ -141,6 +143,90 @@
         <el-button type="primary" @click="createwarning">确 定</el-button>
       </div>
     </el-dialog>
+
+    <!-- 修改预警联系人 -->
+    <el-dialog
+      title="修改"
+      :visible.sync="dialogEdit"
+      width="500px"
+      :before-close="handleClose"
+      :close-on-click-modal="false"
+    >
+      <el-form
+        ref="dataForm"
+        :model="editForm"
+        label-position="right"
+        label-width="80px"
+        style="margin-right:40px;"
+      >
+        <el-form-item
+          label="名字:"
+          prop="name"
+          :show-message="showMessage"
+          :error="errorMessage.name"
+        >
+          <el-input v-model="editForm.name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item
+          label="电话:"
+          prop="phone"
+          :show-message="showMessage"
+          :error="errorMessage.phone"
+        >
+          <el-input v-model="editForm.phone" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item
+          label="邮箱:"
+          prop="email"
+          :show-message="showMessage"
+          :error="errorMessage.email"
+        >
+          <el-input v-model="editForm.email" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item
+          label="分组:"
+          prop="earlyGroupId"
+          :show-message="showMessage"
+          :error="errorMessage.earlyGroupId"
+        >
+          <el-select v-model="editForm.earlyGroupId" placeholder="请选择">
+            <el-option
+              v-for="tag in earlyGroup"
+              :key="tag.id"
+              :label="tag.groupName"
+              :value="tag.id"
+            ></el-option>
+          </el-select>
+          <el-button @click="showUnitSetting = !showUnitSetting">添加分组</el-button>
+          <div v-if="showUnitSetting">
+            <el-tag
+              style="margin-left:5px"
+              :key="index"
+              v-for="(tag, index) in earlyGroup"
+              closable
+              :disable-transitions="false"
+              @close="deleteTag(tag, index)"
+            >{{tag.groupName}}</el-tag>
+            <el-input
+              class="input-new-tag"
+              v-if="newTag"
+              v-model="newTagValue"
+              ref="saveTagInput"
+              size="small"
+              @blur="handleInputConfirm"
+            ></el-input>
+            <el-button v-else class="button-new-tag" size="small" @click="showInput">新增单位</el-button>
+          </div>
+        </el-form-item>
+        <el-form-item label="备注:">
+          <el-input v-model="editForm.note" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogEdit = false">取 消</el-button>
+        <el-button type="primary" @click="updatewarning">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -148,7 +234,14 @@
 import { Component, Prop, Vue, Mixins } from "vue-property-decorator";
 import { Getter, Action, Mutation } from "vuex-class";
 import mixin from "@/config/minxins";
-import { deleteWarning, getGroup } from "@/api/systemApi.ts";
+import {
+  addWarning, //新增预警联系人
+  editWarning, //修改预警联系人
+  deleteWarning, //删除预警联系人
+  getGroup, //获取预警联系人分组
+  addGroup, //新增预警联系人分组
+  deleteGroup //删除预警联系人分组
+} from "@/api/systemApi.ts";
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 
 @Component({
@@ -174,7 +267,12 @@ export default class WarningLink extends Vue {
   };
 
   dialogCreate: boolean = false;
-  private earlyGroup: Array<Object> = []; //获取分组
+
+  showUnitSetting: boolean = false; // 查看已有分组设置状态
+  earlyGroup: Array<Object> = []; //获取分组
+  newTag: boolean = false; // 新增分组框状态
+  newTagValue: string = ""; // 新增分组的值
+
   private createForm: Object = {
     //新增表单字段
     earlyGroupId: "", //分组id
@@ -182,6 +280,17 @@ export default class WarningLink extends Vue {
     name: "", //姓名
     note: "", //备注
     phone: "" //电话
+  };
+
+  private dialogEdit: Boolean = false; // 修改弹出表单
+  private editForm: Object = {
+    //修改表单字段
+    earlyGroupId: "", //分组id
+    email: "", //邮箱
+    name: "", //姓名
+    note: "", //备注
+    phone: "", //电话
+    id: "" //目标联系人id
   };
 
   private rules: Object = {
@@ -225,8 +334,20 @@ export default class WarningLink extends Vue {
     });
   }
 
-  cellClick(row, column, event, cell) {
-    row.carNote = true;
+  createwarning() {
+    /**@description 新增预警联系人 */
+    this.$refs["dataForm"]["validate"](valid => {
+      if (valid) {
+        var form = {
+          ...this.createForm
+        };
+        addWarning(form).then(res => {
+          this.handleClose();
+          this["fetchData"](this.initForm);
+          this["notify"]("添加预警联系人成功");
+        });
+      }
+    });
   }
 
   async getGroupList() {
@@ -236,70 +357,59 @@ export default class WarningLink extends Vue {
     this.earlyGroup = data.data;
   }
 
-  createwarning() {
-    /**@description 新增预警联系人 */
-    console.log(this.createForm);
-    this.$refs["dataForm"]["validate"](valid => {
-      if (valid) {
-        var form = [
-          {
-            ...this.createForm
-            // scenceUserId: this.restaurants[0]["scenceUserId"]
-          }
-        ];
-        // addCar(form).then(res => {
-        //   this.handleClose();
-        //   this["fetchData"](this.initForm);
-        //   this.nameDisabled = false;
-        //   this["notify"]("添加车辆名单成功");
-        // });
+  showInput() {
+    /**@description 显示新增分组框*/
+    this.newTag = true;
+  }
 
-        // .catch(err => {
-        //   const { data } = err.response;
-        //   console.log(err.response);
-        //     this.errorMessage = data[k][0];
-        // });
+  handleInputConfirm() {
+    /**@description 新增分组 */
+    this.newTag = false;
+    addGroup({ groupName: this.newTagValue }).then(res => {
+      if (res.data.code === 200) {
+        this.getGroupList();
+        this.newTagValue = "";
       }
     });
   }
 
-  editType(item) {
-    /**@description 修改状态 */
-    // for (const key in this.editForm) {
-    //   this.editForm[key] = item[key];
-    // }
-    // this.dialogEdit = true;
-  }
-
-  closeTag(tag) {
-    // this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1);
-  }
-
-  showInput() {
-    this.inputVisible = true;
-    this.$nextTick(_ => {
-      this.$refs.saveTagInput.$refs.input.focus();
+  deleteTag(tag, index) {
+    /**@description 删除分组 */
+    deleteGroup(tag.id).then(res => {
+      if (res.data.code === 200) {
+        this.getGroupList();
+      }
     });
   }
 
-  handleInputConfirm() {
-    let inputValue = this.inputValue;
-    if (inputValue) {
-      this.dynamicTags.push(inputValue);
+  editTarget(item) {
+    /**@description 修改操作 */
+    console.log(item);
+    for (const key in this.editForm) {
+      this.editForm[key] = item[key];
     }
-    this.inputVisible = false;
-    this.inputValue = "";
+    this.editForm["earlyGroupId"] = item.groupId;
+    this.dialogEdit = true;
+  }
+
+  updatewarning() {
+    /**@description 修改预警联系人 */
+    editWarning(this.editForm).then(() => {
+      this.handleClose();
+      this["notify"]("修改预警联系人成功");
+      this["fetchData"](this.initForm);
+    });
   }
 
   handleClose() {
     /** @description 关闭新增/修改dialog */
-    this.dialogCreate = false; //车辆新增dialog
-    // this.dialogEdit = false; //修改dialog
+    this.dialogCreate = false; //新增dialog
+    this.dialogEdit = false; //修改dialog
     this.$refs["dataForm"]["resetFields"]();
   }
 
   deleteBtn(item) {
-    /**@description 修改状态 */
+    /**@description 单个删除状态 */
     this.$confirm("此操作将永久删除此预警联系人信息, 是否继续?", "提示", {
       confirmButtonText: "确定",
       cancelButtonText: "取消",
@@ -334,5 +444,8 @@ export default class WarningLink extends Vue {
 }
 .table-col {
   position: relative;
+}
+.input-new-tag {
+  width: 120px;
 }
 </style>

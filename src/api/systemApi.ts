@@ -37,23 +37,6 @@ export function getRoleList(name: string | null) {
   })
 }
 
- // 新建角色
- export function addRole(data: object) {
-   return _axios({
-     url: '/admin/usrRole',
-     method: 'post',
-     data
-   })
- }
-
- // 修改角色
- export function updateRole(data: object) {
-   return _axios({
-     url: '/admin/usrRole',
-     method: 'put',
-     data
-   })
- }
 // 新建角色
 export function addRole(data: object) {
   return _axios({
@@ -63,8 +46,36 @@ export function addRole(data: object) {
   })
 }
 
+// 修改角色
+export function updateRole(data: object) {
+  return _axios({
+    url: '/admin/usrRole',
+    method: 'put',
+    data
+  })
+}
 
-// 获取预警联系人列表
+/********* 预警联系人 *********** */
+
+//新增预警联系人
+export function addWarning(data: Object) {
+  return _axios({
+    url: '/admin/usr-early-contact/',
+    method: 'post',
+    data
+  })
+}
+
+//修改预警联系人
+export function editWarning(data: Object) {
+  return _axios({
+    url: `/admin/usr-early-contact/${data['id']}/`,
+    method: 'patch',
+    data
+  })
+}
+
+// 删除预警联系人列表
 export function deleteWarning(id: any) {
   return _axios({
     url: `/admin/usr-early-contact/${id}/`,
@@ -72,10 +83,27 @@ export function deleteWarning(id: any) {
   })
 }
 
-// 获取分组
+// 获取预警联系人分组
 export function getGroup() {
   return _axios({
-    url: '/admin/usr-early-group',
+    url: '/admin/usr-early-group/',
     method: 'get',
+  })
+}
+
+//新增预警联系人分组
+export function addGroup(data: Object) {
+  return _axios({
+    url: '/admin/usr-early-group/',
+    method: 'post',
+    data
+  })
+}
+
+//删除预警联系人分组
+export function deleteGroup(id: any) {
+  return _axios({
+    url: `/admin/usr-early-group/${id}/`,
+    method: 'delete'
   })
 }

@@ -739,6 +739,19 @@ export default class CarList extends Vue {
 .serial-num {
   position: relative;
 }
+.fun-btn {
+  position: absolute;
+  left: -64px;
+  top: 28%;
+  .iconfont {
+    font-size: 19px;
+    color: #8091a5;
+    cursor: pointer;
+  }
+}
+.table-col {
+  position: relative;
+}
 
 .capture-img {
   width: 30px;
