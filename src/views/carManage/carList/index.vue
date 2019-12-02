@@ -69,7 +69,10 @@
                       <div @click="editType(scope.row)">
                         <el-dropdown-item command="update">修改</el-dropdown-item>
                       </div>
-                      <el-dropdown-item :command="returnCommand('delete', scope.row)">批量删除</el-dropdown-item>
+                      <el-dropdown-item :command="returnCommand('delete', scope.row)">
+                        {{ deleteForm.data.length ? '批量删除' : '删除' }}
+                      </el-dropdown-item>
+                      <!-- <el-dropdown-item :command="returnCommand('delete', scope.row)">批量删除</el-dropdown-item> -->
                     </el-dropdown-menu>
                   </el-dropdown>
                 </div>

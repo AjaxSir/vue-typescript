@@ -136,7 +136,7 @@ img {
 }
 
 .el-menu-item.is-active {
-  color: white !important;
+  color: #303133 ;
 }
 
 // .el-menu-item .showHidden{
@@ -161,4 +161,24 @@ img {
 .col-line {
   //详细信息分割线
   border-right: 1px solid #E4E7ED;
+}
+
+
+.indexNum{
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.fun-btn {
+  position: absolute;
+  left: 0px;
+  top: 50%;
+  margin-top: -11px;
+  .iconfont {
+    font-size: 19px;
+    color: #8091a5;
+    cursor: pointer;
+  }
 }

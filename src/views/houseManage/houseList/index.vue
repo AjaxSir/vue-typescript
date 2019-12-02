@@ -37,6 +37,10 @@
     <el-row :gutter="10">
       <el-col :span="rowSpan.row1">
         <data-tree
+        @fetchData='fetchData'
+        :page='page'
+        :filterForm='filterForm'
+        :initFormHeader='initForm'
         @getHouseTreeData='getHouseTreeData'
         :TreeData='TreeData' />
       </el-col>
@@ -55,21 +59,28 @@
           >
             <el-table-column type="selection" align='center' width="50"></el-table-column>
 
-            <el-table-column type="index" align='center' label="序号" width="50"></el-table-column>
-
-            <el-table-column class="serial-num" align='center' prop="name" label="所属楼栋">
+            <el-table-column type="index" align='center' label="序号" class="indexNum" width="50">
               <template slot-scope="scope">
-                <span>{{scope.row.groupName}}</span>
+                <span>{{scope.$index}}</span>
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start" @command='commandClick'>
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
                     <el-dropdown-menu slot="dropdown">
                       <el-dropdown-item :command='returnCommand("update", scope.row)'>远程开门</el-dropdown-item>
-                      <el-dropdown-item :command='returnCommand("delete", scope.row)'>删除</el-dropdown-item>
+                      <!-- <el-dropdown-item :command='returnCommand("delete", scope.row)'>删除</el-dropdown-item> -->
+                      <el-dropdown-item :command="returnCommand('delete', scope.row)">
+                        {{ deleteForm.data.length ? '批量删除' : '删除' }}
+                      </el-dropdown-item>
                       <el-dropdown-item :command='returnCommand("delete", scope.row)'>编辑信息</el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
                 </div>
+              </template>
+            </el-table-column>
+
+            <el-table-column class="serial-num" align='center' prop="name" label="所属楼栋">
+              <template slot-scope="scope">
+                <span>{{scope.row.groupName}}</span>
               </template>
             </el-table-column>
 
@@ -229,7 +240,8 @@ export default class CardManage extends Vue {
   }
   filterForm: object = {
     keys: '',
-    status: ''
+    status: '',
+    buildingId: ''
   }
   deleteForm: object = {
     url: '/admin/hsHouse',
@@ -402,16 +414,6 @@ export default class CardManage extends Vue {
   position: relative;
 }
 
-.fun-btn {
-  position: absolute;
-  left: -64px;
-  top: 8px;
-  .iconfont {
-    font-size: 19px;
-    color: #8091a5;
-    cursor: pointer;
-  }
-}
 .table-col {
   position: relative;
 }

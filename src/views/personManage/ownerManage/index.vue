@@ -61,19 +61,24 @@
             @cell-mouse-enter="enterRowChange"
             @cell-mouse-leave="leaveRowChange">
             <el-table-column type="selection" align="center"></el-table-column>
-            <el-table-column type="index" width="60" align="center" label="编号"></el-table-column>
-            <el-table-column align="center" class="serial-num" label="姓名">
-              <template slot-scope="{row}">
-                <el-button style="padding:0px;" type="text" @click="showDetail(row)">{{row.name }}</el-button>
+            <el-table-column type="index" width="60" class="indexNum" align="center" label="编号">
+              <template slot-scope="scope">
+                <span>{{ scope.$index }}</span>
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start" @command='commandClick'>
-                    <i v-show="row.showMenu" class="iconfont icon-menu"></i>
+                    <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
                     <el-dropdown-menu slot="dropdown">
-                      <!-- <el-dropdown-item :command='returnCommand("update", row)'>修改</el-dropdown-item> -->
-                      <el-dropdown-item :command='returnCommand("delete", row)'>删除</el-dropdown-item>
+                      <el-dropdown-item :command="returnCommand('delete', scope.row)">
+                        {{ deleteForm.data.length ? '批量删除' : '删除' }}
+                      </el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
                 </div>
+              </template>
+            </el-table-column>
+            <el-table-column align="center" class="serial-num" label="姓名">
+              <template slot-scope="{row}">
+                <el-button style="padding:0px;" type="text" @click="showDetail(row)">{{row.name }}</el-button>
               </template>
             </el-table-column>
             <el-table-column prop="phone" align="center" label="电话">
@@ -215,8 +220,6 @@
             <el-form-item class="floatForm" label="电话:"  prop='phone'>
               <el-input v-model="Form.phone" placeholder='输入电话'></el-input>
             </el-form-item>
-          <!-- </el-form> -->
-      <!-- <el-form :model="Form" style="overflow:hidden" :rules="rules" ref='Forms' label-width="50px"> -->
             <el-form-item class="floatForm" label="卡名:"  prop='cardName'>
               <el-input v-model="Form.cardName"  placeholder='输入卡名'></el-input>
             </el-form-item>
@@ -666,19 +669,4 @@ export default class OwnerManage extends Vue {
     position: relative;
     z-index: 999;
   }
-// .rightContent {
-//   flex: 1;
-//   box-shadow: 0px 6px 5px 0px lightgray;
-// }
-
-.fun-btn {
-  position: absolute;
-  left: -64px;
-  top: 12px;
-  .iconfont {
-    font-size: 19px;
-    color: #8091a5;
-    cursor: pointer;
-  }
-}
 </style>

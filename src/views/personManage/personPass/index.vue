@@ -16,27 +16,27 @@
           <div slot="houseNum">
             <div class="word-filter">
               <span class="filter-name">单元楼:</span>
-              <el-input class="input-filter" v-model='filterForm.unitHouse' size="small"></el-input>
+              <el-input style='width:220px' class="input-filter" v-model='filterForm.unitHouse' size="small"></el-input>
             </div>
              <div class="word-filter">
               <span class="filter-name">姓名:</span>
-              <el-input class="input-filter" v-model='filterForm.userName' size="small"></el-input>
+              <el-input style='width:220px' class="input-filter" v-model='filterForm.userName' size="small"></el-input>
             </div>
              <div class="word-filter">
-              <span class="filter-name">开始时间:</span>
+              <span class="filter-name">开始时间:</span> &nbsp;&nbsp;
               <el-date-picker
-
                 :picker-options='pickOptionStart'
                 v-model="filterForm.startPassTime"
                 type="datetime"
                 format='yyyy-MM-dd HH:mm:ss'
                  value-format="yyyy-MM-dd HH:mm:ss"
                 :clearable='false'
+                @change='timeChange'
                 placeholder="选择日期">
               </el-date-picker>
             </div>
             <div class="word-filter">
-              <span class="filter-name">结束时间:</span>
+              <span class="filter-name">结束时间:</span>&nbsp;&nbsp;
               <el-date-picker
               :clearable='false'
               format='yyyy-MM-dd HH:mm:ss'
@@ -44,11 +44,12 @@
                 v-model="filterForm.endPassTime"
                 :picker-options='pickOptionEnd'
                 type="datetime"
+                @change='timeChange'
                 placeholder="选择日期">
               </el-date-picker>
             </div>
             <div class="word-filter">
-              <span class="filter-name">通行方式:</span>
+              <span class="filter-name">通行方式:</span>&nbsp;
               <el-select class="input-filter" size="small" v-model="filterForm.passMethod" placeholder="请选择">
                 <el-option label="全部" value=""></el-option>
                 <el-option label="蓝牙" value="3"></el-option>
@@ -60,7 +61,7 @@
               </el-select>
             </div>
             <div class="word-filter">
-              <span class="filter-name">类型:</span>
+              <span class="filter-name">类型:</span>&nbsp;
               <el-select class="input-filter" size="small" v-model="filterForm.userType" placeholder="请选择">
                 <el-option label="全部" value="all"></el-option>
                 <el-option label="住户" value="house"></el-option>
@@ -142,6 +143,7 @@
           </el-table>
           <el-pagination
           @current-change='pageChange'
+          :page-size="page.limit"
           style="margin-top:10px;" background layout="prev, pager, next" :total="page.total"></el-pagination>
         </div>
       </el-col>
@@ -204,17 +206,17 @@ export default class PersonPass extends Vue {
     url: '/admin/people-pass/',
     method: 'get'
   }
-  pickOptionStart:object = {}
-  pickOptionEnd:object = {}
-  mounted() {
+  pickOptionStart:any = []
+  pickOptionEnd:any = []
+  timeChange(){
+    console.log(1)
     const _this = this
     this.pickOptionStart = {
         disabledDate(time){
-        if (_this.filterForm['endPassTime'] !== "") {
-            return time.getTime() > Date.now() || time.getTime() > _this.filterForm['endPassTime'];
-          } else {
-            return time.getTime() > Date.now();
-        }
+        if (_this.filterForm['endPassTime']) {
+            return time.getTime() > Date.now() -8.64e7 || time.getTime() > _this.filterForm['endPassTime'];
+          }
+          return time.getTime() > Date.now() -8.64e7;
       }
     }
     this.pickOptionEnd = {

@@ -17,12 +17,21 @@
           </el-dropdown-menu>
           <div slot="houseNum">
             <div class="word-filter">
-              <span class="filter-name">房屋:</span>
+              <span class="filter-name">关联房屋:</span>
               <el-input class="input-filter" v-model='filterForm.houseName' size="small"></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">卡号:</span>
               <el-input class="input-filter" v-model='filterForm.cardNo' size="small"></el-input>
+            </div>
+             <div class="word-filter">
+              <span class="filter-name">状态:</span>
+              <el-select class="input-filter" size="small" v-model="filterForm.status" placeholder="请选择">
+                <el-option label="全部" value=""></el-option>
+                <el-option label="正常" value="0"></el-option>
+                <el-option label="过期" value="-1"></el-option>
+                <el-option label="禁用" value="-2"></el-option>
+              </el-select>
             </div>
           </div>
         </action-header>
@@ -44,8 +53,21 @@
           >
             <el-table-column type="selection" width="50"></el-table-column>
 
-            <el-table-column align="center" type="index" label="序号" width="50"></el-table-column>
-
+            <el-table-column align="center" class="indexNum" type="index" label="序号" width="50">
+              <template slot-scope="scope">
+                <span>{{ scope.$index }}</span>
+                <div class="fun-btn">
+                  <el-dropdown trigger="click" placement="bottom-start" @command='commandClick'>
+                    <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
+                    <el-dropdown-menu slot="dropdown">
+                      <el-dropdown-item :command="returnCommand('delete', scope.row)">
+                        {{ deleteForm.data.length ? '批量删除' : '删除' }}
+                      </el-dropdown-item>
+                    </el-dropdown-menu>
+                  </el-dropdown>
+                </div>
+              </template>
+            </el-table-column>
             <el-table-column align="center" class="serial-num" prop="cardNo" label="卡号">
               <template slot-scope="scope">
                 <el-button
@@ -53,14 +75,6 @@
                   type="text"
                   @click="queryIdetity(scope.row)"
                 >{{scope.row.cardNo}}</el-button>
-                <div class="fun-btn">
-                  <el-dropdown trigger="click" placement="bottom-start" @command='commandClick'>
-                    <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
-                    <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item :command='returnCommand("delete", scope.row)'>批量删除</el-dropdown-item>
-                    </el-dropdown-menu>
-                  </el-dropdown>
-                </div>
               </template>
             </el-table-column>
 
@@ -68,11 +82,11 @@
 
             <el-table-column align="center" prop="createTime" label="创建时间"></el-table-column>
 
-            <el-table-column align="center" prop="lastUseTime" label="最近刷卡时间">
+            <!-- <el-table-column align="center" prop="lastUseTime" label="最近刷卡时间">
               <template slot-scope="scope">
                 {{ scope.row.lastUseTime || '--' }}
               </template>
-            </el-table-column>
+            </el-table-column> -->
             <el-table-column align="center" prop="validDate" label="过期时间">
               <template slot-scope="scope">
                 <el-tag class='rowUpdate'
@@ -232,7 +246,8 @@ export default class CardManage extends Vue {
     };
   filterForm: Object = {
     houseName: '',
-    cardNo: ''
+    cardNo: '',
+    status: ''
   }
   initForm: Object = {
     url: 'admin/hsDoorCard/list',
@@ -353,16 +368,6 @@ export default class CardManage extends Vue {
   position: relative;
 }
 
-.fun-btn {
-  position: absolute;
-  left: -64px;
-  top: 12px;
-  .iconfont {
-    font-size: 19px;
-    color: #8091a5;
-    cursor: pointer;
-  }
-}
 .table-col {
   position: relative;
 }

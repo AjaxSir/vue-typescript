@@ -4,7 +4,7 @@
 -->
 <template>
   <div class="content tree-rename">
-    <div class="treeHeader">
+    <div @click='handleNodeClick({ type: "building", id: "" })' class="treeHeader">
       <i class="iconfont icon-shuji"></i>
       所有
       <el-dropdown v-if='type === "house"' class='dropdownAll' @command='commandTreeClick' trigger="click" placement="bottom-start">
@@ -18,7 +18,7 @@
       :data="TreeData"
       node-key="id"
       :props='dataFormate'
-      default-expand-all
+      :default-expand-all='false'
       :expand-on-click-node="false"
       @node-click="handleNodeClick"
     >
@@ -29,7 +29,7 @@
         @mouseleave="MouseLeave(node.id)"
       >
         <span>{{ node.label }}</span>
-        <div class="fun-btn">
+        <div>
           <el-dropdown @command='commandTreeClick' trigger="click" placement="bottom-start">
             <i v-show="node.id===showMenu" class="iconfont icon-menu"></i>
             <el-dropdown-menu v-if='type === "house"' slot="dropdown">
@@ -261,7 +261,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Mixins } from "vue-property-decorator";
+import { Component, Prop, Vue, Mixins, Emit } from "vue-property-decorator";
 import { Getter, Action, Mutation } from "vuex-class";
 import { addHouseGroup, deleteHouseGroup, updateHouseGroup,
 getUnitList, addUnit, deleteUnit,
@@ -285,6 +285,9 @@ export default class DataTree extends Vue {
     }
   }}) dataFormate: Object
   @Prop({ default: true }) needAction: any;
+  @Prop({ default:()=> { return {} } }) filterForm: object
+  @Prop({ default:()=> { return {} } }) initFormHeader: object
+  @Prop({ default:()=> { return {} } }) page: object
   nodeAction: string = '' // 记录执行的操作
   bindDeviceList: Array<object> = [] // 已选择绑定的设备列表
   bindDeviceListVisible: boolean = false // 设备列表弹框状态
@@ -514,8 +517,22 @@ export default class DataTree extends Vue {
     this.$refs['buildings']['resetFields']()
     this.HouseUnitVisible = false
   }
+  @Emit("fetchData")
   handleNodeClick(data) {
     /**@description 树节点点击事件 */
+    if(this.type === "house") {
+      if(data.type === 'group') {
+        return this.$message.error('请选择单元楼')
+      } else {
+        this.initFormHeader["params"]['buildingId'] = data.id
+          this['page']["page"] = 1;
+          this.initFormHeader["params"] = Object.assign(
+            this.initFormHeader["params"],
+            this.page
+          );
+          return this.initFormHeader;
+      }
+    }
   }
   /*** 删除序号单元 */
   deleteTag(tag, index) {
@@ -669,6 +686,9 @@ export default class DataTree extends Vue {
   border: 1px solid #ebeef5;
 }
 .treeHeader {
+  &:hover{
+    cursor: pointer;
+  }
   width: 100%;
   height: 40px;
   text-align: left;
@@ -702,16 +722,6 @@ export default class DataTree extends Vue {
   padding-right: 8px;
 }
 
-.fun-btn {
-  // position: absolute;
-  // right: 1px;
-  // top: 4px;
-  .iconfont {
-    font-size: 19px;
-    color: #8091a5;
-    cursor: pointer;
-  }
-}
 .formDialog{
   .input{
     width:220px;

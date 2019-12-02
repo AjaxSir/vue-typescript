@@ -38,7 +38,10 @@
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
                     <el-dropdown-menu slot="dropdown">
                       <el-dropdown-item :command='returnCommand("update", scope.row)'>修改</el-dropdown-item>
-                      <el-dropdown-item :command='returnCommand("delete", scope.row)'>删除</el-dropdown-item>
+                      <!-- <el-dropdown-item :command='returnCommand("delete", scope.row)'>删除</el-dropdown-item> -->
+                      <el-dropdown-item :command="returnCommand('delete', scope.row)">
+                        {{ deleteForm.data.length ? '批量删除' : '删除' }}
+                      </el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
                 </div>

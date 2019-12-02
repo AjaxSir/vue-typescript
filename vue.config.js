@@ -9,7 +9,7 @@ module.exports = {
   devServer: {
     proxy: {
       "/v1": {
-        target: "http://192.168.3.19:8094", // 测试服务器
+        target: "http://192.168.3.19:8094", // 测试服务器 http://192.168.3.122:8080 开波 http://192.168.3.19:8094 测试
         changeOrigin: true,
         pathRewrite: {
           "^/v1": "/"

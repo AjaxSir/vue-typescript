@@ -200,6 +200,8 @@ export default class ActionManage extends Vue {
       this.page
     );
     // this.$emit('fetchData', this.initFormHeader)
+    this.visible = false
+    console.log(this.initFormHeader)
     return this.initFormHeader;
   }
   getRouter() {
@@ -317,12 +319,12 @@ a {
   }
   .filterDialog {
     text-align: left;
-    width: 420px;
+    width: 340px;
     height: auto;
     padding: 20px 10px;
     position: absolute;
     z-index: 11;
-    left: -250px;
+    left: -170px;
     top: 40px;
     border: 1px solid lightgray;
     box-shadow: 0px 10px 10px gray;
@@ -331,5 +333,8 @@ a {
       float: right;
     }
   }
+}
+.icon-_shezhi-xian:hover{
+  cursor: pointer;
 }
 </style>

@@ -34,19 +34,24 @@
           @cell-mouse-leave="leaveRowChange"
           border>
             <el-table-column type="selection" align="center"></el-table-column>
-            <el-table-column type="index" width="60" align="center" label="编号"></el-table-column>
-            <el-table-column prop="name" align="center" label="姓名">
-              <template slot-scope="{row}">
-                <el-button style="padding:0px;" type="text" @click="showDetail(row)">{{row.name }}</el-button>
+            <el-table-column type="index" width="60" align="center" class="indexNum" label="编号">
+              <template slot-scope="scope">
+                <span>{{ scope.$index }}</span>
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start" @command='commandClick'>
-                    <i v-show="row.showMenu" class="iconfont icon-menu"></i>
+                    <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
                     <el-dropdown-menu slot="dropdown">
-                      <!-- <el-dropdown-item :command='returnCommand("update", row)'>修改</el-dropdown-item> -->
-                      <el-dropdown-item :command='returnCommand("delete", row)'>删除</el-dropdown-item>
+                      <el-dropdown-item :command="returnCommand('delete', scope.row)">
+                        {{ deleteForm.data.length ? '批量删除' : '删除' }}
+                      </el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
                 </div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="name" align="center" label="姓名">
+              <template slot-scope="{row}">
+                <el-button style="padding:0px;" type="text" @click="showDetail(row)">{{row.name }}</el-button>
               </template>
             </el-table-column>
             <el-table-column prop="age" align="center" label="年龄"></el-table-column>
@@ -371,31 +376,11 @@ export default class PropertyManage extends Vue {
   flex: 1;
   box-shadow: 0px 6px 5px 0px lightgray;
 }
-.fun-btn {
-  position: absolute;
-  left: -64px;
-  top: 12px;
-  .iconfont {
-    font-size: 19px;
-    color: #8091a5;
-    cursor: pointer;
-  }
-}
 .float{
   width: 260px;
   float: left;;
   position: relative;
   z-index: 99;
-}
-.fun-btn {
-  position: absolute;
-  left: -64px;
-  top: 8px;
-  .iconfont {
-    font-size: 19px;
-    color: #8091a5;
-    cursor: pointer;
-  }
 }
 .close-menu {
   width: 10px;

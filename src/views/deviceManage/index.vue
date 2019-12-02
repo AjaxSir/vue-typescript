@@ -45,20 +45,26 @@
           >
             <el-table-column align="center" type="selection" width="50"></el-table-column>
 
-            <el-table-column align="center" type="index" label="序号" width="50"></el-table-column>
-
-            <el-table-column align="center" prop="name" label="设备编号" width="90">
+            <el-table-column align="center" class="indexNum" type="index" label="序号" width="50">
               <template slot-scope="scope">
-                <el-button @click="showDetails(scope.row)" type="text">{{scope.row.name}}</el-button>
+               <span>{{scope.$index}}</span>
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start" @command="commandClick">
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
                     <el-dropdown-menu slot="dropdown">
                       <el-dropdown-item :command="returnCommand('rebind', scope.row)">重新绑定</el-dropdown-item>
-                      <el-dropdown-item :command="returnCommand('delete', scope.row)">删除</el-dropdown-item>
+                      <el-dropdown-item :command="returnCommand('delete', scope.row)">
+                        {{ deleteForm.data.length ? '批量删除' : '删除' }}
+                      </el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
                 </div>
+              </template>
+            </el-table-column>
+
+            <el-table-column align="center" prop="name" label="设备编号" width="90">
+              <template slot-scope="scope">
+                <el-button @click="showDetails(scope.row)" type="text">{{scope.row.name}}</el-button>
               </template>
             </el-table-column>
 
@@ -154,6 +160,7 @@
     >
       <el-form
         ref="Forms"
+        :rules="rules"
         :model="deviceForm"
         label-position="right"
         label-width="100px"
@@ -193,6 +200,9 @@
         <el-form-item class="phone-input" label="绑定位置: " prop="bindingAddress">
           <el-input style="width:310px" v-model="deviceForm.bindingAddress"></el-input>
           <el-button type='text' @click='deviceBindingVisible = true'>设备绑定</el-button>
+        </el-form-item>
+        <el-form-item class="phone-input" label="设备备注: " prop="note">
+          <el-input type='textarea' style="width:310px" v-model="deviceForm.note"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -261,7 +271,7 @@
       </div>
     </el-dialog>
     <!-- 设备地址选择 -->
-    <el-dialog title="选取设备地址" :visible.sync="mapVisible">
+    <el-dialog :close-on-click-modal='false' title="选取设备地址" :visible.sync="mapVisible">
       <el-input v-model="deviceForm.address" placeholder="输入设备地址"></el-input>
       <BaiduMap @pointClick='pointClick' :keyword='deviceForm.address' />
       <div slot="footer" class="dialog-footer">
@@ -278,7 +288,7 @@ import { Getter, Action, Mutation } from "vuex-class";
 import mixin from "@/config/minxins";
 import { createDevice } from '@/api/deviceApi.ts'
 import { debounce } from '@/utils'
-import _axios from '@/plugins/axios'
+import axios from 'axios'
 import { searchHouse, getInoutList } from '@/api/houseApi.ts'
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 const BaiduMap = () => import('@/components/baiduMap/index.vue')
@@ -337,14 +347,25 @@ export default class DeviceManage extends Vue {
   deviceBindingVisible: boolean = false // 设备绑定dialog状态
   deviceBindingData: Array<Object> = [
   ]
+  rules: object =
+    {
+      serialNumber: [
+            { required: true, message: '请输入设备编号', trigger: 'blur' }
+          ],
+      address: [
+            { required: true, message: '请输入设备所在位置', trigger: 'blur' }
+          ],
+      bindingAddress: [
+            { required: true, message: '请选择设备绑定位置', trigger: 'blur' }
+          ]
+    }
   created() {
     this.fetchBuilding()
     this.initForm['params'] = Object.assign(this.initForm['params'], this.page, this.filterForm) // 合并参数
   }
     /** 获取经纬度 */
     getlocLat() {
-      console.log(this)
-      _axios({
+      axios({
         url: `/v2/`,
         params: {
           address: this.deviceForm['address'],
@@ -356,7 +377,6 @@ export default class DeviceManage extends Vue {
         if (!res.data.status) {
           this.deviceForm['longitude'] = res.data.result.location.lng
           this.deviceForm['latitude'] = res.data.result.location.lat
-          console.log(this.deviceForm)
         } else {
           this.$message({
             message: '没有找到对应的位置信息',
@@ -411,13 +431,16 @@ export default class DeviceManage extends Vue {
   confirmBind() {
     this.$refs['Forms']["validate"](valid => {
       if(valid) {
-        console.log(this.deviceForm)
-        // createDevice(this.deviceForm).then(res => {
-        //   if(res.data.code === 200) {
-        //     this['handleClose']()
-        //     this['fetchData'](this.initForm)
-        //   }
-        // })
+        if (this.deviceForm['longitude'] === '' || this.deviceForm['latitude'] === '') {
+          return this.$message.error('请输入正确的设备地址')
+        } else {
+          createDevice(this.deviceForm).then(res => {
+            if(res.data.code === 200) {
+              this['handleClose']()
+              this['fetchData'](this.initForm)
+            }
+          })
+        }
       }
     })
   }
@@ -448,16 +471,6 @@ export default class DeviceManage extends Vue {
   position: relative;
 }
 
-.fun-btn {
-  position: absolute;
-  left: -64px;
-  top: 12px;
-  .iconfont {
-    font-size: 19px;
-    color: #8091a5;
-    cursor: pointer;
-  }
-}
 .table-col {
   position: relative;
 }
