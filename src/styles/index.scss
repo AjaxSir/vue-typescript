@@ -163,6 +163,11 @@ img {
   border-right: 1px solid #E4E7ED;
 }
 
+.el-upload--picture-card {
+  width: 100px !important;
+  height: 100px !important;
+  line-height: 100px !important;
+}
 
 .indexNum{
   text-align: center;
@@ -181,4 +186,10 @@ img {
     color: #8091a5;
     cursor: pointer;
   }
+}
+.el-upload-list--picture-card .el-upload-list__item,
+.el-upload-list--picture-card .el-upload-list__item-thumbnail {
+  width: 100px !important;
+  height: 100px !important;
+
 }

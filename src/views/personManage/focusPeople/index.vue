@@ -58,11 +58,17 @@
             @cell-mouse-leave="leaveRowChange"
             @cell-click="cellClick"
           >
-            <el-table-column type="selection" width="50"></el-table-column>
+            <el-table-column type="selection" width="50" :selectable="isDisabled" disabled="true"></el-table-column>
 
             <el-table-column type="index" label="序号" width="50" align="center"></el-table-column>
 
-            <el-table-column prop="name" align="center" label="姓名">
+            <el-table-column
+              prop="name"
+              align="center"
+              label="姓名"
+              width="100"
+              :show-overflow-tooltip="true"
+            >
               <template slot-scope="scope">
                 <el-button
                   @click="showCarDetails(scope.row)"
@@ -86,25 +92,50 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="age" align="center" label="年龄"></el-table-column>
+            <el-table-column prop="age" align="center" label="年龄" :show-overflow-tooltip="true"></el-table-column>
 
-            <el-table-column prop="typeName" align="center" label="分类"></el-table-column>
+            <el-table-column
+              prop="typeName"
+              align="center"
+              label="分类"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
 
-            <el-table-column prop="phone" align="center" label="联系电话"></el-table-column>
+            <el-table-column prop="phone" align="center" label="联系电话" :show-overflow-tooltip="true"></el-table-column>
 
-            <el-table-column prop="locationName" align="center" label="房屋编号" min-width="200px">
+            <el-table-column
+              prop="locationName"
+              align="center"
+              label="房屋编号"
+              :show-overflow-tooltip="true"
+            >
               <template slot-scope="scope">
                 <span>{{scope.row.house&&scope.row.house.length>0 ? scope.row.house[0].locationName :'--'}}</span>
               </template>
             </el-table-column>
 
-            <el-table-column prop="emergencyPhone" align="center" label="紧急联系人电话"></el-table-column>
+            <el-table-column
+              prop="emergencyPhone"
+              align="center"
+              label="紧急联系人电话"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
 
-            <el-table-column prop="earlyGroupName" align="center" label="预警组别"></el-table-column>
+            <el-table-column
+              prop="earlyGroupName"
+              align="center"
+              label="预警组别"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
 
-            <el-table-column prop="earlyPeriod" align="center" label="预警周期"></el-table-column>
+            <el-table-column
+              prop="earlyPeriod"
+              align="center"
+              label="预警周期"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
 
-            <el-table-column align="center" label="状态">
+            <el-table-column align="center" label="状态" :show-overflow-tooltip="true">
               <template slot-scope="scope">
                 <el-tag
                   size="small"
@@ -113,7 +144,7 @@
                 >{{ scope.row.isNormal? "正常" : "异常" }}</el-tag>
               </template>
             </el-table-column>
-            <el-table-column prop="note" label="备注">
+            <el-table-column prop="note" label="备注" :show-overflow-tooltip="true">
               <template slot-scope="scope">
                 <span
                   v-if="!scope.row.peopleNote"
@@ -580,6 +611,7 @@ export default class FocusPeople extends Vue {
     this.getGroupList();
     this.getTypeList();
   }
+
   async remoteMethod(query) {
     /**@description 根据姓名模糊查询人员 */
     if (query !== "") {
@@ -800,6 +832,13 @@ export default class FocusPeople extends Vue {
     /**@description 关闭人员详情 */
     this.activeName = "first";
     this.detailDialogVisible = false; //人员详情dialog
+  }
+
+  isDisabled(row, index) {
+    /**@discription 禁用多选 */
+    if (row.auditResult == 3) {
+      return 0;
+    }
   }
 }
 </script>

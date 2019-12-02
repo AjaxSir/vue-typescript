@@ -97,7 +97,7 @@
           <el-input style="width:310px" v-model="createForm.title"></el-input>
         </el-form-item>
 
-        <el-form-item
+        <!-- <el-form-item
           class="phone-input"
           label="发布类型: "
           prop="objType"
@@ -117,9 +117,9 @@
               :value="item.value"
             ></el-option>
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
 
-        <el-form-item
+        <!-- <el-form-item
           v-if="createForm.objType==='1'"
           class="phone-input"
           label="发布对象: "
@@ -148,9 +148,9 @@
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span>
             </el-option>
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
 
-        <el-form-item
+        <!-- <el-form-item
           v-if="createForm.objType==='2'"
           class="phone-input"
           label="发布对象: "
@@ -174,7 +174,7 @@
               :value="item.scenceUserId"
             ></el-option>
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
 
         <el-form-item
           class="phone-input"
@@ -236,7 +236,7 @@ export default class InformIssue extends Vue {
   private createForm: Object = {
     //新增/修改表单字段
     content: "", //发布内容
-    objType: "1", //发布对象
+    objType: "3", //发布对象
     title: "", //发布名称
     objIds: [] //发布对象id
   };

@@ -23,7 +23,7 @@
       @cell-mouse-enter="enterRowChange"
       @cell-mouse-leave="leaveRowChange"
     >
-      <el-table-column type="selection" width="50"></el-table-column>
+      <el-table-column type="selection" width="50"  disabled="true"></el-table-column>
 
       <el-table-column type="index" label="序号" width="50" align="center"></el-table-column>
       <el-table-column prop="name" align="center" label="姓名">
@@ -75,7 +75,7 @@
         style="margin-right:40px;"
       >
         <el-form-item
-          label="名字:"
+          label="姓名:"
           prop="name"
           :show-message="showMessage"
           :error="errorMessage.name"
@@ -139,7 +139,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogCreate = false">取 消</el-button>
+        <el-button @click="handleClose">取 消</el-button>
         <el-button type="primary" @click="createwarning">确 定</el-button>
       </div>
     </el-dialog>
@@ -160,7 +160,7 @@
         style="margin-right:40px;"
       >
         <el-form-item
-          label="名字:"
+          label="姓名:"
           prop="name"
           :show-message="showMessage"
           :error="errorMessage.name"
@@ -223,7 +223,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogEdit = false">取 消</el-button>
+        <el-button @click="handleClose">取 消</el-button>
         <el-button type="primary" @click="updatewarning">确 定</el-button>
       </div>
     </el-dialog>
@@ -306,7 +306,7 @@ export default class WarningLink extends Vue {
     ],
     earlyGroupId: [
       { required: true, message: "请选择预警联系人分组", trigger: "blur" }
-    ]
+    ],
   };
   private showMessage: Boolean = true; //是否显示表单错误信息
   private errorMessage: Object = {
@@ -341,11 +341,17 @@ export default class WarningLink extends Vue {
         var form = {
           ...this.createForm
         };
-        addWarning(form).then(res => {
-          this.handleClose();
-          this["fetchData"](this.initForm);
-          this["notify"]("添加预警联系人成功");
-        });
+        addWarning(form)
+          .then(res => {
+            this.handleClose();
+            this["fetchData"](this.initForm);
+            this["notify"]("添加预警联系人成功");
+          })
+          .catch(err => {
+            if (err.response.data.data[0].key === "phone") {
+              this.errorMessage["phone"] = err.response.data.data[0].value;
+            }
+          });
       }
     });
   }
@@ -384,7 +390,6 @@ export default class WarningLink extends Vue {
 
   editTarget(item) {
     /**@description 修改操作 */
-    console.log(item);
     for (const key in this.editForm) {
       this.editForm[key] = item[key];
     }
@@ -405,6 +410,9 @@ export default class WarningLink extends Vue {
     /** @description 关闭新增/修改dialog */
     this.dialogCreate = false; //新增dialog
     this.dialogEdit = false; //修改dialog
+    for (const key in this.errorMessage) {
+      this.errorMessage[key] = "";
+    }
     this.$refs["dataForm"]["resetFields"]();
   }
 
@@ -427,6 +435,13 @@ export default class WarningLink extends Vue {
           message: "已取消删除"
         });
       });
+  }
+
+  isDisabled(row, index) {
+    /**@discription 禁用多选 */
+    if (row.auditResult == 3) {
+      return 0;
+    }
   }
 }
 </script>

@@ -124,9 +124,21 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column prop="phone" label="电话" align="center"></el-table-column>
-            <el-table-column prop="visitName" label="受访人姓名" align="center"></el-table-column>
-            <el-table-column prop="visitType" label="访客类型" align="center" width="101">
+            <el-table-column prop="phone" label="电话" align="center" :show-overflow-tooltip="true"></el-table-column>
+            <el-table-column
+              prop="visitName"
+              label="受访人姓名"
+              align="center"
+              width="100px"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
+            <el-table-column
+              prop="visitType"
+              label="访客类型"
+              align="center"
+              width="101"
+              :show-overflow-tooltip="true"
+            >
               <template slot="header">
                 <el-dropdown style="padding:0;" trigger="click" @command="filterType">
                   <span class="el-dropdown-link">
@@ -153,9 +165,19 @@
                 <span>{{scope.row.visitType ==='1' ?'APP' : scope.row.visitType ==='2' ?'访客机' : '--'}}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="cardNo" label="身份证号" align="center"></el-table-column>
-            <el-table-column prop="createTime" label="注册时间" align="center"></el-table-column>
-            <el-table-column prop="status" label="状态" align="center">
+            <el-table-column
+              prop="cardNo"
+              label="身份证号"
+              align="center"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
+            <el-table-column
+              prop="createTime"
+              label="注册时间"
+              align="center"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
+            <el-table-column prop="status" label="状态" align="center" :show-overflow-tooltip="true">
               <template slot="header">
                 <el-dropdown style="padding:0;" trigger="click" @command="filterStatus">
                   <span class="el-dropdown-link">
@@ -176,8 +198,18 @@
                 <span>{{statusFilter(scope.row.status)}}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="visitTime" label="到访时间" align="center"></el-table-column>
-            <el-table-column prop="invalidDate" label="有效期" align="center"></el-table-column>
+            <el-table-column
+              prop="visitTime"
+              label="到访时间"
+              align="center"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
+            <el-table-column
+              prop="invalidDate"
+              label="有效期"
+              align="center"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
             <el-table-column prop="photo" label="人脸信息" align="center">
               <template slot-scope="scope">
                 <img class="capture-img" :src="scope.row.photo" alt />
@@ -387,6 +419,15 @@ export default class VistorRegister extends Vue {
         row2: 20
       };
     }
+  }
+  enterRowChange(row, column, cell, event) {
+    /**@description hover enter tab 行 */
+    row.showMenu = true;
+  }
+
+  leaveRowChange(row) {
+    /**@description hover leave tab 行 */
+    row.showMenu = false;
   }
 }
 </script>

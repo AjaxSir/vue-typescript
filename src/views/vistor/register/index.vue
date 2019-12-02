@@ -42,7 +42,7 @@
             </div>
           </div>
           <div class="write">
-            <el-button>手动输入</el-button>
+            <el-button size="small" @click="manualInput()">{{inputStatus ? '刷卡注册' : '手动输入'}}</el-button>
           </div>
           <div class="imgInfo" style="margin-left:80px;width:680px;height:auto;display:block">
             <el-form
@@ -55,27 +55,54 @@
               <el-row :gutter="10">
                 <el-col :span="12">
                   <el-form-item class="vistorItemForm" label="姓名:">
-                    <span>{{ vistorForm.name }}</span>
+                    <span v-if="!inputStatus">{{ vistorForm.name }}</span>
+                    <el-input v-else style="width:210px" size="small" v-model="vistorForm.name"></el-input>
                   </el-form-item>
 
                   <el-form-item class="vistorItemForm" label="性别:">
-                    <span>{{ vistorForm.sex }}</span>
+                    <span v-if="!inputStatus">{{ vistorForm.sex }}</span>
+                    <el-select
+                      v-else
+                      style="width:210px"
+                      v-model="vistorForm.sex"
+                      placeholder="请选择"
+                      size="small"
+                    >
+                      <el-option
+                        v-for="item in sexType"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                      ></el-option>
+                    </el-select>
                   </el-form-item>
 
                   <el-form-item class="vistorItemForm" label="民族:">
-                    <span>{{ vistorForm.nation }}</span>
+                    <span v-if="!inputStatus">{{ vistorForm.nation }}</span>
+                    <el-input v-else style="width:210px" size="small" v-model="vistorForm.nation"></el-input>
                   </el-form-item>
 
                   <el-form-item class="vistorItemForm" label="出生日期:">
-                    <span>{{ vistorForm.birthday }}</span>
+                    <span v-if="!inputStatus">{{ vistorForm.birthday }}</span>
+                    <el-date-picker
+                      v-else
+                      v-model="vistorForm.birthday"
+                      style="width:210px"
+                      size="small"
+                      type="date"
+                      placeholder="选择日期"
+                      value-format="yyyy-MM-dd"
+                    ></el-date-picker>
                   </el-form-item>
 
                   <el-form-item class="vistorItemForm" label="身份证号:">
-                    <span>{{ vistorForm.cardNo }}</span>
+                    <span v-if="!inputStatus">{{ vistorForm.cardNo }}</span>
+                    <el-input v-else style="width:210px" size="small" v-model="vistorForm.cardNo"></el-input>
                   </el-form-item>
 
                   <el-form-item class="vistorItemForm clearBotn" label="户籍地址:">
-                    <span>{{ vistorForm.address }}</span>
+                    <span v-if="!inputStatus">{{ vistorForm.address }}</span>
+                    <el-input v-else style="width:210px" size="small" v-model="vistorForm.address"></el-input>
                   </el-form-item>
                 </el-col>
                 <el-col :span="12">
@@ -229,7 +256,8 @@ import {
   getRegData, //获取刷身份证信息
   getUserName, //输入人名模糊查询人员
   getTargetHouse, // 获取指定房屋
-  addVisitor, //确认注册访客
+  addVisitor, //刷卡确认注册访客
+  addVisitorManual, //手动访客注册
   cancelVisitor //取消访客注册
 } from "@/api/vistorApi.ts";
 const DataTree = () => import("@/components/DataTree.vue");
@@ -275,6 +303,18 @@ export default class VistorRegister extends Vue {
 
   pickOptionStart: object = {}; //按照时间段查询的开始时间
   pickOptionEnd: object = {}; //按照时间段查询的结束时间
+  private inputStatus: Boolean = false; //是否手动输入
+
+  private sexType: Array<Object> = [
+    {
+      label: " 男",
+      value: "男"
+    },
+    {
+      label: "女",
+      value: "女"
+    }
+  ];
 
   private reasonsType: Array<Object> = [
     //发布通知类型
@@ -347,6 +387,24 @@ export default class VistorRegister extends Vue {
     this.getIdentity();
   }
 
+  manualInput() {
+    this.inputStatus = !this.inputStatus;
+    if (this.inputStatus) {
+      for (const key in this.vistorForm) {
+        this.vistorForm[key] = "";
+      }
+      for (const key in this.writeVisitor) {
+        this.writeVisitor[key] = "";
+      }
+      this.writeVisitor["numPeople"] = 0;
+      this.startFetch = false;
+      this.getVisitorData();
+    } else {
+      this.startFetch = true;
+      this.getVisitorData();
+    }
+  }
+
   async handleNodeClick(val) {
     /**@description 树节点点击事件 */
     this.deviceId = val.id;
@@ -368,7 +426,6 @@ export default class VistorRegister extends Vue {
   async getVisitorData() {
     /**@description 获取最新访客人员信息 */
     if (this.deviceId) {
-      let fetch = true;
       while (this.startFetch) {
         try {
           this.vistorForm = {};
@@ -438,17 +495,32 @@ export default class VistorRegister extends Vue {
   }
 
   async createVisitor() {
-    /**@description 注册访客 */
-    this.writeVisitor["id"] = this.vistorForm["id"];
-    try {
-      const { data } = await addVisitor(this.writeVisitor, this.deviceId);
-      this.vistorForm = {};
-      this.writeVisitor = {};
-      this["notify"]("注册访客成功");
-      this.startFetch = true;
-      this.getVisitorData();
-    } catch (err) {
-      console.log(err);
+    /**@description 注册访客
+     * @argument inputStatus:false 刷卡注册 :true 手动注册
+     */
+    if (!this.inputStatus) {
+      this.writeVisitor["id"] = this.vistorForm["id"];
+      try {
+        const { data } = await addVisitor(this.writeVisitor, this.deviceId);
+        this.vistorForm = {};
+        this.writeVisitor = {};
+        this["notify"]("注册访客成功");
+        this.startFetch = true;
+        this.getVisitorData();
+      } catch (err) {
+        console.log(err);
+      }
+    } else {
+      console.log(123);
+      const form = { ...this.vistorForm, ...this.writeVisitor };
+      try {
+        const { data } = await addVisitorManual(form, this.deviceId);
+        this.vistorForm = {};
+        this.writeVisitor = {};
+        this["notify"]("注册访客成功");
+      } catch (err) {
+        console.log(err);
+      }
     }
   }
 
@@ -533,7 +605,7 @@ export default class VistorRegister extends Vue {
   width: 720px;
   height: 30px;
   text-align: center;
-  line-height: 30px;
+  // line-height: 30px;
 }
 .vistorItemForm {
   // width: 300px !important;

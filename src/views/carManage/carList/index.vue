@@ -59,7 +59,7 @@
 
             <el-table-column type="index" label="序号" width="50" align="center"></el-table-column>
 
-            <el-table-column prop="name" label="所属房屋">
+            <el-table-column prop="name" label="所属房屋" :show-overflow-tooltip="true">
               <template slot-scope="scope">
                 <span class="serial-num">{{scope.row.name}}</span>
                 <div class="fun-btn">
@@ -79,7 +79,7 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="ownerName" label="车主"></el-table-column>
+            <el-table-column prop="ownerName" label="车主" :show-overflow-tooltip="true"></el-table-column>
 
             <el-table-column prop="carNo" label="车牌号">
               <template slot-scope="scope">
@@ -91,7 +91,7 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="lastInTime" label="最近一次访问"></el-table-column>
+            <el-table-column prop="lastInTime" label="最近一次访问" :show-overflow-tooltip="true"></el-table-column>
 
             <el-table-column prop="lastInPhoto" label="最近抓拍图片">
               <template slot-scope="scope">
@@ -128,7 +128,7 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="note" label="备注">
+            <el-table-column prop="note" label="备注" :show-overflow-tooltip="true">
               <template slot-scope="scope">
                 <span
                   v-if="!scope.row.carNote"
@@ -354,9 +354,20 @@
         <el-tab-pane label="通行记录" name="thirdly">
           <el-table v-loading="passTarget" :data="passList" style="width: 100%" stripe>
             <el-table-column type="index" label="序号" width="50" align="center"></el-table-column>
-            <el-table-column align="center" prop="carNo" label="车牌号"></el-table-column>
-            <el-table-column align="center" prop="passTime" label="通行时间" width="150px"></el-table-column>
-            <el-table-column align="center" prop="address" label="访客通行">
+            <el-table-column align="center" prop="carNo" label="车牌号" :show-overflow-tooltip="true"></el-table-column>
+            <el-table-column
+              align="center"
+              prop="passTime"
+              label="通行时间"
+              width="150px"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
+            <el-table-column
+              align="center"
+              prop="address"
+              label="访客通行"
+              :show-overflow-tooltip="true"
+            >
               <template slot-scope="scope">
                 <el-tag
                   size="small"

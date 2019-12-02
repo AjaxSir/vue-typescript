@@ -69,16 +69,17 @@ export default class GlobalMimins extends Vue {
               console.log(this.list_data)
             }
           } else {
+            this.page.total = res.data.data.total
+            this.list_data = res.data.data.records
+            console.log(this.list_data)
             if (res.data.data.records.length) {
-              this.page.total = res.data.data.total
               res.data.data.records.forEach((ele: object) => {
                 this.updateArray.forEach((itemStatus: string) => {
                   ele[itemStatus] = false
                 })
                 ele['showMenu'] = false
               })
-              this.list_data = res.data.data.records
-              console.log(this.list_data)
+
             } else {
               if (this.initForm['params']['page'] > 1) {
                 this.initForm['params']['page']--

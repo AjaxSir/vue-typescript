@@ -107,7 +107,13 @@
           >
             <el-table-column type="selection" align="center"></el-table-column>
             <el-table-column type="index" width="50" align="center" label="编号"></el-table-column>
-            <el-table-column prop="name" width="70" align="center" label="姓名">
+            <el-table-column
+              prop="name"
+              width="70"
+              align="center"
+              label="姓名"
+              :show-overflow-tooltip="true"
+            >
               <template slot-scope="scope">
                 <span>{{scope.row.name}}</span>
                 <div class="fun-btn">
@@ -120,14 +126,32 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column prop="phone" min-width="90" align="center" label="电话"></el-table-column>
-            <el-table-column prop="visitName" align="center" label="受访人姓名">
+            <el-table-column
+              prop="phone"
+              min-width="90"
+              align="center"
+              label="电话"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
+            <el-table-column
+              prop="visitName"
+              align="center"
+              label="受访人姓名"
+              width="100px"
+              :show-overflow-tooltip="true"
+            >
               <template slot-scope="{ row }">
                 <el-button type="text" @click="showDetail(row)">{{ row.visitName }}</el-button>
               </template>
             </el-table-column>
 
-            <el-table-column prop="visitType" width="101" align="center" label="访客类型">
+            <el-table-column
+              prop="visitType"
+              width="101"
+              align="center"
+              label="访客类型"
+              :show-overflow-tooltip="true"
+            >
               <template slot="header">
                 <el-dropdown style="padding:0;" trigger="click" @command="filterType">
                   <span class="el-dropdown-link">
@@ -154,11 +178,32 @@
                 <span>{{scope.row.visitType ==='1' ?'APP' : scope.row.visitType ==='2' ?'访客机' : '--'}}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="cardNo" align="center" label="身份证号"></el-table-column>
-            <el-table-column prop="visitTime" min-width="130" align="center" label="访问时间"></el-table-column>
-            <el-table-column prop="buildingName" align="center" label="所属楼栋"></el-table-column>
-            <el-table-column prop="houseName" align="center" label="房屋编号"></el-table-column>
-            <el-table-column prop="status" align="center" label="状态">
+            <el-table-column
+              prop="cardNo"
+              align="center"
+              label="身份证号"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
+            <el-table-column
+              prop="visitTime"
+              min-width="130"
+              align="center"
+              label="访问时间"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
+            <el-table-column
+              prop="buildingName"
+              align="center"
+              label="所属楼栋"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
+            <el-table-column
+              prop="houseName"
+              align="center"
+              label="房屋编号"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
+            <el-table-column prop="status" align="center" label="状态" :show-overflow-tooltip="true">
               <template slot="header">
                 <el-dropdown style="padding:0;" trigger="click" @command="filterStatus">
                   <span class="el-dropdown-link">
@@ -179,9 +224,26 @@
                 <span>{{statusFilter(scope.row.status)}}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="numPeople" align="center" label="同行人数"></el-table-column>
-            <el-table-column prop="createTime" min-width="130" align="center" label="创建时间"></el-table-column>
-            <el-table-column prop="invalidDate" min-width="130" align="center" label="有效时间"></el-table-column>
+            <el-table-column
+              prop="numPeople"
+              align="center"
+              label="同行人数"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
+            <el-table-column
+              prop="createTime"
+              min-width="130"
+              align="center"
+              label="创建时间"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
+            <el-table-column
+              prop="invalidDate"
+              min-width="130"
+              align="center"
+              label="有效时间"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
 
             <!-- <el-table-column prop="all_times" align="center" label="累计访问次数"></el-table-column> -->
             <!-- <el-table-column prop="last_time" align="center" label="最近访问时间"></el-table-column> -->
@@ -214,7 +276,7 @@
                   <span>{{visitorDialogForm.name ? visitorDialogForm.name :'--'}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="访客类型:">
-                  <span>{{visitorDialogForm.visitType ? visitorDialogForm.visitType : '--'}}</span>
+                  <span>{{visitorDialogForm.visitType ==='1' ?'APP' : visitorDialogForm.visitType ==='2' ?'访客机' : '--'}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="身份证号:">
                   <span>{{visitorDialogForm.cardNo ? visitorDialogForm.cardNo :'--'}}</span>
@@ -449,27 +511,27 @@ export default class VistoryManage extends Vue {
   }
 
   mounted() {
-    const _this = this;
-    this.pickOptionStart = {
-      disabledDate(time) {
-        if (_this.filterForm["endCreateTime"] !== "") {
-          return (
-            time.getTime() > Date.now() ||
-            time.getTime() > _this.filterForm["endCreateTime"]
-          );
-        } else {
-          return time.getTime() > Date.now();
-        }
-      }
-    };
-    this.pickOptionEnd = {
-      disabledDate(time) {
-        return (
-          time.getTime() < _this.filterForm["startCreateTime"] ||
-          time.getTime() > Date.now()
-        );
-      }
-    };
+    // const _this = this;
+    // this.pickOptionStart = {
+    //   disabledDate(time) {
+    //     if (_this.filterForm["endCreateTime"] !== "") {
+    //       return (
+    //         time.getTime() > Date.now() ||
+    //         time.getTime() > _this.filterForm["endCreateTime"]
+    //       );
+    //     } else {
+    //       return time.getTime() > Date.now();
+    //     }
+    //   }
+    // };
+    // this.pickOptionEnd = {
+    //   disabledDate(time) {
+    //     return (
+    //       time.getTime() < _this.filterForm["startCreateTime"] ||
+    //       time.getTime() > Date.now()
+    //     );
+    //   }
+    // };
   }
 
   handleSelectionChange(val) {

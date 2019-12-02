@@ -18,53 +18,51 @@
     <el-row :gutter="10">
       <el-col :span="24" class="table-col">
         <div class="rightContent">
-          <el-form ref="form" :model="form" label-width="80px">
-            <el-form-item label="小区名称">
-              <el-input v-model="form.name"></el-input>
+          <el-form ref="formInfo" :rules="userRules" :model="communityForm" label-width="80px">
+            <el-form-item label="小区名称" prop="name">
+              <el-input v-model="communityForm.name" placeholder="填写小区名称" auto-complete="off"></el-input>
             </el-form-item>
 
-            <!-- <el-form-item label="省">
-              <el-select v-model="form.region" placeholder="请选择省">
-                <el-option label="四川" value="shanghai"></el-option>
-                <el-option label="浙江" value="beijing"></el-option>
-              </el-select>
+            <el-form-item label="小区地址" prop="address">
+              <el-input
+                @input="getlocLat"
+                v-model="communityForm.address"
+                placeholder="填写小区地址"
+                auto-complete="off"
+              ></el-input>
             </el-form-item>
 
-            <el-form-item label="市">
-              <el-select v-model="form.region" placeholder="请选择市">
-                <el-option label="成都" value="shanghai"></el-option>
-                <el-option label="宁波" value="beijing"></el-option>
-              </el-select>
-            </el-form-item>
+            <span
+              style="margin-left:40px"
+            >当前经纬度(经度:{{ communityForm.longitude}}, 纬度: {{ communityForm.latitude }})</span>
+            <BaiduMap
+              :backStatus="true"
+              :markerStatus="false"
+              @pointClick="getPoint"
+              :keyword="communityForm.address"
+            ></BaiduMap>
 
-            <el-form-item label="区县">
-              <el-select v-model="form.region" placeholder="请选择区">
-                <el-option label="金牛区" value="shanghai"></el-option>
-                <el-option label="鄞州区" value="beijing"></el-option>
-              </el-select>
-            </el-form-item>-->
-
-            <el-form-item label="详细地址">
-              <el-input v-model="form.name"></el-input>
-            </el-form-item>
-
-            <el-form-item label="图片展示">
+            <el-form-item label="图片展示" style="margin-top:22px">
               <el-upload
                 multiple
-                action="https://jsonplaceholder.typicode.com/posts/"
+                :action="upPathPerson"
+                :data="communityForm"
+                ref="personForm"
                 list-type="picture-card"
-                :on-preview="handlePictureCardPreview"
-                :on-remove="handleRemove"
+                :auto-upload="false"
+                name="picList"
+                :on-success="succUpdatePerson"
+                :on-error="errorUpdatePerson"
               >
                 <i class="el-icon-plus"></i>
               </el-upload>
               <el-dialog :visible.sync="dialogVisible" size="tiny">
-                <img width="100%" :src="imageUrl" alt />
+                <img width="100px" :src="imageUrl" alt />
               </el-dialog>
             </el-form-item>
 
             <el-form-item label="小区概况">
-              <el-input type="textarea" :rows="5" v-model="form.desc"></el-input>
+              <el-input type="textarea" :rows="5" v-model="communityForm.note"></el-input>
             </el-form-item>
             <el-form-item>
               <el-button type="primary" @click="onSubmit" style="float:right;">立即创建</el-button>
@@ -83,41 +81,47 @@ import mixin from "@/config/minxins";
 
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 const DataTree = () => import("@/components/DataTree.vue");
+const BaiduMap = () => import("@/components/baiduMap/index.vue");
+import { baiduDebounce } from "@/utils";
+
+import _axios from "axios";
 
 @Component({
   mixins: [mixin],
   components: {
     ActionHeader,
-    DataTree
+    DataTree,
+    BaiduMap
   }
 })
 export default class InformIssue extends Vue {
   filterForm: object = {
     tag: "no"
   }; //根据关键字查询
-  private form: any = {
-    name: "",
-    region: "",
-    date1: "",
-    date2: "",
-    delivery: false,
-    type: [],
-    resource: "",
-    desc: ""
+  initForm: object = {}; //获取数据的url
+
+  private communityForm: Object = {
+    address: "",
+    latitude: "", //纬度
+    longitude: "", //经度
+    name: "", //名称
+    note: "", //备注
+    picList: [], //图片
+
   };
+  private userRules: Object = {
+    name: [
+      { required: true, message: "请输入小区名称", trigger: "blur" }
+      // { min: 10, max: 11, message: "长度在 10 个字符", trigger: "blur" }
+    ],
+    address: [
+      { required: true, message: "请输入具体位置", trigger: "blur" }
+      // { min: 1, max: 20, message: "长度在 20 个字符内", trigger: "blur" }
+    ]
+  };
+  private upPathPerson: string = "/v1/admin/hs-scence/info/";
   private imageUrl: any = "";
   private dialogVisible: Boolean = false;
-
-  private rowSpan: any = {
-    row1: 4,
-    row2: 20
-  };
-
-  private dialogLibrary: any = false;
-
-  private dialogFormVisible: Boolean = false;
-  private formLabelWidth: String = "120px";
-  initForm: object = {};
 
   created() {
     this.initForm["params"] = Object.assign(
@@ -127,13 +131,14 @@ export default class InformIssue extends Vue {
     ); // 合并参数
   }
 
-  handleRemove(file, fileList) {
-    console.log(file, fileList);
-  }
-  handlePictureCardPreview(file) {
-    this.imageUrl = file.url;
-    this.dialogVisible = true;
-  }
+  // handleRemove(file, fileList) {
+  //   console.log(file, fileList);
+  // }
+
+  // handlePictureCardPreview(file) {
+  //   this.imageUrl = file.url;
+  //   this.dialogVisible = true;
+  // }
 
   editType(item) {
     /**@description 修改状态 */
@@ -150,16 +155,62 @@ export default class InformIssue extends Vue {
     /**@description hover leave tab 行 */
     row.showMenu = false;
   }
-  queryIdetity() {
-    this.dialogLibrary = true;
-  }
+
   onSubmit() {
-    console.log("submit!");
+    this.$refs["formInfo"]["validate"](valid => {
+      if (valid) {
+        this.$refs["personForm"]["submit"]();
+      }
+    });
   }
 
-  handleAvatarSuccess(res, file) {
-    this.imageUrl = URL.createObjectURL(file.raw);
+  succUpdatePerson() {
+    this.$message({
+      type: "success",
+      message: "新增成功"
+    });
+    // this.addPersonVisible = false
   }
+
+  errorUpdatePerson() {
+    this.$message({
+      type: "warning",
+      message: "新增失败"
+    });
+  }
+
+  /** 获取经纬度 */
+  getPoint(add) {
+    this.communityForm["address"] =
+      add.province + add.city + add.district + add.street + add.streetNumber;
+    this.communityForm["latitude"] = add.lat;
+    this.communityForm["longitude"] = add.lng;
+  }
+
+  getlocLat() {
+    _axios({
+      url: `/v3/`,
+      params: {
+        address: this.communityForm["address"],
+        ak: "vCZU88Guz4BmAODWTm8k9BP0WlwId1V0",
+        output: "json"
+      },
+      method: "get"
+    }).then(res => {
+      if (!res.data.status) {
+        this.communityForm["longitude"] = res.data.result.location.lng;
+        this.communityForm["latitude"] = res.data.result.location.lat;
+      } else {
+        this.$message({
+          message: "没有找到对应的位置信息",
+          type: "error"
+        });
+        this.communityForm["longitude"] = "";
+        this.communityForm["latitude"] = "";
+      }
+    });
+  }
+
   beforeAvatarUpload(file) {
     const isJPG = file.type === "image/jpeg";
     const isLt2M = file.size / 1024 / 1024 < 2;
