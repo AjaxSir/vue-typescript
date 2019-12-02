@@ -95,11 +95,31 @@
     <el-row :gutter="10">
       <el-col :span="24">
         <div class="rightContent">
-          <el-table :data="list_data" border>
-            <!-- <el-table-column type="selection" align="center"></el-table-column> -->
+          <el-table
+            v-loading="showLoading"
+            :data="list_data"
+            stripe
+            class="demo-block"
+            highlight-current-row
+            @cell-mouse-enter="enterRowChange"
+            @cell-mouse-leave="leaveRowChange"
+            @selection-change="handleSelectionChange"
+          >
+            <el-table-column type="selection" align="center"></el-table-column>
             <el-table-column type="index" width="50" align="center" label="编号"></el-table-column>
-
-            <el-table-column prop="name" width="70" align="center" label="姓名"></el-table-column>
+            <el-table-column prop="name" width="70" align="center" label="姓名">
+              <template slot-scope="scope">
+                <span>{{scope.row.name}}</span>
+                <div class="fun-btn">
+                  <el-dropdown trigger="click" placement="bottom-start" @command="commandClick">
+                    <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
+                    <el-dropdown-menu slot="dropdown">
+                      <el-dropdown-item :command="returnCommand('delete', scope.row)">批量删除</el-dropdown-item>
+                    </el-dropdown-menu>
+                  </el-dropdown>
+                </div>
+              </template>
+            </el-table-column>
             <el-table-column prop="phone" min-width="90" align="center" label="电话"></el-table-column>
             <el-table-column prop="visitName" align="center" label="受访人姓名">
               <template slot-scope="{ row }">
@@ -107,7 +127,7 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="vistor_type" width="101" align="center" label="访客类型">
+            <el-table-column prop="visitType" width="101" align="center" label="访客类型">
               <template slot="header">
                 <el-dropdown style="padding:0;" trigger="click" @command="filterType">
                   <span class="el-dropdown-link">
@@ -120,18 +140,18 @@
                       :class="commandType==='all' ? pitchOn : unchecked"
                     >全部</el-dropdown-item>
                     <el-dropdown-item
-                      command="App"
+                      command="1"
                       :class="commandType==='App' ? pitchOn : unchecked"
                     >APP</el-dropdown-item>
                     <el-dropdown-item
-                      command="注册机"
-                      :class="commandType==='注册机' ? pitchOn : unchecked"
-                    >注册机</el-dropdown-item>
+                      command="2"
+                      :class="commandType==='访客机' ? pitchOn : unchecked"
+                    >访客机</el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </template>
               <template slot-scope="scope">
-                <span>{{scope.row.visitType}}</span>
+                <span>{{scope.row.visitType ==='1' ?'APP' : scope.row.visitType ==='2' ?'访客机' : '--'}}</span>
               </template>
             </el-table-column>
             <el-table-column prop="cardNo" align="center" label="身份证号"></el-table-column>
@@ -356,6 +376,13 @@ export default class VistoryManage extends Vue {
     method: "get"
   };
 
+  deleteForm: Object = {
+    //单个或批量删除
+    url: "/admin/usr-visitor/batch-delete/",
+    method: "delete",
+    data: []
+  };
+
   private listQuery: Object = {
     // 访客目标通行记录翻页
     total: 0,
@@ -445,6 +472,14 @@ export default class VistoryManage extends Vue {
     };
   }
 
+  handleSelectionChange(val) {
+    /**@description  获取需要操作的数据列表 */
+    this.deleteForm["data"] = [];
+    val.forEach(ele => {
+      this.deleteForm["data"].push(ele.id);
+    });
+  }
+
   created() {
     this.initForm["params"] = Object.assign(
       this.initForm["params"],
@@ -515,7 +550,7 @@ export default class VistoryManage extends Vue {
     if (tab.name === "second") {
       this.fetchUser();
     } else if (tab.name === "thirdly") {
-      this.listQuery['page'] = 1
+      this.listQuery["page"] = 1;
       this.fetchPass();
     }
   }
@@ -586,5 +621,29 @@ export default class VistoryManage extends Vue {
 .n {
   color: black;
   background: #fff;
+}
+.fun-btn {
+  position: absolute;
+  left: -64px;
+  top: 30%;
+
+  .iconfont {
+    font-size: 19px;
+    color: #8091a5;
+    cursor: pointer;
+  }
+}
+
+.table-col {
+  position: relative;
+}
+
+.close-menu {
+  width: 10px;
+  height: 48px;
+  background: #acb7c1;
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+  position: relative;
 }
 </style>

@@ -5,20 +5,16 @@
         <action-header :dialogCreate.sync="dialogCreate" :total="1">
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>导入</el-dropdown-item>
-            <el-dropdown-item>导出</el-dropdown-item>
+            <el-dropdown-item command="export">导出</el-dropdown-item>
           </el-dropdown-menu>
           <div slot="houseNum">
-
             <div class="word-filter">
               <span class="filter-name">车位号:</span>
               <el-input class="input-filter" size="small"></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">有效日期:</span>
-              <el-date-picker
-                type="date"
-                placeholder="选择日期">
-              </el-date-picker>
+              <el-date-picker type="date" placeholder="选择日期"></el-date-picker>
             </div>
             <div class="word-filter">
               <span class="filter-name">状&nbsp;&nbsp;&nbsp;&nbsp;态:</span>
@@ -28,7 +24,6 @@
                 <el-option label="空闲" value="free"></el-option>
               </el-select>
             </div>
-
           </div>
         </action-header>
       </el-col>

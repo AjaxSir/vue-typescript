@@ -5,7 +5,7 @@
         <action-header :dialogCreate.sync="dialogCreate" :total="1">
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>导入</el-dropdown-item>
-            <el-dropdown-item>导出</el-dropdown-item>
+            <el-dropdown-item command="export">导出</el-dropdown-item>
             <el-dropdown-item>统计图表</el-dropdown-item>
           </el-dropdown-menu>
           <div slot="houseNum">

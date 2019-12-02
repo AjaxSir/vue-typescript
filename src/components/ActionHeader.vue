@@ -21,7 +21,7 @@
           class="createBtn"
           type="primary"
           size="small"
-          @click='handleClick("export")'
+          @click="handleClick('export')"
         >导出</el-button>
         <el-dropdown v-if="moreStatus" size="small" @command="handleClick">
           <el-button size="small" style="border-color: #409EFF; color: #409EFF;">
@@ -65,11 +65,16 @@
           </transition>
         </div>
 
-        <span class="total">总共:{{ total }}条</span>
+        <span v-if="pageStatus" class="total">总共:{{ total }}条</span>
 
-        <i @click="visible = !visible" style="font-size:18px;" class="iconfont icon-_shezhi-xian"></i>
+        <i
+          v-if="pageStatus"
+          @click="visible = !visible"
+          style="font-size:18px;"
+          class="iconfont icon-_shezhi-xian"
+        ></i>
 
-        <transition name="el-zoom-in-top">
+        <transition v-if="pageStatus" name="el-zoom-in-top">
           <div v-show="visible" class="setting">
             <span>每页显示:</span>
             <el-select
@@ -102,7 +107,7 @@ import {
   Emit
 } from "vue-property-decorator";
 import mixin from "@/config/minxins";
-import qs from 'qs'
+import qs from "qs";
 
 @Component({
   mixins: [mixin],
@@ -114,6 +119,7 @@ export default class ActionManage extends Vue {
   @Prop({ default: false }) houseStatus: boolean; // 住宅管理才显示
   @Prop({ default: true }) filterStatus: boolean; // 是否需要显示过滤条件
   @Prop({ default: true }) moreStatus: boolean; // 是否显示更多菜单
+  @Prop({ default: true }) pageStatus: boolean; //是否显示分页
   @Prop() private exportUrl: any; // 导出路径
   @Prop() private exportName: any; //导出文件名
   @Prop({
@@ -171,7 +177,7 @@ export default class ActionManage extends Vue {
   }
   // 导出
   exportTable() {
-    this["exportFunc"](this.exportName, this.exportUrl);
+    this["exportFunc"](this.exportName, this.exportUrl, this.filterForm);
   }
   /**
    * 筛选按钮
@@ -179,7 +185,7 @@ export default class ActionManage extends Vue {
   @Emit("fetchData")
   emitFetchData() {
     this.visibleFilter = false;
-    this.page['page'] = 1
+    this.page["page"] = 1;
     this.initFormHeader["params"] = Object.assign(
       this.initFormHeader["params"],
       this.filterForm,
@@ -214,18 +220,21 @@ export default class ActionManage extends Vue {
   // 更多菜单下的操作
   handleClick(val) {
     switch (val) {
-      case 'export':
-        for (let key in this.initFormHeader['params']) {
-          if (this.initFormHeader['params'][key] === '' || this.initFormHeader['params'][key] === null) {
-            console.log(key)
-            delete this.initFormHeader['params'][key]
+      case "export":
+        for (let key in this.initFormHeader["params"]) {
+          if (
+            this.initFormHeader["params"][key] === "" ||
+            this.initFormHeader["params"][key] === null
+          ) {
+            console.log(key);
+            delete this.initFormHeader["params"][key];
             // = null
           }
         }
-        console.log(this.initFormHeader['params'])
-        const filterUrl = qs.stringify(this.initFormHeader['params'])
-        console.log(this.exportUrl + '/?' + filterUrl)
-        this['exportFunc'](this.exportName, this.exportUrl + '/?' + filterUrl)
+        console.log(this.initFormHeader["params"]);
+        const filterUrl = qs.stringify(this.initFormHeader["params"]);
+        console.log(this.exportUrl + "/?" + filterUrl);
+        this["exportFunc"](this.exportName, this.exportUrl + "/?" + filterUrl);
     }
   }
 }

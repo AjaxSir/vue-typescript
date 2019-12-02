@@ -12,7 +12,7 @@
           :total="page.total"
         >
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>导出</el-dropdown-item>
+            <el-dropdown-item command="export">导出</el-dropdown-item>
           </el-dropdown-menu>
           <div slot="houseNum">
             <div class="word-filter">
@@ -298,11 +298,7 @@ export default class InformIssue extends Vue {
         postMessage(form).then(res => {
           this.handleClose();
           this["fetchData"](this.initForm);
-          this.$notify({
-            type: "success",
-            title: "成功",
-            message: "发布消息成功"
-          });
+          this["notify"]("发布消息成功");
         });
       }
     });

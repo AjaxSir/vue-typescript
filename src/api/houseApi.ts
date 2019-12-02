@@ -147,7 +147,7 @@ export function searchSuggestHouse(keys: string) {
 // 新增房屋
 export function addHouse(data: object) {
   return _axios({
-    url:'/admin/hsHouse',
+    url: '/admin/hsHouse',
     method: 'post',
     data
   })
@@ -165,5 +165,22 @@ export function searchHouse() {
   return _axios({
     url: '/admin/hsBuilding/query-building-name',
     method: 'get',
+  })
+}
+// 新增出入口
+export function creatPassageway(data: object) {
+  return _axios({
+    url: '/admin/hs-enter-exit',
+    method: 'post',
+    data
+  })
+}
+
+//修改出入口
+export function editPassageway(data: object) {
+  return _axios({
+    url: '/admin/hs-enter-exit',
+    method: 'put',
+    data
   })
 }
