@@ -50,6 +50,14 @@ export function updateUserNote(id: string, note: string) {
   })
 }
 
+//
+export function getUserPass(params: object) {
+  return _axios({
+    url: '/admin/people-pass/',
+    method: 'get',
+    params
+  })
+}
 
 //获取目标人员通行记录 || 访客通行记录
 export function getTargrtRecord(params: object) {
@@ -102,7 +110,7 @@ export function addRoleGroup(data: object) {
 }
 
 // 删除权限组
-export function deleteRoleGroup(id:string) {
+export function deleteRoleGroup(id: string) {
   return _axios({
     url: '/admin/devAuthorities',
     method: 'delete',
@@ -120,6 +128,16 @@ export function updateRoleGroup(data: object) {
     data
   })
 }
+/********* 关注人员 *********** */
+
+// 创建关注人员
+export function addFocusPeople(data: object) {
+  return _axios({
+    url: '/admin/usr-focus-personnel/',
+    method: 'post',
+    data
+  })
+}
 
 // 通过id获取权限组信息
 export function getGroupInfoById(id: string){
@@ -132,3 +150,44 @@ export function getGroupInfoById(id: string){
   })
 }
 
+//修改关注人员
+export function editFocusPeople(data: Object) {
+  return _axios({
+    url: `/admin/usr-focus-personnel/${data['id']}/`,
+    method: 'patch',
+    data
+  })
+}
+
+// 删除关注人员
+export function deleteFocusPeople(id: string) {
+  return _axios({
+    url: `/admin/usr-focus-personnel/${id}/`,
+    method: 'delete'
+  })
+}
+
+// 获取关注人员类别
+export function getType() {
+  return _axios({
+    url: '/admin/usr-focus-personnel-type/',
+    method: 'get',
+  })
+}
+
+//新增关注人员类别
+export function addType(data: Object) {
+  return _axios({
+    url: '/admin/usr-focus-personnel-type/',
+    method: 'post',
+    data
+  })
+}
+
+//删除关注人员类别
+export function deleteType(id: any) {
+  return _axios({
+    url: `/admin/usr-focus-personnel-type/${id}/`,
+    method: 'delete'
+  })
+}

@@ -11,7 +11,7 @@
         :dialogCreate.sync="dialogCreate"
         :total="page.total">
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item command='export'>导出</el-dropdown-item>
+            <el-dropdown-item command="export">导出</el-dropdown-item>
           </el-dropdown-menu>
           <div slot="houseNum">
             <span class="word-filter">

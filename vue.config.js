@@ -23,7 +23,7 @@ module.exports = {
         }
       }
     },
-    host: '192.168.3.108'
+    host: '192.168.3.172'
   },
   // 生产环境 sourceMap
   productionSourceMap: false,

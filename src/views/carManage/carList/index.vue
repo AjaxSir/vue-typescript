@@ -3,6 +3,8 @@
     <el-row>
       <el-col :span="24">
         <action-header
+          exportUrl="/v1/admin/usr-car/export/"
+          exportName="车辆管理列表.xls"
           :initFormHeader="initForm"
           @fetchData="fetchData"
           :filterForm="filterForm"
@@ -10,8 +12,7 @@
           :total="page.total"
         >
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>
-              <!-- :headers="myHeaders" -->
+            <!-- <el-dropdown-item>
               <el-upload
                 :action="actionUrl"
                 :show-file-list="false"
@@ -20,10 +21,8 @@
               >
                 <p>导入</p>
               </el-upload>
-            </el-dropdown-item>
-            <div @click="exportFunc('车辆管理列表','/v1/admin/usr-car/export/')">
-              <el-dropdown-item command="export">导出</el-dropdown-item>
-            </div>
+            </el-dropdown-item>-->
+            <el-dropdown-item command="export">导出</el-dropdown-item>
           </el-dropdown-menu>
           <div slot="houseNum">
             <div class="word-filter">
@@ -54,6 +53,7 @@
             @cell-mouse-enter="enterRowChange"
             @cell-mouse-leave="leaveRowChange"
             @selection-change="handleSelectionChange"
+            @cell-click="cellClick"
           >
             <el-table-column type="selection" width="50"></el-table-column>
 
@@ -128,7 +128,15 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="note" label="备注"></el-table-column>
+            <el-table-column prop="note" label="备注">
+              <template slot-scope="scope">
+                <span
+                  v-if="!scope.row.carNote"
+                  @click="scope.row.carNote = !scope.row.carNote"
+                >{{scope.row.note}}</span>
+                <el-input v-else size="small" v-model="editForm.note" @blur="editNote(scope.row)"></el-input>
+              </template>
+            </el-table-column>
           </el-table>
         </div>
         <el-pagination
@@ -148,7 +156,7 @@
         </div>-->
       </el-col>
     </el-row>
-    <!-- 车辆修改 -->
+    <!-- 车辆新增 -->
     <el-dialog
       title="新增"
       :visible.sync="dialogCreate"
@@ -469,7 +477,7 @@ export default class CarList extends Vue {
     note: "" //备注
   };
 
-  private actionUrl: String = "/v1/admin/usr-car/batch-add/";
+  // private actionUrl: String = "/v1/admin/usr-car/batch-add/";
   //  private myHeaders: Object = { Authorization: store.getters.bearerToken },
   private detailDialogVisible: boolean = false; // 详细信息dialog弹框
   private activeName: string = "first"; //目标车辆详细信息 tab Title
@@ -480,6 +488,7 @@ export default class CarList extends Vue {
   private CarDialogForm: Object = {}; // 车辆详细信息
   private carUserDetail: Object = {}; //车主详细信息
   private notifyInstance: any; //防止notify重复多次出现提示
+  updateArray: Array<string> = ["carNote"];
 
   initForm: object = {
     //获取车辆列表url
@@ -576,7 +585,7 @@ export default class CarList extends Vue {
           this.handleClose();
           this["fetchData"](this.initForm);
           this.nameDisabled = false;
-          this.notify("添加车辆成功");
+          this["notify"]("添加车辆名单成功");
         });
         // .catch(err => {
         //   const { data } = err.response;
@@ -599,28 +608,25 @@ export default class CarList extends Vue {
     this.editForm["id"] = val;
   }
 
-  handleCommand(val) {
-    this.editForm["status"] = val;
-    const form = { ...this.editForm };
-    for (let key in form) {
-      if (form[key] === "") {
-        delete form[key];
-      }
-    }
+  cellClick(row, column, event, cell) {
+    row.carNote = true;
+  }
+
+  editNote(item) {
+    /**@description 修改备注 */
+    const form = { note: this.editForm["note"], id: item.id };
     editCar(form).then(() => {
-      this.notify("修改车辆状态成功");
+      this.editForm["note"] = "";
+      this["notify"]("修改车辆备注成功");
       this["fetchData"](this.initForm);
     });
   }
 
-  notify(val) {
-    if (this.notifyInstance) {
-      this.notifyInstance.close();
-    }
-    this.notifyInstance = this.$notify({
-      type: "success",
-      title: "成功",
-      message: val
+  handleCommand(val) {
+    const form = { status: val, id: this.editForm["id"] };
+    editCar(form).then(() => {
+      this["notify"]("修改车辆状态成功");
+      this["fetchData"](this.initForm);
     });
   }
 
@@ -635,7 +641,7 @@ export default class CarList extends Vue {
     editCar(form).then(() => {
       this.handleClose();
       this["fetchData"](this.initForm);
-      this.notify("修改车辆成功");
+      this["notify"]("修改车辆成功");
     });
   }
 
@@ -704,19 +710,19 @@ export default class CarList extends Vue {
     }
   }
 
-  successFile(response, file, fileList) {
-    /**@description 导入Excel 成功 */
-    this.$message({
-      message: `导入 ${file.name} 成功`,
-      type: "success"
-    });
-  }
+  // successFile(response, file, fileList) {
+  //   /**@description 导入Excel 成功 */
+  //   this.$message({
+  //     message: `导入 ${file.name} 成功`,
+  //     type: "success"
+  //   });
+  // }
 
-  errorFile(err, file, fileList) {
-    /**@description 导入Excel 失败 */
-    let errormsg = JSON.parse(err.message);
-    this.$message.error(`${errormsg.message}`);
-  }
+  // errorFile(err, file, fileList) {
+  //   /**@description 导入Excel 失败 */
+  //   let errormsg = JSON.parse(err.message);
+  //   this.$message.error(`${errormsg.message}`);
+  // }
 }
 </script>
 
@@ -736,11 +742,10 @@ export default class CarList extends Vue {
 .serial-num {
   position: relative;
 }
-
 .fun-btn {
   position: absolute;
   left: -64px;
-  top: 30%;
+  top: 28%;
   .iconfont {
     font-size: 19px;
     color: #8091a5;
@@ -748,15 +753,6 @@ export default class CarList extends Vue {
   }
 }
 .table-col {
-  position: relative;
-}
-
-.close-menu {
-  width: 10px;
-  height: 48px;
-  background: #acb7c1;
-  border-top-right-radius: 20px;
-  border-bottom-right-radius: 20px;
   position: relative;
 }
 

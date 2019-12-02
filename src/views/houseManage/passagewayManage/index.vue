@@ -2,7 +2,15 @@
   <div class="app-container">
     <el-row>
       <el-col :span="24">
-        <action-header :filterStatus='false' :dialogCreate.sync="dialogCreate" :total="1">
+        <action-header
+          :filterStatus="false"
+          :pageStatus="false"
+          :initFormHeader="initForm"
+          @fetchData="fetchData"
+          :filterForm="filterForm"
+          :dialogCreate.sync="dialogCreate"
+          :total="page.total"
+        >
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>统计信息</el-dropdown-item>
           </el-dropdown-menu>
@@ -11,7 +19,7 @@
               <span class="filter-name">发布对象:</span>
               <el-input class="input-filter" size="small"></el-input>
             </div>
-          </div> -->
+          </div>-->
         </action-header>
       </el-col>
     </el-row>
@@ -19,22 +27,25 @@
       <el-col :span="24" class="table-col">
         <div class="rightContent">
           <el-table
-            :data="cardList"
+            v-loading="showLoading"
+            :data="list_data"
             stripe
             class="demo-block"
             highlight-current-row
             @cell-mouse-enter="enterRowChange"
             @cell-mouse-leave="leaveRowChange"
+            @selection-change="handleSelectionChange"
+            @cell-click="cellClick"
           >
             <el-table-column type="selection" width="50"></el-table-column>
 
             <el-table-column type="index" label="序号" width="50"></el-table-column>
 
-            <el-table-column  class="serial-num" prop="name" label="出入口名称" align="center">
+            <el-table-column class="serial-num" prop="name" label="出入口名称" align="center">
               <template slot-scope="scope">
                 <span>{{scope.row.name}}</span>
                 <div class="fun-btn">
-                  <el-dropdown @command='commandClick' trigger="click" placement="bottom-start">
+                  <el-dropdown @command="commandClick" trigger="click" placement="bottom-start">
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
                     <el-dropdown-menu slot="dropdown">
                       <el-dropdown-item :command='returnCommand("update", scope.row)'>修改</el-dropdown-item>
@@ -48,27 +59,69 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="xb" align="center" label="累计进入人数"></el-table-column>
+            <el-table-column prop="enterTimes" align="center" label="累计进入人数"></el-table-column>
 
-            <el-table-column prop="xq" label="累计出人数" align="center"></el-table-column>
-            <el-table-column prop="detail" label="备注" align="center"></el-table-column>
+            <el-table-column prop="exitTimes" label="累计出人数" align="center"></el-table-column>
+            <el-table-column prop="note" label="备注">
+              <template slot-scope="scope">
+                <span
+                  v-if="!scope.row.passagewayNote"
+                  @click="scope.row.passagewayNote = !scope.row.passagewayNote"
+                >{{scope.row.note}}</span>
+                <el-input v-else size="small" v-model="editForm.note" @blur="editNote(scope.row)"></el-input>
+              </template>
+            </el-table-column>
           </el-table>
         </div>
-        <el-pagination style="margin-top:10px;" background layout="prev, pager, next" :total="2"></el-pagination>
+        <!-- <el-pagination style="margin-top:10px;" background layout="prev, pager, next" :total="2"></el-pagination> -->
       </el-col>
     </el-row>
-    <el-dialog title="提示" :visible.sync="dialogCreate" width="30%" :before-close="handleClose">
-      <el-form :model="Form" :rules="rules" ref='Forms' label-width="110px">
-        <el-form-item label="出入口名称:"  prop='name'>
-          <el-input v-model="Form.name" placeholder='输入出入口名称'></el-input>
+    <!-- 新增出入口 -->
+    <el-dialog
+      title="新增"
+      :visible.sync="dialogCreate"
+      width="500px"
+      :before-close="handleClose"
+      :close-on-click-modal="false"
+    >
+      <el-form :model="createForm" :rules="rules" ref="dataForm" label-width="110px">
+        <el-form-item label="出入口名称:" prop="name">
+          <el-input v-model="createForm.name" placeholder="输入出入口名称"></el-input>
         </el-form-item>
-        <el-form-item label="备注:"  prop='detail'>
-          <el-input v-model="Form.detail" placeholder='输入备注信息'></el-input>
+        <el-form-item label="备注:" prop="detail">
+          <el-input v-model="createForm.note" placeholder="输入备注信息"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose">取 消</el-button>
-        <el-button type="primary" @click="dialogCreate = false">确 定</el-button>
+        <el-button type="primary" @click="addPassageway">确 定</el-button>
+      </span>
+    </el-dialog>
+    <!-- 修改出入口 -->
+    <el-dialog
+      title="修改"
+      :visible.sync="dialogEdit"
+      width="500px"
+      :before-close="handleClose"
+      :close-on-click-modal="false"
+    >
+      <el-form
+        ref="dataForm"
+        :model="editForm"
+        label-position="right"
+        label-width="110px"
+        style="margin-right:40px;"
+      >
+        <el-form-item label="出入口名称:" prop="name">
+          <el-input v-model="editForm.name" placeholder="输入出入口名称"></el-input>
+        </el-form-item>
+        <el-form-item label="备注:" prop="detail">
+          <el-input v-model="editForm.note" placeholder="输入备注信息"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="handleClose">取 消</el-button>
+        <el-button type="primary" @click="modifPassageway">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -77,58 +130,128 @@
 <script lang="ts">
 import { Component, Prop, Vue, Mixins } from "vue-property-decorator";
 import { Getter, Action, Mutation } from "vuex-class";
+import { creatPassageway, editPassageway } from "@/api/houseApi.ts";
 import mixin from "@/config/minxins";
 
 const ActionHeader = () => import("@/components/ActionHeader.vue");
-const DataTree = () => import("@/components/DataTree.vue");
 
 @Component({
   mixins: [mixin],
   components: {
-    ActionHeader,
-    DataTree
+    ActionHeader
   }
 })
 export default class InformIssue extends Vue {
-  private cardList: Array<Object> = [
-    {
-      name: "东大门",
-      xq: "100011",
-      xb: "1000000",
-      showMenu: false,
-      detail: '11'
-    }
-  ];
+  filterForm: object = { tag: "pagination" }; //根据关键字查询
+  private dialogCreate: Boolean = false; // 新增弹出表单
   // 新增dialog弹框信息
-  Form: any = {
-    name: '',
-    detail: ''
-  }
-  rules: any = {
-    name: [
-            { required: true, message: '请输入需关联的房屋', trigger: 'blur' }
-          ]
-  }
-  private dialogLibrary: any = false;
-
-  private form: Object = {
+  private createForm: Object = {
     name: "",
-    region: "",
-    date1: "",
-    date2: "",
-    delivery: false,
-    type: [],
-    resource: "",
-    desc: ""
+    note: ""
+  };
+  private rules: Object = {
+    //新增验证
+    name: [{ required: true, message: "请输入出入口名称", trigger: "blur" }]
   };
 
-  private dialogFormVisible: Boolean = false;
-  private formLabelWidth: String = "120px";
+  private dialogEdit: Boolean = false; // 修改弹出表单
+  private editForm: Object = {
+    // 修改dialog弹框信息
+    name: "",
+    note: "",
+    id: ""
+  };
+  updateArray: Array<string> = ["passagewayNote"];
+
+  initForm: object = {
+    //获取车辆列表url
+    url: "/admin/hs-enter-exit",
+    method: "get"
+  };
+
+  deleteForm: Object = {
+    //单个或批量删除
+    url: "/admin/hs-enter-exit/batch-delete",
+    method: "delete",
+    data: []
+  };
+
+  created() {
+    this.initForm["params"] = Object.assign(
+      this.initForm["params"],
+      this.page,
+      this.filterForm
+    ); // 合并参数
+  }
+
+  // 获取需要操作的数据列表
+  handleSelectionChange(val) {
+    this.deleteForm["data"] = [];
+    val.forEach(ele => {
+      this.deleteForm["data"].push(ele.id);
+    });
+  }
+
+  addPassageway() {
+    /**@description 新增出入口 */
+    this.$refs["dataForm"]["validate"](valid => {
+      if (valid) {
+        var form = { ...this.createForm };
+        creatPassageway(form).then(res => {
+          this.handleClose();
+          this["fetchData"](this.initForm);
+          this["notify"]("添加出入口成功");
+        });
+        // .catch(err => {
+        //   const { data } = err.response;
+        //   console.log(err.response);
+        //     this.errorMessage = data[k][0];
+        // });
+      }
+    });
+  }
 
   editType(item) {
     /**@description 修改状态 */
-    console.log(item);
-    // this.dialogFormVisible = true;
+    for (const key in this.editForm) {
+      this.editForm[key] = item[key];
+    }
+    this.dialogEdit = true;
+  }
+
+  modifPassageway() {
+    const form = { ...this.editForm };
+    for (let key in form) {
+      if (form[key] === "") {
+        delete form[key];
+      }
+    }
+    editPassageway(form).then(() => {
+      this.handleClose();
+      this["fetchData"](this.initForm);
+      this["notify"]("修改出入口成功");
+    });
+  }
+
+  editNote(item) {
+    /**@description 修改备注 */
+    const form = { note: this.editForm["note"], id: item.id };
+    editPassageway(form).then(() => {
+      this.editForm["note"] = "";
+      this["notify"]("修改出入口备注成功");
+      this["fetchData"](this.initForm);
+    });
+  }
+
+  cellClick(row, column, event, cell) {
+    row.passagewayNote = true;
+  }
+
+  handleClose() {
+    /** @description 关闭新增/修改dialog */
+    this.dialogCreate = false; //车辆新增dialog
+    this.dialogEdit = false; //修改dialog
+    this.$refs["dataForm"]["resetFields"]();
   }
 
   enterRowChange(row, column, cell, event) {
@@ -139,9 +262,6 @@ export default class InformIssue extends Vue {
   leaveRowChange(row) {
     /**@description hover leave tab 行 */
     row.showMenu = false;
-  }
-  queryIdetity() {
-    this.dialogLibrary = true;
   }
 }
 </script>

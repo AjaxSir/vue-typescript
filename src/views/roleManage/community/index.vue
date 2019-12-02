@@ -4,7 +4,7 @@
       <el-col :span="24">
         <action-header :total="1">
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>导出</el-dropdown-item>
+            <el-dropdown-item command="export">导出</el-dropdown-item>
           </el-dropdown-menu>
           <div slot="houseNum">
             <div class="word-filter">
@@ -19,11 +19,11 @@
       <el-col :span="24" class="table-col">
         <div class="rightContent">
           <el-form ref="form" :model="form" label-width="80px">
-            <el-form-item label="名称">
+            <el-form-item label="小区名称">
               <el-input v-model="form.name"></el-input>
             </el-form-item>
 
-            <el-form-item label="省">
+            <!-- <el-form-item label="省">
               <el-select v-model="form.region" placeholder="请选择省">
                 <el-option label="四川" value="shanghai"></el-option>
                 <el-option label="浙江" value="beijing"></el-option>
@@ -42,27 +42,29 @@
                 <el-option label="金牛区" value="shanghai"></el-option>
                 <el-option label="鄞州区" value="beijing"></el-option>
               </el-select>
-            </el-form-item>
+            </el-form-item>-->
 
-            <el-form-item label="地址">
+            <el-form-item label="详细地址">
               <el-input v-model="form.name"></el-input>
             </el-form-item>
 
             <el-form-item label="图片展示">
               <el-upload
-                class="avatar-uploader"
+                multiple
                 action="https://jsonplaceholder.typicode.com/posts/"
-                :show-file-list="false"
-                :on-success="handleAvatarSuccess"
-                :before-upload="beforeAvatarUpload"
+                list-type="picture-card"
+                :on-preview="handlePictureCardPreview"
+                :on-remove="handleRemove"
               >
-                <img v-if="imageUrl" :src="imageUrl" class="avatar" />
-                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                <i class="el-icon-plus"></i>
               </el-upload>
+              <el-dialog :visible.sync="dialogVisible" size="tiny">
+                <img width="100%" :src="imageUrl" alt />
+              </el-dialog>
             </el-form-item>
 
-            <el-form-item label="备注">
-              <el-input type="textarea" v-model="form.desc"></el-input>
+            <el-form-item label="小区概况">
+              <el-input type="textarea" :rows="5" v-model="form.desc"></el-input>
             </el-form-item>
             <el-form-item>
               <el-button type="primary" @click="onSubmit" style="float:right;">立即创建</el-button>
@@ -90,6 +92,9 @@ const DataTree = () => import("@/components/DataTree.vue");
   }
 })
 export default class InformIssue extends Vue {
+  filterForm: object = {
+    tag: "no"
+  }; //根据关键字查询
   private form: any = {
     name: "",
     region: "",
@@ -100,8 +105,8 @@ export default class InformIssue extends Vue {
     resource: "",
     desc: ""
   };
-
   private imageUrl: any = "";
+  private dialogVisible: Boolean = false;
 
   private rowSpan: any = {
     row1: 4,
@@ -112,6 +117,23 @@ export default class InformIssue extends Vue {
 
   private dialogFormVisible: Boolean = false;
   private formLabelWidth: String = "120px";
+  initForm: object = {};
+
+  created() {
+    this.initForm["params"] = Object.assign(
+      this.initForm["params"],
+      this.page,
+      this.filterForm
+    ); // 合并参数
+  }
+
+  handleRemove(file, fileList) {
+    console.log(file, fileList);
+  }
+  handlePictureCardPreview(file) {
+    this.imageUrl = file.url;
+    this.dialogVisible = true;
+  }
 
   editType(item) {
     /**@description 修改状态 */

@@ -1,6 +1,5 @@
 <template>
   <div class="app-container">
-
     <el-row :gutter="20">
       <el-col :span="5">
         <scene-manage />

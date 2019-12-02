@@ -95,8 +95,6 @@
               </template>
             </el-table-column>
 
-            <!-- <el-table-column align="center" prop="modal" label="车辆品牌"></!-->
-            -->
             <el-table-column align="center" prop="isVisitCar" label="访客通行">
               <template slot-scope="scope">
                 <el-tag

@@ -2,22 +2,43 @@
   <div class="app-container">
     <el-row>
       <el-col :span="24">
-        <ActionHeader :btnStatus="1" :total="1">
+        <ActionHeader
+          :btnStatus="1"
+          :moreStatus="false"
+          :initFormHeader="initForm"
+          @fetchData="fetchData"
+          :filterForm="filterForm"
+          :dialogCreate.sync="dialogCreate"
+          :total="page.total"
+        >
           <!-- <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>进出次数排序</el-dropdown-item>
             <el-dropdown-item>滞留时间排序</el-dropdown-item>
             <el-dropdown-item>次数统计</el-dropdown-item>
-          </el-dropdown-menu> -->
+          </el-dropdown-menu>-->
           <div slot="houseNum">
             <div class="word-filter">
-              <span class="filter-name">分类:</span>
-              <el-select  class="input-filter" v-model="statusType" placeholder="请选择">
+              <span class="filter-name" style="min-width: 86px;">关注人姓名:</span>
+              <el-input class="input-filter" size="small" v-model="filterForm.name"></el-input>
+            </div>
+            <div class="word-filter">
+              <span class="filter-name" style="min-width: 86px;">紧急联系电话:</span>
+              <el-input class="input-filter" size="small" v-model="filterForm.emergencyPhone"></el-input>
+            </div>
+            <div class="word-filter">
+              <span class="filter-name" style="min-width: 86px;">预警组别:</span>
+              <el-select
+                class="input-filter"
+                v-model="filterForm.earlyGroupId"
+                size="small"
+                placeholder="请选择"
+              >
                 <el-option
-                  v-for="item in options"
-                  :key="item.id"
-                  :label="item.label"
-                  :value="item.id">
-                </el-option>
+                  v-for="tag in earlyGroup"
+                  :key="tag.id"
+                  :label="tag.groupName"
+                  :value="tag.id"
+                ></el-option>
               </el-select>
             </div>
           </div>
@@ -27,39 +48,439 @@
     <el-row :gutter="10">
       <el-col :span="24">
         <div class="rightContent">
-          <el-table :data="list_data" border>
-            <el-table-column type="selection" align="center"></el-table-column>
+          <el-table
+            v-loading="showLoading"
+            :data="list_data"
+            stripe
+            class="demo-block"
+            highlight-current-row
+            @cell-mouse-enter="enterRowChange"
+            @cell-mouse-leave="leaveRowChange"
+            @cell-click="cellClick"
+          >
+            <el-table-column type="selection" width="50"></el-table-column>
+
+            <el-table-column type="index" label="序号" width="50" align="center"></el-table-column>
+
             <el-table-column prop="name" align="center" label="姓名">
-              <template slot-scope="{ row }">
-                <el-button type='text' @click="showDetail(row)">{{ row.name }}</el-button>
+              <template slot-scope="scope">
+                <el-button
+                  @click="showCarDetails(scope.row)"
+                  type="text"
+                  class="serial-num"
+                >{{scope.row.name}}</el-button>
+                <div class="fun-btn">
+                  <el-dropdown trigger="click" placement="bottom-start" @command="commandClick">
+                    <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
+                    <el-dropdown-menu slot="dropdown">
+                      <div @click="editTarget(scope.row)">
+                        <el-dropdown-item command="update">修改</el-dropdown-item>
+                      </div>
+                      <div @click="deleteBtn(scope.row)">
+                        <el-dropdown-item command="dele">删除</el-dropdown-item>
+                      </div>
+                      <!-- <el-dropdown-item :command="returnCommand('delete', scope.row)">批量删除</el-dropdown-item> -->
+                    </el-dropdown-menu>
+                  </el-dropdown>
+                </div>
               </template>
             </el-table-column>
 
-            <el-table-column prop="card_number" align="center" label="房号"></el-table-column>
             <el-table-column prop="age" align="center" label="年龄"></el-table-column>
-            <el-table-column prop="vistor_type" align="center" label="分类"></el-table-column>
+
+            <el-table-column prop="typeName" align="center" label="分类"></el-table-column>
+
+            <el-table-column prop="phone" align="center" label="联系电话"></el-table-column>
+
+            <el-table-column prop="locationName" align="center" label="房屋编号" min-width="200px">
+              <template slot-scope="scope">
+                <span>{{scope.row.house&&scope.row.house.length>0 ? scope.row.house[0].locationName :'--'}}</span>
+              </template>
+            </el-table-column>
+
+            <el-table-column prop="emergencyPhone" align="center" label="紧急联系人电话"></el-table-column>
+
+            <el-table-column prop="earlyGroupName" align="center" label="预警组别"></el-table-column>
+
+            <el-table-column prop="earlyPeriod" align="center" label="预警周期"></el-table-column>
+
             <el-table-column align="center" label="状态">
               <template slot-scope="scope">
                 <el-tag
                   size="small"
                   style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
-                  :type="scope.row.type === 1 ? 'success' : 'danger'"
-                  @click="editType(scope.row)"
-                >{{ scope.row.type === 1 ? "正常" : "异常" }}</el-tag>
+                  :type="scope.row.isNormal ? 'success' : 'danger'"
+                >{{ scope.row.isNormal? "正常" : "异常" }}</el-tag>
               </template>
             </el-table-column>
-            <el-table-column prop="detail" align="center" label="备注"></el-table-column>
+            <el-table-column prop="note" label="备注">
+              <template slot-scope="scope">
+                <span
+                  v-if="!scope.row.peopleNote"
+                  @click="scope.row.peopleNote = !scope.row.peopleNote"
+                >{{scope.row.note}}</span>
+                <el-input v-else size="small" v-model="editForm.note" @blur="editNote(scope.row)"></el-input>
+              </template>
+            </el-table-column>
           </el-table>
         </div>
-        <el-pagination style="margin-top:10px;" background layout="prev, pager, next" :total="2"></el-pagination>
+        <el-pagination
+          @current-change="pageChange"
+          style="margin-top:10px;"
+          background
+          layout="prev, pager, next,total"
+          :page-size="page.limit"
+          :total="page.total"
+        ></el-pagination>
       </el-col>
     </el-row>
+    <!-- 新增关注人员 -->
+    <el-dialog
+      title="新增"
+      :visible.sync="dialogCreate"
+      width="500px"
+      :before-close="handleClose"
+      :close-on-click-modal="false"
+    >
+      <el-form
+        ref="dataForm"
+        :model="createForm"
+        :rules="rules"
+        label-position="right"
+        label-width="100px"
+        style="margin-right:40px;"
+      >
+        <div style="display: flex;">
+          <el-form-item
+            label="名字:"
+            prop="scenceUser"
+            :show-message="showMessage"
+            :error="errorMessage.scenceUser"
+          >
+            <el-select
+              v-model="createForm.scenceUser"
+              filterable
+              remote
+              :remote-method="remoteMethod"
+              :loading="loading"
+            >
+              <el-option
+                v-for="item in nameList"
+                :key="item.scenceUserId"
+                :label="item.name"
+                :value="[item.scenceUserId,item.name]"
+              >
+                <span style="float: left">{{ item.name }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item. value }}</span>
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item
+            label="年龄:"
+            prop="age"
+            :show-message="showMessage"
+            :error="errorMessage.age"
+          >
+            <el-input v-model="createForm.age" autocomplete="off"></el-input>
+          </el-form-item>
+        </div>
+
+        <el-form-item
+          label="紧急联系人:"
+          prop="emergencyPhone"
+          :show-message="showMessage"
+          :error="errorMessage.emergencyPhone"
+        >
+          <el-input v-model="createForm.emergencyPhone" autocomplete="off"></el-input>
+        </el-form-item>
+
+        <el-form-item
+          label="预警周期:"
+          prop="earlyPeriod"
+          :show-message="showMessage"
+          :error="errorMessage.earlyPeriod"
+        >
+          <el-input v-model="createForm.earlyPeriod" autocomplete="off"></el-input>
+        </el-form-item>
+
+        <el-form-item
+          label="预警组别:"
+          prop="earlyGroupId"
+          :show-message="showMessage"
+          :error="errorMessage.earlyGroupId"
+        >
+          <el-select v-model="createForm.earlyGroupId" placeholder="请选择">
+            <el-option
+              v-for="tag in earlyGroup"
+              :key="tag.id"
+              :label="tag.groupName"
+              :value="tag.id"
+            ></el-option>
+          </el-select>
+          <el-button @click="showTypeSetting = !showTypeSetting">添加分组</el-button>
+          <div v-if="showTypeSetting">
+            <el-tag
+              style="margin-left:5px"
+              :key="index"
+              v-for="(tag, index) in earlyGroup"
+              closable
+              :disable-transitions="false"
+              @close="deleteTag(tag, index,'group')"
+            >{{tag.groupName}}</el-tag>
+            <el-input
+              class="input-new-tag"
+              v-if="newTag"
+              v-model="newTagValue"
+              ref="saveTagInput"
+              size="small"
+              @blur="handleInputConfirm('group')"
+            ></el-input>
+            <el-button v-else class="button-new-tag" size="small" @click="showInput('group')">新增分组</el-button>
+          </div>
+        </el-form-item>
+
+        <el-form-item
+          label="人员类别:"
+          prop="typeId"
+          :show-message="showMessage"
+          :error="errorMessage.typeId"
+        >
+          <el-select v-model="createForm.typeId" placeholder="请选择">
+            <el-option v-for="tag in earlyType" :key="tag.id" :label="tag.typeName" :value="tag.id"></el-option>
+          </el-select>
+          <el-button @click="showUnitSetting = !showUnitSetting">添加类别</el-button>
+          <div v-if="showUnitSetting">
+            <el-tag
+              style="margin-left:5px"
+              :key="index"
+              v-for="(tag, index) in earlyType"
+              closable
+              :disable-transitions="false"
+              @close="deleteTag(tag, index,'type')"
+            >{{tag.typeName}}</el-tag>
+            <el-input
+              class="input-new-tag"
+              v-if="newTypeTag"
+              v-model="newTypeTagValue"
+              ref="saveTagInput"
+              size="small"
+              @blur="handleInputConfirm('type')"
+            ></el-input>
+            <el-button v-else class="button-new-tag" size="small" @click="showInput('type')">新增类别</el-button>
+          </div>
+        </el-form-item>
+
+        <el-form-item label="备注:">
+          <el-input v-model="createForm.note" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogCreate = false">取 消</el-button>
+        <el-button type="primary" @click="createFocusPeople">确 定</el-button>
+      </div>
+    </el-dialog>
+
+    <!-- 修改关注人员 -->
+    <el-dialog
+      title="修改"
+      :visible.sync="dialogEdit"
+      width="500px"
+      :before-close="handleClose"
+      :close-on-click-modal="false"
+    >
+      <el-form
+        ref="dataForm"
+        :model="editForm"
+        label-position="right"
+        label-width="100px"
+        style="margin-right:40px;"
+      >
+        <el-form-item label="年龄:" prop="age" :show-message="showMessage" :error="errorMessage.age">
+          <el-input v-model="editForm.age" autocomplete="off"></el-input>
+        </el-form-item>
+
+        <el-form-item
+          label="紧急联系人:"
+          prop="emergencyPhone"
+          :show-message="showMessage"
+          :error="errorMessage.emergencyPhone"
+        >
+          <el-input v-model="editForm.emergencyPhone" autocomplete="off"></el-input>
+        </el-form-item>
+
+        <el-form-item
+          label="预警周期:"
+          prop="earlyPeriod"
+          :show-message="showMessage"
+          :error="errorMessage.earlyPeriod"
+        >
+          <el-input v-model="editForm.earlyPeriod" autocomplete="off"></el-input>
+        </el-form-item>
+
+        <el-form-item
+          label="预警组别:"
+          prop="earlyGroupId"
+          :show-message="showMessage"
+          :error="errorMessage.earlyGroupId"
+        >
+          <el-select v-model="editForm.earlyGroupId" placeholder="请选择">
+            <el-option
+              v-for="tag in earlyGroup"
+              :key="tag.id"
+              :label="tag.groupName"
+              :value="tag.id"
+            ></el-option>
+          </el-select>
+          <el-button @click="showTypeSetting = !showTypeSetting">添加分组</el-button>
+          <div v-if="showTypeSetting">
+            <el-tag
+              style="margin-left:5px"
+              :key="index"
+              v-for="(tag, index) in earlyGroup"
+              closable
+              :disable-transitions="false"
+              @close="deleteTag(tag, index,'group')"
+            >{{tag.groupName}}</el-tag>
+            <el-input
+              class="input-new-tag"
+              v-if="newTag"
+              v-model="newTagValue"
+              ref="saveTagInput"
+              size="small"
+              @blur="handleInputConfirm('group')"
+            ></el-input>
+            <el-button v-else class="button-new-tag" size="small" @click="showInput('group')">新增分组</el-button>
+          </div>
+        </el-form-item>
+
+        <el-form-item
+          label="人员类别:"
+          prop="typeId"
+          :show-message="showMessage"
+          :error="errorMessage.typeId"
+        >
+          <el-select v-model="editForm.typeId" placeholder="请选择">
+            <el-option v-for="tag in earlyType" :key="tag.id" :label="tag.typeName" :value="tag.id"></el-option>
+          </el-select>
+          <el-button @click="showUnitSetting = !showUnitSetting">添加类别</el-button>
+          <div v-if="showUnitSetting">
+            <el-tag
+              style="margin-left:5px"
+              :key="index"
+              v-for="(tag, index) in earlyType"
+              closable
+              :disable-transitions="false"
+              @close="deleteTag(tag, index,'type')"
+            >{{tag.typeName}}</el-tag>
+            <el-input
+              class="input-new-tag"
+              v-if="newTypeTag"
+              v-model="newTypeTagValue"
+              ref="saveTagInput"
+              size="small"
+              @blur="handleInputConfirm('type')"
+            ></el-input>
+            <el-button v-else class="button-new-tag" size="small" @click="showInput('type')">新增类别</el-button>
+          </div>
+        </el-form-item>
+
+        <el-form-item label="备注:">
+          <el-input v-model="editForm.note" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="handleClose">取 消</el-button>
+        <el-button type="primary" @click="updateFocusPeople">确 定</el-button>
+      </div>
+    </el-dialog>
+
+    <!-- 目标详情 -->
+    <el-dialog
+      class="dialog-rewrite"
+      title="人员详情"
+      :visible.sync="detailDialogVisible"
+      :before-close="closeBtn"
+    >
+      <el-tabs type="card" v-model="activeName" @tab-click="handleClick">
+        <el-tab-pane label="人员信息" name="first">
+          <el-form label-width="130px" :model="userDetail">
+            <el-form-item style="margin-bottom:0" label="姓名:">
+              <span>{{userDetail.name ? userDetail.name :'--'}}</span>
+            </el-form-item>
+            <el-form-item style="margin-bottom:0" label="年龄:">
+              <span>{{userDetail.age ? userDetail.age : '--'}}</span>
+            </el-form-item>
+            <el-form-item style="margin-bottom:0" label="性别:">
+              <span>{{userDetail.sex ? userDetail.sex :'--'}}</span>
+            </el-form-item>
+            <el-form-item style="margin-bottom:0" label="电话:">
+              <span>{{userDetail.phone ? userDetail.phone:'--'}}</span>
+            </el-form-item>
+            <el-form-item style="margin-bottom:0" label="身份证号:">
+              <span>{{userDetail.cardNo ? userDetail.cardNo :'--'}}</span>
+            </el-form-item>
+            <el-form-item style="margin-bottom:0" label="备注信息:">
+              <span>{{userDetail.note ? userDetail.note :'--'}}</span>
+            </el-form-item>
+          </el-form>
+        </el-tab-pane>
+        <el-tab-pane label="通行记录" name="second">
+          <el-table v-loading="passTarget" :data="passList" style="width: 100%" stripe>
+            <el-table-column type="index" label="序号" width="50" align="center"></el-table-column>
+            <el-table-column align="center" prop="name" label="姓名"></el-table-column>
+            <el-table-column align="center" prop="age" label="通行地址">
+              <template slot-scope="scope">{{scope.row.devAddress}} - {{scope.row.devSubAddress}}</template>
+            </el-table-column>
+            <el-table-column align="center" prop="passTime" label="通行时间" width="150px"></el-table-column>
+            <el-table-column align="center" prop="inOut" label="通行类型">
+              <template slot-scope="scope">
+                <el-tag
+                  size="small"
+                  style="border-radius: 50px;"
+                  :type="scope.row.inOut==='进'? 'success' : 'danger'"
+                >{{ scope.row.inOut}}</el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column align="center" prop="address" label="抓拍图片">
+              <template slot-scope="scope">
+                <img :src="scope.row.photos" alt />
+              </template>
+            </el-table-column>
+          </el-table>
+          <el-pagination
+            background
+            style="margin:10px 0"
+            @current-change="handleCurrentChange"
+            :page-size="listQuery.limit"
+            :current-page="listQuery.page"
+            layout="total, prev, pager, next, slot"
+            :total="listQuery.total"
+          ></el-pagination>
+        </el-tab-pane>
+      </el-tabs>
+    </el-dialog>
   </div>
 </template>
 <script lang="ts">
 import { Component, Prop, Vue, Mixins } from "vue-property-decorator";
 import { Getter, Action, Mutation } from "vuex-class";
 import mixin from "@/config/minxins";
+import {
+  addFocusPeople, //新增关注人员
+  editFocusPeople, //修改关注人员
+  deleteFocusPeople, //删除关注人员
+  getType, //获取关注人员类别
+  addType, //新增关注人员类别
+  deleteType, //删除关注人员类别
+  getUserPass //获取目标通行记录
+} from "@/api/peopleApi.ts";
+import {
+  getGroup, //获取关注人员分组
+  addGroup, //新增关注人员分组
+  deleteGroup //删除关注人员分组
+} from "@/api/systemApi.ts";
+import { getUserName } from "@/api/vistorApi.ts"; //输入人名模糊查询人员
+import { getTargetUser } from "@/api/carApi.ts"; //获取目标关注人员信息
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 @Component({
   mixins: [mixin],
@@ -68,28 +489,318 @@ const ActionHeader = () => import("@/components/ActionHeader.vue");
   }
 })
 export default class FocusPeople extends Vue {
-  private list_data: Array<Object> = [
-    {
-      name: "张三",
-      vistor_type: "111",
-      card_number: "1-3-5",
-      age: 20,
-      type: 1,
-      detail: "2019/10/1"
+  filterForm: object = { name: "", emergencyPhone: "", earlyGroupId: "" }; //根据关键字查询
+  initForm: object = {
+    //获取车辆列表url
+    url: "/admin/usr-focus-personnel/",
+    method: "get"
+  };
+
+  dialogCreate: boolean = false; //新增
+  private createForm: Object = {
+    //新增表单字段
+    scenceUser: [], //用户id
+    age: "", //年龄
+    earlyGroupId: "", //预警组别
+    emergencyPhone: "", // 紧急联系人电话
+    earlyPeriod: 0, //预警周期
+    typeId: "", //人员类别
+    note: "" //备注
+  };
+  private rules: Object = {
+    // 表单验证
+    scenceUser: [
+      { required: true, message: "请输入关注人员姓名", trigger: "blur" }
+    ],
+    emergencyPhone: [
+      { required: true, message: "请s输入紧急联系人", trigger: "blur" }
+    ],
+    earlyGroupId: [
+      { required: true, message: "请选择预警组别", trigger: "blur" }
+    ],
+    earlyPeriod: [
+      { required: true, message: "请选择预警周期", trigger: "blur" }
+    ],
+    typeId: [{ required: true, message: "请选择人员类别", trigger: "blur" }]
+  };
+  private showMessage: Boolean = true; //是否显示表单错误信息
+  private errorMessage: Object = {
+    // 表单错误信息
+    phone: "",
+    scenceUser: "",
+    email: "",
+    earlyGroupId: ""
+  };
+  private nameList: Array<Object> = []; //人员
+  private loading: Boolean = false; //姓名模糊查询
+
+  showUnitSetting: boolean = false; // 查看已有分组设置状态
+  earlyGroup: Array<Object> = []; //获取分组
+  newTag: boolean = false; // 新增分组框状态
+  newTagValue: string = ""; // 新增分组的值
+
+  showTypeSetting: boolean = false; // 查看已有类别设置状态
+  earlyType: Array<Object> = []; //获取类别
+  newTypeTag: boolean = false; // 新增类别框状态
+  newTypeTagValue: string = ""; // 新增类别的值
+
+  private dialogEdit: Boolean = false; // 修改弹出表单
+  private editForm: Object = {
+    //修改表单字段
+    age: "", //年龄
+    earlyGroupId: "", //预警组别
+    emergencyPhone: "", // 紧急联系人电话
+    earlyPeriod: 0, //预警周期
+    typeId: "", //人员类别
+    note: "", //备注
+    id: "" //目标关注人员id
+  };
+  updateArray: Array<string> = ["peopleNote"];
+
+  private detailDialogVisible: boolean = false; // 详细信息dialog弹框
+  private CarDialogForm: Object = {}; // 关注人员详细信息
+  private activeName: string = "first"; //目标关注人员详细信息 tab Title
+  private passTarget: Boolean = true; //目标关注人员通行记录的loadding
+  private passList: Array<Object> = []; // 关注人员名单目标通行记录
+  private userDetail: Object = {}; //关注人员详细信息
+
+  private listQuery: Object = {
+    // 关注人员目标通行记录翻页
+    total: 0,
+    limit: 10,
+    page: 1
+  };
+
+  created() {
+    this.initForm["params"] = Object.assign(
+      this.initForm["params"],
+      this.page,
+      this.filterForm
+    ); // 合并参数
+    this.getGroupList();
+    this.getTypeList();
+  }
+  async remoteMethod(query) {
+    /**@description 根据姓名模糊查询人员 */
+    if (query !== "") {
+      this.loading = true;
+      setTimeout(() => {
+        if (query.length >= 1) {
+          this.getName(query);
+        }
+      }, 200);
+    } else {
+      this.nameList = [];
     }
-  ];
-  options: Array<Object> = [
-    {
-      label: '分类1',
-      id: 1
-    },
-    {
-      label: '分类2',
-      id: 2
+  }
+
+  getName(query) {
+    /**@description 获取人员信息 */
+    getUserName({ name: query }).then(res => {
+      this.loading = false;
+      this.nameList = res.data.data.map(item => {
+        return {
+          value: item.phone,
+          name: item.name,
+          scenceUserId: item.id
+        };
+      });
+    });
+  }
+
+  async getGroupList() {
+    /**@description 获取预警组别信息 */
+    const { data } = await getGroup();
+    this.createForm["earlyGroupId"] = data.data[0].id;
+    this.earlyGroup = data.data;
+  }
+
+  async getTypeList() {
+    /**@description 获取类别信息 */
+    const { data } = await getType();
+    this.createForm["typeId"] = data.data[0].id;
+    this.earlyType = data.data;
+  }
+
+  showInput(val) {
+    /**@description 显示新增预警组别框*/
+    val === "group" ? (this.newTag = true) : (this.newTypeTag = true);
+  }
+
+  handleInputConfirm(val) {
+    /**@description 新增预警组别 */
+    if (val === "group") {
+      this.newTag = false;
+      addGroup({ groupName: this.newTagValue }).then(res => {
+        if (res.data.code === 200) {
+          this.getGroupList();
+          this.newTagValue = "";
+        }
+      });
+    } else {
+      this.newTypeTag = false;
+      addType({ typeName: this.newTypeTagValue }).then(res => {
+        if (res.data.code === 200) {
+          this.getTypeList();
+          this.newTypeTagValue = "";
+        }
+      });
     }
-  ]
-  statusType:number = 1
-  handleClick() {}
+  }
+
+  deleteTag(tag, index, val) {
+    /**@description 删除预警组别 */
+    if (val === "group") {
+      deleteGroup(tag.id).then(res => {
+        if (res.data.code === 200) {
+          this.getGroupList();
+        }
+      });
+    } else {
+      deleteType(tag.id).then(res => {
+        if (res.data.code === 200) {
+          this.getTypeList();
+        }
+      });
+    }
+  }
+
+  createFocusPeople() {
+    /**@description 新增关注人员 */
+    this.$refs["dataForm"]["validate"](valid => {
+      if (valid) {
+        var form = {
+          ...this.createForm,
+          scenceUserId: this.createForm["scenceUser"][0],
+          name: this.createForm["scenceUser"][1]
+        };
+        delete form["scenceUser"];
+        form["earlyPeriod"] = Number(form["earlyPeriod"]);
+        addFocusPeople(form).then(res => {
+          this.handleClose();
+          this["fetchData"](this.initForm);
+          this["notify"]("添加关注人员成功");
+        });
+      }
+    });
+  }
+
+  editTarget(item) {
+    /**@description 修改操作 */
+    for (const key in this.editForm) {
+      this.editForm[key] = item[key];
+    }
+    this.dialogEdit = true;
+
+    console.log(this.editForm);
+  }
+
+  updateFocusPeople() {
+    /**@description 修改预警联系人 */
+    var form = { ...this.editForm };
+    form["earlyPeriod"] = Number(form["earlyPeriod"]);
+    editFocusPeople(form).then(() => {
+      this.handleClose();
+      this["notify"]("修改关注人员成功");
+      this["fetchData"](this.initForm);
+    });
+  }
+
+  cellClick(row, column, event, cell) {
+    row.peopleNote = true;
+  }
+
+  editNote(item) {
+    /**@description 修改备注 */
+    const form = { note: this.editForm["note"], id: item.id };
+    editFocusPeople(form).then(() => {
+      this["notify"]("修改关注人员成功");
+      this["fetchData"](this.initForm);
+    });
+  }
+
+  handleClose() {
+    /** @description 关闭新增/修改dialog */
+    this.dialogCreate = false; //新增dialog
+    this.dialogEdit = false; //修改dialog
+    this.$refs["dataForm"]["resetFields"]();
+  }
+
+  deleteBtn(item) {
+    /**@description 单个删除状态 */
+    this.$confirm("此操作将永久删除此关注人员信息, 是否继续?", "提示", {
+      confirmButtonText: "确定",
+      cancelButtonText: "取消",
+      type: "warning"
+    })
+      .then(() => {
+        deleteFocusPeople(item.id).then(() => {
+          this["notify"]("删除关注人员成功");
+          this["fetchData"](this.initForm);
+        });
+      })
+      .catch(err => {
+        this.$message({
+          type: "info",
+          message: "已取消删除"
+        });
+      });
+  }
+
+  showCarDetails(row) {
+    this.detailDialogVisible = true;
+    this.CarDialogForm = Object.assign({}, row);
+    this.fetchUser();
+  }
+
+  handleCurrentChange(val) {
+    /** @description 处理目标车辆通行记录翻页事件
+     * @augments val: 页数
+     */
+    this.listQuery["page"] = val;
+    this.fetchPass();
+  }
+
+  async handleClick(tab) {
+    /**@description 查看车辆管理名单目标详情 */
+    if (tab.name === "first") {
+      this.fetchUser();
+    } else if (tab.name === "second") {
+      this.listQuery["page"] = 1;
+      this.fetchPass();
+    }
+  }
+
+  async fetchUser() {
+    /**@description 查看车辆管理名单用户详情 */
+    try {
+      const { data } = await getTargetUser(this.CarDialogForm["scenceUserId"]);
+      this.userDetail = data.data.user;
+      console.log(this.userDetail);
+    } catch (err) {
+      console.log(err.response);
+    }
+  }
+
+  async fetchPass() {
+    this.passTarget = true;
+    console.log(this.CarDialogForm);
+    const info = {
+      ...this.listQuery,
+      scenceUserId: this.CarDialogForm["scenceUserId"]
+    };
+    const { data } = await getUserPass(info);
+    console.log(data.data);
+    this.passList = data.data.records;
+    this.listQuery["total"] = data.data.total;
+    this.passTarget = false;
+  }
+
+  closeBtn() {
+    /**@description 关闭人员详情 */
+    this.activeName = "first";
+    this.detailDialogVisible = false; //人员详情dialog
+  }
 }
 </script>
 
@@ -97,9 +808,30 @@ export default class FocusPeople extends Vue {
 .leftContent {
   flex: none;
   width: 200px;
+  display: flex;
 }
 .rightContent {
   flex: 1;
   box-shadow: 0px 6px 5px 0px lightgray;
+}
+.input-new-tag {
+  width: 120px;
+}
+
+.serial-num {
+  position: relative;
+}
+.fun-btn {
+  position: absolute;
+  left: -64px;
+  top: 28%;
+  .iconfont {
+    font-size: 19px;
+    color: #8091a5;
+    cursor: pointer;
+  }
+}
+.table-col {
+  position: relative;
 }
 </style>

@@ -18,6 +18,7 @@ export default class GlobalMimins extends Vue {
     limit: 10,
   }
   public dialogCreate: any = false
+  public notifyInstance: any; //防止notify重复多次出现提示
   public showLoading: any = true
   public orderBy: Object = {
     prop: "", // 需要的根据什么排序
@@ -41,35 +42,55 @@ export default class GlobalMimins extends Vue {
   }
 
   fetchData(option: object) {
-    for (let key in option['params']) {
-      if (option['params'][key] === '') {
-        option['params'][key] = null
-      }
-    }
-    this.page.limit = Number(option['params'].limit)
-    console.log('mixins获取数据')
-    this.showLoading = true;
-    _axios(option).then((res: any) => {
-      if (res.data && res.data.data) {
-        if (res.data.data.records.length) {
-          this.page.total = res.data.data.total
-          res.data.data.records.forEach((ele: object) => {
-            this.updateArray.forEach((itemStatus: string) => {
-              ele[itemStatus] = false
-            })
-            ele['showMenu'] = false
-          })
-          this.list_data = res.data.data.records
-          this.showLoading = false
-          console.log(this.list_data)
-        } else {
-          if (this.initForm['params']['page'] > 1) {
-            this.initForm['params']['page']--
-            this.fetchData(this.initForm)
-          }
+    /**@description init数据
+     * @argument tag no 不init数据
+     * @argument tag pagination 不分页init数据
+     */
+    if (option['params'].tag !== 'no') {
+      for (let key in option['params']) {
+        if (option['params'][key] === '') {
+          option['params'][key] = null
         }
       }
-    })
+      this.page.limit = Number(option['params'].limit)
+      console.log('mixins获取数据')
+      this.showLoading = true;
+      _axios(option).then((res: any) => {
+        if (res.data && res.data.data) {
+          if (option['params'].tag === 'pagination') {
+            if (res.data.data.length) {
+              res.data.data.forEach((ele: object) => {
+                this.updateArray.forEach((itemStatus: string) => {
+                  ele[itemStatus] = false
+                })
+                ele['showMenu'] = false
+              })
+              this.list_data = res.data.data
+              console.log(this.list_data)
+            }
+          } else {
+            if (res.data.data.records.length) {
+              this.page.total = res.data.data.total
+              res.data.data.records.forEach((ele: object) => {
+                this.updateArray.forEach((itemStatus: string) => {
+                  ele[itemStatus] = false
+                })
+                ele['showMenu'] = false
+              })
+              this.list_data = res.data.data.records
+              console.log(this.list_data)
+            } else {
+              if (this.initForm['params']['page'] > 1) {
+                this.initForm['params']['page']--
+                this.fetchData(this.initForm)
+              }
+            }
+          }
+        }
+        this.showLoading = false
+      })
+    }
+
   }
   /**
    * 打开创建框
@@ -82,7 +103,7 @@ export default class GlobalMimins extends Vue {
    * @param page 关闭新增/修改框
    */
   handleClose() {
-    for(let key in this.Form){
+    for (let key in this.Form) {
       this.Form[key] = ''
     }
     this.$refs['Forms']['resetFields']();
@@ -214,5 +235,20 @@ export default class GlobalMimins extends Vue {
         });
         break
     }
+  }
+
+  /**
+   * 新增成功弹出框
+   * @param action
+   */
+  notify(val: string) {
+    if (this.notifyInstance) {
+      this.notifyInstance.close();
+    }
+    this.notifyInstance = this.$notify({
+      type: "success",
+      title: "成功",
+      message: val
+    });
   }
 }
