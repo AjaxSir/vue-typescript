@@ -10,7 +10,18 @@
           :filterForm="filterForm"
         :dialogCreate.sync="dialogCreate" :total="1">
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>导入</el-dropdown-item>
+            <el-dropdown-item>
+              <el-upload
+                class="upload-demo"
+                :show-file-list='false'
+                :on-error='errorUpload'
+                :on-success='successUpload'
+                action="/v1/admin/usrUser/import"
+                >
+                <!-- <el-button size="small" type="primary">点击上传</el-button> -->
+                导入
+              </el-upload>
+            </el-dropdown-item>
             <el-dropdown-item command='export'>导出</el-dropdown-item>
             <el-dropdown-item>统计信息</el-dropdown-item>
           </el-dropdown-menu>
@@ -26,8 +37,9 @@
             <div class="word-filter">
               <span class="filter-name">用户类型:</span>
               <el-select class="input-filter" size="small" v-model="filterForm.type" placeholder="请选择">
-                <el-option label="租客" value="all"></el-option>
-                <el-option label="业主" value="owner"></el-option>
+                <el-option label="业主" value="1"></el-option>
+                <el-option label="租户" value="2"></el-option>
+                <el-option label="成员" value="3"></el-option>
               </el-select>
             </div>
             <div class="word-filter">
@@ -38,7 +50,7 @@
         </ActionHeader>
       </el-col>
     </el-row>
-    <el-row :gutter="10">
+    <el-row>
       <el-col :span="24">
         <div class="rightContent">
           <el-table :data="list_data" border
@@ -49,19 +61,24 @@
             @cell-mouse-enter="enterRowChange"
             @cell-mouse-leave="leaveRowChange">
             <el-table-column type="selection" align="center"></el-table-column>
-            <el-table-column type="index" width="60" align="center" label="编号"></el-table-column>
-            <el-table-column align="center" class="serial-num" label="姓名">
-              <template slot-scope="{row}">
-                <el-button style="padding:0px;" type="text" @click="showDetail(row)">{{row.name }}</el-button>
+            <el-table-column type="index" width="60" class="indexNum" align="center" label="编号">
+              <template slot-scope="scope">
+                <span>{{ scope.$index }}</span>
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start" @command='commandClick'>
-                    <i v-show="row.showMenu" class="iconfont icon-menu"></i>
+                    <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
                     <el-dropdown-menu slot="dropdown">
-                      <!-- <el-dropdown-item :command='returnCommand("update", row)'>修改</el-dropdown-item> -->
-                      <el-dropdown-item :command='returnCommand("delete", row)'>删除</el-dropdown-item>
+                      <el-dropdown-item :command="returnCommand('delete', scope.row)">
+                        {{ deleteForm.data.length ? '批量删除' : '删除' }}
+                      </el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
                 </div>
+              </template>
+            </el-table-column>
+            <el-table-column align="center" class="serial-num" label="姓名">
+              <template slot-scope="{row}">
+                <el-button style="padding:0px;" type="text" @click="showDetail(row)">{{row.name }}</el-button>
               </template>
             </el-table-column>
             <el-table-column prop="phone" align="center" label="电话">
@@ -70,7 +87,7 @@
                 <el-input v-else @blur="phoneBlur(row)" @keyup.enter.native="confirmUpdatePhone(row)" v-model="phoneString" placeholder="输入电话"></el-input>
               </template>
             </el-table-column>
-            <el-table-column prop="sex" align="center" label="性别"></el-table-column>
+            <el-table-column prop="sex" align="center" width="50" label="性别"></el-table-column>
             <el-table-column prop="img" align="center" label="人脸">
               <template slot-scope="scope">
                 <img
@@ -85,7 +102,12 @@
             <el-table-column prop="note" align="center" label="用户备注">
               <template slot-scope="{row}">
                 <span class="rowUpdate" v-if='!row.noteStatus' @click='row.noteStatus = !row.noteStatus'>{{ row.note }}</span>
-                <el-input type='textarea'  @keyup.enter.native="confirmUpdateNote(row)" @blur="noteBlur(row)" v-model="noteString" v-else placeholder="输入备注"></el-input>
+                <el-input type='textarea'
+                 @keyup.enter.native="confirmUpdateNote(row)"
+                 @blur="noteBlur(row)"
+                 v-model="noteString"
+                 v-else
+                 placeholder="输入备注"></el-input>
               </template>
             </el-table-column>
             <el-table-column prop="car" align="center" label="访客车辆">
@@ -198,8 +220,6 @@
             <el-form-item class="floatForm" label="电话:"  prop='phone'>
               <el-input v-model="Form.phone" placeholder='输入电话'></el-input>
             </el-form-item>
-          <!-- </el-form> -->
-      <!-- <el-form :model="Form" style="overflow:hidden" :rules="rules" ref='Forms' label-width="50px"> -->
             <el-form-item class="floatForm" label="卡名:"  prop='cardName'>
               <el-input v-model="Form.cardName"  placeholder='输入卡名'></el-input>
             </el-form-item>
@@ -420,7 +440,18 @@ export default class OwnerManage extends Vue {
   created() {
     this.initForm['params'] = Object.assign(this.initForm['params'], this.page, this.filterForm) // 合并参数
   }
-  // 确定添加用户
+  // 导入失败
+  errorUpload(err) {
+    this.$message.error('导入失败')
+  }
+  // 导入成功
+  successUpload(res) {
+    if(res.code === '400') {
+      return this.$message.error(res.message)
+    }
+    this['fetchData'](this.initForm)
+  }
+// 确定添加用户
   addUserConfirm() {
     this.$refs['Forms']['validate']((valid) => {
       if(valid) {
@@ -631,7 +662,6 @@ export default class OwnerManage extends Vue {
   .form{
     flex: 1;
   }
-
 }
   .floatForm{
     width: 50%;
@@ -639,23 +669,4 @@ export default class OwnerManage extends Vue {
     position: relative;
     z-index: 999;
   }
-.leftContent {
-  flex: none;
-  width: 200px;
-}
-.rightContent {
-  flex: 1;
-  box-shadow: 0px 6px 5px 0px lightgray;
-}
-
-.fun-btn {
-  position: absolute;
-  left: -64px;
-  top: 12px;
-  .iconfont {
-    font-size: 19px;
-    color: #8091a5;
-    cursor: pointer;
-  }
-}
 </style>

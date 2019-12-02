@@ -160,11 +160,18 @@ export function updateStatusNote(data: object) {
     data
   })
 }
-// 通过关键字查询单元楼名字
+// 获取当前场景下的单元楼
 export function searchHouse() {
   return _axios({
     url: '/admin/hsBuilding/query-building-name',
     method: 'get',
+  })
+}
+// 获取当前场景下出入口
+export function getInoutList() {
+  return _axios({
+    url: '/admin/hs-enter-exit',
+    method: 'get'
   })
 }
 // 新增出入口

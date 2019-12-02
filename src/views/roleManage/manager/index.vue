@@ -5,13 +5,9 @@
         <action-header
         :moreStatus='false'
         :filterStatus='false'
+        :initFormHeader="initForm"
+          @fetchData="fetchData"
         :dialogCreate.sync="dialogCreate" :total="page.total">
-          <div slot="houseNum">
-            <div class="word-filter">
-              <span class="filter-name">发布对象:</span>
-              <el-input class="input-filter" v-model='filterForm.name' size="small"></el-input>
-            </div>
-          </div>
         </action-header>
       </el-col>
     </el-row>
@@ -29,21 +25,27 @@
           >
             <el-table-column type="selection" width="50"></el-table-column>
 
-            <el-table-column type="index" label="序号" width="50"></el-table-column>
-
-            <el-table-column prop="name" class="serial-num" label="账号名" align="center">
+            <el-table-column type="index" align='center' class="indexNum" label="序号" width="50">
               <template slot-scope="scope">
-                <span>{{scope.row.name}}</span>
+                <span>{{scope.$index}}</span>
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start" @command="commandClick">
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
                     <el-dropdown-menu slot="dropdown">
                       <el-dropdown-item :command="returnCommand('update', scope.row)">修改</el-dropdown-item>
                       <el-dropdown-item :command="returnCommand('resetPassword', scope.row)">重置密码</el-dropdown-item>
-                      <el-dropdown-item :command="returnCommand('delete', scope.row)">删除</el-dropdown-item>
+                      <el-dropdown-item :command="returnCommand('delete', scope.row)">
+                        {{ deleteForm.data.length ? '批量删除' : '删除' }}
+                      </el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
                 </div>
+              </template>
+            </el-table-column>
+
+            <el-table-column prop="name" class="serial-num" label="账号名" align="center">
+              <template slot-scope="scope">
+                <span>{{scope.row.name}}</span>
               </template>
             </el-table-column>
 
@@ -76,21 +78,24 @@
             </el-table-column>
           </el-table>
         </div>
-        <el-pagination @current-change='pageChange' style="margin-top:10px;" background layout="prev, pager, next" :total="page.total"></el-pagination>
+        <el-pagination
+        :page-size='page.limit'
+        @current-change='pageChange' style="margin-top:10px;" background layout="prev, pager, next" :total="page.total"></el-pagination>
       </el-col>
     </el-row>
     <!-- 新增或修改 -->
     <el-dialog
-      title="新增"
+      :title="Form.id ? '修改' : '新增'"
       :visible.sync="dialogCreate"
       width="500px"
+      :close-on-click-modal='false'
       :before-close="handleClose"
     >
       <el-form :rules='rules' ref="Forms" :model="Form" label-width="80px">
-        <el-form-item prop='name' label="账号名">
+        <el-form-item v-if='!Form.id' prop='name' label="账号名">
           <el-input v-model="Form.name"></el-input>
         </el-form-item>
-        <el-form-item prop='password' v-if='!Form.id' label="新密码">
+        <el-form-item prop='password' v-if='!Form.id' label="密码">
           <el-input type='password' v-model="Form.password"></el-input>
         </el-form-item>
         <el-form-item prop='roleName' label="角色">
@@ -113,16 +118,17 @@
       title="重置密码"
       :visible.sync="resetVisible"
       width="500px"
+      :close-on-click-modal='false'
       :before-close="handleCloseReset"
     >
       <el-form :rules='resetRules' ref="resetForms" :model="resetForms" label-width="80px">
         <el-form-item label="账号">
           <span>{{ resetForms.name }}</span>
         </el-form-item>
-        <el-form-item label="新密码">
+        <el-form-item label="新密码" prop="newPassword">
           <el-input type='password' placeholder="请输入修改后的密码" v-model="resetForms.newPassword "></el-input>
         </el-form-item>
-        <el-form-item label="确认密码">
+        <el-form-item label="确认密码" prop='reNewPassword'>
           <el-input type='password' placeholder="请再次确认密码" v-model="resetForms.reNewPassword "></el-input>
         </el-form-item>
 
@@ -188,7 +194,7 @@ export default class InformIssue extends Vue {
           ]
   }
   resetRules: object = {
-    password: [
+    newPassword: [
             { required: true, message: '请输入管理员的密码', trigger: 'blur' },
             { min: 6, max: 10, message: '长度在 6 到 10 个字符', trigger: 'blur' }
           ],
@@ -252,7 +258,7 @@ export default class InformIssue extends Vue {
   }
   // 确认重置密码
   resetPasswordConfirm() {
-    this.$refs['Forms']['validate']((valid) => {
+    this.$refs['resetForms']['validate']((valid) => {
       if (valid) {
         if (this.resetForms['newPassword'] !== this.resetForms['reNewPassword']) {
           this.$message.error('两次密码不一致!')
@@ -307,16 +313,6 @@ td {
   position: relative;
 }
 
-.fun-btn {
-  position: absolute;
-  left: -64px;
-  top: 6px;
-  .iconfont {
-    font-size: 19px;
-    color: #8091a5;
-    cursor: pointer;
-  }
-}
 .table-col {
   position: relative;
 }
@@ -341,4 +337,5 @@ td {
 .capture-img {
   width: 60px;
 }
+
 </style>

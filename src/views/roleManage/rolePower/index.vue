@@ -24,20 +24,27 @@
           >
             <el-table-column type="selection" width="50"></el-table-column>
 
-            <el-table-column type="index" label="序号" width="50"></el-table-column>
-
-            <el-table-column prop="name" class="serial-num" label="角色" align="center">
+            <el-table-column type="index" label="序号" class="indexNum" align="center" width="50">
               <template slot-scope="scope">
-                <span>{{scope.row.name}}</span>
+                <span>{{scope.$index}}</span>
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start" @command="commandClick">
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
                     <el-dropdown-menu slot="dropdown">
                       <el-dropdown-item :command='returnCommand("update", scope.row)'>修改</el-dropdown-item>
-                      <el-dropdown-item :command='returnCommand("delete", scope.row)'>删除</el-dropdown-item>
+                      <!-- <el-dropdown-item :command='returnCommand("delete", scope.row)'>删除</el-dropdown-item> -->
+                      <el-dropdown-item :command="returnCommand('delete', scope.row)">
+                        {{ deleteForm.data.length ? '批量删除' : '删除' }}
+                      </el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
                 </div>
+              </template>
+            </el-table-column>
+
+            <el-table-column prop="name" class="serial-num" label="角色" align="center">
+              <template slot-scope="scope">
+                <span>{{scope.row.name}}</span>
               </template>
             </el-table-column>
 
@@ -207,16 +214,6 @@ td {
   position: relative;
 }
 
-.fun-btn {
-  position: absolute;
-  left: -64px;
-  top: 14px;
-  .iconfont {
-    font-size: 19px;
-    color: #8091a5;
-    cursor: pointer;
-  }
-}
 .table-col {
   position: relative;
 }

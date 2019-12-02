@@ -4,7 +4,7 @@
 -->
 <template>
   <div class="content tree-rename">
-    <div class="treeHeader">
+    <div @click='handleNodeClick({ type: "building", id: "" })' class="treeHeader">
       <i class="iconfont icon-shuji"></i>
       所有
       <el-dropdown v-if='type === "house"' class='dropdownAll' @command='commandTreeClick' trigger="click" placement="bottom-start">
@@ -18,7 +18,7 @@
       :data="TreeData"
       node-key="id"
       :props='dataFormate'
-      default-expand-all
+      :default-expand-all='false'
       :expand-on-click-node="false"
       @node-click="handleNodeClick"
     >
@@ -29,7 +29,7 @@
         @mouseleave="MouseLeave(node.id)"
       >
         <span>{{ node.label }}</span>
-        <div class="fun-btn">
+        <div>
           <el-dropdown @command='commandTreeClick' trigger="click" placement="bottom-start">
             <i v-show="node.id===showMenu" class="iconfont icon-menu"></i>
             <el-dropdown-menu v-if='type === "house"' slot="dropdown">
@@ -137,12 +137,12 @@
       </div>
     </el-dialog>
     <!-- 权限dialog -->
-    <el-dialog :close-on-click-modal='false' width="800px" title="创建权限" :visible.sync="RoleVisible">
-      <el-form style="overflow:hidden" :model="RoleForm">
-        <el-form-item label="楼栋名称:" label-width="85px">
+    <el-dialog :close-on-click-modal='false' width="800px" :title="RoleForm.id ? '修改权限组' : '新建权限组'" :visible.sync="RoleVisible">
+      <el-form :rules="RoleRules" style="overflow:hidden" ref='roleForm' :model="RoleForm">
+        <el-form-item prop='name' label="权限名称:" label-width="85px">
           <el-input v-model="RoleForm.name" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item style="float:left;width:350px" label="邀请车辆:" label-width="85px">
+        <el-form-item prop='enableInviteCar' style="float:left;width:350px" label="邀请车辆:" label-width="85px">
           <el-switch
             v-model="RoleForm.enableInviteCar"
             active-color="#13ce66"
@@ -151,7 +151,7 @@
             inactive-value="0">
           </el-switch>
         </el-form-item>
-        <el-form-item  style="float:left;width:350px" label="邀请访客:" label-width="85px">
+        <el-form-item prop='enableInviteVisitor' style="float:left;width:350px" label="邀请访客:" label-width="85px">
           <el-switch
             v-model="RoleForm.enableInviteVisitor"
             active-color="#13ce66"
@@ -179,43 +179,42 @@
           align='center'
           label="位置">
           <template slot-scope="{row}">
-            <span>{{row.address}} - {{row.subAddress}}</span>
+            <span>{{row.address || row.position}}</span>
           </template>
         </el-table-column>
-        <!-- <el-table-column
-          align='center'
-          prop="loc"
-          label="周">
-        </el-table-column> -->
         <el-table-column
           align='center'
-          width="300"
+          width="350"
           label="时间">
           <template slot-scope="{row}">
-            <span class="rowUpdate" @click='row.timeStatus = !row.timeStatus' v-if='!row.timeStatus'>{{row.startTime}}-{{row.endTime}}{{row.timeStatus}}</span>
-            <span v-else>
+            <span v-if='!row.timeStatus' class="rowUpdate" @click='timeUpdateStatus(row)' >{{row.startTime}}-{{row.endTime}}</span>
+            <div v-else>
               <el-time-select
-                style="width:100px"
+              :clearable='false'
+                style="width:120px"
                 v-model="startTime"
                 :picker-options="{
-                  start: '08:30',
-                  step: '00:15',
-                  end: '18:30'
+                  start: '00:30',
+                  step: '00:30',
+                  end: '23:30'
                 }"
+                @blur="confirmEndTime(row)"
                 placeholder="开始时间">
               </el-time-select>
               -
               <el-time-select
-              style="width:100px"
+              :clearable='false'
+              style="width:120px"
                 v-model="endTime"
+                @change='confirmEndTime(row)'
                 :picker-options="{
-                  start: '08:30',
-                  step: '00:15',
-                  end: '18:30'
+                  start: startTime,
+                  step: '00:30',
+                  end: '23:30'
                 }"
                 placeholder="结束时间">
               </el-time-select>
-            </span>
+            </div>
             </template>
         </el-table-column>
         <el-table-column
@@ -227,20 +226,21 @@
         </el-table-column>
       </el-table>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="RoleVisible = false">取 消</el-button>
-        <el-button type="primary" @click="RoleVisible = false">确 定</el-button>
+        <el-button @click="roleHandClose">取 消</el-button>
+        <el-button type="primary" @click="RoleAddConfim">确 定</el-button>
       </div>
     </el-dialog>
 
     <!-- 设备列表 -->
-    <el-dialog width="800px" title="设备列表" :visible.sync="bindDeviceListVisible">
+    <el-dialog
+    :close-on-click-modal='false' width="800px" title="设备列表" :visible.sync="bindDeviceListVisible">
       <el-table :data="DeviceList"
       @selection-change="handleSelectionChange">
         <el-table-column type='selection' width="50"></el-table-column>
         <el-table-column type='index' label="序号" align='center' width="50"></el-table-column>
         <el-table-column property="name" align='center' label="位置" >
           <template slot-scope="{row}">
-            <span>{{row.address}} - {{row.subAddress}}</span>
+            <span>{{row.address || row.position}}</span>
           </template>
         </el-table-column>
         <el-table-column align='center' property="name" label="设备名称"></el-table-column>
@@ -261,12 +261,13 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Mixins } from "vue-property-decorator";
+import { Component, Prop, Vue, Mixins, Emit } from "vue-property-decorator";
 import { Getter, Action, Mutation } from "vuex-class";
 import { addHouseGroup, deleteHouseGroup, updateHouseGroup,
 getUnitList, addUnit, deleteUnit,
 addBuilding, updateBuilding, deleteBuilding } from '@/api/houseApi.ts'
 import { getDeviceList } from '@/api/deviceApi.ts'
+import { addRoleGroup, getGroupInfoById, updateRoleGroup, deleteRoleGroup } from '@/api/peopleApi.ts'
 import { Message } from 'element-ui';
 @Component
 export default class DataTree extends Vue {
@@ -284,6 +285,9 @@ export default class DataTree extends Vue {
     }
   }}) dataFormate: Object
   @Prop({ default: true }) needAction: any;
+  @Prop({ default:()=> { return {} } }) filterForm: object
+  @Prop({ default:()=> { return {} } }) initFormHeader: object
+  @Prop({ default:()=> { return {} } }) page: object
   nodeAction: string = '' // 记录执行的操作
   bindDeviceList: Array<object> = [] // 已选择绑定的设备列表
   bindDeviceListVisible: boolean = false // 设备列表弹框状态
@@ -292,8 +296,8 @@ export default class DataTree extends Vue {
     page: 1,
     total: 1
   }
-  startTime: string = ''
-  endTime: string = '' // 权限修改时间
+  startTime: string = '18:00'
+  endTime: string = '21:00' // 权限修改时间
   unConfirmDeviceList: Array<object> = [] // 以勾选的设备
   // 分组校验规则
   HouseRules: Object = {
@@ -350,6 +354,11 @@ export default class DataTree extends Vue {
     enableInviteVisitor: '1',
     name: ''
   }
+  RoleRules: object = {
+    name: [
+            { required: true, message: '请输入权限组名称', trigger: 'blur' }
+          ]
+  }
   // 查看已有单元设置状态
   showUnitSetting: boolean = false
     // 单位序号设置 数组
@@ -379,15 +388,64 @@ export default class DataTree extends Vue {
   bildDeviceSplice(index) {
     this.bindDeviceList.splice(index, 1)
   }
+  // 时间改变状态
+  timeUpdateStatus(row){
+    row.timeStatus = !row.timeStatus
+    this.startTime = row.startTime
+    this.endTime = row.endTime
+  }
+  // 确定对应设备的时间
+  confirmEndTime(row) {
+    row.startTime = this.startTime
+    row.endTime = this.endTime
+    this.startTime = '18:00'
+    this.endTime = '21:00' // 权限修改时间
+    row.timeStatus = false
+  }
+  // 确定新增权限
+  RoleAddConfim() {
+    this.$refs['roleForm']["validate"](valid => {
+      if(valid) {
+        this.RoleForm['devAuthoritiesDevice'] = this.bindDeviceList
+        if(!this.RoleForm['devAuthoritiesDevice'].length) {
+          return this.$message.error('请添加权限组的设备')
+        }
+        if (!this.RoleForm['id']) {
+          addRoleGroup(this.RoleForm).then(res => {
+            if(res.data.code === 200) {
+              this.$message.success('新增权限组成功')
+              this.$emit('fetchRoleGroup')
+              this.roleHandClose()
+            }
+          })
+        } else {
+          updateRoleGroup(this.RoleForm).then(res => {
+            if(res.data.code === 200) {
+              this.$message.success('修改权限组成功')
+              this.$emit('fetchRoleGroup')
+              this.roleHandClose()
+            }
+          })
+        }
+      }
+    })
+  }
+  // 新增/修改权限组关闭弹框
+  roleHandClose() {
+    this.RoleForm['devAuthoritiesDevice'] = []
+    this.bindDeviceList = []
+    this.$refs['roleForm']['resetFields']()
+    this.RoleVisible = false
+  }
   // 保存到绑定设备 并验证是否已经存在 已存在不加入
   saveBindDevicelist() {
     const strDevice = JSON.stringify(this.bindDeviceList)
     this.unConfirmDeviceList.forEach(ele => {
       if(strDevice.indexOf(JSON.stringify(ele)) === -1) {
         ele['startTime'] = '18:00'
-        ele['endTime'] = '20:00'
-        ele['timeStatus'] = false
+        ele['endTime'] = '21:00'
         ele['deviceId'] = ele['id']
+        this.$set(ele, 'timeStatus', false)
         this.bindDeviceList.push(ele)
       }
     })
@@ -459,8 +517,22 @@ export default class DataTree extends Vue {
     this.$refs['buildings']['resetFields']()
     this.HouseUnitVisible = false
   }
+  @Emit("fetchData")
   handleNodeClick(data) {
     /**@description 树节点点击事件 */
+    if(this.type === "house") {
+      if(data.type === 'group') {
+        return this.$message.error('请选择单元楼')
+      } else {
+        this.initFormHeader["params"]['buildingId'] = data.id
+          this['page']["page"] = 1;
+          this.initFormHeader["params"] = Object.assign(
+            this.initFormHeader["params"],
+            this.page
+          );
+          return this.initFormHeader;
+      }
+    }
   }
   /*** 删除序号单元 */
   deleteTag(tag, index) {
@@ -526,7 +598,6 @@ export default class DataTree extends Vue {
               this.HouseVisible = false
             }
           })
-
         }).catch(() => {
           this.$message({
             type: 'info',
@@ -549,7 +620,39 @@ export default class DataTree extends Vue {
         break
       case 'addRoleGroup':
         this.RoleVisible = true
-        this.UnitForm = Object.assign(this.UnitForm, treeData.data)
+        break
+      case 'updateRoleGroup':
+        getGroupInfoById(treeData.data.id).then(res => {
+          if (res.data.code === 200) {
+            this.RoleForm = Object.assign({}, res.data.data)
+            this.bindDeviceList = res.data.data.devAuthoritiesDevice
+          } else {
+            this.$message.error('获取全选组信息失败')
+          }
+        })
+        this.RoleVisible = true
+        break
+      case 'deleteRoleGroup' :
+        this.$confirm('此操作将永久删除该目标, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          deleteRoleGroup(treeData.data.id).then((res: any) => {
+            if (res.data.code === 200) {
+              this.$message({
+                type: 'success',
+                message: '删除成功!'
+              });
+              this.$emit('fetchRoleGroup')
+            }
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
         break
     }
   }
@@ -583,6 +686,9 @@ export default class DataTree extends Vue {
   border: 1px solid #ebeef5;
 }
 .treeHeader {
+  &:hover{
+    cursor: pointer;
+  }
   width: 100%;
   height: 40px;
   text-align: left;
@@ -616,16 +722,6 @@ export default class DataTree extends Vue {
   padding-right: 8px;
 }
 
-.fun-btn {
-  // position: absolute;
-  // right: 1px;
-  // top: 4px;
-  .iconfont {
-    font-size: 19px;
-    color: #8091a5;
-    cursor: pointer;
-  }
-}
 .formDialog{
   .input{
     width:220px;

@@ -52,6 +52,7 @@ export default class GlobalMimins extends Vue {
           option['params'][key] = null
         }
       }
+      this.page.limit = Number(option['params'].limit)
       console.log('mixins获取数据')
       this.showLoading = true;
       _axios(option).then((res: any) => {
@@ -134,6 +135,7 @@ export default class GlobalMimins extends Vue {
   pageChange(page: number) {
     this.list_data = []
     this.page.page = page
+    console.log(this.page.limit)
     this.initForm['params'] = Object.assign(this.initForm['params'], this.page)
     this.fetchData(this.initForm)
   }
@@ -174,6 +176,7 @@ export default class GlobalMimins extends Vue {
   deleteRow(option: object) {
     return _axios(option).then(res => {
       if (res.data.code === 200) {
+        this.deleteForm['data'] = []
         this.$message.success('删除成功')
         this.fetchData(this.initForm)
       }
@@ -195,11 +198,7 @@ export default class GlobalMimins extends Vue {
         break
       case 'delete':
         if (!this.deleteForm['data'].length) {
-          Message({
-            type: 'warning',
-            message: '请选择需要删除的选项！'
-          });
-          return
+          this.deleteForm['data'].push(options['row'].id)
         }
         MessageBox.confirm('此操作将永久删除该列表, 是否继续?', '提示', {
           confirmButtonText: '确定',
@@ -213,6 +212,7 @@ export default class GlobalMimins extends Vue {
             type: 'info',
             message: '已取消删除'
           });
+          this.deleteForm['data'] = []
         });
         break
       case 'whiteList':

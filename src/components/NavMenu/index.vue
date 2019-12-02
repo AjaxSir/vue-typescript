@@ -111,7 +111,7 @@ i{
 }
 .activeLink{
   background-color: #409EFF !important;
-  color: white;
+  color: white !important;
 }
 
 </style>

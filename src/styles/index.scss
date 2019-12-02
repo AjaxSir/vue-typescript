@@ -36,7 +36,7 @@ a:hover {
 }
 
 .app-container {
-  padding: 0px 20px 0px 0px;
+  padding: 0px 00px 0px 0px;
   background-color: #F8F8F8;
 }
 
@@ -136,7 +136,7 @@ img {
 }
 
 .el-menu-item.is-active {
-  color: white !important;
+  color: #303133 ;
 }
 
 // .el-menu-item .showHidden{
@@ -164,3 +164,21 @@ img {
 }
 
 
+.indexNum{
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.fun-btn {
+  position: absolute;
+  left: 0px;
+  top: 50%;
+  margin-top: -11px;
+  .iconfont {
+    font-size: 19px;
+    color: #8091a5;
+    cursor: pointer;
+  }
+}
