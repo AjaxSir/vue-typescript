@@ -107,3 +107,13 @@ export function deleteGroup(id: any) {
     method: 'delete'
   })
 }
+
+
+//小区修改
+export function editCommunity(data: any) {
+  return _axios({
+    url: '/admin/hs-scence/info/',
+    method: 'post',
+    data
+  })
+}

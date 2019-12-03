@@ -295,9 +295,9 @@ export default class InformIssue extends Vue {
     this.$refs["dataForm"]["validate"](valid => {
       if (valid) {
         const form = { ...this.createForm };
-        if (this.createForm["objType"] === "3") {
-          delete form["objIds"];
-        }
+        // if (this.createForm["objType"] === "3") {
+        //   delete form["objIds"];
+        // }
         postMessage(form).then(res => {
           this.handleClose();
           this["fetchData"](this.initForm);
@@ -412,7 +412,7 @@ td {
 .fun-btn {
   position: absolute;
   left: -64px;
-  top: 50%-36;
+  top: 18px;
   .iconfont {
     font-size: 19px;
     color: #8091a5;

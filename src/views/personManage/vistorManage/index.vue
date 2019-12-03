@@ -106,26 +106,29 @@
             @selection-change="handleSelectionChange"
           >
             <el-table-column type="selection" align="center"></el-table-column>
-            <el-table-column type="index" width="50" align="center" label="编号"></el-table-column>
+            <el-table-column type="index" align="center" label="序号" class="indexNum" width="50">
+              <template slot-scope="scope">
+                <span>{{scope.$index+1}}</span>
+                <div class="fun-btn">
+                  <el-dropdown trigger="click" placement="bottom-start" @command="commandClick">
+                    <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
+                    <el-dropdown-menu slot="dropdown">
+                      <el-dropdown-item
+                        :command="returnCommand('delete', scope.row)"
+                      >{{ deleteForm.data.length ? '批量删除' : '删除' }}</el-dropdown-item>
+                    </el-dropdown-menu>
+                  </el-dropdown>
+                </div>
+              </template>
+            </el-table-column>
+
             <el-table-column
               prop="name"
               width="70"
               align="center"
               label="姓名"
               :show-overflow-tooltip="true"
-            >
-              <template slot-scope="scope">
-                <span>{{scope.row.name}}</span>
-                <div class="fun-btn">
-                  <el-dropdown trigger="click" placement="bottom-start" @command="commandClick">
-                    <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
-                    <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item :command="returnCommand('delete', scope.row)">批量删除</el-dropdown-item>
-                    </el-dropdown-menu>
-                  </el-dropdown>
-                </div>
-              </template>
-            </el-table-column>
+            ></el-table-column>
             <el-table-column
               prop="phone"
               min-width="90"
@@ -683,17 +686,6 @@ export default class VistoryManage extends Vue {
 .n {
   color: black;
   background: #fff;
-}
-.fun-btn {
-  position: absolute;
-  left: -64px;
-  top: 30%;
-
-  .iconfont {
-    font-size: 19px;
-    color: #8091a5;
-    cursor: pointer;
-  }
 }
 
 .table-col {

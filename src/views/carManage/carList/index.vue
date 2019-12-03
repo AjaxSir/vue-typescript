@@ -53,15 +53,12 @@
             @cell-mouse-enter="enterRowChange"
             @cell-mouse-leave="leaveRowChange"
             @selection-change="handleSelectionChange"
-            @cell-click="cellClick"
           >
             <el-table-column type="selection" width="50"></el-table-column>
 
-            <el-table-column type="index" label="序号" width="50" align="center"></el-table-column>
-
-            <el-table-column prop="name" label="所属房屋" :show-overflow-tooltip="true">
+            <el-table-column type="index" align="center" label="序号" class="indexNum" width="50">
               <template slot-scope="scope">
-                <span class="serial-num">{{scope.row.name}}</span>
+                <span>{{scope.$index+1}}</span>
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start" @command="commandClick">
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
@@ -69,13 +66,18 @@
                       <div @click="editType(scope.row)">
                         <el-dropdown-item command="update">修改</el-dropdown-item>
                       </div>
-                      <el-dropdown-item :command="returnCommand('delete', scope.row)">
-                        {{ deleteForm.data.length ? '批量删除' : '删除' }}
-                      </el-dropdown-item>
-                      <!-- <el-dropdown-item :command="returnCommand('delete', scope.row)">批量删除</el-dropdown-item> -->
+                      <el-dropdown-item
+                        :command="returnCommand('delete', scope.row)"
+                      >{{ deleteForm.data.length ? '批量删除' : '删除' }}</el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
                 </div>
+              </template>
+            </el-table-column>
+
+            <el-table-column prop="name" label="所属房屋" :show-overflow-tooltip="true">
+              <template slot-scope="scope">
+                <span class="serial-num">{{scope.row.name}}</span>
               </template>
             </el-table-column>
 
@@ -128,13 +130,23 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="note" label="备注" :show-overflow-tooltip="true">
-              <template slot-scope="scope">
+            <el-table-column prop="note" align="center" label="备注" :show-overflow-tooltip="true">
+              <template slot-scope="{row}">
                 <span
-                  v-if="!scope.row.carNote"
-                  @click="scope.row.carNote = !scope.row.carNote"
-                >{{scope.row.note}}</span>
-                <el-input v-else size="small" v-model="editForm.note" @blur="editNote(scope.row)"></el-input>
+                  class="rowUpdate"
+                  v-if="!row.noteStatus"
+                  @click="row.noteStatus = !row.noteStatus"
+                >{{ row.note }}</span>
+                <el-input
+                  size="small"
+                  @keyup.enter.native="confirmUpdateNote(row)"
+                  @blur="noteBlur(row)"
+                  @input="constraintLength(editForm.note,'200')"
+                  :maxlength="200"
+                  v-model="editForm.note"
+                  v-else
+                  placeholder="输入备注"
+                ></el-input>
               </template>
             </el-table-column>
           </el-table>
@@ -182,7 +194,7 @@
             style="width:340px"
             v-model="createForm[0].ownerPhone"
             :disabled="nameDisabled"
-            placeholder="请输入用户电话"
+            placeholder="输入电话号码七位后开始查询"
             popper-class="my-autocomplete"
             :fetch-suggestions="querySearch"
             @select="handleSelectWatchlist"
@@ -195,7 +207,7 @@
         </el-form-item>
 
         <el-form-item label="姓名">
-          <el-input :disabled="true" v-model="createForm[0].ownerUserName"></el-input>
+          <el-input :disabled="true" v-model="createForm[0].ownerUserName" placeholder="请输入姓名"></el-input>
         </el-form-item>
 
         <el-form-item
@@ -204,7 +216,12 @@
           :show-message="showMessage"
           :error="errorMessage.carNo"
         >
-          <el-input v-model="createForm[0].carNo"></el-input>
+          <el-input
+            v-model="createForm[0].carNo"
+            placeholder="请输入车牌"
+            :maxlength="7"
+            @input="constraintLength(createForm[0].carNo,'7')"
+          ></el-input>
         </el-form-item>
 
         <el-form-item
@@ -213,15 +230,36 @@
           :show-message="showMessage"
           :error="errorMessage.modal"
         >
-          <el-input v-model="createForm[0].modal"></el-input>
+          <el-input
+            v-model="createForm[0].modal"
+            placeholder="请输入品牌"
+            :maxlength="10"
+            @input="constraintLength(createForm[0].modal,'10')"
+          ></el-input>
         </el-form-item>
 
         <el-form-item label="车型">
-          <el-input v-model="createForm[0].carType"></el-input>
+          <el-input
+            v-model="createForm[0].carType"
+            placeholder="请输入车型"
+            :maxlength="10"
+            @input="constraintLength(createForm[0].carType,'10')"
+          ></el-input>
         </el-form-item>
 
-        <el-form-item label="备注">
-          <el-input type="textarea" v-model="createForm[0].note"></el-input>
+        <el-form-item
+          label="备注:"
+          prop="note"
+          :show-message="showMessage"
+          :error="errorMessage.note"
+        >
+          <el-input
+            type="textarea"
+            v-model="createForm[0].note"
+            :maxlength="200"
+            placeholder="输入备注信息"
+            @input="constraintLength(createForm[0].note,'200')"
+          ></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -250,7 +288,12 @@
           :show-message="showMessage"
           :error="errorMessage.carNo"
         >
-          <el-input v-model="editForm.carNo"></el-input>
+          <el-input
+            v-model="editForm.carNo"
+            placeholder="请输入车牌"
+            :maxlength="7"
+            @input="constraintLength(editForm.carNo,'7')"
+          ></el-input>
         </el-form-item>
 
         <el-form-item
@@ -259,15 +302,36 @@
           :show-message="showMessage"
           :error="errorMessage.modal"
         >
-          <el-input v-model="editForm.modal"></el-input>
+          <el-input
+            v-model="editForm.modal"
+            placeholder="请输入品牌"
+            :maxlength="10"
+            @input="constraintLength(editForm.modal,'10')"
+          ></el-input>
         </el-form-item>
 
         <el-form-item label="车型">
-          <el-input v-model="editForm.carType"></el-input>
+          <el-input
+            v-model="editForm.carType"
+            placeholder="请输入车型"
+            :maxlength="10"
+            @input="constraintLength(editForm.carType,'10')"
+          ></el-input>
         </el-form-item>
 
-        <el-form-item label="备注">
-          <el-input type="textarea" v-model="editForm.note"></el-input>
+        <el-form-item
+          label="备注:"
+          prop="note"
+          :show-message="showMessage"
+          :error="errorMessage.note"
+        >
+          <el-input
+            type="textarea"
+            v-model="editForm.note"
+            :maxlength="200"
+            placeholder="输入备注信息"
+            @input="constraintLength(editForm.note,'200')"
+          ></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -619,11 +683,13 @@ export default class CarList extends Vue {
     this.editForm["id"] = val;
   }
 
-  cellClick(row, column, event, cell) {
-    row.carNote = true;
+  // 修改备注离开输入框
+  noteBlur(row) {
+    row.noteStatus = false;
+    this.editForm["note"] = "";
   }
 
-  editNote(item) {
+  confirmUpdateNote(item) {
     /**@description 修改备注 */
     const form = { note: this.editForm["note"], id: item.id };
     editCar(form).then(() => {
@@ -753,16 +819,7 @@ export default class CarList extends Vue {
 .serial-num {
   position: relative;
 }
-.fun-btn {
-  position: absolute;
-  left: -64px;
-  top: 28%;
-  .iconfont {
-    font-size: 19px;
-    color: #8091a5;
-    cursor: pointer;
-  }
-}
+
 .table-col {
   position: relative;
 }

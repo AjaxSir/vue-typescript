@@ -9,7 +9,8 @@
         @fetchData='fetchData'
         :filterForm='filterForm'
         :dialogCreate.sync="dialogCreate"
-        :houseStatus='true' :total="page.total">
+        :houseStatus='true'
+        :total="page.total">
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item command='export'>导出</el-dropdown-item>
           </el-dropdown-menu>

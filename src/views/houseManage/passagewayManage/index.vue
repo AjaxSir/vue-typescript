@@ -35,45 +35,56 @@
             @cell-mouse-enter="enterRowChange"
             @cell-mouse-leave="leaveRowChange"
             @selection-change="handleSelectionChange"
-            @cell-click="cellClick"
           >
             <el-table-column type="selection" width="50"></el-table-column>
 
-            <el-table-column type="index" label="序号" width="50"></el-table-column>
-
-            <el-table-column class="serial-num" prop="name" label="出入口名称" align="center">
+            <el-table-column type="index" align="center" label="序号" class="indexNum" width="50">
               <template slot-scope="scope">
-                <span>{{scope.row.name}}</span>
+                <span>{{scope.$index+1}}</span>
                 <div class="fun-btn">
-                  <el-dropdown @command="commandClick" trigger="click" placement="bottom-start">
+                  <el-dropdown trigger="click" placement="bottom-start" @command="commandClick">
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
                     <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item :command='returnCommand("update", scope.row)'>修改</el-dropdown-item>
-                      <!-- <el-dropdown-item :command='returnCommand("delete", scope.row)'>删除</el-dropdown-item> -->
-                      <el-dropdown-item :command="returnCommand('delete', scope.row)">
-                        {{ deleteForm.data.length ? '批量删除' : '删除' }}
-                      </el-dropdown-item>
+                      <div @click="editFrom(scope.row)">
+                        <el-dropdown-item :command="returnCommand('update', scope.row)">修改</el-dropdown-item>
+                      </div>
+
+                      <el-dropdown-item
+                        :command="returnCommand('delete', scope.row)"
+                      >{{ deleteForm.data.length ? '批量删除' : '删除' }}</el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
                 </div>
               </template>
             </el-table-column>
 
+            <el-table-column class="serial-num" prop="name" label="出入口名称" align="center"></el-table-column>
+
             <el-table-column prop="enterTimes" align="center" label="累计进入人数"></el-table-column>
 
             <el-table-column prop="exitTimes" label="累计出人数" align="center"></el-table-column>
-            <el-table-column prop="note" label="备注">
-              <template slot-scope="scope">
+
+            <el-table-column prop="note" align="center" label="备注" :show-overflow-tooltip="true">
+              <template slot-scope="{row}">
                 <span
-                  v-if="!scope.row.passagewayNote"
-                  @click="scope.row.passagewayNote = !scope.row.passagewayNote"
-                >{{scope.row.note}}</span>
-                <el-input v-else size="small" v-model="editForm.note" @blur="editNote(scope.row)"></el-input>
+                  class="rowUpdate"
+                  v-if="!row.noteStatus"
+                  @click="row.noteStatus = !row.noteStatus"
+                >{{ row.note }}</span>
+                <el-input
+                  size="small"
+                  @keyup.enter.native="confirmUpdateNote(row)"
+                  @blur="noteBlur(row)"
+                  @input="constraintLength(editForm.note,'200')"
+                  :maxlength="200"
+                  v-model="editForm.note"
+                  v-else
+                  placeholder="输入备注"
+                ></el-input>
               </template>
             </el-table-column>
           </el-table>
         </div>
-        <!-- <el-pagination style="margin-top:10px;" background layout="prev, pager, next" :total="2"></el-pagination> -->
       </el-col>
     </el-row>
     <!-- 新增出入口 -->
@@ -85,11 +96,31 @@
       :close-on-click-modal="false"
     >
       <el-form :model="createForm" :rules="rules" ref="dataForm" label-width="110px">
-        <el-form-item label="出入口名称:" prop="name">
-          <el-input v-model="createForm.name" placeholder="输入出入口名称"></el-input>
+        <el-form-item
+          label="出入口名称:"
+          prop="name"
+          :show-message="showMessage"
+          :error="errorMessage.name"
+        >
+          <el-input
+            v-model="createForm.name"
+            placeholder="输入出入口名称"
+            :maxlength="10"
+            @input="constraintLength(createForm.name,'10')"
+          ></el-input>
         </el-form-item>
-        <el-form-item label="备注:" prop="detail">
-          <el-input v-model="createForm.note" placeholder="输入备注信息"></el-input>
+        <el-form-item
+          label="备注:"
+          prop="note"
+          :show-message="showMessage"
+          :error="errorMessage.note"
+        >
+          <el-input
+            v-model="createForm.note"
+            :maxlength="200"
+            placeholder="输入备注信息"
+            @input="constraintLength(createForm.note,'200')"
+          ></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -112,11 +143,31 @@
         label-width="110px"
         style="margin-right:40px;"
       >
-        <el-form-item label="出入口名称:" prop="name">
-          <el-input v-model="editForm.name" placeholder="输入出入口名称"></el-input>
+        <el-form-item
+          label="出入口名称:"
+          prop="name"
+          :show-message="showMessage"
+          :error="errorMessage.name"
+        >
+          <el-input
+            v-model="editForm.name"
+            :maxlength="10"
+            placeholder="输入出入口名称"
+            @input="constraintLength(editForm.name,'10')"
+          ></el-input>
         </el-form-item>
-        <el-form-item label="备注:" prop="detail">
-          <el-input v-model="editForm.note" placeholder="输入备注信息"></el-input>
+        <el-form-item
+          label="备注:"
+          prop="note"
+          :show-message="showMessage"
+          :error="errorMessage.note"
+        >
+          <el-input
+            v-model="editForm.note"
+            :maxlength="200"
+            placeholder="输入备注信息"
+            @input="constraintLength(editForm.note,'200')"
+          ></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -149,9 +200,16 @@ export default class InformIssue extends Vue {
     name: "",
     note: ""
   };
+
   private rules: Object = {
     //新增验证
     name: [{ required: true, message: "请输入出入口名称", trigger: "blur" }]
+  };
+  private showMessage: Boolean = true; //是否显示表单错误信息
+  private errorMessage: Object = {
+    // 表单错误信息
+    name: "",
+    note: ""
   };
 
   private dialogEdit: Boolean = false; // 修改弹出表单
@@ -161,7 +219,7 @@ export default class InformIssue extends Vue {
     note: "",
     id: ""
   };
-  updateArray: Array<string> = ["passagewayNote"];
+  updateArray: Array<string> = ["noteStatus"];
 
   initForm: object = {
     //获取车辆列表url
@@ -202,16 +260,11 @@ export default class InformIssue extends Vue {
           this["fetchData"](this.initForm);
           this["notify"]("添加出入口成功");
         });
-        // .catch(err => {
-        //   const { data } = err.response;
-        //   console.log(err.response);
-        //     this.errorMessage = data[k][0];
-        // });
       }
     });
   }
 
-  editType(item) {
+  editFrom(item) {
     /**@description 修改状态 */
     for (const key in this.editForm) {
       this.editForm[key] = item[key];
@@ -233,7 +286,13 @@ export default class InformIssue extends Vue {
     });
   }
 
-  editNote(item) {
+  // 修改备注离开输入框
+  noteBlur(row) {
+    row.noteStatus = false;
+    this.editForm["note"] = "";
+  }
+
+  confirmUpdateNote(item) {
     /**@description 修改备注 */
     const form = { note: this.editForm["note"], id: item.id };
     editPassageway(form).then(() => {
@@ -243,25 +302,16 @@ export default class InformIssue extends Vue {
     });
   }
 
-  cellClick(row, column, event, cell) {
-    row.passagewayNote = true;
-  }
-
   handleClose() {
     /** @description 关闭新增/修改dialog */
     this.dialogCreate = false; //车辆新增dialog
+    this.createForm = {
+      name: "",
+      note: ""
+    };
+
     this.dialogEdit = false; //修改dialog
     this.$refs["dataForm"]["resetFields"]();
-  }
-
-  enterRowChange(row, column, cell, event) {
-    /**@description hover enter tab 行 */
-    row.showMenu = true;
-  }
-
-  leaveRowChange(row) {
-    /**@description hover leave tab 行 */
-    row.showMenu = false;
   }
 }
 </script>
@@ -283,17 +333,6 @@ td {
 
 .serial-num {
   position: relative;
-}
-
-.fun-btn {
-  position: absolute;
-  left: -64px;
-  top: 8px;
-  .iconfont {
-    font-size: 19px;
-    color: #8091a5;
-    cursor: pointer;
-  }
 }
 .table-col {
   position: relative;

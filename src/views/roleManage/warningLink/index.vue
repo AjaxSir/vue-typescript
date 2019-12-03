@@ -23,12 +23,11 @@
       @cell-mouse-enter="enterRowChange"
       @cell-mouse-leave="leaveRowChange"
     >
-      <el-table-column type="selection" width="50"  disabled="true"></el-table-column>
+      <el-table-column type="selection" width="50" :selectable="isDisabled" disabled="true"></el-table-column>
 
-      <el-table-column type="index" label="序号" width="50" align="center"></el-table-column>
-      <el-table-column prop="name" align="center" label="姓名">
+      <el-table-column type="index" align="center" label="序号" class="indexNum" width="50">
         <template slot-scope="scope">
-          <span class="serial-num">{{scope.row.name}}</span>
+          <span>{{scope.$index+1}}</span>
           <div class="fun-btn">
             <el-dropdown trigger="click" placement="bottom-start" @command="commandClick">
               <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
@@ -39,12 +38,16 @@
                 <div @click="deleteBtn(scope.row)">
                   <el-dropdown-item command="dele">删除</el-dropdown-item>
                 </div>
-                <el-dropdown-item :command="returnCommand('delete', scope.row)">批量删除</el-dropdown-item>
+                <!-- <el-dropdown-item
+                  :command="returnCommand('delete', scope.row)"
+                >{{ deleteForm.data.length ? '批量删除' : '删除' }}</el-dropdown-item>-->
               </el-dropdown-menu>
             </el-dropdown>
           </div>
         </template>
       </el-table-column>
+
+      <el-table-column prop="name" align="center" label="姓名"></el-table-column>
       <el-table-column prop="phone" align="center" label="电话"></el-table-column>
       <el-table-column prop="email" align="center" label="邮箱"></el-table-column>
       <el-table-column prop="groupName" align="center" label="分组"></el-table-column>
@@ -80,7 +83,13 @@
           :show-message="showMessage"
           :error="errorMessage.name"
         >
-          <el-input v-model="createForm.name" autocomplete="off"></el-input>
+          <el-input
+            v-model="createForm.name"
+            autocomplete="off"
+            placeholde="请输入预警联系人姓名"
+            :maxlength="10"
+            @input="constraintLength(createForm.name,'10')"
+          ></el-input>
         </el-form-item>
         <el-form-item
           label="电话:"
@@ -88,7 +97,13 @@
           :show-message="showMessage"
           :error="errorMessage.phone"
         >
-          <el-input v-model="createForm.phone" autocomplete="off"></el-input>
+          <el-input
+            v-model="createForm.phone"
+            autocomplete="off"
+            placeholde="请输入电话"
+            :maxlength="11"
+            @input="constraintLength(createForm.phone,'11')"
+          ></el-input>
         </el-form-item>
         <el-form-item
           label="邮箱:"
@@ -129,13 +144,26 @@
               v-model="newTagValue"
               ref="saveTagInput"
               size="small"
+              :maxlength="10"
+              placeholder="请输入新增分组名称"
+              @input="constraintLength(newTagValue,'10')"
               @blur="handleInputConfirm"
             ></el-input>
             <el-button v-else class="button-new-tag" size="small" @click="showInput">新增分组</el-button>
           </div>
         </el-form-item>
-        <el-form-item label="备注:">
-          <el-input v-model="createForm.note" autocomplete="off"></el-input>
+        <el-form-item
+          label="备注:"
+          prop="note"
+          :show-message="showMessage"
+          :error="errorMessage.note"
+        >
+          <el-input
+            v-model="createForm.note"
+            :maxlength="200"
+            placeholder="输入备注信息"
+            @input="constraintLength(createForm.note,'200')"
+          ></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -165,7 +193,13 @@
           :show-message="showMessage"
           :error="errorMessage.name"
         >
-          <el-input v-model="editForm.name" autocomplete="off"></el-input>
+          <el-input
+            v-model="editForm.name"
+            autocomplete="off"
+            placeholde="请输入预警联系人姓名"
+            :maxlength="10"
+            @input="constraintLength(editForm.name,'10')"
+          ></el-input>
         </el-form-item>
         <el-form-item
           label="电话:"
@@ -173,7 +207,13 @@
           :show-message="showMessage"
           :error="errorMessage.phone"
         >
-          <el-input v-model="editForm.phone" autocomplete="off"></el-input>
+          <el-input
+            v-model="editForm.phone"
+            autocomplete="off"
+            placeholde="请输入电话"
+            :maxlength="11"
+            @input="constraintLength(editForm.phone,'11')"
+          ></el-input>
         </el-form-item>
         <el-form-item
           label="邮箱:"
@@ -213,13 +253,26 @@
               v-model="newTagValue"
               ref="saveTagInput"
               size="small"
+              :maxlength="10"
+              placeholder="请输入新增分组名称"
+              @input="constraintLength(newTagValue,'10')"
               @blur="handleInputConfirm"
             ></el-input>
-            <el-button v-else class="button-new-tag" size="small" @click="showInput">新增单位</el-button>
+            <el-button v-else class="button-new-tag" size="small" @click="showInput">新增分组</el-button>
           </div>
         </el-form-item>
-        <el-form-item label="备注:">
-          <el-input v-model="editForm.note" autocomplete="off"></el-input>
+        <el-form-item
+          label="备注:"
+          prop="note"
+          :show-message="showMessage"
+          :error="errorMessage.note"
+        >
+          <el-input
+            v-model="editForm.note"
+            :maxlength="200"
+            placeholder="输入备注信息"
+            @input="constraintLength(editForm.note,'200')"
+          ></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -306,7 +359,7 @@ export default class WarningLink extends Vue {
     ],
     earlyGroupId: [
       { required: true, message: "请选择预警联系人分组", trigger: "blur" }
-    ],
+    ]
   };
   private showMessage: Boolean = true; //是否显示表单错误信息
   private errorMessage: Object = {
@@ -371,12 +424,14 @@ export default class WarningLink extends Vue {
   handleInputConfirm() {
     /**@description 新增分组 */
     this.newTag = false;
-    addGroup({ groupName: this.newTagValue }).then(res => {
-      if (res.data.code === 200) {
-        this.getGroupList();
-        this.newTagValue = "";
-      }
-    });
+    if (this.newTagValue) {
+      addGroup({ groupName: this.newTagValue }).then(res => {
+        if (res.data.code === 200) {
+          this.getGroupList();
+          this.newTagValue = "";
+        }
+      });
+    }
   }
 
   deleteTag(tag, index) {
@@ -447,16 +502,6 @@ export default class WarningLink extends Vue {
 </script>
 
 <style lang="scss" scoped>
-.fun-btn {
-  position: absolute;
-  left: -64px;
-  top: 26%;
-  .iconfont {
-    font-size: 19px;
-    color: #8091a5;
-    cursor: pointer;
-  }
-}
 .table-col {
   position: relative;
 }

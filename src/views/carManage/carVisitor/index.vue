@@ -106,24 +106,23 @@
           >
             <el-table-column type="selection" width="50"></el-table-column>
 
-            <el-table-column type="index" label="序号" width="50"></el-table-column>
-
-            <el-table-column prop="visitName" label="邀请人" :show-overflow-tooltip="true">
+            <el-table-column type="index" align="center" label="序号" class="indexNum" width="50">
               <template slot-scope="scope">
-                <span class="serial-num">{{scope.row.visitName}}</span>
+                <span>{{scope.$index+1}}</span>
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start" @command="commandClick">
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
                     <el-dropdown-menu slot="dropdown">
-                      <!-- <el-dropdown-item :command="returnCommand('delete', scope.row)">批量删除</el-dropdown-item> -->
-                      <el-dropdown-item :command="returnCommand('delete', scope.row)">
-                        {{ deleteForm.data.length ? '批量删除' : '删除' }}
-                      </el-dropdown-item>
+                      <el-dropdown-item
+                        :command="returnCommand('delete', scope.row)"
+                      >{{ deleteForm.data.length ? '批量删除' : '删除' }}</el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
                 </div>
               </template>
             </el-table-column>
+
+            <el-table-column prop="visitName" label="邀请人" :show-overflow-tooltip="true"></el-table-column>
 
             <el-table-column prop="carNo" align="center" label="车牌号" :show-overflow-tooltip="true">
               <template slot-scope="scope">
@@ -355,9 +354,6 @@
           ></el-pagination>
         </el-tab-pane>
       </el-tabs>
-      <!-- <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="detailDialogVisible = false">确 定</el-button>
-      </span>-->
     </el-dialog>
   </div>
 </template>
@@ -524,6 +520,7 @@ export default class CardManage extends Vue {
     this.detailDialogVisible = false; //车辆详情dialog
     this.activeName = "first";
   }
+
 }
 </script>
 
@@ -544,16 +541,6 @@ export default class CardManage extends Vue {
   position: relative;
 }
 
-.fun-btn {
-  position: absolute;
-  left: -64px;
-  top: 26%;
-  .iconfont {
-    font-size: 19px;
-    color: #8091a5;
-    cursor: pointer;
-  }
-}
 .table-col {
   position: relative;
 }

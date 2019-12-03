@@ -45,13 +45,18 @@
             <el-form-item label="图片展示" style="margin-top:22px">
               <el-upload
                 multiple
-                :action="upPathPerson"
                 :data="communityForm"
+                action
                 ref="personForm"
                 list-type="picture-card"
-                :auto-upload="false"
+                accept="image/jpeg, image/jpg, image/png"
                 name="picList"
+                :auto-upload="false"
+                :headers="header"
+                :file-list="fileList"
                 :on-success="succUpdatePerson"
+                :on-change="changefile"
+                :on-remove="removefile"
                 :on-error="errorUpdatePerson"
               >
                 <i class="el-icon-plus"></i>
@@ -62,10 +67,17 @@
             </el-form-item>
 
             <el-form-item label="小区概况">
-              <el-input type="textarea" :rows="5" v-model="communityForm.note"></el-input>
+              <el-input
+                type="textarea"
+                :rows="5"
+                v-model="communityForm.note"
+                placeholder="输入小区概况"
+                @input="constraintLength(communityForm.note,'200')"
+                :maxlength="200"
+              ></el-input>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" @click="onSubmit" style="float:right;">立即创建</el-button>
+              <el-button type="primary" @click="onSubmit" style="float:right;">立即修改</el-button>
             </el-form-item>
           </el-form>
         </div>
@@ -78,6 +90,7 @@
 import { Component, Prop, Vue, Mixins } from "vue-property-decorator";
 import { Getter, Action, Mutation } from "vuex-class";
 import mixin from "@/config/minxins";
+import { editCommunity } from "@/api/systemApi.ts";
 
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 const DataTree = () => import("@/components/DataTree.vue");
@@ -100,15 +113,19 @@ export default class InformIssue extends Vue {
   }; //根据关键字查询
   initForm: object = {}; //获取数据的url
 
+  private header: Object = {
+    "Content-Type": "application/json"
+  };
+
   private communityForm: Object = {
     address: "",
     latitude: "", //纬度
     longitude: "", //经度
     name: "", //名称
     note: "", //备注
-    picList: [], //图片
-
+    picList: [] //图片
   };
+  private selectPic: Object = {};
   private userRules: Object = {
     name: [
       { required: true, message: "请输入小区名称", trigger: "blur" }
@@ -122,6 +139,7 @@ export default class InformIssue extends Vue {
   private upPathPerson: string = "/v1/admin/hs-scence/info/";
   private imageUrl: any = "";
   private dialogVisible: Boolean = false;
+  private fileList: Array<Object> = [];
 
   created() {
     this.initForm["params"] = Object.assign(
@@ -131,19 +149,9 @@ export default class InformIssue extends Vue {
     ); // 合并参数
   }
 
-  // handleRemove(file, fileList) {
-  //   console.log(file, fileList);
-  // }
-
-  // handlePictureCardPreview(file) {
-  //   this.imageUrl = file.url;
-  //   this.dialogVisible = true;
-  // }
-
   editType(item) {
     /**@description 修改状态 */
     console.log(item);
-    // this.dialogFormVisible = true;
   }
 
   enterRowChange(row, column, cell, event) {
@@ -156,10 +164,39 @@ export default class InformIssue extends Vue {
     row.showMenu = false;
   }
 
-  onSubmit() {
+  changefile(file, fileList) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const imgBase64: any = reader.result;
+      this.selectPic[`${file.uid}`] = imgBase64.split(",")[1];
+    };
+    reader.readAsDataURL(file.raw);
+  }
+
+  removefile(file, fileList) {
+    delete this.selectPic[`${file.uid}`];
+  }
+
+  async onSubmit() {
+    this.communityForm["picList"] = [];
     this.$refs["formInfo"]["validate"](valid => {
       if (valid) {
-        this.$refs["personForm"]["submit"]();
+        for (const key in this.selectPic) {
+          this.communityForm["picList"].push(this.selectPic[key]);
+        }
+        editCommunity(this.communityForm).then(res => {
+          this["notify"]("修改小区成功");
+          this.$refs["formInfo"]["resetFields"]();
+          this.fileList = [];
+          this.communityForm = {
+            address: "",
+            latitude: "", //纬度
+            longitude: "", //经度
+            name: "", //名称
+            note: "", //备注
+            picList: [] //图片
+          };
+        });
       }
     });
   }
