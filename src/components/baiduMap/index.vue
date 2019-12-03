@@ -92,11 +92,11 @@ export default class BaiDuMap extends Vue {
           position: { lng: e.point.lng, lat: e.point.lat }
         })
         addRess = Object.assign(addRess, e.point)
-        const geocoder = new BMap['Geocoder']() // 创建地址解析器的实例
-        geocoder.getLocation(e.point, rs => {
-          addRess = Object.assign(addRess, rs.addressComponents)
-          this.$emit('pointClick', addRess)
-        })
+        // const geocoder = new BMap['Geocoder']() // 创建地址解析器的实例
+        // geocoder.getLocation(e.point, rs => {
+        //   addRess = Object.assign(addRess, rs.addressComponents)
+        //   this.$emit('pointClick', addRess)
+        // })
       }
     }
 

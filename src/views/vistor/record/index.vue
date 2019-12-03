@@ -127,7 +127,7 @@
             <el-table-column prop="phone" label="电话" align="center"></el-table-column>
             <el-table-column prop="visitName" label="受访人姓名" align="center"></el-table-column>
             <el-table-column prop="visitType" label="访客类型" align="center" width="101">
-              <template slot="header" slot-scope="scope">
+              <template slot="header">
                 <el-dropdown style="padding:0;" trigger="click" @command="filterType">
                   <span class="el-dropdown-link">
                     访客类型
@@ -156,7 +156,7 @@
             <el-table-column prop="cardNo" label="身份证号" align="center"></el-table-column>
             <el-table-column prop="createTime" label="注册时间" align="center"></el-table-column>
             <el-table-column prop="status" label="状态" align="center">
-              <template slot="header" slot-scope="scope">
+              <template slot="header">
                 <el-dropdown style="padding:0;" trigger="click" @command="filterStatus">
                   <span class="el-dropdown-link">
                     状态
