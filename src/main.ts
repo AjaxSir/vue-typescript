@@ -20,11 +20,8 @@ Vue.use(BaiduMap, {
   ak: 'vCZU88Guz4BmAODWTm8k9BP0WlwId1V0'
 })
 
-import BaiduMap from 'vue-baidu-map'
 import '@/styles/index.scss' // global css
-Vue.use(BaiduMap, {
-  ak: 'vCZU88Guz4BmAODWTm8k9BP0WlwId1V0'
-})
+
 
 Vue.config.productionTip = false;
 

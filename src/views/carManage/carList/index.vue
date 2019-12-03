@@ -75,12 +75,6 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="name" label="所属房屋" :show-overflow-tooltip="true">
-              <template slot-scope="scope">
-                <span class="serial-num">{{scope.row.name}}</span>
-              </template>
-            </el-table-column>
-
             <el-table-column prop="ownerName" label="车主" :show-overflow-tooltip="true"></el-table-column>
 
             <el-table-column prop="carNo" label="车牌号">
