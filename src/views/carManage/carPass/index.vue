@@ -72,7 +72,7 @@
             @cell-mouse-enter="enterRowChange"
             @cell-mouse-leave="leaveRowChange"
           >
-            <el-table-column align="center" type="selection" width="50"></el-table-column>
+            <el-table-column align="center" type="selection" width="50" :selectable="isDisabled" disabled="true"></el-table-column>
 
             <el-table-column align="center" type="index" label="序号" width="50"></el-table-column>
 
@@ -111,7 +111,7 @@
             <el-table-column align="center" prop="ownerName" label="车主姓名"></el-table-column>
             <el-table-column align="center" prop="ownerPhone" label="车主电话"></el-table-column>
             <el-table-column align="center" prop="inOut" label="通行方向"></el-table-column>
-            <el-table-column align="center" prop="passTime" label="抓拍时间"></el-table-column>
+            <el-table-column align="center" prop="passTime" label="抓拍时间"  :show-overflow-tooltip="true"></el-table-column>
 
             <el-table-column align="center" prop="photos" label="最近抓拍图片">
               <template slot-scope="scope">
@@ -311,6 +311,13 @@ export default class CardManage extends Vue {
     /** @description 关闭diolog */
     this.detailDialogVisible = false; //车辆详情dialog
     this.activeName = "first";
+  }
+
+  isDisabled(row, index) {
+    /**@discription 禁用多选 */
+    if (row.auditResult == 3) {
+      return 0;
+    }
   }
 }
 </script>

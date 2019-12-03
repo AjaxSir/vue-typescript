@@ -34,7 +34,7 @@ export function getTargetHouse(params) {
   })
 }
 
-//注册访客
+//刷卡注册访客
 export function addVisitor(data, devId) {
   return _axios({
     url: `/admin/usr-visitor-reg/${devId}/confirm/`,
@@ -43,6 +43,14 @@ export function addVisitor(data, devId) {
   })
 }
 
+//手动注册访客
+export function addVisitorManual(data, devId) {
+  return _axios({
+    url: `/admin/usr-visitor-reg/${devId}/manual/`,
+    method: 'post',
+    data
+  })
+}
 
 //取消注册
 export function cancelVisitor(devId) {
