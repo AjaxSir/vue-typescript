@@ -191,3 +191,15 @@ export function editPassageway(data: object) {
     data
   })
 }
+
+
+// 获取特定房屋下的注册人员
+export function getRegisterPeople(houseId : string){
+  return _axios({
+    url: '/admin/usrHouseLink',
+    method: 'get',
+    params: {
+      houseId
+    }
+  })
+}

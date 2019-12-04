@@ -29,6 +29,7 @@
         <div class="rightContent">
           <el-table :data="list_data"
           v-loading='showLoading'
+          style="max-height: 75vh;overflow:auto"
           @selection-change="handleSelectionChange"
           @cell-mouse-enter="enterRowChange"
           @cell-mouse-leave="leaveRowChange"
@@ -36,7 +37,7 @@
             <el-table-column type="selection" align="center"></el-table-column>
             <el-table-column type="index" width="60" align="center" class="indexNum" label="编号">
               <template slot-scope="scope">
-                <span>{{ scope.$index }}</span>
+                <span>{{ scope.$index + 1 }}</span>
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start" @command='commandClick'>
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
@@ -56,7 +57,7 @@
             </el-table-column>
             <el-table-column prop="age" align="center" label="年龄"></el-table-column>
             <el-table-column prop="sex" align="center" label="性别"></el-table-column>
-            <el-table-column prop="cardNo" align="center" label="身份证号"></el-table-column>
+            <!-- <el-table-column prop="cardNo" align="center" label="身份证号"></el-table-column> -->
             <el-table-column prop="phone" align="center" label="联系电话"></el-table-column>
             <el-table-column prop="authName" align="center" label="权限组"></el-table-column>
             <el-table-column prop="status" align="center" label="状态">
@@ -78,11 +79,12 @@
                 </el-dropdown>
               </template>
             </el-table-column>
-            <el-table-column prop="note" align="center" label="备注"></el-table-column>
-            <el-table-column prop="createTime" align="center" label="创建时间"></el-table-column>
+            <el-table-column :show-overflow-tooltip='true' prop="note" align="center" label="备注"></el-table-column>
+            <el-table-column :show-overflow-tooltip='true' prop="createTime" align="center" label="创建时间"></el-table-column>
           </el-table>
           <el-pagination
         @current-change='pageChange'
+        :page-size="page.limit"
         style="margin-top:10px;" background layout="prev, pager, next" :total="page.total"></el-pagination>
         <div :class="rowSpan.row1===4 ? menuControl1 : menuControl2" @click="menuVisible">
           <p class="close-menu">
@@ -110,20 +112,13 @@
            <el-table
             :data="passListData"
             style="width: 100%">
-            <el-table-column
-              prop="date"
-              align='center'
-              label="日期">
-            </el-table-column>
-            <el-table-column
-              prop="name"
-              align='center'
-              label="姓名">
-            </el-table-column>
-            <el-table-column
-              prop="address"
-              align='center'
-              label="地址">
+            <el-table-column prop="name" align='center' label="姓名" width="150px"></el-table-column>
+            <el-table-column prop="passTime" align='center' label="通行时间" width="150px"></el-table-column>
+            <el-table-column prop="inOut" align='center' label="进/出" width="150px"></el-table-column>
+            <el-table-column prop="passMethod" align='center' label="通行方式"></el-table-column>
+            <el-table-column prop="passMethod" align='center' label="抓拍图片">
+              <template slot-scope="{row}">
+                <img :src="row.photos" alt=""></template>
             </el-table-column>
           </el-table>
           <el-pagination
@@ -158,7 +153,6 @@
             </el-table-column>
           </el-table>
         </el-tab-pane>
-        <el-tab-pane label="人脸库信息" name="fourth">人脸库信息</el-tab-pane>
       </el-tabs>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
@@ -183,6 +177,12 @@
             active-value="1"
             inactive-value="0">
           </el-switch>
+        </el-form-item>
+        <el-form-item  class="float"  label="卡名:"  prop='cardName'>
+          <el-input v-model="Form.cardName" placeholder='输入卡名'></el-input>
+        </el-form-item>
+        <el-form-item  class="float"  label="卡号:"  prop='cardNo'>
+          <el-input v-model="Form.cardNo" placeholder='输入卡号'></el-input>
         </el-form-item>
         <el-form-item  class="float" label="年龄:"  prop='age'>
           <el-input v-model="Form.age" placeholder='输入物业人员年龄'></el-input>
@@ -243,7 +243,9 @@ export default class PropertyManage extends Vue {
     age: '',
     note: '',
     sex: '1',
-    authId: ''
+    authId: '',
+    cardNo: '',
+    cardName: ''
   }
   initForm: object = {
     url: '/admin/usrUser/PropertyManager/list',
@@ -298,6 +300,7 @@ export default class PropertyManage extends Vue {
    * row 列表数据
    */
   showDetail(row) {
+    this.activeName = 'first'
     this.dialogFormVisible = true;
     this.passList['id'] = row.id
     this.passList['page'] = 1
@@ -314,7 +317,6 @@ export default class PropertyManage extends Vue {
     // 获取物业人员的车辆信息
     getUserPropertyCar(row.id).then(res => {
       this.carList = res.data.data
-      console.log(1)
     })
   }
   // 物业人员通行记录翻页

@@ -17,6 +17,7 @@
             stripe
             v-loading='showLoading'
             class="demo-block"
+            style="max-height: 75vh;overflow:auto"
             highlight-current-row
             @selection-change="handleSelectionChange"
             @cell-mouse-enter="enterRowChange"
@@ -26,7 +27,7 @@
 
             <el-table-column type="index" label="序号" class="indexNum" align="center" width="50">
               <template slot-scope="scope">
-                <span>{{scope.$index}}</span>
+                <span>{{scope.$index + 1}}</span>
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start" @command="commandClick">
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
@@ -65,6 +66,7 @@
         </div>
         <el-pagination
         @current-change='pageChange'
+        :page-size="page.limit"
         style="margin-top:10px;" background layout="prev, pager, next" :total="page.total"></el-pagination>
       </el-col>
     </el-row>

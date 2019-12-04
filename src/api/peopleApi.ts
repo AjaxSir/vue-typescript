@@ -1,4 +1,15 @@
 import _axios from "../plugins/axios";
+// 首页获取人员同行记录
+export function peoplePassList() {
+  return _axios({
+    url: '/admin/people-pass',
+    method: 'get',
+    params: {
+      limit: 5,
+      page: 1
+    }
+  })
+}
 /***** 物业/用户 禁用恢复 ****** */
 export function resetDisabledUser(status: string, id: string) {
   return _axios({
@@ -18,7 +29,16 @@ export function getUserPropertyPass(params: object) {
     params
   })
 }
-
+// 查看用户的人脸库信息
+export function getPersonFace(key: string) {
+  return _axios({
+    url: '/admin/uploadFile',
+    method: 'get',
+    params: {
+      key
+    }
+  })
+}
 //****住户相关****** */
 // 添加住户
 export function addPeople(data: Object) {

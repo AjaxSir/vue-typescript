@@ -14,7 +14,7 @@
           <li>照片</li>
           <li>时间</li>
         </ul>
-        <div id='content' style="height: 250px;overflow:hidden">
+        <div v-show='tableData.length' id='content' style="height: 250px;overflow:hidden">
           <div id='listOne'>
             <ul v-for='(item, index) in tableData' :key='index'>
               <li>{{ item.type }}</li>
@@ -34,7 +34,13 @@
             </ul>
           </div>
         </div>
-        <el-button class="button-list" type="primary" plain size="small">查看更多</el-button>
+        <div
+        style="height: 250px;text-align:center;line-height:250px"
+        v-show='!tableData.length'>暂无人员通行记录</div>
+        <router-link :to="{name: 'management'}">
+          <el-button class="button-list" type="primary" plain size="small">查看更多</el-button>
+        </router-link>
+
       </div>
     </div>
   </div>
@@ -42,50 +48,14 @@
 
 <script lang='ts'>
 import { Component, Vue } from "vue-property-decorator";
-
+import { peoplePassList } from '@/api/peopleApi.ts'
 @Component({
   components: {
   }
 })
 export default class openDoor extends Vue {
   timer: any = null
-      tableData: Array<object> = [
-        {
-          type: "业主",
-          house: "1-1-1",
-          phone: " 13518160000",
-          img: require("../../../assets/4075389faf0c20cf430ce772c3afa47.png"),
-          date: "2016-05-02 12:00:00"
-        },
-        {
-          type: "业主",
-          house: "1-1-1",
-          phone: " 13518160000",
-          img: require("../../../assets/4075389faf0c20cf430ce772c3afa47.png"),
-          date: "2016-05-02 12:00:00"
-        },
-        {
-          type: "业主",
-          house: "1-1-1",
-          phone: " 13518160000",
-          img: require("../../../assets/4075389faf0c20cf430ce772c3afa47.png"),
-          date: "2016-05-02 12:00:00"
-        },
-        {
-          type: "业主",
-          house: "1-1-1",
-          phone: " 13518160000",
-          img: require("../../../assets/4075389faf0c20cf430ce772c3afa47.png"),
-          date: "2016-05-02 12:00:00"
-        },
-        {
-          type: "业主",
-          house: "1-1-1",
-          phone: " 13518160000",
-          img: require("../../../assets/4075389faf0c20cf430ce772c3afa47.png"),
-          date: "2016-05-02 12:00:00"
-        }
-      ]
+      tableData: Array<object> = []
 
   created() {
 
@@ -109,6 +79,11 @@ export default class openDoor extends Vue {
         content.scrollTop ++
       }
     }, time)
+  }
+  fetchList() {
+    peoplePassList().then(res => {
+      this.tableData = res.data.data.records
+    })
   }
 }
 </script>

@@ -7,47 +7,32 @@
       </div>
       <div class="statics-data">
         <!-- <pie-chart :chartData="chartData"></pie-chart> -->
-        <p>常住人员:1245人</p>
-        <p>累计访客: 245人</p>
-        <p>租户: 45户</p>
-        <p>租客:108人</p>
+        <p>常住人员: {{ data.userCount }} 人</p>
+        <p>累计访客: {{ data.visitorCount  }}人</p>
+        <p>租户: {{ data.tenementCount }}户</p>
+        <p>租客:{{ data.tenantCount }}人</p>
       </div>
     </div>
   </div>
 </template>
 
-<script>
+<script lang='ts'>
 import { Component, Vue } from "vue-property-decorator";
-// import pieChart from "./PieChart.vue";
-// import { getTimeDoor } from "@/api/statistics";
+import { getSceneInfo } from '@/api/screenApi.ts'
 
 @Component({
   components: {
-    // pieChart
   }
 })
 export default class openDoor extends Vue {
-  data() {
-    return {
-      chartData: {
-        label: [],
-        data: []
-      }
-    };
-  }
 
+  data: object = {}
   created() {
-    // this.fetchData();
+    getSceneInfo().then(res => {
+      this.data = Object.assign({}, res.data.data)
+    })
   }
 
-  async fetchData() {
-    const { data } = await getTimeDoor();
-    this.label = [];
-    for (var k in data.open_ratio) {
-      this.chartData.label.push(k);
-      this.chartData.data.push({ value: data.open_ratio[k], name: k });
-    }
-  }
 }
 </script>
 

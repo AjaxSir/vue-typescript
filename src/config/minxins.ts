@@ -205,14 +205,12 @@ export default class GlobalMimins extends Vue {
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          console.log(this.deleteForm)
           this.deleteRow(this.deleteForm)
         }).catch(() => {
           Message({
             type: 'info',
             message: '已取消删除'
           });
-          this.deleteForm['data'] = []
         });
         break
       case 'whiteList':

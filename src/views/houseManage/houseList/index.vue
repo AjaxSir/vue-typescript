@@ -15,8 +15,8 @@
           </el-dropdown-menu>
           <div slot="houseNum">
             <div class="word-filter">
-              <span class="filter-name">房屋名字:</span>
-              <el-input class="input-filter" v-model="filterForm.keys" placeholder='输入房屋名字筛选' size="small"></el-input>
+              <span class="filter-name">房屋编号:</span>
+              <el-input class="input-filter" v-model="filterForm.keys" placeholder='输入房屋编号筛选' size="small"></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">状态:</span>
@@ -50,6 +50,7 @@
           <el-table
             :data="list_data"
             stripe
+            style="max-height: 75vh;overflow:auto"
             class="demo-block"
             v-loading='showLoading'
             highlight-current-row
@@ -61,17 +62,16 @@
 
             <el-table-column type="index" align='center' label="序号" class="indexNum" width="50">
               <template slot-scope="scope">
-                <span>{{scope.$index}}</span>
+                <span>{{scope.$index + 1}}</span>
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start" @command='commandClick'>
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
                     <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item :command='returnCommand("update", scope.row)'>远程开门</el-dropdown-item>
-                      <!-- <el-dropdown-item :command='returnCommand("delete", scope.row)'>删除</el-dropdown-item> -->
+                      <!-- <el-dropdown-item :command='returnCommand("update", scope.row)'>远程开门</el-dropdown-item> -->
                       <el-dropdown-item :command="returnCommand('delete', scope.row)">
                         {{ deleteForm.data.length ? '批量删除' : '删除' }}
                       </el-dropdown-item>
-                      <el-dropdown-item :command='returnCommand("delete", scope.row)'>编辑信息</el-dropdown-item>
+                      <!-- <el-dropdown-item :command='returnCommand("delete", scope.row)'>编辑信息</el-dropdown-item> -->
                     </el-dropdown-menu>
                   </el-dropdown>
                 </div>
@@ -86,7 +86,10 @@
 
             <el-table-column prop="buildingName" align='center' label="所属单元"></el-table-column>
 
-            <el-table-column prop="serialNumber" align='center' label="房屋编号">
+            <el-table-column align='center' label="房屋编号">
+              <template slot-scope="scope">
+                <el-button @click='showHouseDetails(scope.row)' type='text'>{{ scope.row.serialNumber }}</el-button>
+              </template>
             </el-table-column>
 
             <el-table-column prop="personCnt" align='center' label="注册人数"></el-table-column>
@@ -120,14 +123,14 @@
               </template>
             </el-table-column>
 
-            <el-table-column align='center' prop="note" label="备注">
+            <el-table-column align='center' :show-overflow-tooltip='true' prop="note" label="备注">
               <template slot-scope="scope">
               <span class="rowUpdate" v-if='!scope.row.noteStatus' @click='focusNoteInput(scope.row)'>{{ scope.row.note || '点击编辑' }}</span>
-              <el-input type='textarea' :ref='row.id'  @keyup.enter.native="confirmUpdateNote(scope.row)" @blur="noteBlur(scope.row)" v-model="noteString" v-else placeholder="输入备注"></el-input>
+              <el-input type='textarea' :ref='scope.row.id'  @keyup.enter.native="confirmUpdateNote(scope.row)" @blur="noteBlur(scope.row)" v-model="noteString" v-else placeholder="输入备注"></el-input>
               </template>
             </el-table-column>
           </el-table>
-          <el-pagination @current-change='pageChange' style="margin-top:10px;" background layout="prev, pager, next" :total="page.total"></el-pagination>
+          <el-pagination @current-change='pageChange' :page-size="page.limit" style="margin-top:10px;" background layout="prev, pager, next" :total="page.total"></el-pagination>
         </div>
         <div :class="rowSpan.row1===4 ? menuControl1 : menuControl2" @click="menuVisible">
           <p class="close-menu">
@@ -182,14 +185,52 @@
     >
       <el-tabs type="card" v-model="activeName">
         <el-tab-pane label="详细信息" name="详细信息">
-          <p class="detai-info">关联房屋:{{detailDialog.houseRelative}}</p>
-          <p class="detai-info">最近刷卡时间:{{detailDialog.createDate}}</p>
+          <el-row style='margin-top:10px'>
+            <el-col :span='6'>所在楼层:{{ detailDialog.storeyNum }}</el-col>
+            <el-col :span='6'>所在单元:{{ detailDialog.buildingName }}</el-col>
+            <el-col :span='6'>房屋编号:{{ detailDialog.houseName }}</el-col>
+            <el-col :span='6'>注册时间:{{ detailDialog.createTime }}</el-col>
+          </el-row>
+          <el-row style='margin-top:10px'>
+            <el-col :span='6'>注册人数:{{ detailDialog.personCnt }}</el-col>
+            <el-col :span='6'>房屋状态:{{ detailDialog.status | status }}</el-col>
+            <!-- <el-col :span='6'>业主电话:{{ detailDialog.phone || '--' }}</el-col> -->
+          </el-row>
+          <div style='margin-top:10px'>
+            备注：<el-input type='textarea' v-model='detailDialog.note'></el-input>
+          </div>
+
         </el-tab-pane>
         <el-tab-pane label="在住人员" name="在住人员">
           <el-table :data="dtailTable" style="width: 100%">
-            <el-table-column prop="name" label="姓名"></el-table-column>
-            <el-table-column prop="date" label="年龄"></el-table-column>
-            <el-table-column prop="address" label="房屋"></el-table-column>
+            <el-table-column align='center' prop="userName" label="姓名"></el-table-column>
+            <el-table-column align='center' prop="userPhone" label="电话"></el-table-column>
+            <el-table-column align='center' prop="type" label="类型">
+              <template slot-scope="{row}">
+                <span>{{ row.type | type }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column align='center' prop="status" label="状态">
+              <template slot-scope="{row}">
+                <span>{{ row.status | peopleStatus }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column align='center' prop="createTime" label="注册时间"></el-table-column>
+            <el-table-column align='center' prop="enableInviteCar" label="邀请车辆">
+              <template slot-scope="{row}">
+                <span>{{ row.enableInviteCar === '1' ? '允许' : '禁止' }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column align='center' prop="enableInviteVisitor" label="邀请访客">
+              <template slot-scope="{row}">
+                <span>{{ row.enableInviteVisitor === '1' ? '允许' : '禁止' }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column align='center' prop="enableRemoteOpen" label="远程开门">
+              <template slot-scope="{row}">
+                <span>{{ row.enableRemoteOpen === '1' ? '允许' : '禁止' }}</span>
+              </template>
+            </el-table-column>
           </el-table>
         </el-tab-pane>
       </el-tabs>
@@ -205,7 +246,7 @@ import { Component, Prop, Vue, Mixins } from "vue-property-decorator";
 import { Getter, Action, Mutation } from "vuex-class";
 import mixin from "@/config/minxins";
 import { getHouseTreeData, addHouse,
-updateStatusNote } from '@/api/houseApi.ts'
+updateStatusNote, getRegisterPeople } from '@/api/houseApi.ts'
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 const DataTree = () => import("@/components/DataTree.vue");
 
@@ -224,6 +265,22 @@ const DataTree = () => import("@/components/DataTree.vue");
         "4": '待租中',
         "5": '闲置',
         "6": '其他'
+      }
+      return data[val]
+    },
+    type(val: string) {
+      const data = {
+        "1": '业主',
+        "2": '租户',
+        "3": '成员'
+      }
+      return data[val]
+    },
+    peopleStatus(val: string) {
+      const data = {
+        "0": '在住',
+        "-1": '不在住',
+        "-2": '过期'
       }
       return data[val]
     }
@@ -280,38 +337,30 @@ export default class CardManage extends Vue {
     name: ""
   };
   private activeName: String = "详细信息";
-  private dtailTable: Array<Object> =[
-    {
-      date: "30",
-      name: "王小虎",
-      address: "1-1-620"
-    },
-    {
-      date: "30",
-      name: "王小虎",
-      address: "1-1-620"
-    },
-    {
-      date: "30",
-      name: "王小虎",
-      address: "1-1-620"
-    },
-    {
-      date: "30",
-      name: "王小虎",
-      address: "1-1-620"
-    }
-  ];
+  private dtailTable: Array<Object> =[]; // 当前房屋下的注册人员
   ComponentCommand(houseStatus: string, row:object) {
     return {
       ...row,
       houseStatus
     }
   }
+  // 修改备注自动获取焦点
   focusNoteInput(row) {
-    const input = this.$refs[row.id] as HTMLElement
-    input.focus()
+    this.noteString = row.note
     row.noteStatus = !row.noteStatus
+    this.$nextTick(() =>{
+      const input = this.$refs[row.id] as HTMLElement
+      input.focus()
+    })
+  }
+  // 查看房屋的具体信息
+  showHouseDetails(row) {
+    this.dialogFormVisible = true
+    this.activeName = '详细信息'
+    this.detailDialog = Object.assign(this.detailDialog, row)
+    getRegisterPeople(row.id).then(res => {
+      this.dtailTable = res.data.data
+    })
   }
   // 修改管理员状态
   changeStatus(Obj: object) {
