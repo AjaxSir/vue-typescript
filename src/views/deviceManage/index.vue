@@ -8,25 +8,12 @@
         exportName='设备导出.xls'
         @fetchData='fetchData'
         :filterForm='filterForm'
+        :filterStatus='false'
         :dialogCreate.sync="dialogCreate"
         :total="page.total">
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item command="export">导出</el-dropdown-item>
           </el-dropdown-menu>
-          <div slot="houseNum">
-            <span class="word-filter">
-              <span class="filter-name">状态:</span>
-              <el-select v-model="filterForm.deviceStatus" placeholder="请选择" class="input-filter" size="small">
-                <el-option label="全部" value="all"></el-option>
-                <el-option label="离线" value="offline"></el-option>
-                <el-option label="在线" value="online"></el-option>
-              </el-select>
-            </span>
-            <span class="word-filter">
-              <span class="filter-name">位置:</span>
-              <el-input class="input-filter" v-model='filterForm.loc' size="small"></el-input>
-            </span>
-          </div>
         </action-header>
       </el-col>
     </el-row>
@@ -38,6 +25,7 @@
             stripe
             class="demo-block"
             v-loading='showLoading'
+            style="max-height: 75vh;overflow:auto"
             highlight-current-row
             @selection-change="handleSelectionChange"
             @cell-mouse-enter="enterRowChange"
@@ -47,7 +35,7 @@
 
             <el-table-column align="center" class="indexNum" type="index" label="序号" width="50">
               <template slot-scope="scope">
-               <span>{{scope.$index}}</span>
+               <span>{{scope.$index +1}}</span>
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start" @command="commandClick">
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
@@ -76,8 +64,8 @@
                 </template>
             </el-table-column>
 
-            <el-table-column align="center" prop="upTime" label="上线时间" width="160"></el-table-column>
-            <el-table-column align="center" prop="downTime" label="离线时间" width="160"></el-table-column>
+            <el-table-column align="center" :show-overflow-tooltip='true' prop="upTime" label="上线时间" width="160"></el-table-column>
+            <el-table-column align="center" :show-overflow-tooltip='true' prop="downTime" label="离线时间" width="160"></el-table-column>
 
             <el-table-column align="center" prop="note" label="设备说明">
               <template slot-scope="{row}">
@@ -103,13 +91,14 @@
           </el-table>
         </div>
         <el-pagination
-         @current-change='pageChange' style="margin-top:10px;" background layout="prev, pager, next" :total="page.total"></el-pagination>
+         @current-change='pageChange' :page-size="page.limit" style="margin-top:10px;" background layout="prev, pager, next" :total="page.total"></el-pagination>
       </el-col>
     </el-row>
     <el-dialog
       class="dialog-rewrite"
       :title="detailDialogForm.name"
       :visible.sync="detailDialogVisible"
+      :close-on-click-modal='false'
     >
       <el-tabs type="card" v-model="activeName">
         <el-tab-pane label="详细信息" name="first">
@@ -124,25 +113,28 @@
               <span>{{detailDialogForm.type | devType}}</span>
             </el-form-item>
             <el-form-item label="绑定时间:">
-              <span>{{detailDialogForm.bindTime}}</span>
+              <span>{{detailDialogForm.bindTime || '--'}}</span>
             </el-form-item>
             <el-form-item label="设备绑定时间:">
-              <span>{{detailDialogForm.bindingTime}}</span>
+              <span>{{detailDialogForm.bindingTime || '--'}}</span>
             </el-form-item>
             <el-form-item label="创建时间:">
-              <span>{{detailDialogForm.createDate}}</span>
+              <span>{{detailDialogForm.createDate || '--'}}</span>
             </el-form-item>
             <el-form-item label="最后离线时间:">
-              <span>{{detailDialogForm.downTime}}</span>
+              <span>{{detailDialogForm.downTime || '--'}}</span>
             </el-form-item>
           </el-form>
         </el-tab-pane>
         <el-tab-pane label="门禁记录" name="second">
           <el-table :data="doorRecordTable" style="width: 100%">
             <el-table-column align="center" prop="name" label="姓名" width="150px"></el-table-column>
-            <el-table-column align="center" prop="date" label="通行时间" width="150px"></el-table-column>
-            <el-table-column align="center" prop="address" label="通行地址"></el-table-column>
-            <el-table-column align="center" prop="address" label="抓拍图片"></el-table-column>
+            <el-table-column align="passTime" prop="date" label="通行时间" width="150px"></el-table-column>
+            <el-table-column align="center" prop="devAddress" label="通行地址"></el-table-column>
+            <el-table-column prop="passMethod" align='center' label="抓拍图片">
+              <template slot-scope="{row}">
+                <img :src="row.photos" alt=""></template>
+            </el-table-column>
           </el-table>
         </el-tab-pane>
       </el-tabs>
@@ -169,7 +161,7 @@
         <el-form-item class="phone-input" label="设备编号: " prop="serialNumber">
           <el-input style="width:310px" v-model="deviceForm.serialNumber"></el-input>
         </el-form-item>
-        <el-form-item class="phone-input" label="设备类型: " prop="type">
+        <!-- <el-form-item class="phone-input" label="设备类型: " prop="type">
           <el-select
             style="width:310px;"
             v-model="deviceForm.type"
@@ -180,7 +172,7 @@
             <el-option label="注册机" value="3"></el-option>
             <el-option label="访客机" value="4"></el-option>
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item class="phone-input" label="设备进出: " prop="inOut">
           <el-switch
             v-model="deviceForm.inOut"
@@ -290,6 +282,7 @@ import { createDevice } from '@/api/deviceApi.ts'
 import { debounce } from '@/utils'
 import axios from 'axios'
 import { searchHouse, getInoutList } from '@/api/houseApi.ts'
+import { getUserPass } from '@/api/peopleApi.ts'
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 const BaiduMap = () => import('@/components/baiduMap/index.vue')
 @Component({
@@ -359,6 +352,7 @@ export default class DeviceManage extends Vue {
             { required: true, message: '请选择设备绑定位置', trigger: 'blur' }
           ]
     }
+  deviceId: string = ''
   created() {
     this.fetchBuilding()
     this.initForm['params'] = Object.assign(this.initForm['params'], this.page, this.filterForm) // 合并参数
@@ -392,6 +386,7 @@ export default class DeviceManage extends Vue {
     this.deviceForm['address'] = Object['province'] + Object['city'] + Object['district'] + Object['street']
     this.deviceForm['latitude'] = Object['lat']
     this.deviceForm['longitude'] = Object['lng']
+    console.log(1)
   }
   // 获取单元楼列表
   fetchBuilding() {
@@ -444,12 +439,18 @@ export default class DeviceManage extends Vue {
       }
     })
   }
-  /**
-   * 查看设备详情
-   */
+  /*** 查看设备详情*/
   showDetails(row) {
     this.detailDialogVisible = true;
+    this.deviceId = row.id
     this.detailDialogForm = Object.assign({}, row);
+    this.deviceRecord(1)
+  }
+  // 查看该设备的抓拍记录
+  deviceRecord(page: number) {
+    getUserPass({ devId: this.deviceId, page, limit: 10  }).then(res => {
+      console.log(res)
+    })
   }
 }
 </script>

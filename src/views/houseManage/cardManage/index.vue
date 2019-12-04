@@ -46,6 +46,7 @@
             stripe
             class="demo-block"
             v-loading='showLoading'
+            style="max-height: 75vh;overflow:auto"
             highlight-current-row
             @cell-mouse-enter="enterRowChange"
             @selection-change="handleSelectionChange"
@@ -55,7 +56,7 @@
 
             <el-table-column align="center" class="indexNum" type="index" label="序号" width="50">
               <template slot-scope="scope">
-                <span>{{ scope.$index }}</span>
+                <span>{{ scope.$index + 1 }}</span>
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start" @command='commandClick'>
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
@@ -80,14 +81,14 @@
 
             <el-table-column align="center" width='300' prop="houseName" label="关联房屋"></el-table-column>
 
-            <el-table-column align="center" prop="createTime" label="创建时间"></el-table-column>
+            <el-table-column align="center" :show-overflow-tooltip='true' prop="createTime" label="创建时间"></el-table-column>
 
             <!-- <el-table-column align="center" prop="lastUseTime" label="最近刷卡时间">
               <template slot-scope="scope">
                 {{ scope.row.lastUseTime || '--' }}
               </template>
             </el-table-column> -->
-            <el-table-column align="center" prop="validDate" label="过期时间">
+            <el-table-column :show-overflow-tooltip='true' align="center" prop="validDate" label="过期时间">
               <template slot-scope="scope">
                 <el-tag class='rowUpdate'
                 @click='scope.row.validDateStatus = !scope.row.validDateStatus'
@@ -125,6 +126,7 @@
           </el-table>
           <el-pagination
            @current-change='pageChange'
+           :page-size="page.limit"
            style="margin-top:10px;" background layout="prev, pager, next" :total="page.total"></el-pagination>
         </div>
       </el-col>

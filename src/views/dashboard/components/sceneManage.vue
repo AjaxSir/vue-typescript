@@ -1,49 +1,30 @@
 <template>
   <div class="scene scene-rename">
     <div class="scene-header">
-      <svg-icon icon-class="v_houses" class-name="scene-house" />
-      <span class="scene-titile">{{ houseInf.name }}</span>
+      <!-- <svg-icon icon-class="v_houses" class-name="scene-house" /> -->
+      <span class="scene-titile"> 当前场景: {{ sceneForm.name }}</span>
     </div>
     <div class="scene-content">
-      <img class="scene-image" src="../../../assets/partment.jpg" alt />
-      <p class="scene-num">楼栋数: {{ count }}</p>
-      <p class="scene-num">区域: {{ area }}</p>
-      <p class="scene-num">地址: {{ houseInf.address }}</p>
+      <img class="scene-image" :src="sceneForm.pic" alt />
+      <p class="scene-num">楼栋数: {{ sceneForm.buildingCount }} </p>
+      <!-- <p class="scene-num">区域: {{ sceneForm.buildingCount }}</p> -->
+      <p class="scene-num">地址: {{ sceneForm.address }}</p>
     </div>
   </div>
 </template>
 
-<script>
-// import { getLocInf, getLocation } from "@/api/statistics";
-// import { getHouseList } from "@/api/houseList";
-export default {
-  data() {
-    return {
-      houseInf: { name: "一石数字", address: "盛邦街" },
-      count: 0,
-      area: "..............."
-    };
-  },
-  created() {
-    // this.getSceneInf();
-    // this.fetchHouseList();
-  },
-  methods: {
-    // 获取场景信息
-    // async getSceneInf() {
-    //   const { data } = await getLocInf();
-    //   // 反查出地址
-    //   this.houseInf = data;
-    //   const dataLoc = await getLocation(this.houseInf.loc);
-    //   this.area = dataLoc.data;
-    // },
-    // // 获取楼栋数
-    // async fetchHouseList() {
-    //   const { data } = await getHouseList();
-    //   this.count = data.count;
-    // }
+<script lang='ts'>
+import { Component, Prop, Vue, Mixins } from "vue-property-decorator";
+import { getSceneInfo } from '@/api/screenApi.ts'
+@Component({})
+export default class SceneManage extends Vue{
+  sceneForm: object = {}
+  created(){
+    getSceneInfo().then(res => {
+      this.sceneForm = Object.assign({}, res.data.data)
+    })
   }
-};
+}
 </script>
 <style rel="stylesheet/scss" lang="scss" scoped>
 $size: 24px;

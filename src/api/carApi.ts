@@ -1,7 +1,16 @@
 import _axios from "../plugins/axios";
 
-
-
+// 首页获取车辆通行记录
+export function carPassList() {
+  return _axios({
+    url: '/admin/car-pass',
+    method: 'get',
+    params: {
+      limit: 5,
+      page: 1
+    }
+  })
+}
 //车辆用户查询
 export function queryCarPhone(phone) {
   return _axios({

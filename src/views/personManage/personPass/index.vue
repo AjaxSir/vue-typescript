@@ -80,6 +80,7 @@
             :data="list_data"
             stripe
             v-loading='showLoading'
+            style="max-height: 75vh;overflow:auto"
             class="demo-block"
             highlight-current-row
             @cell-mouse-enter="enterRowChange"
@@ -93,18 +94,22 @@
             </el-table-column>
             <el-table-column align='center' prop="passMethod" label="通行方式">
               <template slot-scope="{row}">
-                <span>{{ row.passMethod | passMethod }}</span>
+                <span>{{ row.passMethod }}</span>
               </template>
             </el-table-column>
             <el-table-column  align='center' prop="devId" label="设备编号">
               <template slot-scope="scope">
-                <span class="serial-num">{{scope.row.devAddress + '--' + scope.row.devSubAddress}}</span>
+                <span class="serial-num">{{scope.row.serialNumber }}</span>
               </template>
             </el-table-column>
-             <el-table-column align='center' prop="devType" label="设备区分"></el-table-column>
+             <!-- <el-table-column align='center' prop="devPartition" label="设备区分">
+               <template slot-scope="{row}">
+                 <span>{{ row.devPartition }}</span>
+               </template>
+             </el-table-column> -->
              <el-table-column align='center' prop="devType" label="通行位置">
                <template slot-scope="scope">
-                <span class="serial-num">{{scope.row.serialNumber}}</span>
+                <span class="serial-num">{{scope.row.devAddress}} - {{ scope.row.devSubAddress }}</span>
               </template>
              </el-table-column>
             <el-table-column align='center' prop="devType" label="设备型号">
@@ -112,9 +117,9 @@
                 <span>{{ row.devType | devType }}</span>
               </template>
             </el-table-column>
-            <el-table-column align='center' prop="devType" label="人员类型">
+            <el-table-column align='center' prop="devType" label="是否访客">
               <template slot-scope="{row}">
-                <span>{{ row.isVisitor ? '访客' : '住户' }}</span>
+                <span>{{ row.isVisitor ? '是' : '否' }}</span>
               </template>
             </el-table-column>
              <el-table-column align='center' prop="img" label="人脸">
@@ -133,8 +138,8 @@
                 <img
                   class="capture-img"
                   @mouseout="imgVisible=false"
-                  @mouseover="imgVisible=true,bigImg=scope.row.photos"
-                  :src="scope.row.photos"
+                  @mouseover="imgVisible=true,bigImg=scope.row.facePhone"
+                  :src="scope.row.facePhone"
                   alt
                 />
               </template>

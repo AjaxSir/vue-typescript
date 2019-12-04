@@ -27,7 +27,7 @@
 
             <el-table-column type="index" align='center' class="indexNum" label="序号" width="50">
               <template slot-scope="scope">
-                <span>{{scope.$index}}</span>
+                <span>{{scope.$index + 1}}</span>
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start" @command="commandClick">
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>

@@ -8,7 +8,7 @@
         :initFormHeader="initForm"
           @fetchData="fetchData"
           :filterForm="filterForm"
-        :dialogCreate.sync="dialogCreate" :total="1">
+        :dialogCreate.sync="dialogCreate" :total="page.total">
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>
               <el-upload
@@ -23,6 +23,7 @@
               </el-upload>
             </el-dropdown-item>
             <el-dropdown-item command='export'>导出</el-dropdown-item>
+            <el-dropdown-item command='exportTemplate'>下载导入模板</el-dropdown-item>
             <el-dropdown-item>统计信息</el-dropdown-item>
           </el-dropdown-menu>
           <div slot="houseNum">
@@ -56,6 +57,7 @@
           <el-table :data="list_data" border
           highlight-current-row
           v-loading='showLoading'
+          style="max-height: 75vh;overflow:auto"
           :span-method="objectSpanMethod"
           @selection-change="handleSelectionChange"
             @cell-mouse-enter="enterRowChange"
@@ -63,7 +65,7 @@
             <el-table-column type="selection" align="center"></el-table-column>
             <el-table-column type="index" width="60" class="indexNum" align="center" label="编号">
               <template slot-scope="scope">
-                <span>{{ scope.$index }}</span>
+                <span>{{ scope.$index + 1 }}</span>
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start" @command='commandClick'>
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
@@ -77,11 +79,11 @@
               </template>
             </el-table-column>
             <el-table-column align="center" class="serial-num" label="姓名">
-              <template slot-scope="{row}">
-                <el-button style="padding:0px;" type="text" @click="showDetail(row)">{{row.name }}</el-button>
+              <template slot-scope="scope">
+                <el-button style="padding:0px;" type="text" @click="showDetail(scope.row, scope.$index)">{{scope.row.name }}</el-button>
               </template>
             </el-table-column>
-            <el-table-column prop="phone" align="center" label="电话">
+            <el-table-column :show-overflow-tooltip='true' prop="phone" align="center" label="电话">
               <template slot-scope="{row}">
                 <span class="rowUpdate" v-if='!row.phoneStatus'  @click='row.phoneStatus = !row.phoneStatus'>{{ row.phone }}</span>
                 <el-input v-else @blur="phoneBlur(row)" @keyup.enter.native="confirmUpdatePhone(row)" v-model="phoneString" placeholder="输入电话"></el-input>
@@ -120,7 +122,7 @@
                 <span>{{ row.house[0] && row.house[0].enableInviteVisitor === '1' ? '允许' : '禁止' }}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="house_info" align="center" label="房屋信息">
+            <el-table-column prop="house_info" :show-overflow-tooltip='true' align="center" label="房屋信息">
               <template slot-scope="{row}">
                 <span>{{ row.house[0] && row.house[0].buildingName || '--' }}</span>
               </template>
@@ -145,12 +147,12 @@
                 <span>{{  row.house[0] && row.house[0].status | statusFilter}}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="detail" align="center" label="房屋备注">
+            <el-table-column prop="detail" :show-overflow-tooltip='true' align="center" label="房屋备注">
               <template slot-scope="{row}">
                 <span>{{ row.house[0] && row.house[0].note || '--' }}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="create_time" align="center" label="创建时间">
+            <el-table-column prop="create_time" :show-overflow-tooltip='true' align="center" label="创建时间">
               <template slot-scope="{row}">
                 <span>{{  row.house[0] && row.house[0].createTime }}</span>
               </template>
@@ -160,6 +162,7 @@
 
         <el-pagination
          @current-change='pageChange'
+         :page-size="page.limit"
         style="margin-top:10px;" background layout="prev, pager, next" :total="page.total"></el-pagination>
       </el-col>
     </el-row>
@@ -167,32 +170,96 @@
     <el-dialog :close-on-click-modal='false' class="dialog-rewrite" :title="detailDialog.name" :visible.sync="dialogFormVisible">
       <el-tabs type="card" v-model="activeName">
         <el-tab-pane label="详细信息" name="first">
-          <p class="detai-info">关联房屋:{{detailDialog.houseRelative}}</p>
-          <p class="detai-info">最近刷卡时间:{{detailDialog.createDate}}</p>
+
+          <el-row style="line-height:103px">
+            <el-col :span='3'>
+              <img style='width:100px;height:100px' :src="personImg" alt="">
+            </el-col>
+            <el-col :span='3'>姓名:{{ detailDialog.name }}</el-col>
+            <el-col :span='2'>性别:{{ detailDialog.sex === '1' ? '男' : '女' }}</el-col>
+            <el-col :span='6'>身份证号:{{ detailDialog.cardNo || '--' }}</el-col>
+            <el-col :span='4'>手机号:{{ detailDialog.phone || '暂无' }}</el-col>
+            <el-col :span='6'>房屋编号:
+              <el-select style="width: 160px" @change='houseChange' v-model="houseArrIndex" placeholder="请选择">
+                <el-option
+                  v-for="(item, index) in detailDialog.house"
+                  :key="index"
+                  :label="item.serialNumber"
+                  :value="index">
+                </el-option>
+              </el-select>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span='6'>邀请访客:{{ houseDetailsFrom.enableInviteVisitor === '1' ? '允许' : '禁止' }}</el-col>
+            <el-col :span='6'>邀请车辆:{{ houseDetailsFrom.enableInviteCar === '1' ? '允许' : '禁止' }}</el-col>
+            <el-col :span='6'>用户类型:{{ houseDetailsFrom.type | typeFilter }}</el-col>
+            <el-col :span='6'>注册时间:{{ houseDetailsFrom.createTime }}</el-col>
+          </el-row>
         </el-tab-pane>
         <el-tab-pane label="通行记录" name="second">
           <el-table :data="dtailTable" style="width: 100%">
-            <el-table-column prop="name" label="姓名" width="150px"></el-table-column>
-            <el-table-column prop="date" label="通行时间" width="150px"></el-table-column>
-            <el-table-column prop="address" label="通行地址"></el-table-column>
+            <el-table-column prop="name" align='center' label="姓名" width="150px"></el-table-column>
+            <el-table-column prop="passTime" align='center' label="通行时间" width="150px"></el-table-column>
+            <el-table-column prop="inOut" align='center' label="进/出" width="150px"></el-table-column>
+            <el-table-column prop="passMethod" align='center' label="通行方式"></el-table-column>
+            <el-table-column prop="passMethod" align='center' label="抓拍图片">
+              <template slot-scope="{row}">
+                <img :src="row.photos" alt=""></template>
+            </el-table-column>
           </el-table>
+           <el-pagination
+        @current-change='pagePassChange'
+        style="margin-top:10px;" background layout="prev, pager, next" :total="passList.total"></el-pagination>
         </el-tab-pane>
         <el-tab-pane label="车辆信息" name="third">
-          <el-table :data="carDtailTable" style="width: 100%">
-            <el-table-column prop="date" label="车牌号"></el-table-column>
-            <el-table-column prop="name" label="所属房屋"></el-table-column>
+          <el-table
+            :data="carDtailTable"
+            style="width: 100%">
+            <el-table-column
+              prop="carNo"
+              align='center'
+              label="车牌号">
+            </el-table-column>
+            <el-table-column
+              prop="carType"
+              align='center'
+              label="车辆类型">
+            </el-table-column>
+            <el-table-column
+              prop="modal"
+              align='center'
+              label="型号">
+            </el-table-column>
+            <el-table-column
+              align='center'
+              label="照片">
+              <template slot-scope="{row}">
+                <img :src="row.photo" alt="">
+              </template>
+            </el-table-column>
           </el-table>
         </el-tab-pane>
         <el-tab-pane label="房屋信息" name="fivw">
           <el-table :data="houseDtailTable" style="width: 100%">
-            <el-table-column prop="name" label="房屋"></el-table-column>
-            <el-table-column prop="date" label="类型"></el-table-column>
-          </el-table>
-        </el-tab-pane>
-        <el-tab-pane label="人脸库信息" name="seven">
-          <el-table :data="faceDtailTable" style="width: 100%">
-            <el-table-column prop="name" label="姓名"></el-table-column>
-            <el-table-column prop="date" label="性别"></el-table-column>
+            <el-table-column align='center' prop="serialNumber" label="房屋编号"></el-table-column>
+            <el-table-column align='center' prop="createTime" label="创建时间"></el-table-column>
+            <el-table-column align='center' prop="note" label="备注"></el-table-column>
+            <el-table-column align='center' label="邀请车辆">
+              <template slot-scope="{row}">
+                {{ row.enableInviteCar === '1' ? '允许' : '禁止' }}
+              </template>
+            </el-table-column>
+            <el-table-column align='center' label="邀请访客">
+              <template slot-scope="{row}">
+                {{ row.enableInviteVisitor === '1' ? '允许' : '禁止' }}
+              </template>
+            </el-table-column>
+            <el-table-column align='center' label="远程开门">
+              <template slot-scope="{row}">
+                {{ row.enableRemoteOpen === '1' ? '允许' : '禁止' }}
+              </template>
+            </el-table-column>
           </el-table>
         </el-tab-pane>
       </el-tabs>
@@ -201,7 +268,7 @@
       </span>
     </el-dialog>
 
-    <el-dialog :close-on-click-modal='false' title="提示" :visible.sync="dialogCreate" width="30%" :before-close="handleClose">
+    <el-dialog :close-on-click-modal='false' title="创建用户" :visible.sync="dialogCreate" width="30%" :before-close="handleClose">
           <el-form :model="Form" :rules="rules" ref='Forms' label-width="55px">
 
 
@@ -220,10 +287,10 @@
             <el-form-item class="floatForm" label="电话:"  prop='phone'>
               <el-input v-model="Form.phone" placeholder='输入电话'></el-input>
             </el-form-item>
-            <el-form-item class="floatForm" label="卡名:"  prop='cardName'>
+            <!-- <el-form-item class="floatForm" label="身份证号:"  prop='cardName'>
               <el-input v-model="Form.cardName"  placeholder='输入卡名'></el-input>
-            </el-form-item>
-            <el-form-item class="floatForm" label="卡号:"  prop='cardNo'>
+            </el-form-item> -->
+            <el-form-item label="身份证号:" style='clear:both' label-width="85px"  prop='cardNo'>
               <el-input v-model="Form.cardNo" placeholder='输入卡号'></el-input>
             </el-form-item>
             <el-form-item label="房屋:" style='clear:both'  prop='houseName'>
@@ -324,6 +391,7 @@
   </div>
 </template>
 <script lang="ts">
+declare function require(string): string
 import { Component, Prop, Vue, Mixins } from "vue-property-decorator";
 import { Getter, Action, Mutation } from "vuex-class";
 import { addPeople,
@@ -332,6 +400,8 @@ import { addPeople,
 import _axios from '@/plugins/axios.js'
 import mixin from "@/config/minxins";
 import { searchSuggestHouse } from '@/api/houseApi.ts'
+import { getUserPropertyPass, getPersonFace } from '@/api/peopleApi.ts'
+import { getUserPropertyCar } from '@/api/carApi.ts'
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 const DiaLog = () => import("@/components/dialog.vue");
 const BigImg = () => import("@/components/BigImg/index.vue");
@@ -367,16 +437,18 @@ export default class OwnerManage extends Vue {
   UserType: string = "owner";
   spanArray:Array<number> = [] // 合并单元格
   index: number = 0 // 合并单元格参数
-  private detailDialog: Object = {
-    name: ""
-  }
+  private detailDialog: Object = {}
   phoneString:string = '' // 需要改成的电话
   noteString: string = '' // 需要改成的备注
-  houseIndex: number = 0
+  houseIndex: number = 0 // 合并单元格用
+  houseArrIndex: number = 0 // 详情显示对应房屋
+  houseDetailsFrom: object = {} // 多个房屋其中一个详情
   updateHouseVisible: boolean = false // 修改房屋弹框
+  data: Array<object> =  [] // 未分单元格人员数据
+  personImg: string = require("@/assets/defaultPerson.png") // 人员头像
   Form: any = {
     name: '',
-    cardName: '',
+    cardName: '身份证号',
     cardNo: '',
     sex: '1',
     phone: '',
@@ -407,11 +479,18 @@ export default class OwnerManage extends Vue {
           ],
     phone: [
             { required: true, message: '请输入电话', trigger: 'blur' }
+          ],
+    cardNo: [
+            { required: true, message: '请输入身份证号', trigger: 'blur' }
           ]
   }
   private imgVisible: Boolean = false; // 控制放大图片的visible
   private bigImg: String = ""; // 保存放大图片的地址
-
+  passList: object = {
+    id: '',
+    limit: 10,
+    page: 1
+  }
   private dtailTable: Array<Object> = [
     {
       date: "2016-05-02",
@@ -419,24 +498,8 @@ export default class OwnerManage extends Vue {
       address: "上海市普陀区金沙江路 1518 弄"
     }
   ];
-  private carDtailTable: Array<Object> =[
-    {
-      date: "川AXXXX",
-      name: "XXXXX"
-    }
-  ];
-  private houseDtailTable: Array<Object> =[
-    {
-      date: "业主",
-      name: "1-1-101"
-    }
-  ];
-  private faceDtailTable: Array<Object> =[
-    {
-      date: "男",
-      name: "zhangsan"
-    }
-  ];
+  private carDtailTable: Array<Object> =[];
+  private houseDtailTable: Array<Object> =[];
   created() {
     this.initForm['params'] = Object.assign(this.initForm['params'], this.page, this.filterForm) // 合并参数
   }
@@ -541,7 +604,7 @@ export default class OwnerManage extends Vue {
     _axios(option).then((res: any) => {
       if (res.data && res.data.data) {
         this.page['total'] = res.data.data.total
-
+        this.data = res.data.data.records
         res.data.data.records.forEach((ele: object) => {
            let singleObj = {}
           if (ele['house'].length > 1) {
@@ -633,12 +696,41 @@ export default class OwnerManage extends Vue {
         }
       }
   }
-  /**
-   * row 列表数据
-   */
-  showDetail(row) {
+  /*** row 列表数据 查看详情*/
+  showDetail(row, index) {
+    this.passList['id'] = row.id
     this.dialogFormVisible = true;
-    this.detailDialog = Object.assign(this.detailDialog, row);
+    this.detailDialog = Object.assign(this.detailDialog, this.data[index]);
+    this.houseDtailTable = []
+    if (row.house.length) {
+      this.houseDetailsFrom = this.data[index]['house'][0]
+      this.houseDtailTable = this.data[index]['house']
+    }
+    this.pagePassChange(1)
+    // 获取物业人员的车辆信息
+    getUserPropertyCar(row.id).then(res => {
+      this.carDtailTable = res.data.data
+    })
+    // 获取人脸库信息
+    if(row.face) {
+      getPersonFace(row.face).then(res => {
+        this.personImg = res.data.data
+      })
+    } else {
+      this.personImg = require("@/assets/defaultPerson.png")
+    }
+  }
+  // 切换房屋时
+  houseChange(index: number) {
+    this.houseDetailsFrom = this.detailDialog['house'][index]
+  }
+  // 获取特定用户的通行记录
+  pagePassChange(page: number) {
+    this.passList['page'] = page
+    getUserPropertyPass(this.passList).then(res => {
+      this.dtailTable = res.data.data.records
+      this.passList['total'] = res.data.data.total
+    })
   }
 }
 </script>
