@@ -42,7 +42,7 @@
             </div>
           </div>
           <div class="write">
-            <el-button>手动输入</el-button>
+            <el-button size="small" @click="manualInput()">{{inputStatus ? '刷卡注册' : '手动输入'}}</el-button>
           </div>
           <div class="imgInfo" style="margin-left:80px;width:680px;height:auto;display:block">
             <el-form
@@ -53,145 +53,274 @@
               class="demo-form-inline"
             >
               <el-row :gutter="10">
-                <el-col :span="12">
-                  <el-form-item class="vistorItemForm" label="姓名:">
-                    <span>{{ vistorForm.name }}</span>
-                  </el-form-item>
+                <el-col :span="24">
+                  <div class="basic-info">
+                    <p class="basic-text">基本信息</p>
+                    <el-row :gutter="10">
+                      <el-col :span="8">
+                        <el-form-item class="vistorItemForm" label="姓名:">
+                          <span v-if="!inputStatus">{{ vistorForm.name }}</span>
+                          <el-input
+                            v-else
+                            size="small"
+                            style="width:130px"
+                            placeholder="请输入姓名"
+                            v-model="vistorForm.name"
+                            @input="constraintLength(vistorForm.name,'10')"
+                            :maxlength="10"
+                          ></el-input>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :span="8">
+                        <el-form-item class="vistorItemForm" label="性别:">
+                          <span v-if="!inputStatus">{{ vistorForm.sex }}</span>
+                          <el-select
+                            v-else
+                            v-model="vistorForm.sex"
+                            placeholder="请输入性别"
+                            size="small"
+                            style="width:130px"
+                          >
+                            <el-option
+                              v-for="item in sexType"
+                              :key="item.value"
+                              :label="item.label"
+                              :value="item.value"
+                            ></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :span="8">
+                        <el-form-item class="vistorItemForm" label="民族:">
+                          <span v-if="!inputStatus">{{ vistorForm.nation }}</span>
+                          <el-input
+                            v-else
+                            size="small"
+                            v-model="vistorForm.nation"
+                            placeholder="请输入民族"
+                          ></el-input>
+                        </el-form-item>
+                      </el-col>
+                    </el-row>
 
-                  <el-form-item class="vistorItemForm" label="性别:">
-                    <span>{{ vistorForm.sex }}</span>
-                  </el-form-item>
-
-                  <el-form-item class="vistorItemForm" label="民族:">
-                    <span>{{ vistorForm.nation }}</span>
-                  </el-form-item>
-
-                  <el-form-item class="vistorItemForm" label="出生日期:">
-                    <span>{{ vistorForm.birthday }}</span>
-                  </el-form-item>
-
-                  <el-form-item class="vistorItemForm" label="身份证号:">
-                    <span>{{ vistorForm.cardNo }}</span>
-                  </el-form-item>
-
-                  <el-form-item class="vistorItemForm clearBotn" label="户籍地址:">
-                    <span>{{ vistorForm.address }}</span>
-                  </el-form-item>
+                    <el-row :gutter="10">
+                      <el-col :span="8">
+                        <el-form-item class="vistorItemForm" label="出生日期:">
+                          <span v-if="!inputStatus">{{ vistorForm.birthday }}</span>
+                          <el-date-picker
+                            v-else
+                            v-model="vistorForm.birthday"
+                            style="width:130px"
+                            size="small"
+                            type="date"
+                            placeholder="请选择日期"
+                            value-format="yyyy-MM-dd"
+                          ></el-date-picker>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :span="8">
+                        <el-form-item class="vistorItemForm clearBotn" label="证件类型:">
+                          <span v-if="!inputStatus">身份证</span>
+                          <el-select
+                            v-else
+                            v-model="writeVisitor.cardName"
+                            placeholder="请选择"
+                            size="small"
+                            style="width:130px"
+                          >
+                            <el-option
+                              v-for="item in identityType"
+                              :key="item.value"
+                              :label="item.label"
+                              :value="item.value"
+                            ></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :span="8">
+                        <el-form-item
+                          v-if="writeVisitor.cardName==='其他'"
+                          class="vistorItemForm"
+                          label="其他证件:"
+                        >
+                          <el-input
+                            size="small"
+                            v-model="elseInfo.cardName"
+                            placeholder="请输入其他证件"
+                            @input="constraintLength(elseInfo.cardName,'10')"
+                            :maxlength="18"
+                          ></el-input>
+                        </el-form-item>
+                      </el-col>
+                    </el-row>
+                    <el-row :gutter="10">
+                      <el-col :span="12">
+                        <el-form-item class="vistorItemForm" label="证件号码:">
+                          <span v-if="!inputStatus">{{ vistorForm.cardNo }}</span>
+                          <el-input
+                            v-else
+                            style="width:240px"
+                            size="small"
+                            placeholder="请输入证件号码"
+                            v-model="vistorForm.cardNo"
+                            @input="constraintLength(vistorForm.cardNo,'18')"
+                            :maxlength="18"
+                          ></el-input>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :span="12">
+                        <el-form-item class="vistorItemForm clearBotn" label="户籍地址:">
+                          <span v-if="!inputStatus">{{ vistorForm.address }}</span>
+                          <el-input
+                            v-else
+                            style="width:240px"
+                            size="small"
+                            placeholder="请输入户籍地址"
+                            v-model="vistorForm.address"
+                          ></el-input>
+                        </el-form-item>
+                      </el-col>
+                    </el-row>
+                  </div>
                 </el-col>
-                <el-col :span="12">
-                  <el-form-item class="vistorItemForm" label="被访人员:">
-                    <el-select
-                      style="width:210px"
-                      size="small"
-                      v-model="writeVisitor.scenceUserId"
-                      filterable
-                      remote
-                      :remote-method="remoteMethod"
-                      :loading="loading"
-                      @change="selectType"
-                    >
-                      <el-option
-                        v-for="item in nameList"
-                        :key="item.scenceUserId"
-                        :label="item.value"
-                        :value="item.scenceUserId"
-                      >
-                        <span style="float: left">{{ item.name }}</span>
-                        <span
-                          style="float: right; color: #8492a6; font-size: 13px"
-                        >{{ item. value }}</span>
-                      </el-option>
-                    </el-select>
-                  </el-form-item>
+              </el-row>
+              <el-row :gutter="10">
+                <el-col :span="24">
+                  <div class="basic-info">
+                    <p class="basic-text">访问信息</p>
+                    <el-row :gutter="10">
+                      <el-col :span="8">
+                        <el-form-item class="vistorItemForm" label="被访人员:">
+                          <el-select
+                            size="small"
+                            v-model="writeVisitor.scenceUserId"
+                            filterable
+                            remote
+                            :remote-method="remoteMethod"
+                            :loading="loading"
+                            @change="selectType"
+                          >
+                            <el-option
+                              v-for="item in nameList"
+                              :key="item.scenceUserId"
+                              :label="item.value"
+                              :value="item.scenceUserId"
+                            >
+                              <span style="float: left">{{ item.name }}</span>
+                              <span
+                                style="float: right; color: #8492a6; font-size: 13px"
+                              >{{ item. value }}</span>
+                            </el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :span="8">
+                        <el-form-item class="vistorItemForm" label="被访房屋:">
+                          <el-select v-model="writeVisitor.houseId" placeholder="请选择" size="small">
+                            <el-option
+                              v-for="item in houseType"
+                              :key="item.houseId"
+                              :label="item.name"
+                              :value="item.value"
+                            ></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :span="8">
+                        <el-form-item class="vistorItemForm" label="同行人数:">
+                          <el-input
+                            size="small"
+                            min="0"
+                            type="number"
+                            v-model="writeVisitor.numPeople"
+                            @keydown.native="channelInputLimit"
+                          ></el-input>
+                        </el-form-item>
+                      </el-col>
+                    </el-row>
 
-                  <el-form-item class="vistorItemForm" label="被访房屋:">
-                    <el-select
-                      style="width:210px"
-                      v-model="writeVisitor.houseId"
-                      placeholder="请选择"
-                      size="small"
-                    >
-                      <el-option
-                        v-for="item in houseType"
-                        :key="item.houseId"
-                        :label="item.name"
-                        :value="item.value"
-                      ></el-option>
-                    </el-select>
-                    <!-- <el-input style="width:210px" size="small" v-model="writeVisitor.houseId"></el-input> -->
-                  </el-form-item>
+                    <el-row :gutter="10">
+                      <el-col :span="12">
+                        <el-form-item class="vistorItemForm" label="手机号:">
+                          <el-input
+                            style="width:240px"
+                            size="small"
+                            v-model="writeVisitor.phone"
+                            @input="constraintLength(writeVisitor.phone,'11')"
+                            :maxlength="11"
+                          ></el-input>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :span="12">
+                        <el-form-item class="vistorItemForm" label="有效期:">
+                          <el-date-picker
+                            style="width:240px"
+                            size="small"
+                            :picker-options="pickOptionStart"
+                            v-model="writeVisitor.invalidDate"
+                            type="datetime"
+                            value-format="yyyy-MM-dd HH:mm:ss"
+                            placeholder="选择日期"
+                          ></el-date-picker>
+                        </el-form-item>
+                      </el-col>
+                    </el-row>
 
-                  <el-form-item class="vistorItemForm" label="被访事由:">
-                    <el-select
-                      style="width:210px"
-                      v-model="writeVisitor.reasons"
-                      placeholder="请选择"
-                      size="small"
-                    >
-                      <el-option
-                        v-for="item in reasonsType"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                      >
-                        <!-- <span style="float: left">{{ item.value }}</span>
-                        <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span>-->
-                      </el-option>
-                    </el-select>
-                    <el-input v-if="writeVisitor.reasons === 'qt'" placeholder="填写事由"></el-input>
-                  </el-form-item>
-
-                  <el-form-item class="vistorItemForm" label="同行人数:">
-                    <el-input style="width:210px" size="small" v-model="writeVisitor.numPeople"></el-input>
-                  </el-form-item>
-
-                  <el-form-item class="vistorItemForm" label="手机号:">
-                    <el-input style="width:210px" size="small" v-model="writeVisitor.phone"></el-input>
-                  </el-form-item>
-
-                  <el-form-item class="vistorItemForm" label="有效期:">
-                    <el-date-picker
-                      size="small"
-                      style="width:210px"
-                      :picker-options="pickOptionStart"
-                      v-model="writeVisitor.invalidDate"
-                      type="datetime"
-                      value-format="yyyy-MM-dd HH:mm:ss"
-                      placeholder="选择日期"
-                    ></el-date-picker>
-                  </el-form-item>
-
-                  <!-- <el-form-item class="vistorItemForm clearBotn" label="其他证件:">
-                    <el-select
-                      style="width:210px"
-                      v-model="vistorForm.otherSredentials"
-                      placeholder="请选择"
-                      size="small"
-                    >
-                      <el-option label="护照" value="hz"></el-option>
-                      <el-option label="驾驶证" value="jsz"></el-option>
-                      <el-option label="其他" value="qt"></el-option>
-                    </el-select>
-                    <el-input
-                      style="width:210px"
-                      v-if="vistorForm.otherSredentials === 'qt'"
-                      placeholder="填写其他证件"
-                    ></el-input>
-                  </el-form-item>
-
-                  <el-form-item class="vistorItemForm clearBotn" label="证件号:">
-                    <el-input
-                      size="small"
-                      style="width:210px"
-                      v-model="vistorForm.sredentialsNumber"
-                    ></el-input>
-                  </el-form-item>-->
+                    <el-row>
+                      <el-col :span="12">
+                        <el-form-item class="vistorItemForm" label="被访事由:">
+                          <el-select
+                            style="width:240px"
+                            v-model="writeVisitor.reasons"
+                            placeholder="请选择"
+                            size="small"
+                          >
+                            <el-option
+                              v-for="item in reasonsType"
+                              :key="item.value"
+                              :label="item.label"
+                              :value="item.value"
+                            ></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :span="12">
+                        <el-form-item
+                          v-if="writeVisitor.reasons==='其他'"
+                          class="vistorItemForm"
+                          label="其他事由:"
+                        >
+                          <el-input
+                            size="small"
+                            style="width:240px"
+                            v-model="elseInfo.reasons"
+                            placeholder="请输入其他事由"
+                            @input="constraintLength(elseInfo.reasons,'10')"
+                            :maxlength="10"
+                          ></el-input>
+                        </el-form-item>
+                      </el-col>
+                    </el-row>
+                  </div>
                 </el-col>
               </el-row>
             </el-form>
           </div>
           <div class="imgInfo" style="margin-left:80px;">
-            <el-button :disabled="deviceId ===''" type="warning" size="small" @click="cancelBtn">取消</el-button>
+            <el-button
+              v-if="!inputStatus"
+              :disabled="deviceId ===''"
+              type="warning"
+              size="small"
+              @click="cancelBtn"
+            >取消刷卡信息</el-button>
+            <el-button
+              v-if="inputStatus"
+              :disabled="deviceId ===''"
+              type="warning"
+              size="small"
+              @click="clearBtn"
+            >清除</el-button>
             <el-button
               :disabled="deviceId ===''"
               type="primary"
@@ -229,7 +358,8 @@ import {
   getRegData, //获取刷身份证信息
   getUserName, //输入人名模糊查询人员
   getTargetHouse, // 获取指定房屋
-  addVisitor, //确认注册访客
+  addVisitor, //刷卡确认注册访客
+  addVisitorManual, //手动访客注册
   cancelVisitor //取消访客注册
 } from "@/api/vistorApi.ts";
 const DataTree = () => import("@/components/DataTree.vue");
@@ -270,33 +400,74 @@ export default class VistorRegister extends Vue {
     phone: "", // 电话
     reasons: "", // 被访事由
     scenceUserId: "", // 被访人员
-    invalidDate: null //时间段开始时间
+    invalidDate: null, //时间段开始时间
+    cardName: ""
   };
 
   pickOptionStart: object = {}; //按照时间段查询的开始时间
   pickOptionEnd: object = {}; //按照时间段查询的结束时间
+  private inputStatus: Boolean = false; //是否手动输入
+  private elseInfo: Object = {
+    //其他信息
+    cardName: "", //其他证件
+    reasons: "" //其他被访事由
+  };
+
+  private sexType: Array<Object> = [
+    {
+      label: " 男",
+      value: "男"
+    },
+    {
+      label: "女",
+      value: "女"
+    }
+  ];
+
+  private identityType: Array<Object> = [
+    {
+      label: "身份证",
+      value: "身份证"
+    },
+    {
+      label: "护照",
+      value: "护照"
+    },
+    {
+      label: "学生证",
+      value: "学生证"
+    },
+    {
+      label: "军官证",
+      value: "军官证"
+    },
+    {
+      label: "其他",
+      value: "其他"
+    }
+  ];
 
   private reasonsType: Array<Object> = [
     //发布通知类型
     {
-      label: " 外卖",
-      value: "1"
+      label: "外卖",
+      value: "外卖"
     },
     {
       label: "访客",
-      value: "2"
+      value: "访客"
     },
     {
       label: "维修",
-      value: "3"
+      value: "维修"
     },
     {
       label: "医疗",
-      value: "4"
+      value: "医疗"
     },
     {
       label: "其他",
-      value: "5"
+      value: "其他"
     }
   ]; // 获取注册设备
 
@@ -347,6 +518,24 @@ export default class VistorRegister extends Vue {
     this.getIdentity();
   }
 
+  manualInput() {
+    this.inputStatus = !this.inputStatus;
+    if (this.inputStatus) {
+      for (const key in this.vistorForm) {
+        this.vistorForm[key] = "";
+      }
+      for (const key in this.writeVisitor) {
+        this.writeVisitor[key] = "";
+      }
+      this.writeVisitor["numPeople"] = 0;
+      this.startFetch = false;
+      this.getVisitorData();
+    } else {
+      this.startFetch = true;
+      this.getVisitorData();
+    }
+  }
+
   async handleNodeClick(val) {
     /**@description 树节点点击事件 */
     this.deviceId = val.id;
@@ -367,8 +556,7 @@ export default class VistorRegister extends Vue {
 
   async getVisitorData() {
     /**@description 获取最新访客人员信息 */
-    if (this.deviceId) {
-      let fetch = true;
+    if (this.deviceId && this.inputStatus === false) {
       while (this.startFetch) {
         try {
           this.vistorForm = {};
@@ -438,17 +626,35 @@ export default class VistorRegister extends Vue {
   }
 
   async createVisitor() {
-    /**@description 注册访客 */
-    this.writeVisitor["id"] = this.vistorForm["id"];
-    try {
-      const { data } = await addVisitor(this.writeVisitor, this.deviceId);
-      this.vistorForm = {};
-      this.writeVisitor = {};
-      this["notify"]("注册访客成功");
-      this.startFetch = true;
-      this.getVisitorData();
-    } catch (err) {
-      console.log(err);
+    /**@description 注册访客
+     * @argument inputStatus:false 刷卡注册 :true 手动注册
+     */
+    if (!this.inputStatus) {
+      const form = { ...this.writeVisitor };
+      form["reasons"] = this.elseInfo["reasons"];
+      form["id"] = this.vistorForm["id"];
+      try {
+        const { data } = await addVisitor(form, this.deviceId);
+        this.vistorForm = {};
+        this.writeVisitor = {};
+        this["notify"]("注册访客成功");
+        this.startFetch = true;
+        this.getVisitorData();
+      } catch (err) {
+        console.log(err);
+      }
+    } else {
+      const form = { ...this.vistorForm, ...this.writeVisitor };
+      form["cardName"] = this.elseInfo["cardName"];
+      form["reasons"] = this.elseInfo["reasons"];
+      try {
+        const { data } = await addVisitorManual(form, this.deviceId);
+        this.vistorForm = {};
+        this.writeVisitor = {};
+        this["notify"]("注册访客成功");
+      } catch (err) {
+        console.log(err);
+      }
     }
   }
 
@@ -461,6 +667,17 @@ export default class VistorRegister extends Vue {
       this.startFetch = true;
       this.getVisitorData();
     });
+  }
+
+  clearBtn() {
+    /**@description 清空input */
+    for (const key in this.vistorForm) {
+      this.vistorForm[key] = "";
+    }
+    for (const key in this.writeVisitor) {
+      this.writeVisitor[key] = "";
+    }
+    this.writeVisitor["numPeople"] = 0;
   }
 
   handleLink() {
@@ -533,7 +750,7 @@ export default class VistorRegister extends Vue {
   width: 720px;
   height: 30px;
   text-align: center;
-  line-height: 30px;
+  // line-height: 30px;
 }
 .vistorItemForm {
   // width: 300px !important;
@@ -570,5 +787,22 @@ export default class VistorRegister extends Vue {
 }
 .choose-target {
   color: #20a0ff;
+}
+
+.basic-info {
+  border: 1px solid #c0c4cc;
+  margin: 20px 5px;
+  padding: 20px;
+  position: relative;
+}
+
+.basic-text {
+  position: absolute;
+  top: -11px;
+  font-size: 14px;
+  color: #409eff;
+  width: 70px;
+  background: #f8f8f8;
+  text-align: center;
 }
 </style>

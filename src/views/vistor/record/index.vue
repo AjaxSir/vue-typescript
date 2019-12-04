@@ -15,15 +15,15 @@
           <div slot="houseNum">
             <div class="word-filter">
               <span class="filter-name">访客姓名:</span>
-              <el-input class="input-filter" size="small" v-model="filterForm.name"></el-input>
+              <el-input class="input-filter" size="small" v-model="filterForm.name" placeholder="请输入访客姓名"></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">受访姓名:</span>
-              <el-input class="input-filter" size="small" v-model="filterForm.visitName"></el-input>
+              <el-input class="input-filter" size="small" v-model="filterForm.visitName" placeholder="请输入受访者姓名"></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">联系电话:</span>
-              <el-input class="input-filter" size="small" v-model="filterForm.cardNo"></el-input>
+              <el-input class="input-filter" size="small" v-model="filterForm.cardNo" placeholder="请输入联系电话"></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">有效时间:</span>
@@ -109,24 +109,39 @@
             @cell-mouse-leave="leaveRowChange"
             @selection-change="handleSelectionChange"
           >
-            <el-table-column type="selection" align="center" width="40"></el-table-column>
-            <el-table-column type="index" label="编号" align="center" width="50"></el-table-column>
-            <el-table-column prop="name" align="center" label="姓名">
+            <el-table-column type="selection" width="40"></el-table-column>
+            <el-table-column type="index" align="center" label="序号" class="indexNum" width="50">
               <template slot-scope="scope">
-                <span>{{scope.row.name}}</span>
+                <span>{{scope.$index+1}}</span>
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start" @command="commandClick">
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
                     <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item :command="returnCommand('delete', scope.row)">批量删除</el-dropdown-item>
+                      <el-dropdown-item
+                        :command="returnCommand('delete', scope.row)"
+                      >{{ deleteForm.data.length ? '批量删除' : '删除' }}</el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
                 </div>
               </template>
             </el-table-column>
-            <el-table-column prop="phone" label="电话" align="center"></el-table-column>
-            <el-table-column prop="visitName" label="受访人姓名" align="center"></el-table-column>
-            <el-table-column prop="visitType" label="访客类型" align="center" width="101">
+
+            <el-table-column prop="name" align="center" label="姓名"></el-table-column>
+            <el-table-column prop="phone" label="电话" align="center" :show-overflow-tooltip="true"></el-table-column>
+            <el-table-column
+              prop="visitName"
+              label="受访人姓名"
+              align="center"
+              width="100px"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
+            <el-table-column
+              prop="visitType"
+              label="访客类型"
+              align="center"
+              width="101"
+              :show-overflow-tooltip="true"
+            >
               <template slot="header">
                 <el-dropdown style="padding:0;" trigger="click" @command="filterType">
                   <span class="el-dropdown-link">
@@ -153,9 +168,25 @@
                 <span>{{scope.row.visitType ==='1' ?'APP' : scope.row.visitType ==='2' ?'访客机' : '--'}}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="cardNo" label="身份证号" align="center"></el-table-column>
-            <el-table-column prop="createTime" label="注册时间" align="center"></el-table-column>
-            <el-table-column prop="status" label="状态" align="center">
+            <el-table-column
+              prop="cardName"
+              label="证件类型"
+              align="center"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
+            <el-table-column
+              prop="cardNo"
+              label="证件号码"
+              align="center"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
+            <el-table-column
+              prop="createTime"
+              label="注册时间"
+              align="center"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
+            <el-table-column prop="status" label="状态" align="center" :show-overflow-tooltip="true">
               <template slot="header">
                 <el-dropdown style="padding:0;" trigger="click" @command="filterStatus">
                   <span class="el-dropdown-link">
@@ -176,8 +207,18 @@
                 <span>{{statusFilter(scope.row.status)}}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="visitTime" label="到访时间" align="center"></el-table-column>
-            <el-table-column prop="invalidDate" label="有效期" align="center"></el-table-column>
+            <el-table-column
+              prop="visitTime"
+              label="到访时间"
+              align="center"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
+            <el-table-column
+              prop="invalidDate"
+              label="有效期"
+              align="center"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
             <el-table-column prop="photo" label="人脸信息" align="center">
               <template slot-scope="scope">
                 <img class="capture-img" :src="scope.row.photo" alt />
@@ -472,18 +513,6 @@ export default class VistorRegister extends Vue {
 .n {
   color: black;
   background: #fff;
-}
-
-.fun-btn {
-  position: absolute;
-  left: -64px;
-  top: 30%;
-
-  .iconfont {
-    font-size: 19px;
-    color: #8091a5;
-    cursor: pointer;
-  }
 }
 
 .table-col {

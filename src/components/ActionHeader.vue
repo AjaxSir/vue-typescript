@@ -65,7 +65,7 @@
           </transition>
         </div>
 
-        <span v-if="pageStatus" class="total">总共:{{ total }}条</span>
+        <span class="total">总共:{{ total }}条</span>
 
         <i
           v-if="pageStatus"
@@ -206,8 +206,8 @@ export default class ActionManage extends Vue {
       this.page
     );
     // this.$emit('fetchData', this.initFormHeader)
-    this.visible = false
-    console.log(this.initFormHeader)
+    this.visible = false;
+    console.log(this.initFormHeader);
     return this.initFormHeader;
   }
   getRouter() {
@@ -343,7 +343,7 @@ a {
     }
   }
 }
-.icon-_shezhi-xian:hover{
+.icon-_shezhi-xian:hover {
   cursor: pointer;
 }
 </style>

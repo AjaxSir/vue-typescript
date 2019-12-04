@@ -14,12 +14,14 @@ import store from "./store/index";
 import '@/icons' // icon
 
 import './plugins/element.js'
-
 import BaiduMap from 'vue-baidu-map'
-import '@/styles/index.scss' // global css
+
 Vue.use(BaiduMap, {
   ak: 'vCZU88Guz4BmAODWTm8k9BP0WlwId1V0'
 })
+
+import '@/styles/index.scss' // global css
+
 
 Vue.config.productionTip = false;
 

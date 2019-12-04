@@ -2,65 +2,78 @@
   <div class="app-container">
     <el-row>
       <el-col :span="24">
-        <action-header :btnStatus='2' :dialogCreate.sync="dialogCreate" :total="1">
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>次数统计排序</el-dropdown-item>
-          </el-dropdown-menu>
-          <div slot="houseNum">
-            <div class="word-filter">
-              <span class="filter-name">姓名:</span>
-              <el-input class="input-filter" size="small"></el-input>
-            </div>
-          </div>
-        </action-header>
+        <action-header
+          :btnStatus="0"
+          :filterStatus="false"
+          :moreStatus="false"
+          :initFormHeader="initForm"
+          @fetchData="fetchData"
+          :filterForm="filterForm"
+          :dialogCreate.sync="dialogCreate"
+          :total="page.total"
+        ></action-header>
       </el-col>
     </el-row>
     <el-row :gutter="10">
       <el-col :span="24" class="table-col">
         <div class="rightContent">
           <el-table
-            :data="cardList"
+            v-loading="showLoading"
+            :data="list_data"
             stripe
             class="demo-block"
             highlight-current-row
             @cell-mouse-enter="enterRowChange"
             @cell-mouse-leave="leaveRowChange"
           >
-            <el-table-column type="selection" width="50"></el-table-column>
+            <el-table-column type="selection" width="50" :selectable="isDisabled" disabled="true"></el-table-column>
 
             <el-table-column type="index" label="序号" width="50"></el-table-column>
 
-            <el-table-column prop="name" label="位置" align="center">
+            <el-table-column prop="address" label="位置" align="center">
               <template slot-scope="scope">
-                <el-button style="padding:0px;" type="text" @click="queryIdetity">{{scope.row.name}}</el-button>
-                <div class="fun-btn">
-                  <el-dropdown @command='commandClick' trigger="click" placement="bottom-start">
-                    <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
-                    <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item :command='returnCommand("whiteList", scope.row)'>加入白名单</el-dropdown-item>
-                    </el-dropdown-menu>
-                  </el-dropdown>
-                </div>
+                <span>{{scope.row.address}}</span>
+                <!-- <el-button
+                  style="padding:0px;"
+                  type="text"
+                  @click="queryIdetity"
+                >{{scope.row.address}}</el-button>-->
+                <!-- <div class="fun-btn">
+                    <el-dropdown @command="commandClick" trigger="click" placement="bottom-start">
+                      <i v-show="row.showMenu" class="iconfont icon-menu"></i>
+                      <el-dropdown-menu slot="dropdown">
+                        <el-dropdown-item :command="returnCommand('whiteList', row)">加入白名单</el-dropdown-item>
+                      </el-dropdown-menu>
+                    </el-dropdown>
+                </div>-->
               </template>
             </el-table-column>
 
-            <el-table-column prop="tjsj" label="时间" align="center"></el-table-column>
+            <el-table-column prop="createdTime" label="时间" align="center"></el-table-column>
 
-            <el-table-column prop="zp" label="照片" align="center">
+            <el-table-column prop="pic" label="头像" align="center">
               <template slot-scope="{row}">
-                <img
-                  @mouseover="imgVisible = true,bigImg = row.zp"
-                  @mouseout="imgVisible = false"
-                  :src="row.zp"
-                  width="30px"
-                  alt
-                />
+                <div>
+                  <img
+                    @mouseover="imgVisible = true,bigImg = row.pic"
+                    @mouseout="imgVisible = false"
+                    :src="row.pic"
+                    width="30px"
+                    alt
+                  />
+                </div>
               </template>
             </el-table-column>
           </el-table>
         </div>
-
-        <el-pagination style="margin-top:10px;" background layout="prev, pager, next" :total="2"></el-pagination>
+        <el-pagination
+          @current-change="pageChange"
+          style="margin-top:10px;"
+          background
+          layout="prev, pager, next,total"
+          :page-size="page.limit"
+          :total="page.total"
+        ></el-pagination>
       </el-col>
     </el-row>
     <el-dialog title="提示" :visible.sync="dialogCreate" width="30%" :before-close="handleClose">
@@ -92,6 +105,13 @@ const BigImg = () => import("@/components/BigImg/index.vue");
   }
 })
 export default class CardManage extends Vue {
+  filterForm: object = { name: "", emergencyPhone: "", earlyGroupId: "" }; //根据关键字查询
+  initForm: object = {
+    //获取车辆列表url
+    url: "/admin/strangerRecord/",
+    method: "get"
+  };
+  dialogCreate: boolean = false; //新增
   private cardList: Array<Object> = [
     {
       name: "张三",
@@ -119,8 +139,13 @@ export default class CardManage extends Vue {
     desc: ""
   };
 
-  private dialogFormVisible: Boolean = false;
-  private formLabelWidth: String = "120px";
+  created() {
+    this.initForm["params"] = Object.assign(
+      this.initForm["params"],
+      this.page,
+      this.filterForm
+    ); // 合并参数
+  }
 
   editType(item) {
     /**@description 修改状态 */
@@ -139,6 +164,13 @@ export default class CardManage extends Vue {
   }
   queryIdetity() {
     this.dialogLibrary = true;
+  }
+
+  isDisabled(row, index) {
+    /**@discription 禁用多选 */
+    if (row.auditResult == 3) {
+      return 0;
+    }
   }
 }
 </script>

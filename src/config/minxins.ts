@@ -65,20 +65,22 @@ export default class GlobalMimins extends Vue {
                 })
                 ele['showMenu'] = false
               })
+              this.page.total = res.data.data.length
               this.list_data = res.data.data
               console.log(this.list_data)
             }
           } else {
+            this.page.total = res.data.data.total
+            this.list_data = res.data.data.records
+            console.log(this.list_data)
             if (res.data.data.records.length) {
-              this.page.total = res.data.data.total
               res.data.data.records.forEach((ele: object) => {
                 this.updateArray.forEach((itemStatus: string) => {
                   ele[itemStatus] = false
                 })
                 ele['showMenu'] = false
               })
-              this.list_data = res.data.data.records
-              console.log(this.list_data)
+
             } else {
               if (this.initForm['params']['page'] > 1) {
                 this.initForm['params']['page']--
@@ -249,4 +251,57 @@ export default class GlobalMimins extends Vue {
       message: val
     });
   }
+
+  /**
+ * 限制备注
+ * @param action
+ */
+  constraintLength(value, note) {
+    switch (note) {
+      case '200':
+        if (value.length === 200) {
+          this.message('备注不能超过200个字符')
+        }
+        return;
+      case '7':
+        if (value.length === 7) {
+          this.message('车牌不能超过7个字符')
+        }
+        return;
+      case '10':
+        if (value.length === 10) {
+          this.message('此项不能超过10个字符')
+        }
+        return;
+      case '11':
+        if (value.length === 11) {
+          this.message('电话不能超过11个字符')
+        }
+        return;
+      case '18':
+        if (value.length === 18) {
+          this.message('身份证号不能超过18个字符')
+        }
+        return;
+    }
+
+  }
+  message(val) {
+    this.$message({
+      message: val,
+      type: "warning"
+    });
+  }
+
+  channelInputLimit(e) {
+    let key = e.key;
+    // 不允许输入'e'和'.'
+    if (key === "e" || key === ".") {
+      e.returnValue = false;
+      return false;
+    }
+    return true;
+  }
+
 }
+

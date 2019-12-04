@@ -19,11 +19,21 @@
           <div slot="houseNum">
             <div class="word-filter">
               <span class="filter-name" style="min-width: 86px;">关注人姓名:</span>
-              <el-input class="input-filter" size="small" v-model="filterForm.name"></el-input>
+              <el-input
+                class="input-filter"
+                size="small"
+                v-model="filterForm.name"
+                placeholder="请输入关注人姓名"
+              ></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name" style="min-width: 86px;">紧急联系电话:</span>
-              <el-input class="input-filter" size="small" v-model="filterForm.emergencyPhone"></el-input>
+              <el-input
+                class="input-filter"
+                size="small"
+                v-model="filterForm.emergencyPhone"
+                placeholder="请输入紧急联系人电话"
+              ></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name" style="min-width: 86px;">预警组别:</span>
@@ -31,7 +41,7 @@
                 class="input-filter"
                 v-model="filterForm.earlyGroupId"
                 size="small"
-                placeholder="请选择"
+                placeholder="请选择预警组别"
               >
                 <el-option
                   v-for="tag in earlyGroup"
@@ -56,19 +66,12 @@
             highlight-current-row
             @cell-mouse-enter="enterRowChange"
             @cell-mouse-leave="leaveRowChange"
-            @cell-click="cellClick"
           >
-            <el-table-column type="selection" width="50"></el-table-column>
+            <el-table-column type="selection" width="50" :selectable="isDisabled" disabled="true"></el-table-column>
 
-            <el-table-column type="index" label="序号" width="50" align="center"></el-table-column>
-
-            <el-table-column prop="name" align="center" label="姓名">
+            <el-table-column type="index" align="center" label="序号" class="indexNum" width="50">
               <template slot-scope="scope">
-                <el-button
-                  @click="showCarDetails(scope.row)"
-                  type="text"
-                  class="serial-num"
-                >{{scope.row.name}}</el-button>
+                <span>{{scope.$index+1}}</span>
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start" @command="commandClick">
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
@@ -79,32 +82,74 @@
                       <div @click="deleteBtn(scope.row)">
                         <el-dropdown-item command="dele">删除</el-dropdown-item>
                       </div>
-                      <!-- <el-dropdown-item :command="returnCommand('delete', scope.row)">批量删除</el-dropdown-item> -->
+                      <!-- <el-dropdown-item
+                        :command="returnCommand('delete', scope.row)"
+                      >{{ deleteForm.data.length ? '批量删除' : '删除' }}</el-dropdown-item>-->
                     </el-dropdown-menu>
                   </el-dropdown>
                 </div>
               </template>
             </el-table-column>
+            <el-table-column
+              prop="name"
+              align="center"
+              label="姓名"
+              width="100"
+              :show-overflow-tooltip="true"
+            >
+              <template slot-scope="scope">
+                <el-button
+                  @click="showCarDetails(scope.row)"
+                  type="text"
+                  class="serial-num"
+                >{{scope.row.name}}</el-button>
+              </template>
+            </el-table-column>
 
-            <el-table-column prop="age" align="center" label="年龄"></el-table-column>
+            <el-table-column prop="age" align="center" label="年龄" :show-overflow-tooltip="true"></el-table-column>
 
-            <el-table-column prop="typeName" align="center" label="分类"></el-table-column>
+            <el-table-column
+              prop="typeName"
+              align="center"
+              label="分类"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
 
-            <el-table-column prop="phone" align="center" label="联系电话"></el-table-column>
+            <el-table-column prop="phone" align="center" label="联系电话" :show-overflow-tooltip="true"></el-table-column>
 
-            <el-table-column prop="locationName" align="center" label="房屋编号" min-width="200px">
+            <el-table-column
+              prop="locationName"
+              align="center"
+              label="房屋编号"
+              :show-overflow-tooltip="true"
+            >
               <template slot-scope="scope">
                 <span>{{scope.row.house&&scope.row.house.length>0 ? scope.row.house[0].locationName :'--'}}</span>
               </template>
             </el-table-column>
 
-            <el-table-column prop="emergencyPhone" align="center" label="紧急联系人电话"></el-table-column>
+            <el-table-column
+              prop="emergencyPhone"
+              align="center"
+              label="紧急联系人电话"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
 
-            <el-table-column prop="earlyGroupName" align="center" label="预警组别"></el-table-column>
+            <el-table-column
+              prop="earlyGroupName"
+              align="center"
+              label="预警组别"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
 
-            <el-table-column prop="earlyPeriod" align="center" label="预警周期"></el-table-column>
+            <el-table-column
+              prop="earlyPeriod"
+              align="center"
+              label="预警周期"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
 
-            <el-table-column align="center" label="状态">
+            <el-table-column align="center" label="状态" :show-overflow-tooltip="true">
               <template slot-scope="scope">
                 <el-tag
                   size="small"
@@ -113,13 +158,25 @@
                 >{{ scope.row.isNormal? "正常" : "异常" }}</el-tag>
               </template>
             </el-table-column>
-            <el-table-column prop="note" label="备注">
-              <template slot-scope="scope">
-                <span
-                  v-if="!scope.row.peopleNote"
-                  @click="scope.row.peopleNote = !scope.row.peopleNote"
-                >{{scope.row.note}}</span>
-                <el-input v-else size="small" v-model="editForm.note" @blur="editNote(scope.row)"></el-input>
+
+            <el-table-column prop="note" align="center" label="备注" :show-overflow-tooltip="true">
+              <template slot-scope="{row}">
+                <p
+                  class="rowUpdate"
+                  v-show="!row.noteStatus || editForm.id !== row.id"
+                  @click="editNote(row)"
+                >{{ row.note ? row.note :'--'}}</p>
+                <el-input
+                  :ref="row.id"
+                  v-show="row.noteStatus&&editForm.id === row.id"
+                  size="small"
+                  @keyup.enter.native="confirmUpdateNote(row)"
+                  @blur="noteBlur(row)"
+                  @input="constraintLength(editForm.note,'200')"
+                  :maxlength="200"
+                  v-model="editForm.note"
+                  placeholder="输入备注"
+                ></el-input>
               </template>
             </el-table-column>
           </el-table>
@@ -163,6 +220,7 @@
               remote
               :remote-method="remoteMethod"
               :loading="loading"
+              placeholder="请输入姓名进行模糊查询"
             >
               <el-option
                 v-for="item in nameList"
@@ -181,7 +239,7 @@
             :show-message="showMessage"
             :error="errorMessage.age"
           >
-            <el-input v-model="createForm.age" autocomplete="off"></el-input>
+            <el-input v-model="createForm.age" autocomplete="off" placeholder="请输入年龄"></el-input>
           </el-form-item>
         </div>
 
@@ -191,7 +249,13 @@
           :show-message="showMessage"
           :error="errorMessage.emergencyPhone"
         >
-          <el-input v-model="createForm.emergencyPhone" autocomplete="off"></el-input>
+          <el-input
+            v-model="createForm.emergencyPhone"
+            autocomplete="off"
+            placeholder="手机11位限长，只能输入数字"
+            :maxlength="11"
+            @input="constraintLength(createForm.emergencyPhone,'11')"
+          ></el-input>
         </el-form-item>
 
         <el-form-item
@@ -200,7 +264,7 @@
           :show-message="showMessage"
           :error="errorMessage.earlyPeriod"
         >
-          <el-input v-model="createForm.earlyPeriod" autocomplete="off"></el-input>
+          <el-input v-model="createForm.earlyPeriod" autocomplete="off" placeholder="请输入预警周期为多少天"></el-input>
         </el-form-item>
 
         <el-form-item
@@ -209,7 +273,7 @@
           :show-message="showMessage"
           :error="errorMessage.earlyGroupId"
         >
-          <el-select v-model="createForm.earlyGroupId" placeholder="请选择">
+          <el-select v-model="createForm.earlyGroupId" placeholder="请选择预警组别">
             <el-option
               v-for="tag in earlyGroup"
               :key="tag.id"
@@ -231,8 +295,11 @@
               class="input-new-tag"
               v-if="newTag"
               v-model="newTagValue"
+              :maxlength="10"
               ref="saveTagInput"
               size="small"
+              placeholder="请输入新增分组名称"
+              @input="constraintLength(newTagValue,'10')"
               @blur="handleInputConfirm('group')"
             ></el-input>
             <el-button v-else class="button-new-tag" size="small" @click="showInput('group')">新增分组</el-button>
@@ -245,7 +312,7 @@
           :show-message="showMessage"
           :error="errorMessage.typeId"
         >
-          <el-select v-model="createForm.typeId" placeholder="请选择">
+          <el-select v-model="createForm.typeId" placeholder="请选择人员类别">
             <el-option v-for="tag in earlyType" :key="tag.id" :label="tag.typeName" :value="tag.id"></el-option>
           </el-select>
           <el-button @click="showUnitSetting = !showUnitSetting">添加类别</el-button>
@@ -264,14 +331,27 @@
               v-model="newTypeTagValue"
               ref="saveTagInput"
               size="small"
+              placeholder="请输入新增类别名称"
+              :maxlength="10"
+              @input="constraintLength(newTagValue,'10')"
               @blur="handleInputConfirm('type')"
             ></el-input>
             <el-button v-else class="button-new-tag" size="small" @click="showInput('type')">新增类别</el-button>
           </div>
         </el-form-item>
 
-        <el-form-item label="备注:">
-          <el-input v-model="createForm.note" autocomplete="off"></el-input>
+        <el-form-item
+          label="备注:"
+          prop="note"
+          :show-message="showMessage"
+          :error="errorMessage.note"
+        >
+          <el-input
+            v-model="createForm.note"
+            :maxlength="200"
+            placeholder="输入备注信息"
+            @input="constraintLength(createForm.note,'200')"
+          ></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -296,7 +376,7 @@
         style="margin-right:40px;"
       >
         <el-form-item label="年龄:" prop="age" :show-message="showMessage" :error="errorMessage.age">
-          <el-input v-model="editForm.age" autocomplete="off"></el-input>
+          <el-input v-model="editForm.age" autocomplete="off" placeholder="请输入年龄"></el-input>
         </el-form-item>
 
         <el-form-item
@@ -305,7 +385,13 @@
           :show-message="showMessage"
           :error="errorMessage.emergencyPhone"
         >
-          <el-input v-model="editForm.emergencyPhone" autocomplete="off"></el-input>
+          <el-input
+            v-model="editForm.emergencyPhone"
+            autocomplete="off"
+            placeholde="手机11位限长，只能输入数字"
+            :maxlength="11"
+            @input="constraintLength(editForm.emergencyPhone,'11')"
+          ></el-input>
         </el-form-item>
 
         <el-form-item
@@ -314,7 +400,7 @@
           :show-message="showMessage"
           :error="errorMessage.earlyPeriod"
         >
-          <el-input v-model="editForm.earlyPeriod" autocomplete="off"></el-input>
+          <el-input v-model="editForm.earlyPeriod" autocomplete="off" placeholder="请输入预警周期为多少天"></el-input>
         </el-form-item>
 
         <el-form-item
@@ -323,7 +409,7 @@
           :show-message="showMessage"
           :error="errorMessage.earlyGroupId"
         >
-          <el-select v-model="editForm.earlyGroupId" placeholder="请选择">
+          <el-select v-model="editForm.earlyGroupId" placeholder="请选择预警组别">
             <el-option
               v-for="tag in earlyGroup"
               :key="tag.id"
@@ -347,6 +433,9 @@
               v-model="newTagValue"
               ref="saveTagInput"
               size="small"
+              :maxlength="10"
+              placeholder="请输入新增分组名称"
+              @input="constraintLength(newTagValue,'10')"
               @blur="handleInputConfirm('group')"
             ></el-input>
             <el-button v-else class="button-new-tag" size="small" @click="showInput('group')">新增分组</el-button>
@@ -378,14 +467,27 @@
               v-model="newTypeTagValue"
               ref="saveTagInput"
               size="small"
+              placeholder="请输入新增类别名称"
+              :maxlength="10"
+              @input="constraintLength(newTypeTagValue,'10')"
               @blur="handleInputConfirm('type')"
             ></el-input>
             <el-button v-else class="button-new-tag" size="small" @click="showInput('type')">新增类别</el-button>
           </div>
         </el-form-item>
 
-        <el-form-item label="备注:">
-          <el-input v-model="editForm.note" autocomplete="off"></el-input>
+        <el-form-item
+          label="备注:"
+          prop="note"
+          :show-message="showMessage"
+          :error="errorMessage.note"
+        >
+          <el-input
+            v-model="editForm.note"
+            :maxlength="200"
+            placeholder="输入备注信息"
+            @input="constraintLength(editForm.note,'200')"
+          ></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -529,7 +631,8 @@ export default class FocusPeople extends Vue {
     phone: "",
     scenceUser: "",
     email: "",
-    earlyGroupId: ""
+    earlyGroupId: "",
+    note: ""
   };
   private nameList: Array<Object> = []; //人员
   private loading: Boolean = false; //姓名模糊查询
@@ -555,7 +658,7 @@ export default class FocusPeople extends Vue {
     note: "", //备注
     id: "" //目标关注人员id
   };
-  updateArray: Array<string> = ["peopleNote"];
+  updateArray: Array<string> = ["noteStatus"];
 
   private detailDialogVisible: boolean = false; // 详细信息dialog弹框
   private CarDialogForm: Object = {}; // 关注人员详细信息
@@ -563,6 +666,7 @@ export default class FocusPeople extends Vue {
   private passTarget: Boolean = true; //目标关注人员通行记录的loadding
   private passList: Array<Object> = []; // 关注人员名单目标通行记录
   private userDetail: Object = {}; //关注人员详细信息
+    private noteRewrite: String = ""; //保存未改变的note
 
   private listQuery: Object = {
     // 关注人员目标通行记录翻页
@@ -580,6 +684,7 @@ export default class FocusPeople extends Vue {
     this.getGroupList();
     this.getTypeList();
   }
+
   async remoteMethod(query) {
     /**@description 根据姓名模糊查询人员 */
     if (query !== "") {
@@ -631,20 +736,24 @@ export default class FocusPeople extends Vue {
     /**@description 新增预警组别 */
     if (val === "group") {
       this.newTag = false;
-      addGroup({ groupName: this.newTagValue }).then(res => {
-        if (res.data.code === 200) {
-          this.getGroupList();
-          this.newTagValue = "";
-        }
-      });
+      if (this.newTagValue) {
+        addGroup({ groupName: this.newTagValue }).then(res => {
+          if (res.data.code === 200) {
+            this.getGroupList();
+            this.newTagValue = "";
+          }
+        });
+      }
     } else {
       this.newTypeTag = false;
-      addType({ typeName: this.newTypeTagValue }).then(res => {
-        if (res.data.code === 200) {
-          this.getTypeList();
-          this.newTypeTagValue = "";
-        }
-      });
+      if (this.newTypeTagValue) {
+        addType({ typeName: this.newTypeTagValue }).then(res => {
+          if (res.data.code === 200) {
+            this.getTypeList();
+            this.newTypeTagValue = "";
+          }
+        });
+      }
     }
   }
 
@@ -691,8 +800,6 @@ export default class FocusPeople extends Vue {
       this.editForm[key] = item[key];
     }
     this.dialogEdit = true;
-
-    console.log(this.editForm);
   }
 
   updateFocusPeople() {
@@ -706,15 +813,31 @@ export default class FocusPeople extends Vue {
     });
   }
 
-  cellClick(row, column, event, cell) {
-    row.peopleNote = true;
+  editNote(row) {
+    /**@description 点击备注*/
+    this.noteRewrite = row.note;
+    this.editForm["note"] = row.note;
+    this.editForm["id"] = row.id;
+    row.noteStatus = !row.noteStatus;
+    this.$nextTick(() => {
+      const input = this.$refs[row.id] as HTMLElement;
+      input.focus();
+    });
   }
 
-  editNote(item) {
+  // 修改备注离开输入框
+  noteBlur(row) {
+    row.noteStatus = false;
+    if (this.noteRewrite !== this.editForm["note"]) {
+      this.confirmUpdateNote(row);
+    }
+  }
+
+  confirmUpdateNote(item) {
     /**@description 修改备注 */
     const form = { note: this.editForm["note"], id: item.id };
     editFocusPeople(form).then(() => {
-      this["notify"]("修改关注人员成功");
+      this["notify"]("修改关注人员备注成功");
       this["fetchData"](this.initForm);
     });
   }
@@ -723,6 +846,17 @@ export default class FocusPeople extends Vue {
     /** @description 关闭新增/修改dialog */
     this.dialogCreate = false; //新增dialog
     this.dialogEdit = false; //修改dialog
+    this.createForm = {
+      //清空新增表单字段
+      age: "",
+      earlyGroupId: "",
+      emergencyPhone: "",
+      earlyPeriod: 0,
+      typeId: "",
+      note: ""
+    };
+    this.getTypeList();
+    this.getGroupList();
     this.$refs["dataForm"]["resetFields"]();
   }
 
@@ -776,21 +910,17 @@ export default class FocusPeople extends Vue {
     try {
       const { data } = await getTargetUser(this.CarDialogForm["scenceUserId"]);
       this.userDetail = data.data.user;
-      console.log(this.userDetail);
     } catch (err) {
       console.log(err.response);
     }
   }
 
   async fetchPass() {
-    this.passTarget = true;
-    console.log(this.CarDialogForm);
     const info = {
       ...this.listQuery,
       scenceUserId: this.CarDialogForm["scenceUserId"]
     };
     const { data } = await getUserPass(info);
-    console.log(data.data);
     this.passList = data.data.records;
     this.listQuery["total"] = data.data.total;
     this.passTarget = false;
@@ -800,6 +930,13 @@ export default class FocusPeople extends Vue {
     /**@description 关闭人员详情 */
     this.activeName = "first";
     this.detailDialogVisible = false; //人员详情dialog
+  }
+
+  isDisabled(row, index) {
+    /**@discription 禁用多选 */
+    if (row.auditResult == 3) {
+      return 0;
+    }
   }
 }
 </script>
@@ -820,16 +957,6 @@ export default class FocusPeople extends Vue {
 
 .serial-num {
   position: relative;
-}
-.fun-btn {
-  position: absolute;
-  left: -64px;
-  top: 28%;
-  .iconfont {
-    font-size: 19px;
-    color: #8091a5;
-    cursor: pointer;
-  }
 }
 .table-col {
   position: relative;
