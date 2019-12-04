@@ -27,6 +27,7 @@
       <el-col :span="24" class="table-col">
         <div class="rightContent">
           <el-table
+            height="65vh"
             v-loading="showLoading"
             :data="list_data"
             stripe
@@ -48,9 +49,9 @@
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
                     <el-dropdown-menu slot="dropdown">
                       <!-- <el-dropdown-item :command="returnCommand('delete', scope.row)">批量删除</el-dropdown-item> -->
-                      <el-dropdown-item :command="returnCommand('delete', scope.row)">
-                        {{ deleteForm.data.length ? '批量删除' : '删除' }}
-                      </el-dropdown-item>
+                      <el-dropdown-item
+                        :command="returnCommand('delete', scope.row)"
+                      >{{ deleteForm.data.length ? '批量删除' : '删除' }}</el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
                 </div>
@@ -117,7 +118,7 @@
               :value="item.value"
             ></el-option>
           </el-select>
-        </el-form-item> -->
+        </el-form-item>-->
 
         <!-- <el-form-item
           v-if="createForm.objType==='1'"
@@ -148,7 +149,7 @@
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span>
             </el-option>
           </el-select>
-        </el-form-item> -->
+        </el-form-item>-->
 
         <!-- <el-form-item
           v-if="createForm.objType==='2'"
@@ -174,7 +175,7 @@
               :value="item.scenceUserId"
             ></el-option>
           </el-select>
-        </el-form-item> -->
+        </el-form-item>-->
 
         <el-form-item
           class="phone-input"

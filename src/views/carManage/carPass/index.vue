@@ -22,7 +22,12 @@
           <div slot="houseNum">
             <div class="word-filter">
               <span class="filter-name">车牌号:</span>
-              <el-input class="input-filter" size="small" v-model="filterForm.carNo" placeholder="请输入车牌号"></el-input>
+              <el-input
+                class="input-filter"
+                size="small"
+                v-model="filterForm.carNo"
+                placeholder="请输入车牌号"
+              ></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">时间段:</span>
@@ -64,6 +69,7 @@
       <el-col :span="24" class="table-col">
         <div class="rightContent">
           <el-table
+            height="65vh"
             v-loading="showLoading"
             :data="list_data"
             stripe
@@ -72,7 +78,13 @@
             @cell-mouse-enter="enterRowChange"
             @cell-mouse-leave="leaveRowChange"
           >
-            <el-table-column align="center" type="selection" width="50" :selectable="isDisabled" disabled="true"></el-table-column>
+            <el-table-column
+              align="center"
+              type="selection"
+              width="50"
+              :selectable="isDisabled"
+              disabled="true"
+            ></el-table-column>
 
             <el-table-column align="center" type="index" label="序号" width="50"></el-table-column>
 
@@ -111,7 +123,12 @@
             <el-table-column align="center" prop="ownerName" label="车主姓名"></el-table-column>
             <el-table-column align="center" prop="ownerPhone" label="车主电话"></el-table-column>
             <el-table-column align="center" prop="inOut" label="通行方向"></el-table-column>
-            <el-table-column align="center" prop="passTime" label="抓拍时间"  :show-overflow-tooltip="true"></el-table-column>
+            <el-table-column
+              align="center"
+              prop="passTime"
+              label="抓拍时间"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
 
             <el-table-column align="center" prop="photos" label="最近抓拍图片">
               <template slot-scope="scope">

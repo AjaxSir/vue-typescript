@@ -31,19 +31,39 @@
           <div slot="houseNum">
             <div class="word-filter">
               <span class="filter-name">车&nbsp;牌&nbsp;号&nbsp;:</span>
-              <el-input class="input-filter" size="small" v-model="filterForm.carNo" placeholder="请输入车牌号"></el-input>
+              <el-input
+                class="input-filter"
+                size="small"
+                v-model="filterForm.carNo"
+                placeholder="请输入车牌号"
+              ></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">车主姓名:</span>
-              <el-input class="input-filter" size="small" v-model="filterForm.ownerUserName" placeholder="请输入车主姓名"></el-input>
+              <el-input
+                class="input-filter"
+                size="small"
+                v-model="filterForm.ownerUserName"
+                placeholder="请输入车主姓名"
+              ></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">邀请人:</span>
-              <el-input class="input-filter" size="small" v-model="filterForm.visitName" placeholder="请输入邀请人姓名"></el-input>
+              <el-input
+                class="input-filter"
+                size="small"
+                v-model="filterForm.visitName"
+                placeholder="请输入邀请人姓名"
+              ></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">联系电话:</span>
-              <el-input class="input-filter" size="small" v-model="filterForm.ownerPhone" placeholder="请输入联系电话"></el-input>
+              <el-input
+                class="input-filter"
+                size="small"
+                v-model="filterForm.ownerPhone"
+                placeholder="请输入联系电话"
+              ></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">有效时间:</span>
@@ -95,6 +115,7 @@
       <el-col :span="24" class="table-col">
         <div class="rightContent">
           <el-table
+            height="65vh"
             :data="list_data"
             stripe
             class="demo-block"
@@ -520,7 +541,6 @@ export default class CardManage extends Vue {
     this.detailDialogVisible = false; //车辆详情dialog
     this.activeName = "first";
   }
-
 }
 </script>
 

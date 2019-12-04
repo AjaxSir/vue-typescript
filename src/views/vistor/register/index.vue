@@ -139,7 +139,7 @@
                       </el-col>
                       <el-col :span="8">
                         <el-form-item
-                          v-if="writeVisitor.cardName==='其他'"
+                          v-if="writeVisitor.cardName==='其他' && this.inputStatus"
                           class="vistorItemForm"
                           label="其他证件:"
                         >
@@ -246,6 +246,7 @@
                             style="width:240px"
                             size="small"
                             v-model="writeVisitor.phone"
+                            placeholder="手机11位限长，只能输入数字"
                             @input="constraintLength(writeVisitor.phone,'11')"
                             :maxlength="11"
                           ></el-input>
@@ -520,14 +521,15 @@ export default class VistorRegister extends Vue {
 
   manualInput() {
     this.inputStatus = !this.inputStatus;
+    for (const key in this.writeVisitor) {
+      this.writeVisitor[key] = "";
+    }
+    this.writeVisitor["numPeople"] = 0;
+
     if (this.inputStatus) {
       for (const key in this.vistorForm) {
         this.vistorForm[key] = "";
       }
-      for (const key in this.writeVisitor) {
-        this.writeVisitor[key] = "";
-      }
-      this.writeVisitor["numPeople"] = 0;
       this.startFetch = false;
       this.getVisitorData();
     } else {

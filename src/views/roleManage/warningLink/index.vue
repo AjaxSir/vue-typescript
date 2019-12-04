@@ -15,6 +15,7 @@
       </el-col>
     </el-row>
     <el-table
+      height="65vh"
       v-loading="showLoading"
       :data="list_data"
       stripe
