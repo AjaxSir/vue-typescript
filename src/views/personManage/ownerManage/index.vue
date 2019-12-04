@@ -8,7 +8,7 @@
         :initFormHeader="initForm"
           @fetchData="fetchData"
           :filterForm="filterForm"
-        :dialogCreate.sync="dialogCreate" :total="1">
+        :dialogCreate.sync="dialogCreate" :total="page.total">
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>
               <el-upload
