@@ -22,7 +22,7 @@
           <div slot="houseNum">
             <div class="word-filter">
               <span class="filter-name">车牌号:</span>
-              <el-input class="input-filter" size="small" v-model="filterForm.carNo"></el-input>
+              <el-input class="input-filter" size="small" v-model="filterForm.carNo" placeholder="请输入车牌号"></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">时间段:</span>
@@ -47,7 +47,7 @@
             </div>
             <div class="word-filter">
               <span class="filter-name">车辆类型:</span>
-              <el-select size="small" v-model="filterForm.isVisitCar" placeholder="请选择">
+              <el-select size="small" v-model="filterForm.isVisitCar" placeholder="请选择车辆类型">
                 <el-option
                   v-for="item in carTypeList"
                   :key="item.value"
@@ -252,26 +252,26 @@ export default class CardManage extends Vue {
   pickOptionEnd: object = {}; //按照时间段查询的结束时间
   mounted() {
     const _this = this;
-    this.pickOptionStart = {
-      disabledDate(time) {
-        if (_this.filterForm["endTime"] !== "") {
-          return (
-            time.getTime() > Date.now() ||
-            time.getTime() > _this.filterForm["endTime"]
-          );
-        } else {
-          return time.getTime() > Date.now();
-        }
-      }
-    };
-    this.pickOptionEnd = {
-      disabledDate(time) {
-        return (
-          time.getTime() < _this.filterForm["startTime"] ||
-          time.getTime() > Date.now()
-        );
-      }
-    };
+    // this.pickOptionStart = {
+    //   disabledDate(time) {
+    //     if (_this.filterForm["endTime"] !== "") {
+    //       return (
+    //         time.getTime() > Date.now() ||
+    //         time.getTime() > _this.filterForm["endTime"]
+    //       );
+    //     } else {
+    //       return time.getTime() > Date.now();
+    //     }
+    //   }
+    // };
+    // this.pickOptionEnd = {
+    //   disabledDate(time) {
+    //     return (
+    //       time.getTime() < _this.filterForm["startTime"] ||
+    //       time.getTime() > Date.now()
+    //     );
+    //   }
+    // };
   }
 
   // 获取需要操作的数据列表

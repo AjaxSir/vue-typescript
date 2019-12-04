@@ -27,15 +27,30 @@
           <div slot="houseNum">
             <div class="word-filter">
               <span class="filter-name">车&nbsp;牌&nbsp;号&nbsp;:</span>
-              <el-input class="input-filter" size="small" v-model="filterForm.carNo"></el-input>
+              <el-input
+                class="input-filter"
+                size="small"
+                v-model="filterForm.carNo"
+                placeholder="请输入车牌号"
+              ></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">车主姓名:</span>
-              <el-input class="input-filter" size="small" v-model="filterForm.ownerUserName"></el-input>
+              <el-input
+                class="input-filter"
+                size="small"
+                v-model="filterForm.ownerName"
+                placeholder="请输入车主姓名"
+              ></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">联系电话:</span>
-              <el-input class="input-filter" size="small" v-model="filterForm.ownerPhone"></el-input>
+              <el-input
+                class="input-filter"
+                size="small"
+                v-model="filterForm.ownerPhone"
+                placeholder="请输入联系电话"
+              ></el-input>
             </div>
           </div>
         </action-header>
@@ -126,19 +141,20 @@
 
             <el-table-column prop="note" align="center" label="备注" :show-overflow-tooltip="true">
               <template slot-scope="{row}">
-                <span
+                <p
                   class="rowUpdate"
-                  v-if="!row.noteStatus"
-                  @click="row.noteStatus = !row.noteStatus"
-                >{{ row.note }}</span>
+                  v-show="!row.noteStatus || editForm.id !== row.id"
+                  @click="editNote(row)"
+                >{{ row.note ? row.note :'--'}}</p>
                 <el-input
+                  :ref="row.id"
+                  v-show="row.noteStatus&&editForm.id === row.id"
                   size="small"
                   @keyup.enter.native="confirmUpdateNote(row)"
                   @blur="noteBlur(row)"
                   @input="constraintLength(editForm.note,'200')"
                   :maxlength="200"
                   v-model="editForm.note"
-                  v-else
                   placeholder="输入备注"
                 ></el-input>
               </template>
@@ -184,11 +200,11 @@
           :error="errorMessage.ownerPhone"
           label="电话"
         >
+          <!-- :disabled="nameDisabled" -->
           <el-autocomplete
             style="width:340px"
             v-model="createForm[0].ownerPhone"
-            :disabled="nameDisabled"
-            placeholder="输入电话号码七位后开始查询"
+            placeholder="手机11位限长，只能输入数字"
             popper-class="my-autocomplete"
             :fetch-suggestions="querySearch"
             @select="handleSelectWatchlist"
@@ -212,7 +228,7 @@
         >
           <el-input
             v-model="createForm[0].carNo"
-            placeholder="请输入车牌"
+            placeholder="车牌号7位限长"
             :maxlength="7"
             @input="constraintLength(createForm[0].carNo,'7')"
           ></el-input>
@@ -276,7 +292,7 @@
         label-width="80px"
         style="margin-right:40px;"
       >
-        <el-form-item
+        <!-- <el-form-item
           label="车牌"
           prop="carNo"
           :show-message="showMessage"
@@ -288,7 +304,7 @@
             :maxlength="7"
             @input="constraintLength(editForm.carNo,'7')"
           ></el-input>
-        </el-form-item>
+        </el-form-item>-->
 
         <el-form-item
           label="品牌"
@@ -493,7 +509,7 @@ const DataTree = () => import("@/components/DataTree.vue");
   }
 })
 export default class CarList extends Vue {
-  filterForm: object = { carNo: null, ownerPhone: null, ownerUserName: null }; //根据关键字查询
+  filterForm: object = { carNo: null, ownerPhone: null, ownerName: null }; //根据关键字查询
   private rowSpan: any = {
     row1: 4,
     row2: 20
@@ -532,6 +548,7 @@ export default class CarList extends Vue {
     ownerPhone: "",
     carNo: ""
   };
+  private noteString: String = "";
 
   private dialogEdit: Boolean = false; // 修改弹出表单
   private editForm: Object = {
@@ -539,7 +556,7 @@ export default class CarList extends Vue {
     ownerPhone: "", //车主电话
     ownerUserName: "", //车主
     scenceUserId: "", //车主id
-    carNo: "", //车牌号
+    // carNo: "", //车牌号
     carType: "", //车型
     id: "",
     modal: "", //品牌
@@ -557,6 +574,7 @@ export default class CarList extends Vue {
   private CarDialogForm: Object = {}; // 车辆详细信息
   private carUserDetail: Object = {}; //车主详细信息
   private notifyInstance: any; //防止notify重复多次出现提示
+  private noteRewrite: String = ""; //保存未改变的note
   updateArray: Array<string> = ["carNote"];
 
   initForm: object = {
@@ -677,17 +695,30 @@ export default class CarList extends Vue {
     this.editForm["id"] = val;
   }
 
+  editNote(row) {
+    /**@description 点击备注*/
+    this.noteRewrite = row.note;
+    this.editForm["note"] = row.note;
+    this.editForm["id"] = row.id;
+    row.noteStatus = !row.noteStatus;
+    this.$nextTick(() => {
+      const input = this.$refs[row.id] as HTMLElement;
+      input.focus();
+    });
+  }
+
   // 修改备注离开输入框
   noteBlur(row) {
     row.noteStatus = false;
-    this.editForm["note"] = "";
+    if (this.noteRewrite !== this.editForm["note"]) {
+      this.confirmUpdateNote(row);
+    }
   }
 
   confirmUpdateNote(item) {
     /**@description 修改备注 */
     const form = { note: this.editForm["note"], id: item.id };
     editCar(form).then(() => {
-      this.editForm["note"] = "";
       this["notify"]("修改车辆备注成功");
       this["fetchData"](this.initForm);
     });

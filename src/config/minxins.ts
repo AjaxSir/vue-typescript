@@ -295,5 +295,15 @@ export default class GlobalMimins extends Vue {
     });
   }
 
+  channelInputLimit(e) {
+    let key = e.key;
+    // 不允许输入'e'和'.'
+    if (key === "e" || key === ".") {
+      e.returnValue = false;
+      return false;
+    }
+    return true;
+  }
+
 }
 
