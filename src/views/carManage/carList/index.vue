@@ -60,6 +60,7 @@
       <el-col :span="24" class="table-col">
         <div class="rightContent">
           <el-table
+            height="65vh"
             v-loading="showLoading"
             :data="list_data"
             stripe

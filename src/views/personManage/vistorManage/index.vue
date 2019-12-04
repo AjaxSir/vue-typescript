@@ -14,7 +14,7 @@
           exportName:导出文件名
           total:总条数
         -->
-        <ActionHeader
+        <!-- <ActionHeader
           :btnStatus="2"
           :initFormHeader="initForm"
           @fetchData="fetchData"
@@ -25,7 +25,6 @@
         >
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>进出次数排序</el-dropdown-item>
-            <!-- <el-dropdown-item>滞留时间排序</el-dropdown-item> -->
             <el-dropdown-item>次数统计</el-dropdown-item>
           </el-dropdown-menu>
           <div slot="houseNum">
@@ -103,23 +102,23 @@
               ></el-date-picker>
             </div>
           </div>
-        </ActionHeader>
+        </ActionHeader>-->
       </el-col>
     </el-row>
-    <el-row :gutter="10">
+    <el-row>
       <el-col :span="24">
         <div class="rightContent">
           <el-table
+            height="61vh"
             v-loading="showLoading"
             :data="list_data"
             stripe
-            class="demo-block"
             highlight-current-row
             @cell-mouse-enter="enterRowChange"
             @cell-mouse-leave="leaveRowChange"
             @selection-change="handleSelectionChange"
           >
-            <el-table-column type="selection" align="center"></el-table-column>
+            <el-table-column type="selection" align="center" width="50"></el-table-column>
             <el-table-column type="index" align="center" label="序号" class="indexNum" width="50">
               <template slot-scope="scope">
                 <span>{{scope.$index+1}}</span>
@@ -136,25 +135,12 @@
               </template>
             </el-table-column>
 
-            <el-table-column
-              prop="name"
-              width="70"
-              align="center"
-              label="姓名"
-              :show-overflow-tooltip="true"
-            ></el-table-column>
-            <el-table-column
-              prop="phone"
-              min-width="90"
-              align="center"
-              label="电话"
-              :show-overflow-tooltip="true"
-            ></el-table-column>
+            <el-table-column prop="name" align="center" label="姓名" :show-overflow-tooltip="true"></el-table-column>
+            <el-table-column prop="phone" align="center" label="电话" :show-overflow-tooltip="true"></el-table-column>
             <el-table-column
               prop="visitName"
               align="center"
-              label="受访人姓名"
-              width="100px"
+              label="受访人"
               :show-overflow-tooltip="true"
             >
               <template slot-scope="{ row }">
@@ -164,10 +150,10 @@
 
             <el-table-column
               prop="visitType"
-              width="101"
               align="center"
               label="访客类型"
               :show-overflow-tooltip="true"
+              width="100px"
             >
               <template slot="header">
                 <el-dropdown style="padding:0;" trigger="click" @command="filterType">
@@ -203,7 +189,6 @@
             ></el-table-column>
             <el-table-column
               prop="visitTime"
-              min-width="130"
               align="center"
               label="访问时间"
               :show-overflow-tooltip="true"
@@ -249,31 +234,26 @@
             ></el-table-column>
             <el-table-column
               prop="createTime"
-              min-width="130"
               align="center"
               label="创建时间"
               :show-overflow-tooltip="true"
             ></el-table-column>
             <el-table-column
               prop="invalidDate"
-              min-width="130"
               align="center"
               label="有效时间"
               :show-overflow-tooltip="true"
             ></el-table-column>
-
-            <!-- <el-table-column prop="all_times" align="center" label="累计访问次数"></el-table-column> -->
-            <!-- <el-table-column prop="last_time" align="center" label="最近访问时间"></el-table-column> -->
           </el-table>
+          <el-pagination
+            @current-change="pageChange"
+            style="margin-top:10px;"
+            background
+            layout="prev, pager, next,total"
+            :page-size="page.limit"
+            :total="page.total"
+          ></el-pagination>
         </div>
-        <el-pagination
-          @current-change="pageChange"
-          style="margin-top:10px;"
-          background
-          layout="prev, pager, next,total"
-          :page-size="page.limit"
-          :total="page.total"
-        ></el-pagination>
       </el-col>
     </el-row>
 

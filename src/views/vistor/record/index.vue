@@ -15,15 +15,30 @@
           <div slot="houseNum">
             <div class="word-filter">
               <span class="filter-name">访客姓名:</span>
-              <el-input class="input-filter" size="small" v-model="filterForm.name" placeholder="请输入访客姓名"></el-input>
+              <el-input
+                class="input-filter"
+                size="small"
+                v-model="filterForm.name"
+                placeholder="请输入访客姓名"
+              ></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">受访姓名:</span>
-              <el-input class="input-filter" size="small" v-model="filterForm.visitName" placeholder="请输入受访者姓名"></el-input>
+              <el-input
+                class="input-filter"
+                size="small"
+                v-model="filterForm.visitName"
+                placeholder="请输入受访者姓名"
+              ></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">联系电话:</span>
-              <el-input class="input-filter" size="small" v-model="filterForm.cardNo" placeholder="请输入联系电话"></el-input>
+              <el-input
+                class="input-filter"
+                size="small"
+                v-model="filterForm.cardNo"
+                placeholder="请输入联系电话"
+              ></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">有效时间:</span>
@@ -100,16 +115,17 @@
       <el-col :span="rowSpan.row2" class="table-col">
         <div class="rightContent">
           <el-table
+            class="demo-block"
+            height="65vh"
             v-loading="showLoading"
             :data="list_data"
             stripe
-            class="demo-block"
             highlight-current-row
             @cell-mouse-enter="enterRowChange"
             @cell-mouse-leave="leaveRowChange"
             @selection-change="handleSelectionChange"
           >
-            <el-table-column type="selection" width="40"></el-table-column>
+            <el-table-column type="selection" width="50" align="center"></el-table-column>
             <el-table-column type="index" align="center" label="序号" class="indexNum" width="50">
               <template slot-scope="scope">
                 <span>{{scope.$index+1}}</span>
@@ -514,11 +530,6 @@ export default class VistorRegister extends Vue {
   color: black;
   background: #fff;
 }
-
-.table-col {
-  position: relative;
-}
-
 .close-menu {
   width: 10px;
   height: 48px;

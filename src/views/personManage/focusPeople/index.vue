@@ -59,6 +59,7 @@
       <el-col :span="24">
         <div class="rightContent">
           <el-table
+            height="65vh"
             v-loading="showLoading"
             :data="list_data"
             stripe
@@ -239,7 +240,14 @@
             :show-message="showMessage"
             :error="errorMessage.age"
           >
-            <el-input v-model="createForm.age" autocomplete="off" placeholder="请输入年龄"></el-input>
+            <el-input
+              autocomplete="off"
+              placeholder="输入年龄"
+              min="0"
+              type="number"
+              v-model="createForm.age"
+              @keydown.native="channelInputLimit"
+            ></el-input>
           </el-form-item>
         </div>
 
@@ -264,7 +272,14 @@
           :show-message="showMessage"
           :error="errorMessage.earlyPeriod"
         >
-          <el-input v-model="createForm.earlyPeriod" autocomplete="off" placeholder="请输入预警周期为多少天"></el-input>
+          <el-input
+            v-model="createForm.earlyPeriod"
+            autocomplete="off"
+            placeholder="请输入预警周期为多少天"
+            min="0"
+            type="number"
+            @keydown.native="channelInputLimit"
+          ></el-input>
         </el-form-item>
 
         <el-form-item
@@ -376,7 +391,14 @@
         style="margin-right:40px;"
       >
         <el-form-item label="年龄:" prop="age" :show-message="showMessage" :error="errorMessage.age">
-          <el-input v-model="editForm.age" autocomplete="off" placeholder="请输入年龄"></el-input>
+          <el-input
+            autocomplete="off"
+            placeholder="输入年龄"
+            min="0"
+            type="number"
+            v-model="editForm.age"
+            @keydown.native="channelInputLimit"
+          ></el-input>
         </el-form-item>
 
         <el-form-item
@@ -400,7 +422,14 @@
           :show-message="showMessage"
           :error="errorMessage.earlyPeriod"
         >
-          <el-input v-model="editForm.earlyPeriod" autocomplete="off" placeholder="请输入预警周期为多少天"></el-input>
+          <el-input
+            v-model="editForm.earlyPeriod"
+            autocomplete="off"
+            placeholder="请输入预警周期为多少天"
+            min="0"
+            type="number"
+            @keydown.native="channelInputLimit"
+          ></el-input>
         </el-form-item>
 
         <el-form-item
@@ -666,7 +695,7 @@ export default class FocusPeople extends Vue {
   private passTarget: Boolean = true; //目标关注人员通行记录的loadding
   private passList: Array<Object> = []; // 关注人员名单目标通行记录
   private userDetail: Object = {}; //关注人员详细信息
-    private noteRewrite: String = ""; //保存未改变的note
+  private noteRewrite: String = ""; //保存未改变的note
 
   private listQuery: Object = {
     // 关注人员目标通行记录翻页
