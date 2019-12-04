@@ -31,19 +31,19 @@
           <div slot="houseNum">
             <div class="word-filter">
               <span class="filter-name">车&nbsp;牌&nbsp;号&nbsp;:</span>
-              <el-input class="input-filter" size="small" v-model="filterForm.carNo"></el-input>
+              <el-input class="input-filter" size="small" v-model="filterForm.carNo" placeholder="请输入车牌号"></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">车主姓名:</span>
-              <el-input class="input-filter" size="small" v-model="filterForm.ownerUserName"></el-input>
+              <el-input class="input-filter" size="small" v-model="filterForm.ownerUserName" placeholder="请输入车主姓名"></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">邀请人:</span>
-              <el-input class="input-filter" size="small" v-model="filterForm.visitName"></el-input>
+              <el-input class="input-filter" size="small" v-model="filterForm.visitName" placeholder="请输入邀请人姓名"></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">联系电话:</span>
-              <el-input class="input-filter" size="small" v-model="filterForm.ownerPhone"></el-input>
+              <el-input class="input-filter" size="small" v-model="filterForm.ownerPhone" placeholder="请输入联系电话"></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">有效时间:</span>
@@ -418,26 +418,26 @@ export default class CardManage extends Vue {
   pickOptionEnd: object = {}; //按照时间段查询的结束时间
   mounted() {
     const _this = this;
-    this.pickOptionStart = {
-      disabledDate(time) {
-        if (_this.filterForm["endCreateTime"] !== "") {
-          return (
-            time.getTime() > Date.now() ||
-            time.getTime() > _this.filterForm["endCreateTime"]
-          );
-        } else {
-          return time.getTime() > Date.now();
-        }
-      }
-    };
-    this.pickOptionEnd = {
-      disabledDate(time) {
-        return (
-          time.getTime() < _this.filterForm["startCreateTime"] ||
-          time.getTime() > Date.now()
-        );
-      }
-    };
+    // this.pickOptionStart = {
+    //   disabledDate(time) {
+    //     if (_this.filterForm["endCreateTime"] !== "") {
+    //       return (
+    //         time.getTime() > Date.now() ||
+    //         time.getTime() > _this.filterForm["endCreateTime"]
+    //       );
+    //     } else {
+    //       return time.getTime() > Date.now();
+    //     }
+    //   }
+    // };
+    // this.pickOptionEnd = {
+    //   disabledDate(time) {
+    //     return (
+    //       time.getTime() < _this.filterForm["startCreateTime"] ||
+    //       time.getTime() > Date.now()
+    //     );
+    //   }
+    // };
   }
 
   created() {

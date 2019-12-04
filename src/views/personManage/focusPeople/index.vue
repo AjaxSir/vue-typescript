@@ -19,11 +19,21 @@
           <div slot="houseNum">
             <div class="word-filter">
               <span class="filter-name" style="min-width: 86px;">关注人姓名:</span>
-              <el-input class="input-filter" size="small" v-model="filterForm.name"></el-input>
+              <el-input
+                class="input-filter"
+                size="small"
+                v-model="filterForm.name"
+                placeholder="请输入关注人姓名"
+              ></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name" style="min-width: 86px;">紧急联系电话:</span>
-              <el-input class="input-filter" size="small" v-model="filterForm.emergencyPhone"></el-input>
+              <el-input
+                class="input-filter"
+                size="small"
+                v-model="filterForm.emergencyPhone"
+                placeholder="请输入紧急联系人电话"
+              ></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name" style="min-width: 86px;">预警组别:</span>
@@ -31,7 +41,7 @@
                 class="input-filter"
                 v-model="filterForm.earlyGroupId"
                 size="small"
-                placeholder="请选择"
+                placeholder="请选择预警组别"
               >
                 <el-option
                   v-for="tag in earlyGroup"
@@ -151,19 +161,20 @@
 
             <el-table-column prop="note" align="center" label="备注" :show-overflow-tooltip="true">
               <template slot-scope="{row}">
-                <span
+                <p
                   class="rowUpdate"
-                  v-if="!row.noteStatus"
-                  @click="row.noteStatus = !row.noteStatus"
-                >{{ row.note }}</span>
+                  v-show="!row.noteStatus || editForm.id !== row.id"
+                  @click="editNote(row)"
+                >{{ row.note ? row.note :'--'}}</p>
                 <el-input
+                  :ref="row.id"
+                  v-show="row.noteStatus&&editForm.id === row.id"
                   size="small"
                   @keyup.enter.native="confirmUpdateNote(row)"
                   @blur="noteBlur(row)"
                   @input="constraintLength(editForm.note,'200')"
                   :maxlength="200"
                   v-model="editForm.note"
-                  v-else
                   placeholder="输入备注"
                 ></el-input>
               </template>
@@ -228,7 +239,7 @@
             :show-message="showMessage"
             :error="errorMessage.age"
           >
-            <el-input v-model="createForm.age" autocomplete="off" placeholde="请输入年龄"></el-input>
+            <el-input v-model="createForm.age" autocomplete="off" placeholder="请输入年龄"></el-input>
           </el-form-item>
         </div>
 
@@ -241,7 +252,7 @@
           <el-input
             v-model="createForm.emergencyPhone"
             autocomplete="off"
-            placeholder="请输入紧急联系人电话"
+            placeholder="手机11位限长，只能输入数字"
             :maxlength="11"
             @input="constraintLength(createForm.emergencyPhone,'11')"
           ></el-input>
@@ -365,7 +376,7 @@
         style="margin-right:40px;"
       >
         <el-form-item label="年龄:" prop="age" :show-message="showMessage" :error="errorMessage.age">
-          <el-input v-model="editForm.age" autocomplete="off" placeholde="请输入年龄"></el-input>
+          <el-input v-model="editForm.age" autocomplete="off" placeholder="请输入年龄"></el-input>
         </el-form-item>
 
         <el-form-item
@@ -377,7 +388,7 @@
           <el-input
             v-model="editForm.emergencyPhone"
             autocomplete="off"
-            placeholde="请输入紧急联系人电话"
+            placeholde="手机11位限长，只能输入数字"
             :maxlength="11"
             @input="constraintLength(editForm.emergencyPhone,'11')"
           ></el-input>
@@ -655,6 +666,7 @@ export default class FocusPeople extends Vue {
   private passTarget: Boolean = true; //目标关注人员通行记录的loadding
   private passList: Array<Object> = []; // 关注人员名单目标通行记录
   private userDetail: Object = {}; //关注人员详细信息
+    private noteRewrite: String = ""; //保存未改变的note
 
   private listQuery: Object = {
     // 关注人员目标通行记录翻页
@@ -801,17 +813,31 @@ export default class FocusPeople extends Vue {
     });
   }
 
+  editNote(row) {
+    /**@description 点击备注*/
+    this.noteRewrite = row.note;
+    this.editForm["note"] = row.note;
+    this.editForm["id"] = row.id;
+    row.noteStatus = !row.noteStatus;
+    this.$nextTick(() => {
+      const input = this.$refs[row.id] as HTMLElement;
+      input.focus();
+    });
+  }
+
   // 修改备注离开输入框
   noteBlur(row) {
     row.noteStatus = false;
-    this.editForm["note"] = "";
+    if (this.noteRewrite !== this.editForm["note"]) {
+      this.confirmUpdateNote(row);
+    }
   }
 
   confirmUpdateNote(item) {
     /**@description 修改备注 */
     const form = { note: this.editForm["note"], id: item.id };
     editFocusPeople(form).then(() => {
-      this["notify"]("修改关注人员成功");
+      this["notify"]("修改关注人员备注成功");
       this["fetchData"](this.initForm);
     });
   }

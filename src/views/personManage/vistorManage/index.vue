@@ -43,8 +43,22 @@
             </div>
             <div class="word-filter">
               <span class="filter-name">同行人数:</span>
-              <el-input style="width:165px" size="small" v-model="filterForm.minNumPeople"></el-input>&nbsp;&nbsp;-&nbsp;&nbsp;
-              <el-input style="width:165px" size="small" v-model="filterForm.maxNumPeople"></el-input>
+              <el-input
+                style="width:165px"
+                size="small"
+                min="0"
+                v-model.number="filterForm.minNumPeople"
+                type="number"
+                @keydown.native="channelInputLimit"
+              ></el-input>&nbsp;&nbsp;-&nbsp;&nbsp;
+              <el-input
+                style="width:165px"
+                size="small"
+                min="0"
+                v-model.number="filterForm.maxNumPeople"
+                type="number"
+                @keydown.native="channelInputLimit"
+              ></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">有效时间:</span>

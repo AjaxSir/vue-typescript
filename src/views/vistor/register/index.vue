@@ -228,7 +228,13 @@
                       </el-col>
                       <el-col :span="8">
                         <el-form-item class="vistorItemForm" label="同行人数:">
-                          <el-input size="small" v-model="writeVisitor.numPeople"></el-input>
+                          <el-input
+                            size="small"
+                            min="0"
+                            type="number"
+                            v-model="writeVisitor.numPeople"
+                            @keydown.native="channelInputLimit"
+                          ></el-input>
                         </el-form-item>
                       </el-col>
                     </el-row>

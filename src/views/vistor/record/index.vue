@@ -15,15 +15,15 @@
           <div slot="houseNum">
             <div class="word-filter">
               <span class="filter-name">访客姓名:</span>
-              <el-input class="input-filter" size="small" v-model="filterForm.name"></el-input>
+              <el-input class="input-filter" size="small" v-model="filterForm.name" placeholder="请输入访客姓名"></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">受访姓名:</span>
-              <el-input class="input-filter" size="small" v-model="filterForm.visitName"></el-input>
+              <el-input class="input-filter" size="small" v-model="filterForm.visitName" placeholder="请输入受访者姓名"></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">联系电话:</span>
-              <el-input class="input-filter" size="small" v-model="filterForm.cardNo"></el-input>
+              <el-input class="input-filter" size="small" v-model="filterForm.cardNo" placeholder="请输入联系电话"></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">有效时间:</span>
@@ -169,8 +169,14 @@
               </template>
             </el-table-column>
             <el-table-column
+              prop="cardName"
+              label="证件类型"
+              align="center"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
+            <el-table-column
               prop="cardNo"
-              label="身份证号"
+              label="证件号码"
               align="center"
               :show-overflow-tooltip="true"
             ></el-table-column>

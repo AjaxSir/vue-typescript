@@ -66,19 +66,20 @@
 
             <el-table-column prop="note" align="center" label="备注" :show-overflow-tooltip="true">
               <template slot-scope="{row}">
-                <span
+                <p
                   class="rowUpdate"
-                  v-if="!row.noteStatus"
-                  @click="row.noteStatus = !row.noteStatus"
-                >{{ row.note }}</span>
+                  v-show="!row.noteStatus || editForm.id !== row.id"
+                  @click="editNote(row)"
+                >{{ row.note ? row.note :'--'}}</p>
                 <el-input
+                  :ref="row.id"
+                  v-show="row.noteStatus&&editForm.id === row.id"
                   size="small"
                   @keyup.enter.native="confirmUpdateNote(row)"
                   @blur="noteBlur(row)"
                   @input="constraintLength(editForm.note,'200')"
                   :maxlength="200"
                   v-model="editForm.note"
-                  v-else
                   placeholder="输入备注"
                 ></el-input>
               </template>
@@ -220,6 +221,7 @@ export default class InformIssue extends Vue {
     id: ""
   };
   updateArray: Array<string> = ["noteStatus"];
+  private noteRewrite: String = ""; //保存未改变的note
 
   initForm: object = {
     //获取车辆列表url
@@ -286,17 +288,30 @@ export default class InformIssue extends Vue {
     });
   }
 
+  editNote(row) {
+    /**@description 点击备注*/
+    this.noteRewrite = row.note;
+    this.editForm["note"] = row.note;
+    this.editForm["id"] = row.id;
+    row.noteStatus = !row.noteStatus;
+    this.$nextTick(() => {
+      const input = this.$refs[row.id] as HTMLElement;
+      input.focus();
+    });
+  }
+
   // 修改备注离开输入框
   noteBlur(row) {
     row.noteStatus = false;
-    this.editForm["note"] = "";
+    if (this.noteRewrite !== this.editForm["note"]) {
+      this.confirmUpdateNote(row);
+    }
   }
 
   confirmUpdateNote(item) {
     /**@description 修改备注 */
     const form = { note: this.editForm["note"], id: item.id };
     editPassageway(form).then(() => {
-      this.editForm["note"] = "";
       this["notify"]("修改出入口备注成功");
       this["fetchData"](this.initForm);
     });
