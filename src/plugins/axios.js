@@ -2,7 +2,10 @@
 
 import Vue from "vue";
 import axios from "axios";
+import store from '../store'
 import { MessageBox, Message } from 'element-ui';
+import { getToken, getName } from '@/utils/auth'
+
 // Full config:  https://github.com/axios/axios#request-config
 axios.defaults.headers.post["Content-Type"] =
   "application/x-www-form-urlencoded";
@@ -17,6 +20,9 @@ const _axios = axios.create(config);
 
 _axios.interceptors.request.use(
   function(config) {
+    if (getToken()) {
+          config.headers['token'] = getToken()
+        }
     return config;
   },
   function(error) {
@@ -44,14 +50,30 @@ _axios.interceptors.response.use(
           break
     }
   },
+
+
+
   function(error) {
     const { data } = error.response;
-    Message({
-      type: 'warning',
-      message: `请求出错! ${data.message}`
-    });
+    if (error.response.status === 401) {
+      MessageBox.confirm('你已被登出，请重新登录', '警告', {
+        confirmButtonText: '重新登录',
+        showClose: false,
+        showCancelButton: false,
+        center: true,
+        type: 'warning'
+      }).then(() => {
+        clearCookie()
+        location.reload()
+      })
+    }else{
+      Message({
+        type: 'warning',
+        message: `请求出错! ${data.message}`
+      });
+    }
     return Promise.reject(error);
-  }
+  },
 );
 
 export default _axios;

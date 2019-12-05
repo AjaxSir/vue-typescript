@@ -27,15 +27,30 @@
           <div slot="houseNum">
             <div class="word-filter">
               <span class="filter-name">车&nbsp;牌&nbsp;号&nbsp;:</span>
-              <el-input class="input-filter" size="small" v-model="filterForm.carNo"></el-input>
+              <el-input
+                class="input-filter"
+                size="small"
+                v-model="filterForm.carNo"
+                placeholder="请输入车牌号"
+              ></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">车主姓名:</span>
-              <el-input class="input-filter" size="small" v-model="filterForm.ownerUserName"></el-input>
+              <el-input
+                class="input-filter"
+                size="small"
+                v-model="filterForm.ownerName"
+                placeholder="请输入车主姓名"
+              ></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">联系电话:</span>
-              <el-input class="input-filter" size="small" v-model="filterForm.ownerPhone"></el-input>
+              <el-input
+                class="input-filter"
+                size="small"
+                v-model="filterForm.ownerPhone"
+                placeholder="请输入联系电话"
+              ></el-input>
             </div>
           </div>
         </action-header>
@@ -45,23 +60,21 @@
       <el-col :span="24" class="table-col">
         <div class="rightContent">
           <el-table
+            height="65vh"
             v-loading="showLoading"
             :data="list_data"
             stripe
-            class="demo-block"
+
             highlight-current-row
             @cell-mouse-enter="enterRowChange"
             @cell-mouse-leave="leaveRowChange"
             @selection-change="handleSelectionChange"
-            @cell-click="cellClick"
           >
             <el-table-column type="selection" width="50"></el-table-column>
 
-            <el-table-column type="index" label="序号" width="50" align="center"></el-table-column>
-
-            <el-table-column prop="name" label="所属房屋">
+            <el-table-column type="index" align="center" label="序号" class="indexNum" width="50">
               <template slot-scope="scope">
-                <span class="serial-num">{{scope.row.name}}</span>
+                <span>{{scope.$index+1}}</span>
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start" @command="commandClick">
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
@@ -69,17 +82,16 @@
                       <div @click="editType(scope.row)">
                         <el-dropdown-item command="update">修改</el-dropdown-item>
                       </div>
-                      <el-dropdown-item :command="returnCommand('delete', scope.row)">
-                        {{ deleteForm.data.length ? '批量删除' : '删除' }}
-                      </el-dropdown-item>
-                      <!-- <el-dropdown-item :command="returnCommand('delete', scope.row)">批量删除</el-dropdown-item> -->
+                      <el-dropdown-item
+                        :command="returnCommand('delete', scope.row)"
+                      >{{ deleteForm.data.length ? '批量删除' : '删除' }}</el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
                 </div>
               </template>
             </el-table-column>
 
-            <el-table-column prop="ownerName" label="车主"></el-table-column>
+            <el-table-column prop="ownerName" label="车主" :show-overflow-tooltip="true"></el-table-column>
 
             <el-table-column prop="carNo" label="车牌号">
               <template slot-scope="scope">
@@ -91,7 +103,7 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="lastInTime" label="最近一次访问"></el-table-column>
+            <el-table-column prop="lastInTime" label="最近一次访问" :show-overflow-tooltip="true"></el-table-column>
 
             <el-table-column prop="lastInPhoto" label="最近抓拍图片">
               <template slot-scope="scope">
@@ -128,13 +140,24 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="note" label="备注">
-              <template slot-scope="scope">
-                <span
-                  v-if="!scope.row.carNote"
-                  @click="scope.row.carNote = !scope.row.carNote"
-                >{{scope.row.note}}</span>
-                <el-input v-else size="small" v-model="editForm.note" @blur="editNote(scope.row)"></el-input>
+            <el-table-column prop="note" align="center" label="备注" :show-overflow-tooltip="true">
+              <template slot-scope="{row}">
+                <p
+                  class="rowUpdate"
+                  v-show="!row.noteStatus || editForm.id !== row.id"
+                  @click="editNote(row)"
+                >{{ row.note ? row.note :'--'}}</p>
+                <el-input
+                  :ref="row.id"
+                  v-show="row.noteStatus&&editForm.id === row.id"
+                  size="small"
+                  @keyup.enter.native="confirmUpdateNote(row)"
+                  @blur="noteBlur(row)"
+                  @input="constraintLength(editForm.note,'200')"
+                  :maxlength="200"
+                  v-model="editForm.note"
+                  placeholder="输入备注"
+                ></el-input>
               </template>
             </el-table-column>
           </el-table>
@@ -178,11 +201,11 @@
           :error="errorMessage.ownerPhone"
           label="电话"
         >
+          <!-- :disabled="nameDisabled" -->
           <el-autocomplete
             style="width:340px"
             v-model="createForm[0].ownerPhone"
-            :disabled="nameDisabled"
-            placeholder="请输入用户电话"
+            placeholder="手机11位限长，只能输入数字"
             popper-class="my-autocomplete"
             :fetch-suggestions="querySearch"
             @select="handleSelectWatchlist"
@@ -195,7 +218,7 @@
         </el-form-item>
 
         <el-form-item label="姓名">
-          <el-input :disabled="true" v-model="createForm[0].ownerUserName"></el-input>
+          <el-input :disabled="true" v-model="createForm[0].ownerUserName" placeholder="请输入姓名"></el-input>
         </el-form-item>
 
         <el-form-item
@@ -204,7 +227,12 @@
           :show-message="showMessage"
           :error="errorMessage.carNo"
         >
-          <el-input v-model="createForm[0].carNo"></el-input>
+          <el-input
+            v-model="createForm[0].carNo"
+            placeholder="车牌号7位限长"
+            :maxlength="7"
+            @input="constraintLength(createForm[0].carNo,'7')"
+          ></el-input>
         </el-form-item>
 
         <el-form-item
@@ -213,15 +241,36 @@
           :show-message="showMessage"
           :error="errorMessage.modal"
         >
-          <el-input v-model="createForm[0].modal"></el-input>
+          <el-input
+            v-model="createForm[0].modal"
+            placeholder="请输入品牌"
+            :maxlength="10"
+            @input="constraintLength(createForm[0].modal,'10')"
+          ></el-input>
         </el-form-item>
 
         <el-form-item label="车型">
-          <el-input v-model="createForm[0].carType"></el-input>
+          <el-input
+            v-model="createForm[0].carType"
+            placeholder="请输入车型"
+            :maxlength="10"
+            @input="constraintLength(createForm[0].carType,'10')"
+          ></el-input>
         </el-form-item>
 
-        <el-form-item label="备注">
-          <el-input type="textarea" v-model="createForm[0].note"></el-input>
+        <el-form-item
+          label="备注:"
+          prop="note"
+          :show-message="showMessage"
+          :error="errorMessage.note"
+        >
+          <el-input
+            type="textarea"
+            v-model="createForm[0].note"
+            :maxlength="200"
+            placeholder="输入备注信息"
+            @input="constraintLength(createForm[0].note,'200')"
+          ></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -244,14 +293,19 @@
         label-width="80px"
         style="margin-right:40px;"
       >
-        <el-form-item
+        <!-- <el-form-item
           label="车牌"
           prop="carNo"
           :show-message="showMessage"
           :error="errorMessage.carNo"
         >
-          <el-input v-model="editForm.carNo"></el-input>
-        </el-form-item>
+          <el-input
+            v-model="editForm.carNo"
+            placeholder="请输入车牌"
+            :maxlength="7"
+            @input="constraintLength(editForm.carNo,'7')"
+          ></el-input>
+        </el-form-item>-->
 
         <el-form-item
           label="品牌"
@@ -259,15 +313,36 @@
           :show-message="showMessage"
           :error="errorMessage.modal"
         >
-          <el-input v-model="editForm.modal"></el-input>
+          <el-input
+            v-model="editForm.modal"
+            placeholder="请输入品牌"
+            :maxlength="10"
+            @input="constraintLength(editForm.modal,'10')"
+          ></el-input>
         </el-form-item>
 
         <el-form-item label="车型">
-          <el-input v-model="editForm.carType"></el-input>
+          <el-input
+            v-model="editForm.carType"
+            placeholder="请输入车型"
+            :maxlength="10"
+            @input="constraintLength(editForm.carType,'10')"
+          ></el-input>
         </el-form-item>
 
-        <el-form-item label="备注">
-          <el-input type="textarea" v-model="editForm.note"></el-input>
+        <el-form-item
+          label="备注:"
+          prop="note"
+          :show-message="showMessage"
+          :error="errorMessage.note"
+        >
+          <el-input
+            type="textarea"
+            v-model="editForm.note"
+            :maxlength="200"
+            placeholder="输入备注信息"
+            @input="constraintLength(editForm.note,'200')"
+          ></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -354,9 +429,20 @@
         <el-tab-pane label="通行记录" name="thirdly">
           <el-table v-loading="passTarget" :data="passList" style="width: 100%" stripe>
             <el-table-column type="index" label="序号" width="50" align="center"></el-table-column>
-            <el-table-column align="center" prop="carNo" label="车牌号"></el-table-column>
-            <el-table-column align="center" prop="passTime" label="通行时间" width="150px"></el-table-column>
-            <el-table-column align="center" prop="address" label="访客通行">
+            <el-table-column align="center" prop="carNo" label="车牌号" :show-overflow-tooltip="true"></el-table-column>
+            <el-table-column
+              align="center"
+              prop="passTime"
+              label="通行时间"
+              width="150px"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
+            <el-table-column
+              align="center"
+              prop="address"
+              label="访客通行"
+              :show-overflow-tooltip="true"
+            >
               <template slot-scope="scope">
                 <el-tag
                   size="small"
@@ -424,7 +510,7 @@ const DataTree = () => import("@/components/DataTree.vue");
   }
 })
 export default class CarList extends Vue {
-  filterForm: object = { carNo: null, ownerPhone: null, ownerUserName: null }; //根据关键字查询
+  filterForm: object = { carNo: null, ownerPhone: null, ownerName: null }; //根据关键字查询
   private rowSpan: any = {
     row1: 4,
     row2: 20
@@ -463,6 +549,7 @@ export default class CarList extends Vue {
     ownerPhone: "",
     carNo: ""
   };
+  private noteString: String = "";
 
   private dialogEdit: Boolean = false; // 修改弹出表单
   private editForm: Object = {
@@ -470,7 +557,7 @@ export default class CarList extends Vue {
     ownerPhone: "", //车主电话
     ownerUserName: "", //车主
     scenceUserId: "", //车主id
-    carNo: "", //车牌号
+    // carNo: "", //车牌号
     carType: "", //车型
     id: "",
     modal: "", //品牌
@@ -488,6 +575,7 @@ export default class CarList extends Vue {
   private CarDialogForm: Object = {}; // 车辆详细信息
   private carUserDetail: Object = {}; //车主详细信息
   private notifyInstance: any; //防止notify重复多次出现提示
+  private noteRewrite: String = ""; //保存未改变的note
   updateArray: Array<string> = ["carNote"];
 
   initForm: object = {
@@ -608,15 +696,30 @@ export default class CarList extends Vue {
     this.editForm["id"] = val;
   }
 
-  cellClick(row, column, event, cell) {
-    row.carNote = true;
+  editNote(row) {
+    /**@description 点击备注*/
+    this.noteRewrite = row.note;
+    this.editForm["note"] = row.note;
+    this.editForm["id"] = row.id;
+    row.noteStatus = !row.noteStatus;
+    this.$nextTick(() => {
+      const input = this.$refs[row.id] as HTMLElement;
+      input.focus();
+    });
   }
 
-  editNote(item) {
+  // 修改备注离开输入框
+  noteBlur(row) {
+    row.noteStatus = false;
+    if (this.noteRewrite !== this.editForm["note"]) {
+      this.confirmUpdateNote(row);
+    }
+  }
+
+  confirmUpdateNote(item) {
     /**@description 修改备注 */
     const form = { note: this.editForm["note"], id: item.id };
     editCar(form).then(() => {
-      this.editForm["note"] = "";
       this["notify"]("修改车辆备注成功");
       this["fetchData"](this.initForm);
     });
@@ -655,16 +758,6 @@ export default class CarList extends Vue {
   closeBtn() {
     this.activeName = "first";
     this.detailDialogVisible = false; //车辆详情dialog
-  }
-
-  enterRowChange(row, column, cell, event) {
-    /**@description hover enter tab 行 */
-    row.showMenu = true;
-  }
-
-  leaveRowChange(row) {
-    /**@description hover leave tab 行 */
-    row.showMenu = false;
   }
 
   showCarDetails(row) {
@@ -742,19 +835,8 @@ export default class CarList extends Vue {
 .serial-num {
   position: relative;
 }
-.fun-btn {
-  position: absolute;
-  left: -64px;
-  top: 28%;
-  .iconfont {
-    font-size: 19px;
-    color: #8091a5;
-    cursor: pointer;
-  }
-}
-.table-col {
-  position: relative;
-}
+
+
 
 .capture-img {
   width: 30px;

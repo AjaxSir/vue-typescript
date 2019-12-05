@@ -6,49 +6,58 @@
 -->
 <template>
   <baidu-map
-  @click="getPoint"
-  :center='{lng: 116.404, lat: 39.915}'
-  :zoom='zoom'
-  :scroll-wheel-zoom="true"
-  class="map">
+    @click="getPoint"
+    :center="{lng: 116.404, lat: 39.915}"
+    :zoom="zoom"
+    :scroll-wheel-zoom="true"
+    class="map"
+  >
     <!--是否需要搜索功能-->
-    <slot name='search'></slot>
+    <slot name="search"></slot>
     <bm-local-search
-        :autoViewport='autoVisible'
-        :panel='false'
-        :keyword='keyword'
-        :location="location"
-        v-if='searchStatus'>
-    </bm-local-search>
-    <slot name='point'></slot>
+      :autoViewport="autoVisible"
+      :panel="false"
+      :keyword="keyword"
+      :location="location"
+      v-if="searchStatus"
+    ></bm-local-search>
+    <slot name="point"></slot>
     <bm-marker
-        v-show='markerStatus'
-         v-for='(item, index) in positionList'
-        :position="item.position"
-         :key='index'
-        :dragging="false"
-        @click="infoWindowOpen(index)">
-
-       <bm-info-window
+      v-show="markerStatus"
+      v-for="(item, index) in positionList"
+      :position="item.position"
+      :key="index"
+      :dragging="false"
+      @click="infoWindowOpen(index)"
+    >
+      <bm-info-window
+        :show="item.show"
+        @close="infoWindowClose(index)"
+        @open="infoWindowOpen(index)"
+      >
+        {{`名字:${item.title}`}}
+        <br />
+        {{`具体地址:${item.address}`}}
+      </bm-info-window>
+    </bm-marker>
+    <bm-marker
+      v-show="backStatus"
+      v-for="(item, index) in list"
+      :position="item.position"
+      :key="index"
+      :dragging="false"
+      :icon="{url: locImg, size: {width: 30, height: 30}}"
+    >
+      <!-- <bm-info-window
             :show="item.show"
             @close="infoWindowClose(index)"
             @open="infoWindowOpen(index)">
             {{`名字:${item.title}`}} <br>
             {{`具体地址:${item.address}`}}
-        </bm-info-window>
+      </bm-info-window>-->
     </bm-marker>
-    <bm-marker
-        v-show='backStatus'
-         v-for='(item, index) in list'
-        :position="item.position"
-         :key='index'
-        :dragging="false"
-        :icon="{url: locImg, size: {width: 30, height: 30}}"
-        >
-    </bm-marker>
-    <slot name='line'></slot>
+    <slot name="line"></slot>
   </baidu-map>
-
 </template>
 
 <script lang='ts'>
@@ -80,15 +89,15 @@ export default class BaiDuMap extends Vue {
       this.autoVisible = true
       // if (this.backStatus) {
         let addRess = {
-          lng: '',
-          lat: '',
-          province: '',
-          city: '',
-          district: '',
-          street: '',
-          streetNumber: ''
-        }
-        this.list = []
+          lng: "",
+          lat: "",
+          province: "",
+          city: "",
+          district: "",
+          street: "",
+          streetNumber: ""
+        };
+        this.list = [];
         this.list.push({
           show: false,
           position: { lng: e.point.lng, lat: e.point.lat }
@@ -120,14 +129,10 @@ export default class BaiDuMap extends Vue {
       })
       // }
     }
-
-  mounted() {
-    this.autoVisible = true
   }
-}
 </script>
 <style lang="scss" scoped>
-.map{
+.map {
   width: 100%;
   height: 400px;
 }

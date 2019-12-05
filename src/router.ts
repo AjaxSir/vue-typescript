@@ -6,6 +6,11 @@ import Layout from '@/views/layout/index.vue'
 Vue.use(Router);
 
 export const constantRouterMap = [{
+  path: '/login',
+  name: 'login',
+  component: _import_('login/index'),
+  hidden: true
+}, {
   path: "",
   redirect: 'dashboard',
   hidden: true,

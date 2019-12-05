@@ -126,16 +126,6 @@ export default class CanteenManage extends Vue {
     console.log(item);
     // this.dialogFormVisible = true;
   }
-
-  enterRowChange(row, column, cell, event) {
-    /**@description hover enter tab 行 */
-    row.showMenu = true;
-  }
-
-  leaveRowChange(row) {
-    /**@description hover leave tab 行 */
-    row.showMenu = false;
-  }
   queryIdetity(val) {
     this.dialogData = val;
     this.dialogCanteen = true;
@@ -170,9 +160,7 @@ export default class CanteenManage extends Vue {
     cursor: pointer;
   }
 }
-.table-col {
-  position: relative;
-}
+
 
 .close-menu {
   width: 10px;

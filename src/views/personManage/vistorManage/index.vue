@@ -25,7 +25,6 @@
         >
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>进出次数排序</el-dropdown-item>
-            <!-- <el-dropdown-item>滞留时间排序</el-dropdown-item> -->
             <el-dropdown-item>次数统计</el-dropdown-item>
           </el-dropdown-menu>
           <div slot="houseNum">
@@ -43,8 +42,22 @@
             </div>
             <div class="word-filter">
               <span class="filter-name">同行人数:</span>
-              <el-input style="width:165px" size="small" v-model="filterForm.minNumPeople"></el-input>&nbsp;&nbsp;-&nbsp;&nbsp;
-              <el-input style="width:165px" size="small" v-model="filterForm.maxNumPeople"></el-input>
+              <el-input
+                style="width:165px"
+                size="small"
+                min="0"
+                v-model.number="filterForm.minNumPeople"
+                type="number"
+                @keydown.native="channelInputLimit"
+              ></el-input>&nbsp;&nbsp;-&nbsp;&nbsp;
+              <el-input
+                style="width:165px"
+                size="small"
+                min="0"
+                v-model.number="filterForm.maxNumPeople"
+                type="number"
+                @keydown.native="channelInputLimit"
+              ></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">有效时间:</span>
@@ -92,42 +105,56 @@
         </ActionHeader>
       </el-col>
     </el-row>
-    <el-row :gutter="10">
+    <el-row>
       <el-col :span="24">
         <div class="rightContent">
           <el-table
+            height="61vh"
             v-loading="showLoading"
             :data="list_data"
             stripe
-            class="demo-block"
             highlight-current-row
             @cell-mouse-enter="enterRowChange"
             @cell-mouse-leave="leaveRowChange"
             @selection-change="handleSelectionChange"
           >
-            <el-table-column type="selection" align="center"></el-table-column>
-            <el-table-column type="index" width="50" align="center" label="编号"></el-table-column>
-            <el-table-column prop="name" width="70" align="center" label="姓名">
+            <el-table-column type="selection" width="50"></el-table-column>
+            <el-table-column type="index" align="center" label="序号" class="indexNum" width="50">
               <template slot-scope="scope">
-                <span>{{scope.row.name}}</span>
+                <span>{{scope.$index+1}}</span>
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start" @command="commandClick">
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
                     <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item :command="returnCommand('delete', scope.row)">批量删除</el-dropdown-item>
+                      <el-dropdown-item
+                        :command="returnCommand('delete', scope.row)"
+                      >{{ deleteForm.data.length ? '批量删除' : '删除' }}</el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
                 </div>
               </template>
             </el-table-column>
-            <el-table-column prop="phone" min-width="90" align="center" label="电话"></el-table-column>
-            <el-table-column prop="visitName" align="center" label="受访人姓名">
+
+            <el-table-column prop="name" align="center" label="姓名" :show-overflow-tooltip="true"></el-table-column>
+            <el-table-column prop="phone" align="center" label="电话" :show-overflow-tooltip="true"></el-table-column>
+            <el-table-column
+              prop="visitName"
+              align="center"
+              label="受访人"
+              :show-overflow-tooltip="true"
+            >
               <template slot-scope="{ row }">
                 <el-button type="text" @click="showDetail(row)">{{ row.visitName }}</el-button>
               </template>
             </el-table-column>
 
-            <el-table-column prop="visitType" width="101" align="center" label="访客类型">
+            <el-table-column
+              prop="visitType"
+              align="center"
+              label="访客类型"
+              :show-overflow-tooltip="true"
+              width="100px"
+            >
               <template slot="header">
                 <el-dropdown style="padding:0;" trigger="click" @command="filterType">
                   <span class="el-dropdown-link">
@@ -154,11 +181,31 @@
                 <span>{{scope.row.visitType ==='1' ?'APP' : scope.row.visitType ==='2' ?'访客机' : '--'}}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="cardNo" align="center" label="身份证号"></el-table-column>
-            <el-table-column prop="visitTime" min-width="130" align="center" label="访问时间"></el-table-column>
-            <el-table-column prop="buildingName" align="center" label="所属楼栋"></el-table-column>
-            <el-table-column prop="houseName" align="center" label="房屋编号"></el-table-column>
-            <el-table-column prop="status" align="center" label="状态">
+            <el-table-column
+              prop="cardNo"
+              align="center"
+              label="身份证号"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
+            <el-table-column
+              prop="visitTime"
+              align="center"
+              label="访问时间"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
+            <el-table-column
+              prop="buildingName"
+              align="center"
+              label="所属楼栋"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
+            <el-table-column
+              prop="houseName"
+              align="center"
+              label="房屋编号"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
+            <el-table-column prop="status" align="center" label="状态" :show-overflow-tooltip="true">
               <template slot="header">
                 <el-dropdown style="padding:0;" trigger="click" @command="filterStatus">
                   <span class="el-dropdown-link">
@@ -179,22 +226,34 @@
                 <span>{{statusFilter(scope.row.status)}}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="numPeople" align="center" label="同行人数"></el-table-column>
-            <el-table-column prop="createTime" min-width="130" align="center" label="创建时间"></el-table-column>
-            <el-table-column prop="invalidDate" min-width="130" align="center" label="有效时间"></el-table-column>
-
-            <!-- <el-table-column prop="all_times" align="center" label="累计访问次数"></el-table-column> -->
-            <!-- <el-table-column prop="last_time" align="center" label="最近访问时间"></el-table-column> -->
+            <el-table-column
+              prop="numPeople"
+              align="center"
+              label="同行人数"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
+            <el-table-column
+              prop="createTime"
+              align="center"
+              label="创建时间"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
+            <el-table-column
+              prop="invalidDate"
+              align="center"
+              label="有效时间"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
           </el-table>
+          <el-pagination
+            @current-change="pageChange"
+            style="margin-top:10px;"
+            background
+            layout="prev, pager, next,total"
+            :page-size="page.limit"
+            :total="page.total"
+          ></el-pagination>
         </div>
-        <el-pagination
-          @current-change="pageChange"
-          style="margin-top:10px;"
-          background
-          layout="prev, pager, next,total"
-          :page-size="page.limit"
-          :total="page.total"
-        ></el-pagination>
       </el-col>
     </el-row>
 
@@ -214,7 +273,7 @@
                   <span>{{visitorDialogForm.name ? visitorDialogForm.name :'--'}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="访客类型:">
-                  <span>{{visitorDialogForm.visitType ? visitorDialogForm.visitType : '--'}}</span>
+                  <span>{{visitorDialogForm.visitType ==='1' ?'APP' : visitorDialogForm.visitType ==='2' ?'访客机' : '--'}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="身份证号:">
                   <span>{{visitorDialogForm.cardNo ? visitorDialogForm.cardNo :'--'}}</span>
@@ -449,27 +508,27 @@ export default class VistoryManage extends Vue {
   }
 
   mounted() {
-    const _this = this;
-    this.pickOptionStart = {
-      disabledDate(time) {
-        if (_this.filterForm["endCreateTime"] !== "") {
-          return (
-            time.getTime() > Date.now() ||
-            time.getTime() > _this.filterForm["endCreateTime"]
-          );
-        } else {
-          return time.getTime() > Date.now();
-        }
-      }
-    };
-    this.pickOptionEnd = {
-      disabledDate(time) {
-        return (
-          time.getTime() < _this.filterForm["startCreateTime"] ||
-          time.getTime() > Date.now()
-        );
-      }
-    };
+    // const _this = this;
+    // this.pickOptionStart = {
+    //   disabledDate(time) {
+    //     if (_this.filterForm["endCreateTime"] !== "") {
+    //       return (
+    //         time.getTime() > Date.now() ||
+    //         time.getTime() > _this.filterForm["endCreateTime"]
+    //       );
+    //     } else {
+    //       return time.getTime() > Date.now();
+    //     }
+    //   }
+    // };
+    // this.pickOptionEnd = {
+    //   disabledDate(time) {
+    //     return (
+    //       time.getTime() < _this.filterForm["startCreateTime"] ||
+    //       time.getTime() > Date.now()
+    //     );
+    //   }
+    // };
   }
 
   handleSelectionChange(val) {
@@ -603,14 +662,14 @@ export default class VistoryManage extends Vue {
 </script>
 
 <style lang="scss" scoped>
-.leftContent {
-  flex: none;
-  width: 200px;
+.main {
+  display: flex;
+  .rightContent {
+    flex: 1;
+    box-shadow: 0px 6px 5px 0px lightgray;
+  }
 }
-.rightContent {
-  flex: 1;
-  box-shadow: 0px 6px 5px 0px lightgray;
-}
+
 .el-dropdown-link {
   color: #20a0ff;
 }
@@ -621,21 +680,6 @@ export default class VistoryManage extends Vue {
 .n {
   color: black;
   background: #fff;
-}
-.fun-btn {
-  position: absolute;
-  left: -64px;
-  top: 30%;
-
-  .iconfont {
-    font-size: 19px;
-    color: #8091a5;
-    cursor: pointer;
-  }
-}
-
-.table-col {
-  position: relative;
 }
 
 .close-menu {

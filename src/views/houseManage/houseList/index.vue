@@ -9,7 +9,8 @@
         @fetchData='fetchData'
         :filterForm='filterForm'
         :dialogCreate.sync="dialogCreate"
-        :houseStatus='true' :total="page.total">
+        :houseStatus='true'
+        :total="page.total">
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item command='export'>导出</el-dropdown-item>
           </el-dropdown-menu>
@@ -51,7 +52,7 @@
             :data="list_data"
             stripe
             style="max-height: 75vh;overflow:auto"
-            class="demo-block"
+
             v-loading='showLoading'
             highlight-current-row
             @cell-mouse-enter="enterRowChange"
@@ -463,9 +464,7 @@ export default class CardManage extends Vue {
   position: relative;
 }
 
-.table-col {
-  position: relative;
-}
+
 
 .menu-control {
   position: absolute;

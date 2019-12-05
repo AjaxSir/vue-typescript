@@ -22,7 +22,12 @@
           <div slot="houseNum">
             <div class="word-filter">
               <span class="filter-name">车牌号:</span>
-              <el-input class="input-filter" size="small" v-model="filterForm.carNo"></el-input>
+              <el-input
+                class="input-filter"
+                size="small"
+                v-model="filterForm.carNo"
+                placeholder="请输入车牌号"
+              ></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">时间段:</span>
@@ -47,7 +52,7 @@
             </div>
             <div class="word-filter">
               <span class="filter-name">车辆类型:</span>
-              <el-select size="small" v-model="filterForm.isVisitCar" placeholder="请选择">
+              <el-select size="small" v-model="filterForm.isVisitCar" placeholder="请选择车辆类型">
                 <el-option
                   v-for="item in carTypeList"
                   :key="item.value"
@@ -64,15 +69,22 @@
       <el-col :span="24" class="table-col">
         <div class="rightContent">
           <el-table
+            height="65vh"
             v-loading="showLoading"
             :data="list_data"
             stripe
-            class="demo-block"
+
             highlight-current-row
             @cell-mouse-enter="enterRowChange"
             @cell-mouse-leave="leaveRowChange"
           >
-            <el-table-column align="center" type="selection" width="50"></el-table-column>
+            <el-table-column
+              align="center"
+              type="selection"
+              width="50"
+              :selectable="isDisabled"
+              disabled="true"
+            ></el-table-column>
 
             <el-table-column align="center" type="index" label="序号" width="50"></el-table-column>
 
@@ -111,7 +123,12 @@
             <el-table-column align="center" prop="ownerName" label="车主姓名"></el-table-column>
             <el-table-column align="center" prop="ownerPhone" label="车主电话"></el-table-column>
             <el-table-column align="center" prop="inOut" label="通行方向"></el-table-column>
-            <el-table-column align="center" prop="passTime" label="抓拍时间"></el-table-column>
+            <el-table-column
+              align="center"
+              prop="passTime"
+              label="抓拍时间"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
 
             <el-table-column align="center" prop="photos" label="最近抓拍图片">
               <template slot-scope="scope">
@@ -252,26 +269,26 @@ export default class CardManage extends Vue {
   pickOptionEnd: object = {}; //按照时间段查询的结束时间
   mounted() {
     const _this = this;
-    this.pickOptionStart = {
-      disabledDate(time) {
-        if (_this.filterForm["endTime"] !== "") {
-          return (
-            time.getTime() > Date.now() ||
-            time.getTime() > _this.filterForm["endTime"]
-          );
-        } else {
-          return time.getTime() > Date.now();
-        }
-      }
-    };
-    this.pickOptionEnd = {
-      disabledDate(time) {
-        return (
-          time.getTime() < _this.filterForm["startTime"] ||
-          time.getTime() > Date.now()
-        );
-      }
-    };
+    // this.pickOptionStart = {
+    //   disabledDate(time) {
+    //     if (_this.filterForm["endTime"] !== "") {
+    //       return (
+    //         time.getTime() > Date.now() ||
+    //         time.getTime() > _this.filterForm["endTime"]
+    //       );
+    //     } else {
+    //       return time.getTime() > Date.now();
+    //     }
+    //   }
+    // };
+    // this.pickOptionEnd = {
+    //   disabledDate(time) {
+    //     return (
+    //       time.getTime() < _this.filterForm["startTime"] ||
+    //       time.getTime() > Date.now()
+    //     );
+    //   }
+    // };
   }
 
   // 获取需要操作的数据列表
@@ -312,6 +329,13 @@ export default class CardManage extends Vue {
     this.detailDialogVisible = false; //车辆详情dialog
     this.activeName = "first";
   }
+
+  isDisabled(row, index) {
+    /**@discription 禁用多选 */
+    if (row.auditResult == 3) {
+      return 0;
+    }
+  }
 }
 </script>
 
@@ -342,9 +366,7 @@ export default class CardManage extends Vue {
     cursor: pointer;
   }
 }
-.table-col {
-  position: relative;
-}
+
 
 .menu-control {
   position: absolute;

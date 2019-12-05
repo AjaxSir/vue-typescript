@@ -400,9 +400,7 @@ export default class PropertyManage extends Vue {
   position: absolute;
   left: -1px;
 }
-.table-col {
-  position: relative;
-}
+
 
 .menu-control {
   position: absolute;

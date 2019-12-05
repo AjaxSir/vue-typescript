@@ -6,9 +6,25 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
     <title>一石智能识别门禁系统</title>
-    <link rel="stylesheet" href="//at.alicdn.com/t/font_1437377_elbs8hj2vk4.css">
+    <link rel="stylesheet" href="//at.alicdn.com/t/font_1437377_7c1yhx5drm2.css">
   </head>
   <body>
     <div id="app"></div>
   </body>
+  <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=Mwf2knuKUGwhZlrzsulGQmpZGm6Z7V47"></script>
+  <script type="text/javascript">
+    // 百度地图API功能
+    var map = new BMap.Map("allmap")
+    var point = new BMap.Point(116.331398, 39.897445)
+    map.centerAndZoom(point, 12)
+
+  function myFun(result) {
+      var cityName = result.name
+      map.setCenter(cityName)
+    // alert("当前定位城市:"+cityName);
+    localStorage.setItem('cityname', cityName)
+  }
+    var myCity = new BMap.LocalCity()
+    myCity.get(myFun)
+  </script>
 </html>

@@ -23,7 +23,7 @@
           <el-table
             :data="list_data"
             stripe
-            class="demo-block"
+
             v-loading='showLoading'
             style="max-height: 75vh;overflow:auto"
             highlight-current-row
@@ -466,9 +466,7 @@ export default class DeviceManage extends Vue {
   position: relative;
 }
 
-.table-col {
-  position: relative;
-}
+
 
 .menu-control {
   position: absolute;
