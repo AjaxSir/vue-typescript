@@ -24,14 +24,13 @@
       </el-col>
     </el-row>
     <el-row :gutter="10">
-      <el-col :span="24" class="table-col">
+      <el-col :span="24">
         <div class="rightContent">
           <el-table
             height="65vh"
             v-loading="showLoading"
             :data="list_data"
             stripe
-            class="demo-block"
             highlight-current-row
             @cell-mouse-enter="enterRowChange"
             @cell-mouse-leave="leaveRowChange"
@@ -333,26 +332,16 @@ export default class InformIssue extends Vue {
 </script>
 
 <style lang="scss" scoped>
-.main {
-  display: flex;
-  .rightContent {
-    flex: 1;
-  }
-}
+
 td {
   padding: 6px 0px;
 }
+
 .demo-block {
   border: 1px solid #ebebeb;
   border-radius: 3px;
 }
 
-.serial-num {
-  position: relative;
-}
-.table-col {
-  position: relative;
-}
 .close-menu {
   width: 10px;
   height: 48px;
@@ -361,15 +350,6 @@ td {
   border-bottom-right-radius: 20px;
   position: relative;
 }
-
-// .icon-class {
-//   font-size: 12px;
-//   color: #e7eaeb;
-//   cursor: pointer;
-//   line-height: 48px;
-//   position: absolute;
-//   left: -1px;
-// }
 
 .capture-img {
   width: 60px;

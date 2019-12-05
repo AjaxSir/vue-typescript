@@ -31,7 +31,7 @@
             v-loading="showLoading"
             :data="list_data"
             stripe
-            class="demo-block"
+
             highlight-current-row
             @cell-mouse-enter="enterRowChange"
             @cell-mouse-leave="leaveRowChange"
@@ -366,16 +366,6 @@ export default class InformIssue extends Vue {
     // this.dialogFormVisible = true;
   }
 
-  enterRowChange(row, column, cell, event) {
-    /**@description hover enter tab 行 */
-    row.showMenu = true;
-  }
-
-  leaveRowChange(row) {
-    /**@description hover leave tab 行 */
-    row.showMenu = false;
-  }
-
   handleClose() {
     this.dialogCreate = false;
     this.$refs["dataForm"]["resetFields"]();
@@ -420,9 +410,7 @@ td {
     cursor: pointer;
   }
 }
-.table-col {
-  position: relative;
-}
+
 .close-menu {
   width: 10px;
   height: 48px;

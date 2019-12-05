@@ -115,7 +115,7 @@
       <el-col :span="rowSpan.row2" class="table-col">
         <div class="rightContent">
           <el-table
-            class="demo-block"
+
             height="65vh"
             v-loading="showLoading"
             :data="list_data"
@@ -456,9 +456,7 @@ export default class VistorRegister extends Vue {
   }
 }
 
-.table-col {
-  position: relative;
-}
+
 
 .menu-control {
   position: absolute;

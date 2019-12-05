@@ -16,7 +16,7 @@
             :data="list_data"
             stripe
             v-loading='showLoading'
-            class="demo-block"
+
             style="max-height: 75vh;overflow:auto"
             highlight-current-row
             @selection-change="handleSelectionChange"
@@ -216,9 +216,7 @@ td {
   position: relative;
 }
 
-.table-col {
-  position: relative;
-}
+
 .close-menu {
   width: 10px;
   height: 48px;

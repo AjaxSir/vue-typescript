@@ -14,7 +14,7 @@
           exportName:导出文件名
           total:总条数
         -->
-        <!-- <ActionHeader
+        <ActionHeader
           :btnStatus="2"
           :initFormHeader="initForm"
           @fetchData="fetchData"
@@ -102,7 +102,7 @@
               ></el-date-picker>
             </div>
           </div>
-        </ActionHeader>-->
+        </ActionHeader>
       </el-col>
     </el-row>
     <el-row>
@@ -118,7 +118,7 @@
             @cell-mouse-leave="leaveRowChange"
             @selection-change="handleSelectionChange"
           >
-            <el-table-column type="selection" align="center" width="50"></el-table-column>
+            <el-table-column type="selection" width="50"></el-table-column>
             <el-table-column type="index" align="center" label="序号" class="indexNum" width="50">
               <template slot-scope="scope">
                 <span>{{scope.$index+1}}</span>
@@ -662,14 +662,14 @@ export default class VistoryManage extends Vue {
 </script>
 
 <style lang="scss" scoped>
-.leftContent {
-  flex: none;
-  width: 200px;
+.main {
+  display: flex;
+  .rightContent {
+    flex: 1;
+    box-shadow: 0px 6px 5px 0px lightgray;
+  }
 }
-.rightContent {
-  flex: 1;
-  box-shadow: 0px 6px 5px 0px lightgray;
-}
+
 .el-dropdown-link {
   color: #20a0ff;
 }
@@ -680,10 +680,6 @@ export default class VistoryManage extends Vue {
 .n {
   color: black;
   background: #fff;
-}
-
-.table-col {
-  position: relative;
 }
 
 .close-menu {

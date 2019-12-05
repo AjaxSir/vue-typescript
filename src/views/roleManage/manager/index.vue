@@ -17,7 +17,7 @@
           <el-table
             :data="list_data"
             stripe
-            class="demo-block"
+
             highlight-current-row
             @selection-change="handleSelectionChange"
             @cell-mouse-enter="enterRowChange"
@@ -313,9 +313,7 @@ td {
   position: relative;
 }
 
-.table-col {
-  position: relative;
-}
+
 .close-menu {
   width: 10px;
   height: 48px;

@@ -154,16 +154,6 @@ export default class InformIssue extends Vue {
     console.log(item);
   }
 
-  enterRowChange(row, column, cell, event) {
-    /**@description hover enter tab 行 */
-    row.showMenu = true;
-  }
-
-  leaveRowChange(row) {
-    /**@description hover leave tab 行 */
-    row.showMenu = false;
-  }
-
   changefile(file, fileList) {
     const reader = new FileReader();
     reader.onload = () => {
@@ -297,9 +287,7 @@ td {
     cursor: pointer;
   }
 }
-.table-col {
-  position: relative;
-}
+
 .close-menu {
   width: 10px;
   height: 48px;

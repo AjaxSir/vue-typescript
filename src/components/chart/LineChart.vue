@@ -32,7 +32,7 @@ export default {
     },
     dateRange: {
       type: Array,
-      default: ['2019-10-01', '2019-10-20']
+      // default: ['2019-10-01', '2019-10-20']
     }
   },
 

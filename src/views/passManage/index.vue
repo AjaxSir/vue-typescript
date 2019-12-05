@@ -15,7 +15,7 @@
           <el-table
             :data="cardList"
             stripe
-            class="demo-block"
+
             highlight-current-row
             @cell-mouse-enter="enterRowChange"
             @cell-mouse-leave="leaveRowChange"
@@ -163,16 +163,6 @@ export default class CardManage extends Vue {
     // this.dialogFormVisible = true;
   }
 
-  enterRowChange(row, column, cell, event) {
-    /**@description hover enter tab 行 */
-    row.showMenu = true;
-  }
-
-  leaveRowChange(row) {
-    /**@description hover leave tab 行 */
-    row.showMenu = false;
-  }
-
   menuVisible() {
     /**@description 控制楼栋 */
     if (this.rowSpan.row1 === 4) {
@@ -217,9 +207,7 @@ export default class CardManage extends Vue {
     cursor: pointer;
   }
 }
-.table-col {
-  position: relative;
-}
+
 
 .menu-control {
   position: absolute;

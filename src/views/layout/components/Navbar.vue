@@ -27,6 +27,7 @@
 <script>
 import { Component, Vue } from "vue-property-decorator";
 import Breadcrumb from "@/components/Breadcrumb";
+import { clearCookie } from "@/utils/cookie";
 
 @Component({
   components: {
@@ -36,7 +37,9 @@ import Breadcrumb from "@/components/Breadcrumb";
 export default class Navbar extends Vue {
   created() {}
   logout() {
-    console.log("退出");
+    this.$router.push({ path: "/login" });
+    clearCookie();
+    location.reload(); // 为了重新实例化vue-router对象 避免bug
   }
 }
 </script>

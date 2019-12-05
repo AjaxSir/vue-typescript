@@ -19,7 +19,7 @@
       v-loading="showLoading"
       :data="list_data"
       stripe
-      class="demo-block"
+
       highlight-current-row
       @cell-mouse-enter="enterRowChange"
       @cell-mouse-leave="leaveRowChange"
@@ -503,9 +503,7 @@ export default class WarningLink extends Vue {
 </script>
 
 <style lang="scss" scoped>
-.table-col {
-  position: relative;
-}
+
 .input-new-tag {
   width: 120px;
 }

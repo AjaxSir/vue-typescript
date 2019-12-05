@@ -63,7 +63,7 @@
             v-loading="showLoading"
             :data="list_data"
             stripe
-            class="demo-block"
+
             highlight-current-row
             @cell-mouse-enter="enterRowChange"
             @cell-mouse-leave="leaveRowChange"
@@ -987,7 +987,5 @@ export default class FocusPeople extends Vue {
 .serial-num {
   position: relative;
 }
-.table-col {
-  position: relative;
-}
+
 </style>
