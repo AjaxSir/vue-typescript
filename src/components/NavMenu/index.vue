@@ -62,7 +62,7 @@ export default class NavMenu extends Vue{
   get Routes() {
     const route = [].concat(this.$router['options'].routes) // [ ...route ] = this.$router['options'].routes
     // route.splice(0, 2)&& route.splice(4, 2)
-    route.splice(0, 1) && route.splice(4, 1) && route.splice(3, 1) && route.splice(4, 3)
+    route.splice(0, 2) && route.splice(4, 1) && route.splice(3, 1) && route.splice(4, 3)
 
     return route
   }
