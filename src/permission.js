@@ -1,8 +1,8 @@
 import router from './router'
 import store from './store'
 import { getToken, removeToken} from '@/utils/auth'
-// import NProgress from 'nprogress' // Progress 进度条
-// import 'nprogress/nprogress.css'// Progress 进度条样式
+import NProgress from 'nprogress' // Progress 进度条
+import 'nprogress/nprogress.css'// Progress 进度条样式
 
 const whiteList = ['/login'] // 不重定向白名单
 
@@ -12,7 +12,7 @@ function hasPermission(roles, permissionRoles) {
 }
 
 router.beforeEach((to, from, next) => {
-  // NProgress.start()
+  NProgress.start()
   if (getToken()) {
     if (to.path === '/login') {
       next({ path: '/' })
@@ -43,7 +43,7 @@ router.beforeEach((to, from, next) => {
       //         noGoBack: true
       //       }
       //     })
-      //     // NProgress.done()
+          NProgress.done()
       //   }
       // }
       next()
@@ -53,11 +53,11 @@ router.beforeEach((to, from, next) => {
       next()
     } else {
       next('/login')
-      // NProgress.done()
+      NProgress.done()
     }
   }
 })
 
 router.afterEach(() => {
-  // NProgress.done() // 结束Progress
+  NProgress.done() // 结束Progress
 })
