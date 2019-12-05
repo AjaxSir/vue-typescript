@@ -37,10 +37,13 @@ export default class GlobalMimins extends Vue {
     url: '',
     method: 'delete'
   }
+
   mounted() {
     this.fetchData(this.initForm)
   }
-
+  is_Phone(str:string) {
+    return (/^1([358][0-9]|4[579]|66|7[0135678]|9[89])[0-9]{8}$/).test(str)
+  }
   fetchData(option: object) {
     /**@description init数据
      * @argument tag no 不init数据
@@ -63,7 +66,7 @@ export default class GlobalMimins extends Vue {
                 this.updateArray.forEach((itemStatus: string) => {
                   ele[itemStatus] = false
                 })
-                ele['showMenu'] = false
+                this.$set(ele, 'showMenu', false)
               })
               this.page.total = res.data.data.length
               this.list_data = res.data.data
@@ -78,7 +81,7 @@ export default class GlobalMimins extends Vue {
                 this.updateArray.forEach((itemStatus: string) => {
                   ele[itemStatus] = false
                 })
-                ele['showMenu'] = false
+                this.$set(ele, 'showMenu', false)
               })
 
             } else {
@@ -120,7 +123,8 @@ export default class GlobalMimins extends Vue {
    */
   enterRowChange(row, column, cell, event) {
     /**@description hover enter tab 行 */
-    row.showMenu = true;
+    this.$set(row, 'showMenu', true)
+    // row.showMenu = true;
   }
   /**
    *
@@ -266,6 +270,7 @@ export default class GlobalMimins extends Vue {
     switch (note) {
       case '200':
         if (value.length === 200) {
+          value = value.slice(200)
           this.message('备注不能超过200个字符')
         }
         return;

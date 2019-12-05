@@ -101,10 +101,10 @@
     >
       <el-form ref="Forms" :rules='rules' :model="Form" label-width="80px">
         <el-form-item label="角色名" prop='name'>
-          <el-input v-model="Form.name"></el-input>
+          <el-input placeholder="输入角色名字" @input="constraintLength(Form.note,'10')" v-model="Form.name"></el-input>
         </el-form-item>
-        <el-form-item label="备注" prop='note'>
-          <el-input type="textarea" v-model="Form.note"></el-input>
+        <el-form-item label="备注"  placeholder="输入角色备注说明(最多200字)" prop='note'>
+          <el-input @input="constraintLength(Form.note,'200')" type="textarea" v-model="Form.note"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -159,7 +159,8 @@ export default class InformIssue extends Vue {
   }
   rules: object = {
    name: [
-            { required: true, message: '请输入角色名', trigger: 'blur' }
+            { required: true, message: '请输入角色名', trigger: 'blur' },
+            { min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'blur' }
           ],
   }
   changeStatus(row) {
@@ -176,7 +177,7 @@ export default class InformIssue extends Vue {
               this['fetchData'](this.initForm)
               this.$message.success('新增角色成功')
             }
-            this['dialogCreate'] = false
+            this['handleClose']()
           })
         } else {
           updateRole(this.Form).then(res => {
@@ -184,7 +185,7 @@ export default class InformIssue extends Vue {
               this['fetchData'](this.initForm)
               this.$message.success('修改角色成功')
             }
-            this['dialogCreate'] = false
+             this['handleClose']()
           })
         }
       }

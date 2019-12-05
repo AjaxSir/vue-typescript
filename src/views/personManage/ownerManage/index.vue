@@ -78,7 +78,7 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column align="center" class="serial-num" label="姓名">
+            <el-table-column :show-overflow-tooltip='true' align="center" class="serial-num" label="姓名">
               <template slot-scope="scope">
                 <el-button style="padding:0px;" type="text" @click="showDetail(scope.row, scope.$index)">{{scope.row.name }}</el-button>
               </template>
@@ -89,7 +89,11 @@
                 <el-input v-else @blur="phoneBlur(row)" @keyup.enter.native="confirmUpdatePhone(row)" v-model="phoneString" placeholder="输入电话"></el-input>
               </template>
             </el-table-column>
-            <el-table-column prop="sex" align="center" width="50" label="性别"></el-table-column>
+            <el-table-column :show-overflow-tooltip='true' prop="sex" align="center" width="50" label="性别">
+              <template slot-scope="{row}">
+                <span>{{ row.sex === '1' ? '男' : '女' }}</span>
+              </template>
+            </el-table-column>
             <el-table-column prop="img" align="center" label="人脸">
               <template slot-scope="scope">
                 <img
@@ -101,7 +105,7 @@
                 />
               </template>
             </el-table-column>
-            <el-table-column prop="note" align="center" label="用户备注">
+            <!-- <el-table-column prop="note" align="center" label="用户备注">
               <template slot-scope="{row}">
                 <span class="rowUpdate" v-if='!row.noteStatus' @click='row.noteStatus = !row.noteStatus'>{{ row.note }}</span>
                 <el-input type='textarea'
@@ -111,38 +115,38 @@
                  v-else
                  placeholder="输入备注"></el-input>
               </template>
-            </el-table-column>
-            <el-table-column prop="car" align="center" label="访客车辆">
+            </el-table-column> -->
+            <el-table-column :show-overflow-tooltip='true' prop="car" align="center" label="访客车辆">
               <template slot-scope="{row}">
                 <span>{{ row.house[0] && row.house[0].enableInviteCar === '1' ? '允许' : '禁止' }}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="car" align="center" label="邀请访客">
+            <el-table-column :show-overflow-tooltip='true' prop="car" align="center" label="邀请访客">
                <template slot-scope="{row}">
                 <span>{{ row.house[0] && row.house[0].enableInviteVisitor === '1' ? '允许' : '禁止' }}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="house_info" :show-overflow-tooltip='true' align="center" label="房屋信息">
+            <el-table-column prop="house_info" :show-overflow-tooltip='true' align="center" label="房屋编号">
               <template slot-scope="{row}">
                 <span>{{ row.house[0] && row.house[0].buildingName || '--' }}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="far_door" align="center" label="远程开门">
+            <el-table-column :show-overflow-tooltip='true' prop="far_door" align="center" label="远程开门">
               <template slot-scope="{row}">
                 <span>{{ row.house[0] && row.house[0].enableRemoteOpen === '1' ? '允许' : '禁止' }}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="far_door" align="center" label="用户类型">
+            <el-table-column :show-overflow-tooltip='true' prop="far_door" align="center" label="用户类型">
               <template slot-scope="{row}">
                 <span>{{ row.house[0] && row.house[0].type | typeFilter }}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="expire_time" align="center" label="过期时间">
+            <el-table-column :show-overflow-tooltip='true' prop="expire_time" align="center" label="过期时间">
               <template slot-scope="{row}">
                 <span>{{ row.house[0] && row.house[0].overTime }}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="status" align="center" label="状态">
+            <el-table-column :show-overflow-tooltip='true' prop="status" align="center" label="状态">
               <template slot-scope="{row}">
                 <span>{{  row.house[0] && row.house[0].status | statusFilter}}</span>
               </template>
@@ -290,8 +294,8 @@
             <!-- <el-form-item class="floatForm" label="身份证号:"  prop='cardName'>
               <el-input v-model="Form.cardName"  placeholder='输入卡名'></el-input>
             </el-form-item> -->
-            <el-form-item label="身份证号:" style='clear:both' label-width="85px"  prop='cardNo'>
-              <el-input v-model="Form.cardNo" placeholder='输入卡号'></el-input>
+            <el-form-item label="身份证号:"  class="floatForm" label-width="85px"  prop='cardNo'>
+              <el-input v-model="Form.cardNo" placeholder='输入身份证号'></el-input>
             </el-form-item>
             <el-form-item label="房屋:" style='clear:both'  prop='houseName'>
               <el-autocomplete
@@ -478,11 +482,20 @@ export default class OwnerManage extends Vue {
             { required: true, message: '请输入姓名', trigger: 'blur' }
           ],
     phone: [
-            { required: true, message: '请输入电话', trigger: 'blur' }
+            { required: true, validator: (rule, value, callback) => {
+                if (!this['is_Phone'](value)) {
+                  callback(new Error('填写正确的手机号'))
+                } else {
+                  callback()
+                }
+              }, trigger: 'blur' }
           ],
     cardNo: [
             { required: true, message: '请输入身份证号', trigger: 'blur' }
-          ]
+          ],
+    note: [
+       { required: true, message: '请输入备注且最多不超过200字', trigger: 'blur', max: 200 }
+    ]
   }
   private imgVisible: Boolean = false; // 控制放大图片的visible
   private bigImg: String = ""; // 保存放大图片的地址
@@ -677,7 +690,6 @@ export default class OwnerManage extends Vue {
       if (res.data.data) {
         result = res.data.data
         result.splice(10)
-        console.log(result)
         cb(result)
       }
     })
@@ -686,8 +698,7 @@ export default class OwnerManage extends Vue {
   objectSpanMethod({row, column, rowIndex, columnIndex}) {
       if(columnIndex === 0 || columnIndex === 1
        || columnIndex === 2 || columnIndex === 3
-       || columnIndex === 4 || columnIndex === 5
-       || columnIndex === 6) {
+       || columnIndex === 4 || columnIndex === 5) {
         const _row_1 = this.spanArray[rowIndex];
         const _col_1 = _row_1 > 0 ? 1 : 0; //如果被合并了_row=0则它这个列需要取消
         return {

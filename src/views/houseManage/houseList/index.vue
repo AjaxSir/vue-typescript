@@ -125,8 +125,8 @@
 
             <el-table-column align='center' :show-overflow-tooltip='true' prop="note" label="备注">
               <template slot-scope="scope">
-              <span class="rowUpdate" v-if='!scope.row.noteStatus' @click='focusNoteInput(scope.row)'>{{ scope.row.note || '点击编辑' }}</span>
-              <el-input type='textarea' :ref='scope.row.id'  @keyup.enter.native="confirmUpdateNote(scope.row)" @blur="noteBlur(scope.row)" v-model="noteString" v-else placeholder="输入备注"></el-input>
+              <span class="rowUpdate" v-show='!scope.row.noteStatus' @click='focusNoteInput(scope.row)'>{{ scope.row.note || '点击编辑' }}</span>
+              <el-input type='textarea' :ref='scope.row.id'  @keyup.enter.native="confirmUpdateNote(scope.row)" @blur="noteBlur(scope.row)" v-model="noteString"  v-show='scope.row.noteStatus' placeholder="输入备注"></el-input>
               </template>
             </el-table-column>
           </el-table>

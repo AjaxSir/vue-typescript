@@ -47,7 +47,7 @@
         </el-dropdown>
 
         <div v-if="filterStatus" class="content">
-          <span @click="visibleFilter = !visibleFilter">
+          <span @click="visibleFilter = !visibleFilter,visible = false">
             <i class="iconfont icon-filtration"></i>
             过滤
           </span>
@@ -69,7 +69,7 @@
 
         <i
           v-if="pageStatus"
-          @click="visible = !visible"
+          @click="visible = !visible,visibleFilter = false"
           style="font-size:18px;"
           class="iconfont icon-_shezhi-xian"
         ></i>
@@ -191,6 +191,7 @@ export default class ActionManage extends Vue {
       this.filterForm,
       this.page
     );
+    this.visible = false
     return this.initFormHeader;
   }
   /**
@@ -205,6 +206,7 @@ export default class ActionManage extends Vue {
       this.initFormHeader["params"],
       this.page
     );
+    this.visibleFilter = false
     // this.$emit('fetchData', this.initFormHeader)
     this.visible = false;
     console.log(this.initFormHeader);

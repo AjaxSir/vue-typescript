@@ -93,10 +93,10 @@
     >
       <el-form :rules='rules' ref="Forms" :model="Form" label-width="80px">
         <el-form-item v-if='!Form.id' prop='name' label="账号名">
-          <el-input v-model="Form.name"></el-input>
+          <el-input placeholder="请输入账号名" @input="constraintLength(Form.name, '10')" v-model="Form.name"></el-input>
         </el-form-item>
         <el-form-item prop='password' v-if='!Form.id' label="密码">
-          <el-input type='password' v-model="Form.password"></el-input>
+          <el-input placeholder="请输入密码" @input="constraintLength(Form.name, '10')" type='password' v-model="Form.password"></el-input>
         </el-form-item>
         <el-form-item prop='roleName' label="角色">
           <el-select v-model="Form.roleName" placeholder="请选择角色">
@@ -104,7 +104,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="备注">
-          <el-input type="textarea" v-model="Form.note"></el-input>
+          <el-input  placeholder="请输入备注" @input="constraintLength(Form.name, '200')" type="textarea" v-model="Form.note"></el-input>
         </el-form-item>
 
       </el-form>

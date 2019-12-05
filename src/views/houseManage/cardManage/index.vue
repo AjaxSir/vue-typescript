@@ -18,11 +18,11 @@
           <div slot="houseNum">
             <div class="word-filter">
               <span class="filter-name">关联房屋:</span>
-              <el-input class="input-filter" v-model='filterForm.houseName' size="small"></el-input>
+              <el-input class="input-filter" placeholder="请输入关联房屋查找" v-model='filterForm.houseName' size="small"></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">卡号:</span>
-              <el-input class="input-filter" v-model='filterForm.cardNo' size="small"></el-input>
+              <el-input class="input-filter" placeholder="请输入卡号查找" v-model='filterForm.cardNo' size="small"></el-input>
             </div>
              <div class="word-filter">
               <span class="filter-name">状态:</span>
@@ -44,7 +44,6 @@
           <el-table
             :data="list_data"
             stripe
-
             v-loading='showLoading'
             style="max-height: 75vh;overflow:auto"
             highlight-current-row
@@ -90,11 +89,12 @@
             </el-table-column> -->
             <el-table-column :show-overflow-tooltip='true' align="center" prop="validDate" label="过期时间">
               <template slot-scope="scope">
-                <el-tag class='rowUpdate'
-                @click='scope.row.validDateStatus = !scope.row.validDateStatus'
-                v-if='!scope.row.validDateStatus'>{{ scope.row.validDate }}</el-tag>
+                <span class='rowUpdate'
+                @click='showUpdateTime(scope.row)'
+                v-show='!scope.row.validDateStatus'>{{ scope.row.validDate }}</span>
                 <el-date-picker
-                  v-else
+                  v-show='scope.row.validDateStatus'
+                  :ref='scope.row.id'
                   v-model="scope.row.validDate"
                   type="date"
                   @change='validDateChange($event, scope.row.id)'
@@ -270,7 +270,15 @@ export default class CardManage extends Vue {
         status
       }
     }
-
+  // 切换到修改时间框
+  showUpdateTime(row){
+    row.validDateStatus = !row.validDateStatus
+    this.$nextTick(() => {
+      const timeInput = this.$refs[row.id] as HTMLElement
+      console.log(timeInput)
+      timeInput.focus()
+    })
+  }
   /// 修改门禁卡过期时间
   validDateChange(date: string, id: string) {
     date = formatTimeObj(date)
@@ -419,5 +427,8 @@ export default class CardManage extends Vue {
       color: #ddd;
     }
   }
+}
+.detai-info{
+  font-size: 14px;
 }
 </style>

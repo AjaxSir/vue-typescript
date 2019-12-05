@@ -104,25 +104,25 @@
       <el-tabs type="card" v-model="activeName">
         <el-tab-pane label="详细信息" name="first">
           <el-form label-width="100px" :model="detailDialogForm">
-            <el-form-item label="所属单元信息:">
+            <el-form-item class="marginForm" label="所属单元信息:">
               <span>{{detailDialogForm.address}}</span>
             </el-form-item>
-            <el-form-item label="状态:">
+            <el-form-item class="marginForm" label="状态:">
               <span>{{detailDialogForm.type === '1' ? "连线中" : "离线中"}}</span>
             </el-form-item>
-            <el-form-item label="门禁类型:">
+            <el-form-item class="marginForm" label="门禁类型:">
               <span>{{detailDialogForm.type | devType}}</span>
             </el-form-item>
-            <el-form-item label="绑定时间:">
+            <el-form-item class="marginForm" label="绑定时间:">
               <span>{{detailDialogForm.bindTime || '--'}}</span>
             </el-form-item>
-            <el-form-item label="设备绑定时间:">
+            <el-form-item class="marginForm" label="设备绑定时间:">
               <span>{{detailDialogForm.bindingTime || '--'}}</span>
             </el-form-item>
-            <el-form-item label="创建时间:">
+            <el-form-item class="marginForm" label="创建时间:">
               <span>{{detailDialogForm.createDate || '--'}}</span>
             </el-form-item>
-            <el-form-item label="最后离线时间:">
+            <el-form-item class="marginForm" label="最后离线时间:">
               <span>{{detailDialogForm.downTime || '--'}}</span>
             </el-form-item>
           </el-form>
@@ -160,7 +160,7 @@
 
       >
         <el-form-item class="phone-input" label="设备编号: " prop="serialNumber">
-          <el-input style="width:310px" v-model="Form.serialNumber"></el-input>
+          <el-input style="width:310px" placeholder="请输入设备编号" v-model="Form.serialNumber"></el-input>
         </el-form-item>
         <el-form-item class="phone-input" label="设备进出: " prop="inOut">
           <el-switch
@@ -186,7 +186,7 @@
           <el-input style="width:310px" placeholder="例如:楼上/楼下" v-model="Form.subAddress"></el-input>
         </el-form-item>
         <el-form-item class="phone-input" label="设备备注: " prop="note">
-          <el-input type='textarea' style="width:310px" v-model="Form.note"></el-input>
+          <el-input type='textarea' placeholder="请输入设备备注" style="width:310px" v-model="Form.note"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -420,6 +420,7 @@ export default class DeviceManage extends Vue {
   confirmBind() {
     this.$refs['Forms']["validate"](valid => {
       if(valid) {
+        console.log(this.Form)
         if (this.Form['longitude'] === '' || this.Form['latitude'] === '') {
           return this.$message.error('请输入正确的设备地址')
         } else {
@@ -500,5 +501,8 @@ export default class DeviceManage extends Vue {
 
 .capture-img {
   width: 60px;
+}
+.marginForm{
+  margin-bottom: 0px;
 }
 </style>
