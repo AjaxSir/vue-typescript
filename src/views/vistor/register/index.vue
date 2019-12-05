@@ -408,6 +408,7 @@ export default class VistorRegister extends Vue {
   pickOptionStart: object = {}; //按照时间段查询的开始时间
   pickOptionEnd: object = {}; //按照时间段查询的结束时间
   private inputStatus: Boolean = false; //是否手动输入
+  private affirmStatus: Boolean = false; //是否有访客信息
   private elseInfo: Object = {
     //其他信息
     cardName: "", //其他证件
@@ -631,6 +632,8 @@ export default class VistorRegister extends Vue {
     /**@description 注册访客
      * @argument inputStatus:false 刷卡注册 :true 手动注册
      */
+    // for (const key in this.vistorForm) {
+    // if (this.vistorForm[key]) {
     if (!this.inputStatus) {
       const form = { ...this.writeVisitor };
       form["reasons"] = this.elseInfo["reasons"];
@@ -658,6 +661,8 @@ export default class VistorRegister extends Vue {
         console.log(err);
       }
     }
+
+    // }
   }
 
   cancelBtn() {
@@ -698,7 +703,6 @@ export default class VistorRegister extends Vue {
     flex: 1;
   }
 }
-
 
 .menu-control {
   position: absolute;

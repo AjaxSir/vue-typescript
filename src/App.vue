@@ -14,7 +14,7 @@ export default {
   margin: 0px;
   padding: 0px;
 }
-#nprogress .bar {
-  background: #4e80a4 !important; //自定义颜色
-}
+// #nprogress .bar {
+//   background: #4e80a4 !important; //nprogress自定义颜色
+// }
 </style>

@@ -45,9 +45,9 @@
                   <el-dropdown trigger="click" placement="bottom-start" @command="commandClick">
                     <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
                     <el-dropdown-menu slot="dropdown">
-                      <div @click="editFrom(scope.row)">
+                      <!-- <div @click="editFrom(scope.row)">
                         <el-dropdown-item :command="returnCommand('update', scope.row)">修改</el-dropdown-item>
-                      </div>
+                      </div>-->
 
                       <el-dropdown-item
                         :command="returnCommand('delete', scope.row)"
@@ -58,11 +58,18 @@
               </template>
             </el-table-column>
 
-            <el-table-column class="serial-num" prop="name" label="出入口名称" align="center"></el-table-column>
+            <el-table-column
+              class="serial-num"
+              prop="name"
+              label="出入口名称"
+              align="center"
+              width="150px"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
 
-            <el-table-column prop="enterTimes" align="center" label="累计进入人数"></el-table-column>
+            <el-table-column prop="enterTimes" align="center" label="累计进入人数" width="130px"></el-table-column>
 
-            <el-table-column prop="exitTimes" label="累计出人数" align="center"></el-table-column>
+            <el-table-column prop="exitTimes" label="累计出人数" align="center" width="130px"></el-table-column>
 
             <el-table-column prop="note" align="center" label="备注" :show-overflow-tooltip="true">
               <template slot-scope="{row}">
@@ -332,7 +339,6 @@ export default class InformIssue extends Vue {
 </script>
 
 <style lang="scss" scoped>
-
 td {
   padding: 6px 0px;
 }
