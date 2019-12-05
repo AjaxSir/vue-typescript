@@ -52,7 +52,6 @@
             :data="list_data"
             stripe
             style="max-height: 75vh;overflow:auto"
-
             v-loading='showLoading'
             highlight-current-row
             @cell-mouse-enter="enterRowChange"

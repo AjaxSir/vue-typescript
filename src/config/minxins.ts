@@ -194,6 +194,12 @@ export default class GlobalMimins extends Vue {
         this.Form = Object.assign(this.Form, options['row'])
         this.dialogCreate = true
         break
+        case 'rebind':
+          const copyForm = Object.assign({}, this.Form)
+            this.Form = Object.assign(this.Form, options['row'])
+            this.Form['bindingType'] = copyForm['bindingType']
+            this.dialogCreate = true
+            break
       case 'resetPassword':
         this['resetVisible'] = true
         this['resetForms'] = Object.assign(this['resetForms'], options['row'])

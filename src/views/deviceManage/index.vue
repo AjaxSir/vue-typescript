@@ -50,12 +50,13 @@
               </template>
             </el-table-column>
 
-            <el-table-column align="center" prop="name" label="设备编号" width="90">
+            <el-table-column align="center" prop="name" label="设备名字" width="90">
               <template slot-scope="scope">
                 <el-button @click="showDetails(scope.row)" type="text">{{scope.row.name}}</el-button>
               </template>
             </el-table-column>
-
+            <el-table-column align="center" prop="serialNumber" label="设备编号" width="90">
+            </el-table-column>
             <el-table-column align="center" prop="address" label="单元信息"></el-table-column>
 
             <el-table-column align="center" prop="bindingType" label="设备类型">
@@ -153,29 +154,17 @@
       <el-form
         ref="Forms"
         :rules="rules"
-        :model="deviceForm"
+        :model="Form"
         label-position="right"
         label-width="100px"
 
       >
         <el-form-item class="phone-input" label="设备编号: " prop="serialNumber">
-          <el-input style="width:310px" v-model="deviceForm.serialNumber"></el-input>
+          <el-input style="width:310px" v-model="Form.serialNumber"></el-input>
         </el-form-item>
-        <!-- <el-form-item class="phone-input" label="设备类型: " prop="type">
-          <el-select
-            style="width:310px;"
-            v-model="deviceForm.type"
-            placeholder="请选择设备类型"
-          >
-            <el-option label="门禁" value="1"></el-option>
-            <el-option label="车禁" value="2"></el-option>
-            <el-option label="注册机" value="3"></el-option>
-            <el-option label="访客机" value="4"></el-option>
-          </el-select>
-        </el-form-item> -->
         <el-form-item class="phone-input" label="设备进出: " prop="inOut">
           <el-switch
-            v-model="deviceForm.inOut"
+            v-model="Form.inOut"
             active-text="进"
             inactive-text="出"
             active-color="#13ce66"
@@ -185,16 +174,19 @@
           </el-switch>
         </el-form-item>
         <el-form-item class="phone-input" label="设备地址: " prop="address">
-          <el-input @change="getlocLat" style="width:310px" v-model="deviceForm.address"></el-input>
+          <el-input @change="getlocLat" placeholder="输入设备所在地址" style="width:310px" v-model="Form.address"></el-input>
           <el-button @click='mapVisible = true' type='text'>地图选点</el-button>
         </el-form-item>
 
         <el-form-item class="phone-input" label="绑定位置: " prop="bindingAddress">
-          <el-input style="width:310px" v-model="deviceForm.bindingAddress"></el-input>
+          <el-input style="width:310px" placeholder="点击右方设备绑定选择对应设备" v-model="Form.bindingAddress"></el-input>
           <el-button type='text' @click='deviceBindingVisible = true'>设备绑定</el-button>
         </el-form-item>
+         <el-form-item class="phone-input" label="具体位置: " prop="subAddress">
+          <el-input style="width:310px" placeholder="例如:楼上/楼下" v-model="Form.subAddress"></el-input>
+        </el-form-item>
         <el-form-item class="phone-input" label="设备备注: " prop="note">
-          <el-input type='textarea' style="width:310px" v-model="deviceForm.note"></el-input>
+          <el-input type='textarea' style="width:310px" v-model="Form.note"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -204,12 +196,12 @@
     </el-dialog>
     <!-- 设备绑定 -->
     <el-dialog :close-on-click-modal='false' width='600px' title="设备绑定" :visible.sync="deviceBindingVisible">
-      <el-form :model="deviceForm">
+      <el-form :model="Form">
         <el-form-item label="设备区分:" :label-width="formLabelWidth">
           <el-select
             @change='bindingTypeChange'
             style="width:310px;"
-            v-model="deviceForm.bindingType"
+            v-model="Form.bindingType"
             placeholder="请选择设备区分"
           >
             <el-option label="单元楼" value="1"></el-option>
@@ -264,8 +256,8 @@
     </el-dialog>
     <!-- 设备地址选择 -->
     <el-dialog :close-on-click-modal='false' title="选取设备地址" :visible.sync="mapVisible">
-      <el-input v-model="deviceForm.address" placeholder="输入设备地址"></el-input>
-      <BaiduMap @pointClick='pointClick' :keyword='deviceForm.address' />
+      <el-input v-model="Form.address" placeholder="输入设备地址"></el-input>
+      <BaiduMap @pointClick='pointClick' :keyword='Form.address' />
       <div slot="footer" class="dialog-footer">
         <el-button @click="mapVisible = false">取 消</el-button>
         <el-button type="primary" @click="mapVisible = false">确 定</el-button>
@@ -324,18 +316,17 @@ export default class DeviceManage extends Vue {
   detailDialogForm: Object = {}; // 设备详情
   doorRecordTable: Array<Object> = []; // 设备抓拍的通行记录
   private roleTitle: String = "0";
-  private deviceForm: Object = { // 创建设备表单
+  private Form: Object = { // 创建设备表单
     address: '',
     bindingId:'',
     bindingAddress: '',
     bindingType: '1',
-    inOut: 'in',
+    inOut: '出',
     latitude: '',
     longitude:'',
     note: '',
     serialNumber: '',
-    subAddress: '',
-    type: '1'
+    subAddress: ''
   };
   deviceBindingVisible: boolean = false // 设备绑定dialog状态
   deviceBindingData: Array<Object> = [
@@ -350,6 +341,9 @@ export default class DeviceManage extends Vue {
           ],
       bindingAddress: [
             { required: true, message: '请选择设备绑定位置', trigger: 'blur' }
+          ],
+      subAddress: [
+            { required: true, message: '请选择设备具体绑定位置(楼上/楼下)', trigger: 'blur' }
           ]
     }
   deviceId: string = ''
@@ -362,30 +356,30 @@ export default class DeviceManage extends Vue {
       axios({
         url: `/v2/`,
         params: {
-          address: this.deviceForm['address'],
+          address: this.Form['address'],
           ak: 'vCZU88Guz4BmAODWTm8k9BP0WlwId1V0',
           output: 'json'
         },
         method: 'get'
       }).then(res => {
         if (!res.data.status) {
-          this.deviceForm['longitude'] = res.data.result.location.lng
-          this.deviceForm['latitude'] = res.data.result.location.lat
+          this.Form['longitude'] = res.data.result.location.lng
+          this.Form['latitude'] = res.data.result.location.lat
         } else {
           this.$message({
             message: '没有找到对应的位置信息',
             type: 'error'
           })
-          this.deviceForm['longitude'] = ''
-          this.deviceForm['latitude'] = ''
+          this.Form['longitude'] = ''
+          this.Form['latitude'] = ''
         }
       })
     }
   // 点击地图选取地址
   pointClick(Object: object) {
-    this.deviceForm['address'] = Object['province'] + Object['city'] + Object['district'] + Object['street']
-    this.deviceForm['latitude'] = Object['lat']
-    this.deviceForm['longitude'] = Object['lng']
+    this.Form['address'] = Object['province'] + Object['city'] + Object['district'] + Object['street']
+    this.Form['latitude'] = Object['lat']
+    this.Form['longitude'] = Object['lng']
     console.log(1)
   }
   // 获取单元楼列表
@@ -406,8 +400,8 @@ export default class DeviceManage extends Vue {
       ele['bindStatus'] = false
     })
     row.bindStatus = true
-    this.deviceForm['bindingId'] = row.id
-    this.deviceForm['bindingAddress'] = row.locationName || '暂无'
+    this.Form['bindingId'] = row.id
+    this.Form['bindingAddress'] = row.locationName || '暂无'
   }
   // 获取出入口列表
   fetchInputList() {
@@ -426,10 +420,10 @@ export default class DeviceManage extends Vue {
   confirmBind() {
     this.$refs['Forms']["validate"](valid => {
       if(valid) {
-        if (this.deviceForm['longitude'] === '' || this.deviceForm['latitude'] === '') {
+        if (this.Form['longitude'] === '' || this.Form['latitude'] === '') {
           return this.$message.error('请输入正确的设备地址')
         } else {
-          createDevice(this.deviceForm).then(res => {
+          createDevice(this.Form).then(res => {
             if(res.data.code === 200) {
               this['handleClose']()
               this['fetchData'](this.initForm)

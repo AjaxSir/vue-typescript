@@ -51,9 +51,11 @@ export default class AppMain extends Vue{
   // box-shadow: 2px 0px 10px 2px lightgray;
 }
 .routerView{
-  flex: 1;
-  margin-left: 15px;
-  padding-right: 20px;
+  // flex: 1;
+  // margin-left: 15px;
+  width: calc(100% - 182px);
+  // padding-right: 20px;
+  box-sizing: border-box;
 }
 
  .fade-enter{
