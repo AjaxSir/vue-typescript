@@ -59,16 +59,16 @@ import axios from 'axios'
 export default class BaiDuMap extends Vue {
   @Prop({ default: '' }) keyword : string
   @Prop({ default: true }) searchStatus : string
-  @Prop({ default: true }) markerStatus : string
+  @Prop({ default: false }) markerStatus : string
   @Prop({ default: 10 }) zoom : number
-  @Prop({ default: true }) backStatus : boolean
+  @Prop({ default: false }) backStatus : boolean
   @Prop({ default: () => {
     return []
   } }) positionList : Array<object>
   location:string = ''
   list: Array<object> = []
   locImg: string = require('@/assets/loc.png')
-  autoVisible:boolean = false
+  autoVisible:boolean = true
   infoWindowOpen(index) {
     this.positionList[index]['show'] = true
   }
@@ -77,8 +77,8 @@ export default class BaiDuMap extends Vue {
   }
     getPoint(e) { // 点击地图获取一些信息，
       const _this = this
-      this.autoVisible = false
-      if (this.backStatus) {
+      this.autoVisible = true
+      // if (this.backStatus) {
         let addRess = {
           lng: '',
           lat: '',
@@ -118,12 +118,7 @@ export default class BaiDuMap extends Vue {
           })
         }
       })
-        // const geocoder = new BMap['Geocoder']() // 创建地址解析器的实例
-        // geocoder.getLocation(e.point, rs => {
-        //   addRess = Object.assign(addRess, rs.addressComponents)
-        //   this.$emit('pointClick', addRess)
-        // })
-      }
+      // }
     }
 
   mounted() {

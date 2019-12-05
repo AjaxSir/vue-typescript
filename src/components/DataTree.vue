@@ -92,7 +92,7 @@
             </div>
           </el-form-item>
           <el-form-item label="备注:" prop='note' label-width="85px">
-            <el-input v-model="batchForm.note" autocomplete="off"></el-input>
+            <el-input type='textarea' v-model="batchForm.note" autocomplete="off"></el-input>
           </el-form-item>
         </el-form>
       </el-tab-pane>
@@ -110,7 +110,7 @@
               :value="item.name">
             </el-option>
           </el-select>
-          <el-button @click='showUnitSetting = !showUnitSetting' type='text'>序号单元设置</el-button>
+          <!-- <el-button @click='showUnitSetting = !showUnitSetting' type='text'>序号单元设置</el-button>
           <div v-if='showUnitSetting'>
              <el-tag
              style="margin-left:5px"
@@ -131,7 +131,7 @@
             >
             </el-input>
             <el-button v-else class="button-new-tag" size="small" @click="showInput">新增单位</el-button>
-          </div>
+          </div> -->
         </el-form-item>
         <el-form-item label="别名:" prop='name' label-width="85px">
           <el-input v-model="HouseForm.name" autocomplete="off"></el-input>
@@ -365,7 +365,16 @@ export default class DataTree extends Vue {
     page: 1,
     total: 1
   }
-  batchForm: object = {} // 批量添加表单
+  batchForm: object = {
+    serialNumber: '', // 序号
+    serialNumberUnit: '区区',
+    name: '',
+    note: '',
+    min: '',
+    max: '',
+    parentId: '',
+    title: '添加子分组'
+  } // 批量添加表单
   activeName: string = 'first'
   startTime: string = '18:00'
   endTime: string = '21:00' // 权限修改时间
@@ -407,7 +416,7 @@ export default class DataTree extends Vue {
   // 新增分组表单
   HouseForm: object = {
     serialNumber: '', // 序号
-    serialNumberUnit: '区',
+    serialNumberUnit: '区区',
     name: '',
     note: '',
     parentId: '',
@@ -563,7 +572,7 @@ export default class DataTree extends Vue {
   }
   /** 新增或修改分组信息 */
   GroupAction() {
-    if (this.activeName === 'first') {
+    if (this.activeName === 'second') {
       if (this.nodeAction === 'addGroup') {
         addHouseGroup(this.HouseForm).then(res => {
           if (res.data.code === 200) {
@@ -587,6 +596,8 @@ export default class DataTree extends Vue {
           }
         })
       }
+    } else {
+      console.log(Number(this.batchForm['min']), Number(this.batchForm['max']))
     }
 
   }
@@ -656,6 +667,7 @@ export default class DataTree extends Vue {
       case 'addGroup' :
         this.HouseForm['title'] = '添加子分组'
         this.HouseForm['parentId'] = treeData.data ? treeData.data.id : ''
+        this.batchForm['parentId'] = treeData.data ? treeData.data.id : ''
         this.HouseVisible = true
         this.activeName = 'first'
         this.$nextTick(() => {
