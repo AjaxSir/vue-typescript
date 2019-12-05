@@ -35,7 +35,7 @@
           <el-table
             :data="cardList"
             stripe
-            class="demo-block"
+
             highlight-current-row
             @cell-mouse-enter="enterRowChange"
             @cell-mouse-leave="leaveRowChange"
@@ -156,15 +156,6 @@ export default class LibraryManage extends Vue {
     // this.dialogFormVisible = true;
   }
 
-  enterRowChange(row, column, cell, event) {
-    /**@description hover enter tab 行 */
-    row.showMenu = true;
-  }
-
-  leaveRowChange(row) {
-    /**@description hover leave tab 行 */
-    row.showMenu = false;
-  }
   queryIdetity(val) {
     this.dialogData = val;
     this.dialogLibrary = true;
@@ -199,9 +190,7 @@ export default class LibraryManage extends Vue {
     cursor: pointer;
   }
 }
-.table-col {
-  position: relative;
-}
+
 
 // .menu-control {
 //   position: absolute;

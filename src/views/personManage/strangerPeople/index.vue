@@ -22,7 +22,7 @@
             v-loading="showLoading"
             :data="list_data"
             stripe
-            class="demo-block"
+
             highlight-current-row
             @cell-mouse-enter="enterRowChange"
             @cell-mouse-leave="leaveRowChange"
@@ -154,15 +154,6 @@ export default class CardManage extends Vue {
     // this.dialogFormVisible = true;
   }
 
-  enterRowChange(row, column, cell, event) {
-    /**@description hover enter tab 行 */
-    row.showMenu = true;
-  }
-
-  leaveRowChange(row) {
-    /**@description hover leave tab 行 */
-    row.showMenu = false;
-  }
   queryIdetity() {
     this.dialogLibrary = true;
   }
@@ -205,9 +196,7 @@ td {
     cursor: pointer;
   }
 }
-.table-col {
-  position: relative;
-}
+
 .close-menu {
   width: 10px;
   height: 48px;

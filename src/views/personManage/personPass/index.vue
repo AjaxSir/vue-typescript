@@ -81,7 +81,7 @@
             stripe
             v-loading='showLoading'
             style="max-height: 75vh;overflow:auto"
-            class="demo-block"
+
             highlight-current-row
             @cell-mouse-enter="enterRowChange"
             @cell-mouse-leave="leaveRowChange"
@@ -268,9 +268,7 @@ export default class PersonPass extends Vue {
     cursor: pointer;
   }
 }
-.table-col {
-  position: relative;
-}
+
 
 .menu-control {
   position: absolute;

@@ -12,6 +12,7 @@ import store from "./store/index";
 
 
 import '@/icons' // icon
+import '@/permission' // permission control
 
 import './plugins/element.js'
 import BaiduMap from 'vue-baidu-map'

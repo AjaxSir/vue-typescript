@@ -698,9 +698,7 @@ export default class VistorRegister extends Vue {
     flex: 1;
   }
 }
-.table-col {
-  position: relative;
-}
+
 
 .menu-control {
   position: absolute;

@@ -118,7 +118,7 @@
             height="65vh"
             :data="list_data"
             stripe
-            class="demo-block"
+
             highlight-current-row
             v-loading="showLoading"
             @cell-mouse-enter="enterRowChange"
@@ -561,9 +561,7 @@ export default class CardManage extends Vue {
   position: relative;
 }
 
-.table-col {
-  position: relative;
-}
+
 
 .menu-control {
   position: absolute;

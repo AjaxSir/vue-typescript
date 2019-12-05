@@ -64,7 +64,7 @@
             v-loading="showLoading"
             :data="list_data"
             stripe
-            class="demo-block"
+
             highlight-current-row
             @cell-mouse-enter="enterRowChange"
             @cell-mouse-leave="leaveRowChange"
@@ -760,16 +760,6 @@ export default class CarList extends Vue {
     this.detailDialogVisible = false; //车辆详情dialog
   }
 
-  enterRowChange(row, column, cell, event) {
-    /**@description hover enter tab 行 */
-    row.showMenu = true;
-  }
-
-  leaveRowChange(row) {
-    /**@description hover leave tab 行 */
-    row.showMenu = false;
-  }
-
   showCarDetails(row) {
     this.detailDialogVisible = true;
     this.CarDialogForm = Object.assign({}, row);
@@ -846,9 +836,7 @@ export default class CarList extends Vue {
   position: relative;
 }
 
-.table-col {
-  position: relative;
-}
+
 
 .capture-img {
   width: 30px;
