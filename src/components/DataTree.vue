@@ -13,11 +13,18 @@
           <el-dropdown-item :command='commandObj("addGroup", {})'>添加子分组</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
+      <el-dropdown v-else class='dropdownAll' @command='commandTreeClick' placement="bottom-start">
+        <i class="iconfont icon-menu"></i>
+        <el-dropdown-menu  slot="dropdown">
+          <el-dropdown-item :command='commandObj("addRoleGroup", {})'>创建权限组</el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
     </div>
     <el-tree
       :data="TreeData"
       node-key="id"
       :props='dataFormate'
+      accordion
       :default-expand-all='false'
       :expand-on-click-node="false"
       @node-click="handleNodeClick"
@@ -41,7 +48,7 @@
               <el-dropdown-item v-if='node.data.type === "building"' :command='commandObj("deleteBuilding", node)'>删除单元楼</el-dropdown-item>
             </el-dropdown-menu>
             <el-dropdown-menu v-if='type === "role"' slot="dropdown">
-              <el-dropdown-item :command='commandObj("addRoleGroup", node)'>创建权限组</el-dropdown-item>
+
               <el-dropdown-item :command='commandObj("updateRoleGroup", node)'>修改</el-dropdown-item>
               <el-dropdown-item :command='commandObj("deleteRoleGroup", node)'>删除</el-dropdown-item>
             </el-dropdown-menu>
@@ -55,9 +62,10 @@
       <el-tab-pane label="批量添加" name="first">
         <el-form  ref='batchForm' :rules='batchRules' :model="batchForm" label-width="80px">
           <el-form-item label="编号:">
-            <el-input style="width:100px" type='number' placeholder="开始编号" v-model="batchForm.min"></el-input>
+            <el-input style="width:100px" placeholder="开始编号" v-model="batchForm.min"></el-input>
               至
-            <el-input placeholder="结束编号"  type='number' style="width:100px" v-model="batchForm.max"></el-input>
+            <el-input placeholder="结束编号"  style="width:100px" v-model="batchForm.max"></el-input>
+            设备名以序号排序命名
           </el-form-item>
           <el-form-item label="序号单位:" prop='serialNumberUnit' label-width="85px">
             <el-select v-model="batchForm.serialNumberUnit" placeholder="请选择">
@@ -110,28 +118,6 @@
               :value="item.name">
             </el-option>
           </el-select>
-          <!-- <el-button @click='showUnitSetting = !showUnitSetting' type='text'>序号单元设置</el-button>
-          <div v-if='showUnitSetting'>
-             <el-tag
-             style="margin-left:5px"
-              :key="index"
-              v-for="(tag, index) in Tags"
-              closable
-              :disable-transitions="false"
-              @close="deleteTag(tag, index)">
-              {{tag.name}}
-            </el-tag>
-            <el-input
-              class="input-new-tag"
-              v-if="newTag"
-              v-model="newTagValue"
-              ref="saveTagInput"
-              size="small"
-              @blur="handleInputConfirm"
-            >
-            </el-input>
-            <el-button v-else class="button-new-tag" size="small" @click="showInput">新增单位</el-button>
-          </div> -->
         </el-form-item>
         <el-form-item label="别名:" prop='name' label-width="85px">
           <el-input v-model="HouseForm.name" autocomplete="off"></el-input>
@@ -142,7 +128,7 @@
       </el-form>
       </el-tab-pane>
   </el-tabs>
-  <div slot="footer" class="dialog-footer">
+      <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="GroupAction">确 定</el-button>
         <el-button @click="HouseVisible = false">取 消</el-button>
       </div>
@@ -167,29 +153,6 @@
               :value="item.name">
             </el-option>
           </el-select>
-          <!-- <el-input class='input' v-model="UnitForm.serialNumberUnit" autocomplete="off"></el-input>  -->
-          <!-- <el-button @click='showUnitSetting = !showUnitSetting' type='text'>序号单元设置</el-button>
-          <div v-if='showUnitSetting'>
-             <el-tag
-             style="margin-left:5px"
-              :key="index"
-              v-for="(tag, index) in Tags"
-              closable
-              :disable-transitions="false"
-              @close="deleteTag(tag, index)">
-              {{tag.name}}
-            </el-tag>
-            <el-input
-              class="input-new-tag"
-              v-if="newTag"
-              v-model="newTagValue"
-              ref="saveTagInput"
-              size="small"
-              @blur="handleInputConfirm"
-            >
-            </el-input>
-            <el-button v-else class="button-new-tag" size="small" @click="showInput">新增单位</el-button>
-          </div> -->
 
         </el-form-item>
         <el-form-item label="楼层数:" prop='storeyNum' label-width="85px">
@@ -231,7 +194,7 @@
       </el-form>
       <div class="bindDevice">
       <span style="float:left">设备权限</span>
-      <el-button style="float:right" type='primary' @click='bindDeviceListVisible = true'>绑定设备</el-button>
+      <el-button style="float:right" type='primary' @click='bindDeviceListVisible = true, fetchDeviceList(1)'>绑定设备</el-button>
       </div>
       <el-table
         :data="bindDeviceList"
@@ -367,7 +330,7 @@ export default class DataTree extends Vue {
   }
   batchForm: object = {
     serialNumber: '', // 序号
-    serialNumberUnit: '区区',
+    serialNumberUnit: '区',
     name: '',
     note: '',
     min: '',
@@ -416,7 +379,7 @@ export default class DataTree extends Vue {
   // 新增分组表单
   HouseForm: object = {
     serialNumber: '', // 序号
-    serialNumberUnit: '区区',
+    serialNumberUnit: '区',
     name: '',
     note: '',
     parentId: '',
@@ -528,8 +491,9 @@ export default class DataTree extends Vue {
   // 保存到绑定设备 并验证是否已经存在 已存在不加入
   saveBindDevicelist() {
     const strDevice = JSON.stringify(this.bindDeviceList)
+
     this.unConfirmDeviceList.forEach(ele => {
-      if(strDevice.indexOf(JSON.stringify(ele)) === -1) {
+      if(strDevice.indexOf(ele['serialNumber']) === -1) {
         ele['startTime'] = '18:00'
         ele['endTime'] = '21:00'
         ele['deviceId'] = ele['id']
@@ -571,7 +535,7 @@ export default class DataTree extends Vue {
     })
   }
   /** 新增或修改分组信息 */
-  GroupAction() {
+  async GroupAction() {
     if (this.activeName === 'second') {
       if (this.nodeAction === 'addGroup') {
         addHouseGroup(this.HouseForm).then(res => {
@@ -597,9 +561,37 @@ export default class DataTree extends Vue {
         })
       }
     } else {
-      console.log(Number(this.batchForm['min']), Number(this.batchForm['max']))
+      const reg = /^[0-9]+$/
+      if(!reg.test(this.batchForm['min']) && !reg.test(this.batchForm['max'])) {
+        return this.$message.error('请输入正整数!')
+      } else if (Number(this.batchForm['min']) > Number(this.batchForm['max'])) {
+        return this.$message.error('请确保序号由小到大!')
+      } else {
+        this.sortCreated().then(res => {
+          this.$message.info(`创建${res.success}个成功,${res.error}个失败`)
+          this.$emit('getHouseTreeData')
+            this.HouseVisible = false
+        })
+      }
     }
+  }
+  // 循环创建
+  async sortCreated() {
+    let success = 0
+      let error = 0
+        for(var i = Number(this.batchForm['min']); i<=Number(this.batchForm['max']); i++ ) {
+          this.batchForm['serialNumber'] = i
+          this.batchForm['name'] = i
+           await addHouseGroup(this.batchForm).then(res => {
+            if (res.data.code === 200) {
+              success++
+            } else {
+              error++
+            }
+          })
 
+        }
+        return Promise.resolve({ success, error })
   }
   // 关闭新增/修改单元楼
   closeBuildingAction() {

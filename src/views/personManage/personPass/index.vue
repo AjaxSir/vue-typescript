@@ -15,12 +15,12 @@
           </el-dropdown-menu>
           <div slot="houseNum">
             <div class="word-filter">
-              <span class="filter-name">单元楼:</span>
-              <el-input style='width:220px' class="input-filter" v-model='filterForm.unitHouse' size="small"></el-input>
+              <span class="filter-name">通行位置:</span>
+              <el-input style='width:220px' placeholder="请输入通行位置" class="input-filter" v-model='filterForm.unitHouse' size="small"></el-input>
             </div>
              <div class="word-filter">
               <span class="filter-name">姓名:</span>
-              <el-input style='width:220px' class="input-filter" v-model='filterForm.userName' size="small"></el-input>
+              <el-input style='width:220px' placeholder="请输入需查找的姓名" class="input-filter" v-model='filterForm.userName' size="small"></el-input>
             </div>
              <div class="word-filter">
               <span class="filter-name">开始时间:</span> &nbsp;&nbsp;
@@ -94,7 +94,7 @@
             </el-table-column>
             <el-table-column align='center' prop="passMethod" label="通行方式">
               <template slot-scope="{row}">
-                <span>{{ row.passMethod }}</span>
+                <span>{{ row.passMethod | passMethod }}</span>
               </template>
             </el-table-column>
             <el-table-column  align='center' prop="devId" label="设备编号">
@@ -127,7 +127,7 @@
                 <img
                   class="capture-img"
                   @mouseout="imgVisible=false"
-                  @mouseover="imgVisible=true,bigImg=scope.row.photos"
+                  @mouseover="imgVisible=true,bigImg=scope.row.photos,imgTitle='抓拍人脸'"
                   :src="scope.row.photos"
                   alt
                 />
@@ -138,7 +138,7 @@
                 <img
                   class="capture-img"
                   @mouseout="imgVisible=false"
-                  @mouseover="imgVisible=true,bigImg=scope.row.facePhone"
+                  @mouseover="imgVisible=true,bigImg=scope.row.facePhone,imgTitle='注册人脸'"
                   :src="scope.row.facePhone"
                   alt
                 />
@@ -154,7 +154,7 @@
       </el-col>
     </el-row>
 
-    <ImageMagni :centerDialogVisible="imgVisible" bigTitle="抓拍图片" :bigImg="bigImg" />
+    <ImageMagni :centerDialogVisible="imgVisible" :bigTitle="imgTitle"  :bigImg="bigImg" />
   </div>
 </template>
 
@@ -198,6 +198,7 @@ const ImageMagni = () => import("@/components/BigImg/index.vue");
 export default class PersonPass extends Vue {
   private imgVisible: Boolean = false; // 控制放大图片的visible
   private bigImg: String = ""; // 保存放大图片的地址
+  imgTitle: string = '人脸'
   filterForm: object = {
     unitHouse: '',
     userName: '',

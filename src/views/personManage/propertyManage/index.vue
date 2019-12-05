@@ -11,11 +11,11 @@
           <div slot="houseNum">
             <div class="word-filter">
               <span class="filter-name">姓&nbsp;&nbsp;&nbsp;名:</span>
-              <el-input class="input-filter" v-model="filterForm.name" size="small"></el-input>
+              <el-input class="input-filter" placeholder="输入需要查找的姓名" v-model="filterForm.name" size="small"></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">手机号:</span>
-              <el-input class="input-filter"  v-model="filterForm.phone" size="small"></el-input>
+              <el-input class="input-filter"  placeholder="输入需要查找的手机号"  v-model="filterForm.phone" size="small"></el-input>
             </div>
           </div>
         </ActionHeader>
@@ -56,7 +56,11 @@
               </template>
             </el-table-column>
             <el-table-column prop="age" align="center" label="年龄"></el-table-column>
-            <el-table-column prop="sex" align="center" label="性别"></el-table-column>
+            <el-table-column prop="sex" align="center" label="性别">
+              <template slot-scope="{row}">
+                <span>{{ row.sex === '1' ? '男' : '女' }}</span>
+              </template>
+            </el-table-column>
             <!-- <el-table-column prop="cardNo" align="center" label="身份证号"></el-table-column> -->
             <el-table-column prop="phone" align="center" label="联系电话"></el-table-column>
             <el-table-column prop="authName" align="center" label="权限组"></el-table-column>
@@ -95,16 +99,14 @@
         </div>
       </el-col>
     </el-row>
-    <el-dialog :close-on-click-modal='false' :title="Dialog.name" :visible.sync="dialogFormVisible">
+    <el-dialog :close-on-click-modal='false' width="600" :title="Dialog.name" :visible.sync="dialogFormVisible">
       <el-tabs v-model="activeName">
         <el-tab-pane label="详细信息" name="first">
           <div class="singleInfo">姓名:&nbsp;&nbsp;{{ Dialog.name }}</div>
           <div class="singleInfo">性别:&nbsp;&nbsp;{{ Dialog.sex }}</div>
           <div class="singleInfo">生日:&nbsp;&nbsp;{{ Dialog.birthday || '--' }}</div>
           <div class="singleInfo">身份证号:&nbsp;&nbsp;{{ Dialog.cardNo }}</div>
-          <div class="singleInfo">卡名:&nbsp;&nbsp;{{ Dialog.cardName }}</div>
           <div class="singleInfo">年龄:&nbsp;&nbsp;{{ Dialog.age }}</div>
-          <div class="singleInfo">身份证号:&nbsp;&nbsp;{{ Dialog.name }}</div>
           <div class="singleInfo">手机号:&nbsp;&nbsp;{{ Dialog.phone }}</div>
           <div class="singleInfo">权限组:&nbsp;&nbsp;{{ Dialog.auth && Dialog.auth.name || '--' }}</div>
         </el-tab-pane>
@@ -165,7 +167,7 @@
           <el-input v-model="Form.name" placeholder='输入物业人员姓名'></el-input>
         </el-form-item>
         <el-form-item  class="float"  label="电话:"  prop='phone'>
-          <el-input v-model="Form.phone" placeholder='输入物业人员电话'></el-input>
+          <el-input v-model="Form.phone"  type="number" placeholder='输入物业人员电话'></el-input>
         </el-form-item>
         <el-form-item  class="float"  label="性别:"  prop='sex'>
           <el-switch
@@ -178,14 +180,14 @@
             inactive-value="0">
           </el-switch>
         </el-form-item>
-        <el-form-item  class="float"  label="卡名:"  prop='cardName'>
-          <el-input v-model="Form.cardName" placeholder='输入卡名'></el-input>
-        </el-form-item>
-        <el-form-item  class="float"  label="卡号:"  prop='cardNo'>
-          <el-input v-model="Form.cardNo" placeholder='输入卡号'></el-input>
-        </el-form-item>
         <el-form-item  class="float" label="年龄:"  prop='age'>
-          <el-input v-model="Form.age" placeholder='输入物业人员年龄'></el-input>
+          <el-input v-model="Form.age" type="number" placeholder='输入物业人员年龄'></el-input>
+        </el-form-item>
+        <el-form-item   class="float"
+        @input="constraintLength(Form.cardNo,'18')"
+        label="身份证号:"
+        label-width="90px" prop='cardNo'>
+          <el-input v-model="Form.cardNo" placeholder='输入身份证号'></el-input>
         </el-form-item>
         <el-form-item label="权限组:"  prop='authId'>
           <el-select v-model="Form.authId" placeholder="请选择">
@@ -199,7 +201,7 @@
         </el-form-item>
 
         <el-form-item label="备注:"  prop='note'>
-          <el-input type='textarea' v-model="Form.note" placeholder='输入备注'></el-input>
+          <el-input type='textarea' @input="constraintLength(Form.note,'200')" v-model="Form.note" placeholder='输入备注'></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -272,11 +274,27 @@ export default class PropertyManage extends Vue {
             { required: true, message: '请输入物业人员名称', trigger: 'blur' }
           ],
     phone: [
-            { required: true, message: '请输入电话', trigger: 'blur' }
+            { required: true, trigger: 'blur', validator: (rule, value, callback) => {
+                if (!this['is_Phone'](value)) {
+                  callback(new Error('填写正确的手机号'))
+                } else {
+                  callback()
+                }
+              }
+            }
           ],
     authId: [
             { required: true, message: '请选择对应的权限组', trigger: 'change' }
-          ]
+          ],
+    cardNo: [
+      { required: true, trigger: 'blur', validator: (rule, value, callback) => {
+                if (value.length !== 18) {
+                  callback(new Error('填写正确的身份证号'))
+                } else {
+                  callback()
+                }
+              } }
+    ]
   }
   Dialog: object = {
     name: ''  // 物业人员详细记录
