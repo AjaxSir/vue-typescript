@@ -64,7 +64,6 @@
             v-loading="showLoading"
             :data="list_data"
             stripe
-
             highlight-current-row
             @cell-mouse-enter="enterRowChange"
             @cell-mouse-leave="leaveRowChange"
@@ -197,6 +196,10 @@
       >
         <el-form-item
           prop="ownerPhone"
+          :rules="[
+              { required: true, message: '手机不能为空'},
+              { type: 'number', message: '请正确的填写手机号'}
+            ]"
           :show-message="showMessage"
           :error="errorMessage.ownerPhone"
           label="电话"
@@ -204,7 +207,7 @@
           <!-- :disabled="nameDisabled" -->
           <el-autocomplete
             style="width:340px"
-            v-model="createForm[0].ownerPhone"
+            v-model.number="createForm[0].ownerPhone"
             placeholder="手机11位限长，只能输入数字"
             popper-class="my-autocomplete"
             :fetch-suggestions="querySearch"
@@ -835,8 +838,6 @@ export default class CarList extends Vue {
 .serial-num {
   position: relative;
 }
-
-
 
 .capture-img {
   width: 30px;

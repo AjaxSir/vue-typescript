@@ -63,12 +63,12 @@
             v-loading="showLoading"
             :data="list_data"
             stripe
-
             highlight-current-row
             @cell-mouse-enter="enterRowChange"
             @cell-mouse-leave="leaveRowChange"
+            @selection-change="handleSelectionChange"
           >
-            <el-table-column type="selection" width="50" :selectable="isDisabled" disabled="true"></el-table-column>
+            <el-table-column type="selection" width="50" disabled="true"></el-table-column>
 
             <el-table-column type="index" align="center" label="序号" class="indexNum" width="50">
               <template slot-scope="scope">
@@ -80,12 +80,9 @@
                       <div @click="editTarget(scope.row)">
                         <el-dropdown-item command="update">修改</el-dropdown-item>
                       </div>
-                      <div @click="deleteBtn(scope.row)">
-                        <el-dropdown-item command="dele">删除</el-dropdown-item>
-                      </div>
-                      <!-- <el-dropdown-item
+                      <el-dropdown-item
                         :command="returnCommand('delete', scope.row)"
-                      >{{ deleteForm.data.length ? '批量删除' : '删除' }}</el-dropdown-item>-->
+                      >{{ deleteForm.data.length ? '批量删除' : '删除' }}</el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
                 </div>
@@ -237,6 +234,9 @@
           <el-form-item
             label="年龄:"
             prop="age"
+            :rules="[
+              { type: 'number', message: '年龄必须为数值'}
+            ]"
             :show-message="showMessage"
             :error="errorMessage.age"
           >
@@ -244,9 +244,8 @@
               autocomplete="off"
               placeholder="输入年龄"
               min="0"
-              type="number"
-              v-model="createForm.age"
-              @keydown.native="channelInputLimit"
+              v-model.number="createForm.age"
+              @input="constraint(createForm.age,'age')"
             ></el-input>
           </el-form-item>
         </div>
@@ -254,11 +253,15 @@
         <el-form-item
           label="紧急联系人:"
           prop="emergencyPhone"
+          :rules="[
+              { required: true, message: '手机不能为空'},
+              { type: 'number', message: '请正确的填写手机号'}
+            ]"
           :show-message="showMessage"
           :error="errorMessage.emergencyPhone"
         >
           <el-input
-            v-model="createForm.emergencyPhone"
+            v-model.number="createForm.emergencyPhone"
             autocomplete="off"
             placeholder="手机11位限长，只能输入数字"
             :maxlength="11"
@@ -269,15 +272,18 @@
         <el-form-item
           label="预警周期:"
           prop="earlyPeriod"
+          :rules="[
+              { required: true, message: '预警周期不能为空'},
+              { type: 'number', message: '请正确的填写预警周期'}
+            ]"
           :show-message="showMessage"
           :error="errorMessage.earlyPeriod"
         >
           <el-input
-            v-model="createForm.earlyPeriod"
+            v-model.number="createForm.earlyPeriod"
             autocomplete="off"
             placeholder="请输入预警周期为多少天"
             min="0"
-            type="number"
             @keydown.native="channelInputLimit"
           ></el-input>
         </el-form-item>
@@ -380,55 +386,67 @@
       title="修改"
       :visible.sync="dialogEdit"
       width="500px"
-      :before-close="handleClose"
+      :before-close="editClose"
       :close-on-click-modal="false"
     >
       <el-form
-        ref="dataForm"
+        ref="updateForm"
         :model="editForm"
         label-position="right"
         label-width="100px"
         style="margin-right:40px;"
       >
-        <el-form-item label="年龄:" prop="age" :show-message="showMessage" :error="errorMessage.age">
+        <el-form-item
+          label="年龄:"
+          prop="age"
+          :rules="[
+              { type: 'number', message: '年龄必须为数值'}
+            ]"
+          :show-message="showMessage"
+          :error="errorMessage.age"
+        >
           <el-input
             autocomplete="off"
             placeholder="输入年龄"
             min="0"
-            type="number"
-            v-model="editForm.age"
-            @keydown.native="channelInputLimit"
+            v-model.number="editForm.age"
+            @input="constraint(editForm.age,'age')"
           ></el-input>
         </el-form-item>
 
         <el-form-item
           label="紧急联系人:"
           prop="emergencyPhone"
+          :rules="[
+              { type: 'number', message: '请正确的填写手机号'}
+            ]"
           :show-message="showMessage"
           :error="errorMessage.emergencyPhone"
         >
           <el-input
-            v-model="editForm.emergencyPhone"
+            v-model.number="editForm.emergencyPhone"
             autocomplete="off"
             placeholde="手机11位限长，只能输入数字"
             :maxlength="11"
-            @input="constraintLength(editForm.emergencyPhone,'11')"
+            @input="constraint(editForm.emergencyPhone,'emergencyPhone')"
           ></el-input>
         </el-form-item>
 
         <el-form-item
           label="预警周期:"
           prop="earlyPeriod"
+          :rules="[
+              { type: 'number', message: '预警周期为数值'}
+            ]"
           :show-message="showMessage"
           :error="errorMessage.earlyPeriod"
         >
           <el-input
-            v-model="editForm.earlyPeriod"
+            v-model.number="editForm.earlyPeriod"
             autocomplete="off"
             placeholder="请输入预警周期为多少天"
             min="0"
-            type="number"
-            @keydown.native="channelInputLimit"
+            @input="constraint(editForm.earlyPeriod,'earlyPeriod')"
           ></el-input>
         </el-form-item>
 
@@ -520,7 +538,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="handleClose">取 消</el-button>
+        <el-button @click="editClose">取 消</el-button>
         <el-button type="primary" @click="updateFocusPeople">确 定</el-button>
       </div>
     </el-dialog>
@@ -625,6 +643,13 @@ export default class FocusPeople extends Vue {
     //获取车辆列表url
     url: "/admin/usr-focus-personnel/",
     method: "get"
+  };
+
+  deleteForm: Object = {
+    //单个或批量删除
+    url: "/admin/usr-focus-personnel/batch-delete/",
+    method: "delete",
+    data: []
   };
 
   dialogCreate: boolean = false; //新增
@@ -805,6 +830,9 @@ export default class FocusPeople extends Vue {
 
   createFocusPeople() {
     /**@description 新增关注人员 */
+    if (this.createForm["age"] === "") {
+      this.createForm["age"] = null;
+    }
     this.$refs["dataForm"]["validate"](valid => {
       if (valid) {
         var form = {
@@ -828,17 +856,46 @@ export default class FocusPeople extends Vue {
     for (const key in this.editForm) {
       this.editForm[key] = item[key];
     }
+    if (+item["age"]) {
+      this.editForm["age"] = +item["age"];
+    } else if (item["age"] === "") {
+      this.editForm["age"] = null;
+    }
+    if (+item["emergencyPhone"]) {
+      this.editForm["emergencyPhone"] = +item["emergencyPhone"];
+    } else if (item["emergencyPhone"] === "") {
+      this.editForm["emergencyPhone"] = null;
+    }
+    if (+item["earlyPeriod"]) {
+      this.editForm["earlyPeriod"] = +item["earlyPeriod"];
+    } else if (item["earlyPeriod"] === "") {
+      this.editForm["earlyPeriod"] = null;
+    }
     this.dialogEdit = true;
+  }
+
+  constraint(value, type) {
+    if (value.toString().length === 11) {
+      this.$message("电话不能超过11个字符");
+    }
+    if (value === "") {
+      this.editForm[type] = null;
+    }
   }
 
   updateFocusPeople() {
     /**@description 修改预警联系人 */
-    var form = { ...this.editForm };
-    form["earlyPeriod"] = Number(form["earlyPeriod"]);
-    editFocusPeople(form).then(() => {
-      this.handleClose();
-      this["notify"]("修改关注人员成功");
-      this["fetchData"](this.initForm);
+
+    this.$refs["updateForm"]["validate"](valid => {
+      if (valid) {
+        var form = { ...this.editForm };
+        form["earlyPeriod"] = Number(form["earlyPeriod"]);
+        editFocusPeople(form).then(() => {
+          this.editClose();
+          this["notify"]("修改关注人员成功");
+          this["fetchData"](this.initForm);
+        });
+      }
     });
   }
 
@@ -871,10 +928,16 @@ export default class FocusPeople extends Vue {
     });
   }
 
+  editClose() {
+    this.dialogEdit = false; //修改dialog
+    this.getTypeList();
+    this.getGroupList();
+    this.$refs["updateForm"]["resetFields"]();
+  }
+
   handleClose() {
     /** @description 关闭新增/修改dialog */
     this.dialogCreate = false; //新增dialog
-    this.dialogEdit = false; //修改dialog
     this.createForm = {
       //清空新增表单字段
       age: "",
@@ -987,5 +1050,4 @@ export default class FocusPeople extends Vue {
 .serial-num {
   position: relative;
 }
-
 </style>
