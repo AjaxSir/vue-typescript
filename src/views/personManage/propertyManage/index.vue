@@ -23,7 +23,12 @@
     </el-row>
     <el-row :gutter="20">
       <el-col :span="rowSpan.row1">
-        <DataTree @fetchRoleGroup='fetchRoleGroup' :TreeData='TreeData' :type='"role"' />
+        <DataTree
+         @fetchData='fetchData'
+          :page='page'
+          :initFormHeader='initForm'
+         @fetchRoleGroup='fetchRoleGroup'
+         :TreeData='TreeData' :type='"role"' />
       </el-col>
       <el-col :span="rowSpan.row2" class="table-col">
         <div class="rightContent">
@@ -63,7 +68,24 @@
             </el-table-column>
             <!-- <el-table-column prop="cardNo" align="center" label="身份证号"></el-table-column> -->
             <el-table-column prop="phone" align="center" label="联系电话"></el-table-column>
-            <el-table-column prop="authName" align="center" label="权限组"></el-table-column>
+            <el-table-column prop="authName" align="center" label="权限组">
+              <template slot-scope="{row}">
+                <el-dropdown @command="changeGroupRole"
+                trigger="click">
+                  <span class="el-dropdown-link">
+                    <el-tag
+                    size="small"
+                    style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
+                    >{{ row.authName }}
+                    </el-tag>
+                  </span>
+                  <el-dropdown-menu  slot="dropdown">
+                    <el-dropdown-item v-for='(item, index) in TreeData'
+                    :key='index' :command='ComponentCommand(item.id, row.id)'>{{ item.name }}</el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
+              </template>
+            </el-table-column>
             <el-table-column prop="status" align="center" label="状态">
               <template slot-scope="{row}">
                 <el-dropdown @command="changeStatus"
@@ -83,7 +105,22 @@
                 </el-dropdown>
               </template>
             </el-table-column>
-            <el-table-column :show-overflow-tooltip='true' prop="note" align="center" label="备注"></el-table-column>
+            <el-table-column align='center' :show-overflow-tooltip='true' prop="note" label="备注">
+              <template slot-scope="scope">
+              <span class="rowUpdate"
+              v-show='!scope.row.noteStatus'
+              @click='focusNoteInput(scope.row)'>{{ scope.row.note || '点击编辑' }}</span>
+              <el-input
+              type='textarea'
+              :ref='scope.row.id'
+              @keyup.enter.native="confirmUpdateNote(scope.row)"
+              @blur="noteBlur(scope.row)"
+              v-model="noteString"
+              v-show='scope.row.noteStatus'
+              placeholder="输入备注">
+              </el-input>
+              </template>
+            </el-table-column>
             <el-table-column :show-overflow-tooltip='true' prop="createTime" align="center" label="创建时间"></el-table-column>
           </el-table>
           <el-pagination
@@ -103,7 +140,7 @@
       <el-tabs v-model="activeName">
         <el-tab-pane label="详细信息" name="first">
           <div class="singleInfo">姓名:&nbsp;&nbsp;{{ Dialog.name }}</div>
-          <div class="singleInfo">性别:&nbsp;&nbsp;{{ Dialog.sex }}</div>
+          <div class="singleInfo">性别:&nbsp;&nbsp;{{ Dialog.sex === '1' ? '男' : '女' }}</div>
           <div class="singleInfo">生日:&nbsp;&nbsp;{{ Dialog.birthday || '--' }}</div>
           <div class="singleInfo">身份证号:&nbsp;&nbsp;{{ Dialog.cardNo }}</div>
           <div class="singleInfo">年龄:&nbsp;&nbsp;{{ Dialog.age }}</div>
@@ -167,7 +204,7 @@
           <el-input v-model="Form.name" placeholder='输入物业人员姓名'></el-input>
         </el-form-item>
         <el-form-item  class="float"  label="电话:"  prop='phone'>
-          <el-input v-model="Form.phone"  type="number" placeholder='输入物业人员电话'></el-input>
+          <el-input v-model="Form.phone"  maxlength="11" placeholder='输入物业人员电话'></el-input>
         </el-form-item>
         <el-form-item  class="float"  label="性别:"  prop='sex'>
           <el-switch
@@ -180,14 +217,13 @@
             inactive-value="0">
           </el-switch>
         </el-form-item>
-        <el-form-item  class="float" label="年龄:"  prop='age'>
-          <el-input v-model="Form.age" type="number" placeholder='输入物业人员年龄'></el-input>
+        <el-form-item   class="float" label="年龄:"  prop='age'>
+          <el-input v-model="Form.age"  maxlength="3" placeholder='输入物业人员年龄'></el-input>
         </el-form-item>
         <el-form-item   class="float"
-        @input="constraintLength(Form.cardNo,'18')"
         label="身份证号:"
         label-width="90px" prop='cardNo'>
-          <el-input v-model="Form.cardNo" placeholder='输入身份证号'></el-input>
+          <el-input maxlength="18" @input="constraintLength(Form.cardNo,'18')" v-model="Form.cardNo" placeholder='输入身份证号'></el-input>
         </el-form-item>
         <el-form-item label="权限组:"  prop='authId'>
           <el-select v-model="Form.authId" placeholder="请选择">
@@ -201,7 +237,7 @@
         </el-form-item>
 
         <el-form-item label="备注:"  prop='note'>
-          <el-input type='textarea' @input="constraintLength(Form.note,'200')" v-model="Form.note" placeholder='输入备注'></el-input>
+          <el-input type='textarea'  maxlength="11" @input="constraintLength(Form.note,'200')" v-model="Form.note" placeholder='输入备注'></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -215,7 +251,7 @@
 import { Component, Prop, Vue, Mixins } from "vue-property-decorator";
 import { Getter, Action, Mutation } from "vuex-class";
 import { getRoleGroup, addPropert, resetDisabledUser, watchPropert,
-getUserPropertyPass } from '@/api/peopleApi.ts'
+getUserPropertyPass, changeRoleGroup, updateUserNote } from '@/api/peopleApi.ts'
 import { getUserPropertyCar } from '@/api/carApi.ts'
 import mixin from "@/config/minxins";
 const ActionHeader = () => import("@/components/ActionHeader.vue");
@@ -239,6 +275,7 @@ export default class PropertyManage extends Vue {
   private menuControl2: String = "menu-visible";
   passListData: Array<object> = [] // 物业人员通行记录
   carList: Array<object> = [] // 物业人员车辆信息
+  noteString: string = '' // 备注信息
   Form: object = {
     name: '',
     phone: '',
@@ -268,6 +305,7 @@ export default class PropertyManage extends Vue {
     limit: 10,
     total:1
   }
+  updateArray: Array<string> = ['noteStatus'] //需要行内修改的
   TreeData: Array<object> = [] // 权限组
   FormRules: object = {
     name: [
@@ -313,10 +351,43 @@ export default class PropertyManage extends Vue {
       };
     }
   }
-  handleClick() {}
-  /**
-   * row 列表数据
-   */
+  // 改变物业人员权限组
+  changeGroupRole(Obj: object) {
+    changeRoleGroup(Obj['Status'], Obj['id']).then(res => {
+      if(res.data.code === 200){
+        this.$message.success('设置成功')
+        this['fetchData'](this.initForm)
+      }
+    })
+  }
+  // 修改备注自动获取焦点
+  focusNoteInput(row) {
+    this.noteString = row.note
+    row.noteStatus = !row.noteStatus
+    this.$nextTick(() =>{
+      const input = this.$refs[row.id] as HTMLElement
+      input.focus()
+    })
+  }
+  // 修改备注
+  confirmUpdateNote(row) {
+    updateUserNote( row.id, this.noteString ).then(res => {
+      if (res.data.code === 200) {
+        this.$message.success('修改成功')
+        row.noteStatus = false
+        this.noteString = ''
+        this.fetchData(this.initForm)
+      } else {
+        this.$message.error(res.data.message)
+      }
+    })
+  }
+  // 修改备注离开输入框
+  noteBlur(row) {
+    row.noteStatus = false
+    this.noteString = ''
+  }
+  /*** row 列表数据*/
   showDetail(row) {
     this.activeName = 'first'
     this.dialogFormVisible = true;

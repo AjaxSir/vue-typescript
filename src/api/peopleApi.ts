@@ -98,6 +98,18 @@ export function addPropert(data: object) {
   })
 }
 
+// 改变物业人员的权限组
+export function changeRoleGroup(authId:string, id:string) {
+  return _axios({
+    url: '/admin/usrUser/PropertyManager/updateAuth',
+    method: 'put',
+    params: {
+      authId,
+      id
+    }
+  })
+}
+
 // 查看物业人员
 export function watchPropert(id:string) {
   return _axios({

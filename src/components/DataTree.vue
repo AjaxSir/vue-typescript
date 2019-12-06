@@ -57,15 +57,14 @@
       </span>
     </el-tree>
     <!-- 楼栋dialog添加分组 -->
-    <el-dialog width="500px" class='formDialog' :title="HouseForm.title" :visible.sync="HouseVisible">
+    <el-dialog  :close-on-click-modal='false' width="500px" class='formDialog' :title="HouseForm.title" :visible.sync="HouseVisible">
       <el-tabs v-model="activeName" type="card">
-      <el-tab-pane label="批量添加" name="first">
+      <el-tab-pane v-if='nodeAction !== "updateGroup"' label="批量添加" name="first">
         <el-form  ref='batchForm' :rules='batchRules' :model="batchForm" label-width="80px">
-          <el-form-item label="编号:">
+          <el-form-item prop='min' label="编号:">
             <el-input style="width:100px" placeholder="开始编号" v-model="batchForm.min"></el-input>
               至
-            <el-input placeholder="结束编号"  style="width:100px" v-model="batchForm.max"></el-input>
-            设备名以序号排序命名
+            <el-input prop='max' placeholder="结束编号"  style="width:100px" v-model="batchForm.max"></el-input>
           </el-form-item>
           <el-form-item label="序号单位:" prop='serialNumberUnit' label-width="85px">
             <el-select v-model="batchForm.serialNumberUnit" placeholder="请选择">
@@ -118,6 +117,28 @@
               :value="item.name">
             </el-option>
           </el-select>
+          <el-button @click='showUnitSetting = !showUnitSetting' type='text'>序号单元设置</el-button>
+            <div v-if='showUnitSetting'>
+              <el-tag
+              style="margin-left:5px"
+                :key="index"
+                v-for="(tag, index) in Tags"
+                closable
+                :disable-transitions="false"
+                @close="deleteTag(tag, index)">
+                {{tag.name}}
+              </el-tag>
+              <el-input
+                class="input-new-tag"
+                v-if="newTag"
+                v-model="newTagValue"
+                ref="saveTagInput"
+                size="small"
+                @blur="handleInputConfirm"
+              >
+              </el-input>
+              <el-button v-else class="button-new-tag" size="small" @click="showInput">新增单位</el-button>
+            </div>
         </el-form-item>
         <el-form-item label="别名:" prop='name' label-width="85px">
           <el-input v-model="HouseForm.name" autocomplete="off"></el-input>
@@ -127,14 +148,14 @@
         </el-form-item>
       </el-form>
       </el-tab-pane>
-  </el-tabs>
+      </el-tabs>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="GroupAction">确 定</el-button>
-        <el-button @click="HouseVisible = false">取 消</el-button>
+        <el-button @click="closeDialog(['batchForm', 'HouseForm'])">取 消</el-button>
       </div>
     </el-dialog>
     <!-- 楼栋dialog添加单元楼 -->
-    <el-dialog :close-on-click-modal='false' width="500px" :before-close="closeBuildingAction"  class='formDialog' title="添加单元楼" :visible.sync="HouseUnitVisible">
+    <el-dialog :close-on-click-modal='false' width="500px"  class='formDialog' title="添加单元楼" :visible.sync="HouseUnitVisible">
       <el-form  ref='buildings' :rules="unitRules" :model="UnitForm">
          <el-form-item label="名称:" prop='name' label-width="85px">
           <el-input v-model="UnitForm.name" autocomplete="off"></el-input>
@@ -164,11 +185,11 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="addUpdateUnitConfim">确 定</el-button>
-        <el-button @click="closeBuildingAction">取 消</el-button>
+        <el-button @click="closeDialog(['buildings'])">取 消</el-button>
       </div>
     </el-dialog>
     <!-- 权限dialog -->
-    <el-dialog :close-on-click-modal='false' width="800px" :title="RoleForm.id ? '修改权限组' : '新建权限组'" :visible.sync="RoleVisible">
+    <el-dialog :before-close="roleHandClose" :close-on-click-modal='false' width="800px" :title="RoleForm.id ? '修改权限组' : '新建权限组'" :visible.sync="RoleVisible">
       <el-form :rules="RoleRules" style="overflow:hidden" ref='roleForm' :model="RoleForm">
         <el-form-item prop='name' label="权限名称:" label-width="85px">
           <el-input v-model="RoleForm.name" autocomplete="off"></el-input>
@@ -316,7 +337,6 @@ export default class DataTree extends Vue {
     }
   }}) dataFormate: Object
   @Prop({ default: true }) needAction: any;
-  @Prop({ default:()=> { return {} } }) filterForm: object
   @Prop({ default:()=> { return {} } }) initFormHeader: object
   @Prop({ default:()=> { return {} } }) page: object
   selectId: any =  ''
@@ -330,7 +350,7 @@ export default class DataTree extends Vue {
   }
   batchForm: object = {
     serialNumber: '', // 序号
-    serialNumberUnit: '区',
+    serialNumberUnit: '',
     name: '',
     note: '',
     min: '',
@@ -379,7 +399,7 @@ export default class DataTree extends Vue {
   // 新增分组表单
   HouseForm: object = {
     serialNumber: '', // 序号
-    serialNumberUnit: '区',
+    serialNumberUnit: '',
     name: '',
     note: '',
     parentId: '',
@@ -430,6 +450,17 @@ export default class DataTree extends Vue {
       this.DeviceList = res.data.data.records
       this.devicePage['total'] = res.data.data.total
     })
+  }
+  // 关闭弹框
+  closeDialog(arr:Array<string>) {
+    this.$nextTick(() => {
+      arr.forEach(ele => {
+        this.$refs[ele]['resetFields']()
+      })
+    })
+    this.batchForm['max'] = ''
+    this.HouseUnitVisible = false
+    this.HouseVisible = false
   }
   // 将已选中的设备保存
   handleSelectionChange(val){
@@ -532,6 +563,8 @@ export default class DataTree extends Vue {
   fetchUnitList(){
     getUnitList().then(res => {
       this.Tags = res.data.data
+      this.HouseForm['serialNumberUnit'] = this.Tags[0]['name']
+      this.batchForm['serialNumberUnit'] = this.Tags[0]['name']
     })
   }
   /** 新增或修改分组信息 */
@@ -540,6 +573,7 @@ export default class DataTree extends Vue {
       if (this.nodeAction === 'addGroup') {
         addHouseGroup(this.HouseForm).then(res => {
           if (res.data.code === 200) {
+            this.closeDialog(['batchForm', 'HouseForm'])
             Message({
               type: 'success',
               message: '新增成功'
@@ -551,6 +585,7 @@ export default class DataTree extends Vue {
       } else if (this.nodeAction === 'updateGroup') {
         updateHouseGroup(this.HouseForm).then(res => {
           if (res.data.code === 200) {
+            this.closeDialog(['batchForm', 'HouseForm'])
             Message({
               type: 'success',
               message: '修改成功'
@@ -568,7 +603,8 @@ export default class DataTree extends Vue {
         return this.$message.error('请确保序号由小到大!')
       } else {
         this.sortCreated().then(res => {
-          this.$message.info(`创建${res.success}个成功,${res.error}个失败`)
+          this.$message.success(`创建${res.success}个成功,${res.error}个失败`)
+          this.$refs['batchForm']['resetFields']()
           this.$emit('getHouseTreeData')
             this.HouseVisible = false
         })
@@ -581,7 +617,7 @@ export default class DataTree extends Vue {
       let error = 0
         for(var i = Number(this.batchForm['min']); i<=Number(this.batchForm['max']); i++ ) {
           this.batchForm['serialNumber'] = i
-          this.batchForm['name'] = i
+          this.batchForm['name'] = i + this.batchForm['serialNumberUnit']
            await addHouseGroup(this.batchForm).then(res => {
             if (res.data.code === 200) {
               success++
@@ -603,7 +639,14 @@ export default class DataTree extends Vue {
     /**@description 树节点点击事件 */
     if(this.type === "house") {
       if(data.type === 'group') {
-        return this.initFormHeader
+        this.selectId = data.id
+        this.initFormHeader["params"]['groupId'] = data.id
+          this['page']["page"] = 1;
+          this.initFormHeader["params"] = Object.assign(
+            this.initFormHeader["params"],
+            this.page
+          );
+          return this.initFormHeader;
       } else {
         this.selectId = data.id
         this.initFormHeader["params"]['buildingId'] = data.id
@@ -614,6 +657,14 @@ export default class DataTree extends Vue {
           );
           return this.initFormHeader;
       }
+    } else {
+       this['page']["page"] = 1;
+       this.initFormHeader["params"]['authId'] = data.id
+          this.initFormHeader["params"] = Object.assign(
+            this.initFormHeader["params"],
+            this.page
+          );
+          return this.initFormHeader;
     }
   }
   /*** 删除序号单元 */
@@ -637,10 +688,6 @@ export default class DataTree extends Vue {
         this.newTagValue = ''
       }
     })
-    // this.Tags.push({
-    //   label: this.newTagValue,
-    //   value: this.newTagValue
-    // })
   }
   /*** 显示新增序号单元框*/
   showInput() {
@@ -662,9 +709,6 @@ export default class DataTree extends Vue {
         this.batchForm['parentId'] = treeData.data ? treeData.data.id : ''
         this.HouseVisible = true
         this.activeName = 'first'
-        this.$nextTick(() => {
-          this.$refs['HouseForm']['resetFields']()
-        })
         break
       case 'deleteGroup' :
         this.$confirm('此操作将永久删除该目标, 是否继续?', '提示', {
@@ -694,6 +738,7 @@ export default class DataTree extends Vue {
         this.HouseUnitVisible = true
         break
       case 'updateGroup':
+        this.activeName = 'second'
         this.HouseVisible = true
         this.HouseForm['title'] = '修改子分组'
         this.HouseForm = Object.assign(this.HouseForm, treeData.data)
@@ -790,6 +835,7 @@ export default class DataTree extends Vue {
   height: 70vh;
   text-align: left;
   border: 1px solid #ebeef5;
+  overflow-y: auto;
 }
 .treeHeader {
   &:hover{
