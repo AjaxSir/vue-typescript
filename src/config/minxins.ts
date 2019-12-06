@@ -64,7 +64,7 @@ export default class GlobalMimins extends Vue {
             if (res.data.data.length) {
               res.data.data.forEach((ele: object) => {
                 this.updateArray.forEach((itemStatus: string) => {
-                  ele[itemStatus] = false
+                  this.$set(ele, itemStatus, false)
                 })
                 this.$set(ele, 'showMenu', false)
               })
@@ -79,7 +79,7 @@ export default class GlobalMimins extends Vue {
             if (res.data.data.records.length) {
               res.data.data.records.forEach((ele: object) => {
                 this.updateArray.forEach((itemStatus: string) => {
-                  ele[itemStatus] = false
+                  this.$set(ele, itemStatus, false)
                 })
                 this.$set(ele, 'showMenu', false)
               })

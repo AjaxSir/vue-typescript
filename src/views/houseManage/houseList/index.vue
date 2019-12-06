@@ -40,7 +40,6 @@
         <data-tree
         @fetchData='fetchData'
         :page='page'
-        :filterForm='filterForm'
         :initFormHeader='initForm'
         @getHouseTreeData='getHouseTreeData'
         :TreeData='TreeData' />
@@ -94,11 +93,11 @@
 
             <el-table-column prop="personCnt" align='center' label="注册人数"></el-table-column>
 
-            <el-table-column prop="visitorNum" align='center' label="累计访客次数"></el-table-column>
+            <!-- <el-table-column prop="visitorNum" align='center' label="累计访客次数"></el-table-column>
 
             <el-table-column prop="sumPassTimes" align='center' label="累计进出次数"></el-table-column>
 
-            <el-table-column prop="sumPassTimesYes" align='center' label="昨日进出次数"></el-table-column>
+            <el-table-column prop="sumPassTimesYes" align='center' label="昨日进出次数"></el-table-column> -->
 
             <el-table-column align='center' prop="type" label="状态">
               <template slot-scope="{row}">
@@ -141,7 +140,7 @@
       </el-col>
     </el-row>
     <!-- 新建房屋 -->
-    <el-dialog :close-on-click-modal='false' title="创建房屋" :visible.sync="dialogCreate" width="30%" :before-close="handleClose">
+    <el-dialog :close-on-click-modal='false' title="创建房屋" :visible.sync="dialogCreate" width="500px" :before-close="handleClose">
       <el-form :model="Form" :rules="rules" ref='Forms' label-width="110px">
         <el-form-item label="所属组别:"  prop='cardNo'>
           <el-cascader
@@ -152,13 +151,13 @@
             @change="handleChange"></el-cascader>
         </el-form-item>
         <el-form-item label="房屋编号:"  prop='serialNumber'>
-          <el-input v-model="Form.serialNumber" placeholder='输入房屋编号'></el-input>
+          <el-input style="width:217px" v-model="Form.serialNumber" placeholder='输入房屋编号'></el-input>
         </el-form-item>
         <el-form-item label="楼层:"  prop='storeyNum'>
-          <el-input v-model="Form.storeyNum" placeholder='输入楼层'></el-input>
+          <el-input style="width:217px" v-model="Form.storeyNum" placeholder='输入楼层'></el-input>
         </el-form-item>
         <el-form-item label="状态:"  prop='status'>
-          <el-select class="input-filter" size="small" v-model="Form.status" placeholder="请选择">
+          <el-select  style="width:217px" size="small" v-model="Form.status" placeholder="请选择">
                 <el-option label="业主居住" value="1"></el-option>
                 <el-option label="出租中" value="2"></el-option>
                 <el-option label="待售中" value="3"></el-option>
@@ -168,7 +167,7 @@
               </el-select>
         </el-form-item>
         <el-form-item label="备注:"  prop='note'>
-          <el-input type='textarea' v-model="Form.note" placeholder='输入备注'></el-input>
+          <el-input  style="width:217px" type='textarea' v-model="Form.note" placeholder='输入备注'></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -405,6 +404,7 @@ export default class CardManage extends Vue {
             this.$message.success('新增成功')
             this['dialogCreate'] = false
             this['fetchData'](this.initForm)
+            this['handleClose']()
           }
         })
       }
