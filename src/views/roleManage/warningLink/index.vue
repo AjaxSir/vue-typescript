@@ -19,12 +19,12 @@
       v-loading="showLoading"
       :data="list_data"
       stripe
-
       highlight-current-row
       @cell-mouse-enter="enterRowChange"
       @cell-mouse-leave="leaveRowChange"
+      @selection-change="handleSelectionChange"
     >
-      <el-table-column type="selection" width="50" :selectable="isDisabled" disabled="true"></el-table-column>
+      <el-table-column type="selection" width="50" disabled="true"></el-table-column>
 
       <el-table-column type="index" align="center" label="序号" class="indexNum" width="50">
         <template slot-scope="scope">
@@ -36,22 +36,22 @@
                 <div @click="editTarget(scope.row)">
                   <el-dropdown-item command="update">修改</el-dropdown-item>
                 </div>
-                <div @click="deleteBtn(scope.row)">
+                <!-- <div @click="deleteBtn(scope.row)">
                   <el-dropdown-item command="dele">删除</el-dropdown-item>
-                </div>
-                <!-- <el-dropdown-item
+                </div>-->
+                <el-dropdown-item
                   :command="returnCommand('delete', scope.row)"
-                >{{ deleteForm.data.length ? '批量删除' : '删除' }}</el-dropdown-item>-->
+                >{{ deleteForm.data.length ? '批量删除' : '删除' }}</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </div>
         </template>
       </el-table-column>
 
-      <el-table-column prop="name" align="center" label="姓名"></el-table-column>
-      <el-table-column prop="phone" align="center" label="电话"></el-table-column>
-      <el-table-column prop="email" align="center" label="邮箱"></el-table-column>
-      <el-table-column prop="groupName" align="center" label="分组"></el-table-column>
+      <el-table-column prop="name" align="center" label="姓名" :show-overflow-tooltip="true"></el-table-column>
+      <el-table-column prop="phone" align="center" label="电话" :show-overflow-tooltip="true"></el-table-column>
+      <el-table-column prop="email" align="center" label="邮箱" :show-overflow-tooltip="true"></el-table-column>
+      <el-table-column prop="groupName" align="center" label="分组" :show-overflow-tooltip="true"></el-table-column>
     </el-table>
 
     <el-pagination
@@ -67,7 +67,7 @@
       title="新增"
       :visible.sync="dialogCreate"
       width="500px"
-      :before-close="handleClose"
+      :before-close="createClose"
       :close-on-click-modal="false"
     >
       <el-form
@@ -87,7 +87,7 @@
           <el-input
             v-model="createForm.name"
             autocomplete="off"
-            placeholde="请输入预警联系人姓名"
+            placeholder="请输入预警联系人姓名"
             :maxlength="10"
             @input="constraintLength(createForm.name,'10')"
           ></el-input>
@@ -95,13 +95,17 @@
         <el-form-item
           label="电话:"
           prop="phone"
+          :rules="[
+              { required: true, message: '手机不能为空'},
+              { type: 'number', message: '请正确的填写手机号'}
+            ]"
           :show-message="showMessage"
           :error="errorMessage.phone"
         >
           <el-input
-            v-model="createForm.phone"
+            v-model.number="createForm.phone"
             autocomplete="off"
-            placeholde="请输入电话"
+            placeholder="手机11位限长，只能输入数字"
             :maxlength="11"
             @input="constraintLength(createForm.phone,'11')"
           ></el-input>
@@ -109,10 +113,14 @@
         <el-form-item
           label="邮箱:"
           prop="email"
+          :rules="[
+            { required: true, message: '请输入邮箱地址', trigger: 'blur' },
+            { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur,change' }
+          ]"
           :show-message="showMessage"
           :error="errorMessage.email"
         >
-          <el-input v-model="createForm.email" autocomplete="off"></el-input>
+          <el-input v-model="createForm.email" autocomplete="off" placeholder="请输入邮箱"></el-input>
         </el-form-item>
         <el-form-item
           label="分组:"
@@ -168,7 +176,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="handleClose">取 消</el-button>
+        <el-button @click="createClose">取 消</el-button>
         <el-button type="primary" @click="createwarning">确 定</el-button>
       </div>
     </el-dialog>
@@ -178,11 +186,11 @@
       title="修改"
       :visible.sync="dialogEdit"
       width="500px"
-      :before-close="handleClose"
+      :before-close="editClose"
       :close-on-click-modal="false"
     >
       <el-form
-        ref="dataForm"
+        ref="updateForm"
         :model="editForm"
         label-position="right"
         label-width="80px"
@@ -197,7 +205,7 @@
           <el-input
             v-model="editForm.name"
             autocomplete="off"
-            placeholde="请输入预警联系人姓名"
+            placeholder="请输入预警联系人姓名"
             :maxlength="10"
             @input="constraintLength(editForm.name,'10')"
           ></el-input>
@@ -205,24 +213,35 @@
         <el-form-item
           label="电话:"
           prop="phone"
+          :rules="[
+              { type: 'number', message: '请正确的填写手机号'}
+            ]"
           :show-message="showMessage"
           :error="errorMessage.phone"
         >
           <el-input
-            v-model="editForm.phone"
+            v-model.number="editForm.phone"
             autocomplete="off"
-            placeholde="请输入电话"
+            placeholder="手机11位限长，只能输入数字"
             :maxlength="11"
-            @input="constraintLength(editForm.phone,'11')"
+            @input="constraint(editForm.phone,'phone')"
           ></el-input>
         </el-form-item>
         <el-form-item
           label="邮箱:"
           prop="email"
+          :rules="[
+            { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur,change' }
+          ]"
           :show-message="showMessage"
           :error="errorMessage.email"
         >
-          <el-input v-model="editForm.email" autocomplete="off"></el-input>
+          <el-input
+            v-model="editForm.email"
+            autocomplete="off"
+            placeholder="请输入邮箱"
+            @input="constraint(editForm.email,'email')"
+          ></el-input>
         </el-form-item>
         <el-form-item
           label="分组:"
@@ -277,7 +296,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="handleClose">取 消</el-button>
+        <el-button @click="editClose">取 消</el-button>
         <el-button type="primary" @click="updatewarning">确 定</el-button>
       </div>
     </el-dialog>
@@ -315,7 +334,7 @@ export default class WarningLink extends Vue {
 
   deleteForm: Object = {
     //单个或批量删除
-    url: "/admin/usr-car/batch-delete/",
+    url: "/admin/usr-early-contact/batch-delete/",
     method: "delete",
     data: []
   };
@@ -380,14 +399,6 @@ export default class WarningLink extends Vue {
     this.getGroupList();
   }
 
-  // 获取需要操作的数据列表
-  handleSelectionChange(val) {
-    this.deleteForm["data"] = [];
-    val.forEach(ele => {
-      this.deleteForm["data"].push(ele.id);
-    });
-  }
-
   createwarning() {
     /**@description 新增预警联系人 */
     this.$refs["dataForm"]["validate"](valid => {
@@ -397,7 +408,7 @@ export default class WarningLink extends Vue {
         };
         addWarning(form)
           .then(res => {
-            this.handleClose();
+            this.createClose();
             this["fetchData"](this.initForm);
             this["notify"]("添加预警联系人成功");
           })
@@ -413,7 +424,7 @@ export default class WarningLink extends Vue {
   async getGroupList() {
     /**@description 获取分组信息 */
     const { data } = await getGroup();
-    this.createForm["earlyGroupId"] = data.data[0].id;
+    // this.createForm["earlyGroupId"] = data.data[0].id;
     this.earlyGroup = data.data;
   }
 
@@ -449,27 +460,60 @@ export default class WarningLink extends Vue {
     for (const key in this.editForm) {
       this.editForm[key] = item[key];
     }
+    if (+item["phone"]) {
+      this.editForm["phone"] = +item["phone"];
+    } else if (item["phone"] === "") {
+      this.editForm["phone"] = null;
+    }
+    if (item["email"] === "") {
+      this.editForm["email"] = null;
+    }
+    this.editForm["phone"] = +item.phone;
     this.editForm["earlyGroupId"] = item.groupId;
     this.dialogEdit = true;
   }
 
+  constraint(value, type) {
+    if (value.toString().length === 11) {
+      this.$message("电话不能超过11个字符");
+    }
+    if (value === "") {
+      this.editForm[type] = null;
+    }
+  }
+
   updatewarning() {
     /**@description 修改预警联系人 */
-    editWarning(this.editForm).then(() => {
-      this.handleClose();
-      this["notify"]("修改预警联系人成功");
-      this["fetchData"](this.initForm);
+    for (const key in this.errorMessage) {
+      this.errorMessage[key] = "";
+    }
+    this.$refs["updateForm"]["validate"](valid => {
+      if (valid) {
+        editWarning(this.editForm).then(() => {
+          this.editClose();
+          this["notify"]("修改预警联系人成功");
+          this["fetchData"](this.initForm);
+        });
+      }
     });
   }
 
-  handleClose() {
-    /** @description 关闭新增/修改dialog */
+  createClose() {
     this.dialogCreate = false; //新增dialog
-    this.dialogEdit = false; //修改dialog
     for (const key in this.errorMessage) {
       this.errorMessage[key] = "";
     }
     this.$refs["dataForm"]["resetFields"]();
+  }
+
+  editClose() {
+    /** @description 关闭新增/修改dialog */
+
+    this.dialogEdit = false; //修改dialog
+    for (const key in this.errorMessage) {
+      this.errorMessage[key] = "";
+    }
+    this.$refs["updateForm"]["resetFields"]();
   }
 
   deleteBtn(item) {
@@ -503,7 +547,6 @@ export default class WarningLink extends Vue {
 </script>
 
 <style lang="scss" scoped>
-
 .input-new-tag {
   width: 120px;
 }

@@ -12,9 +12,12 @@
           :total="page.total"
         >
           <el-dropdown-menu slot="dropdown">
-            <div @click="handleStatistics('统计查询')">
+            <!-- <div @click="handleStatistics('统计查询')"> -->
+            <router-link to="/statementManage/info">
               <el-dropdown-item>统计查询</el-dropdown-item>
-            </div>
+            </router-link>
+
+            <!-- </div> -->
             <!-- <div @click="handleStatistics('访客次数排序排序')">
               <el-dropdown-item>访客次数排序排序</el-dropdown-item>
             </div>-->
@@ -27,6 +30,24 @@
                 size="small"
                 v-model="filterForm.carNo"
                 placeholder="请输入车牌号"
+              ></el-input>
+            </div>
+            <div class="word-filter">
+              <span class="filter-name">车主姓名:</span>
+              <el-input
+                class="input-filter"
+                size="small"
+                v-model="filterForm.ownerName"
+                placeholder="请输入车主姓名"
+              ></el-input>
+            </div>
+            <div class="word-filter">
+              <span class="filter-name">车主电话:</span>
+              <el-input
+                class="input-filter"
+                size="small"
+                v-model="filterForm.ownerPhone"
+                placeholder="请输入车主电话"
               ></el-input>
             </div>
             <div class="word-filter">
@@ -73,7 +94,6 @@
             v-loading="showLoading"
             :data="list_data"
             stripe
-
             highlight-current-row
             @cell-mouse-enter="enterRowChange"
             @cell-mouse-leave="leaveRowChange"
@@ -226,6 +246,8 @@ const StatisticDataDialog = () =>
 })
 export default class CardManage extends Vue {
   filterForm: object = {
+    ownerName: null, //车主姓名
+    ownerPhone: null, //车主电话
     carNo: null, //车牌
     startTime: null, //时间段开始时间
     endTime: null, //时间段结束时间
@@ -366,7 +388,6 @@ export default class CardManage extends Vue {
     cursor: pointer;
   }
 }
-
 
 .menu-control {
   position: absolute;

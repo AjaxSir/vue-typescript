@@ -30,15 +30,30 @@
           <div slot="houseNum">
             <div class="word-filter">
               <span class="filter-name">访客姓名:</span>
-              <el-input class="input-filter" size="small" v-model="filterForm.name"></el-input>
+              <el-input
+                class="input-filter"
+                size="small"
+                v-model="filterForm.name"
+                placeholder="请输入访客姓名"
+              ></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">受访姓名:</span>
-              <el-input class="input-filter" size="small" v-model="filterForm.visitName"></el-input>
+              <el-input
+                class="input-filter"
+                size="small"
+                v-model="filterForm.visitName"
+                placeholder="请输入受访人姓名"
+              ></el-input>
             </div>
             <div class="word-filter">
-              <span class="filter-name">身份证号:</span>
-              <el-input class="input-filter" size="small" v-model="filterForm.cardNo"></el-input>
+              <span class="filter-name">证件号码:</span>
+              <el-input
+                class="input-filter"
+                size="small"
+                v-model="filterForm.cardNo"
+                placeholder="请输入证件号码"
+              ></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">同行人数:</span>
@@ -49,6 +64,7 @@
                 v-model.number="filterForm.minNumPeople"
                 type="number"
                 @keydown.native="channelInputLimit"
+                placeholder="同行人数"
               ></el-input>&nbsp;&nbsp;-&nbsp;&nbsp;
               <el-input
                 style="width:165px"
@@ -57,6 +73,7 @@
                 v-model.number="filterForm.maxNumPeople"
                 type="number"
                 @keydown.native="channelInputLimit"
+                placeholder="同行人数"
               ></el-input>
             </div>
             <div class="word-filter">
@@ -184,7 +201,7 @@
             <el-table-column
               prop="cardNo"
               align="center"
-              label="身份证号"
+              label="证件号码"
               :show-overflow-tooltip="true"
             ></el-table-column>
             <el-table-column
@@ -275,7 +292,7 @@
                 <el-form-item style="margin-bottom:0" label="访客类型:">
                   <span>{{visitorDialogForm.visitType ==='1' ?'APP' : visitorDialogForm.visitType ==='2' ?'访客机' : '--'}}</span>
                 </el-form-item>
-                <el-form-item style="margin-bottom:0" label="身份证号:">
+                <el-form-item style="margin-bottom:0" label="证件号码:">
                   <span>{{visitorDialogForm.cardNo ? visitorDialogForm.cardNo :'--'}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="同行人数:">
@@ -318,7 +335,7 @@
                 <el-form-item style="margin-bottom:0" label="证件类型:">
                   <span>{{interUserDetail.cardName}}</span>
                 </el-form-item>
-                <el-form-item style="margin-bottom:0" label="身份证:">
+                <el-form-item style="margin-bottom:0" label="证件号码:">
                   <span>{{interUserDetail.cardNo}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="车主备注:">
@@ -419,7 +436,7 @@ export default class VistoryManage extends Vue {
   filterForm: object = {
     name: null, //来访者姓名
     visitName: null, //受访者姓名
-    cardNo: null, //身份证号
+    cardNo: null, //证件号码
     minNumPeople: null, //最小随行人数
     maxNumPeople: null, //最大随行人数
     startCreateTime: null, //创建开始时间

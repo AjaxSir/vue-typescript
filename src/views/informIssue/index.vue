@@ -31,7 +31,6 @@
             v-loading="showLoading"
             :data="list_data"
             stripe
-
             highlight-current-row
             @cell-mouse-enter="enterRowChange"
             @cell-mouse-leave="leaveRowChange"
@@ -41,7 +40,7 @@
 
             <el-table-column type="index" label="序号" width="50"></el-table-column>
 
-            <el-table-column prop="title" label="标题" align="center">
+            <el-table-column prop="title" label="标题" align="center" :show-overflow-tooltip="true">
               <template slot-scope="scope">
                 <span>{{scope.row.title}}</span>
                 <div class="fun-btn">
@@ -57,8 +56,8 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column prop="content" align="center" label="发布内容"></el-table-column>
-            <el-table-column prop="publishTime" label="发布时间" align="center"></el-table-column>
+            <el-table-column prop="content" align="center" label="发布内容" :show-overflow-tooltip="true"></el-table-column>
+            <el-table-column prop="createTime" label="发布时间" align="center" :show-overflow-tooltip="true"></el-table-column>
           </el-table>
         </div>
         <el-pagination
@@ -75,7 +74,7 @@
     <el-dialog
       class="image-dialod"
       title="发布通知"
-      width="600px"
+      width="500px"
       :visible.sync="dialogCreate"
       :close-on-click-modal="false"
       :before-close="handleClose"
@@ -95,7 +94,13 @@
           :show-message="showMessage"
           :error="errorMessage.title"
         >
-          <el-input style="width:310px" v-model="createForm.title"></el-input>
+          <el-input
+            style="width:310px"
+            v-model="createForm.title"
+            placeholder="请输入标题"
+            @input="constraintLength(createForm.title,'10')"
+            :maxlength="10"
+          ></el-input>
         </el-form-item>
 
         <!-- <el-form-item
@@ -185,7 +190,14 @@
           :show-message="showMessage"
           :error="errorMessage.content"
         >
-          <el-input type="textarea" :rows="9" placeholder="请输入通知内容" v-model="createForm.content"></el-input>
+          <el-input
+            type="textarea"
+            :rows="9"
+            placeholder="请输入通知内容"
+            v-model="createForm.content"
+            @input="constraintLength(createForm.content,'200')"
+            :maxlength="200"
+          ></el-input>
         </el-form-item>
       </el-form>
 

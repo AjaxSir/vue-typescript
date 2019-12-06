@@ -285,7 +285,7 @@ export default class GlobalMimins extends Vue {
         }
         return;
       case '11':
-        if (value.length === 11) {
+        if (value.toString().length === 11) {
           this.message('电话不能超过11个字符')
         }
         return;
