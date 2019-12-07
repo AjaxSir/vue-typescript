@@ -99,17 +99,17 @@
             </div>
           </el-form-item>
           <el-form-item label="备注:" prop='note' label-width="85px">
-            <el-input type='textarea' v-model="batchForm.note" autocomplete="off"></el-input>
+            <el-input style="width:217px" @input="constraintLength(batchForm.note, '200')" type='textarea' v-model="batchForm.note" autocomplete="off"></el-input>
           </el-form-item>
         </el-form>
       </el-tab-pane>
       <el-tab-pane label="手动添加" name="second">
         <el-form ref='HouseForm' :rules='HouseRules' :model="HouseForm">
         <el-form-item label="序号:" prop='serialNumber' label-width="85px">
-          <el-input v-model="HouseForm.serialNumber" autocomplete="off"></el-input>
+          <el-input  style="width:217px" v-model="HouseForm.serialNumber" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="序号单位:" prop='serialNumberUnit' label-width="85px">
-          <el-select v-model="HouseForm.serialNumberUnit" placeholder="请选择">
+          <el-select  style="width:217px" v-model="HouseForm.serialNumberUnit" placeholder="请选择">
             <el-option
               v-for="item in Tags"
               :key="item.name"
@@ -141,10 +141,10 @@
             </div>
         </el-form-item>
         <el-form-item label="别名:" prop='name' label-width="85px">
-          <el-input v-model="HouseForm.name" autocomplete="off"></el-input>
+          <el-input style="width:217px" v-model="HouseForm.name" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="备注:" prop='note' label-width="85px">
-          <el-input v-model="HouseForm.note" autocomplete="off"></el-input>
+          <el-input style="width:217px" type='textarea' v-model="HouseForm.note" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
       </el-tab-pane>

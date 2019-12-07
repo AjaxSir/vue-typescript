@@ -172,13 +172,14 @@
       </span>
     </el-dialog>
 
-    <el-dialog :close-on-click-modal='false' title="创建门禁卡" :visible.sync="dialogCreate" width="30%" :before-close="handleClose">
+    <el-dialog :close-on-click-modal='false' title="创建门禁卡" :visible.sync="dialogCreate" width="500px" :before-close="handleClose">
       <el-form :model="Form" :rules="rules" ref='Forms' label-width="110px">
         <el-form-item label="卡号:"  prop='cardNo'>
-          <el-input v-model="Form.cardNo" placeholder='输入卡号'></el-input>
+          <el-input style="width:250px" v-model="Form.cardNo" placeholder='输入卡号'></el-input>
         </el-form-item>
-         <el-form-item label="需关联的房屋:"  prop='houseId'>
+         <el-form-item label="需关联的房屋:"  prop='houseName'>
           <el-autocomplete
+           style="width:250px"
             popper-class="my-autocomplete"
             v-model="Form.houseName"
             :fetch-suggestions="querySearch"
@@ -193,6 +194,7 @@
         </el-form-item>
         <el-form-item label="过期时间:"  prop='validDate'>
           <el-date-picker
+           style="width:250px"
             v-model="Form.validDate"
             type="date"
             placeholder="选择过期日期">
@@ -233,7 +235,13 @@ export default class CardManage extends Vue {
     houseId: ''
   }
   rules: any = {
-    name: [
+    cardNo: [
+            { required: true, message: '请输入卡号', trigger: 'blur' }
+          ],
+    validDate: [
+            { required: true, message: '请输入过期时间', trigger: 'blur' }
+          ],
+    houseName: [
             { required: true, message: '请输入需关联的房屋', trigger: 'blur' }
           ]
   }

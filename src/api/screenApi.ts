@@ -16,3 +16,12 @@ export function editCommunity(data: any) {
     data
   })
 }
+
+// 人员通信记录统计
+export function getPassListChart(params: object) {
+  return _axios({
+    url: '/admin/count-report/report',
+    method: 'get',
+    params
+  })
+}

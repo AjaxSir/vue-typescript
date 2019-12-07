@@ -174,32 +174,37 @@
     <el-dialog :close-on-click-modal='false' class="dialog-rewrite" :title="detailDialog.name" :visible.sync="dialogFormVisible">
       <el-tabs type="card" v-model="activeName">
         <el-tab-pane label="详细信息" name="first">
-
-          <el-row style="line-height:103px">
+          <el-row style="margin-top:10px">
             <el-col :span='3'>
               <img style='width:100px;height:100px' :src="personImg" alt="">
             </el-col>
-            <el-col :span='3'>姓名:{{ detailDialog.name }}</el-col>
-            <el-col :span='2'>性别:{{ detailDialog.sex === '1' ? '男' : '女' }}</el-col>
-            <el-col :span='6'>身份证号:{{ detailDialog.cardNo || '--' }}</el-col>
-            <el-col :span='4'>手机号:{{ detailDialog.phone || '暂无' }}</el-col>
-            <el-col :span='6'>房屋编号:
-              <el-select style="width: 160px" @change='houseChange' v-model="houseArrIndex" placeholder="请选择">
-                <el-option
-                  v-for="(item, index) in detailDialog.house"
-                  :key="index"
-                  :label="item.serialNumber"
-                  :value="index">
-                </el-option>
-              </el-select>
+            <el-col :span='21'>
+              <el-row style="line-height:50px;height:50px">
+                <el-col :span='3'>姓名:{{ detailDialog.name }}</el-col>
+                <el-col :span='2'>性别:{{ detailDialog.sex === '1' ? '男' : '女' }}</el-col>
+                <el-col :span='6'>身份证号:{{ detailDialog.cardNo || '--' }}</el-col>
+                <el-col :span='5'>手机号:{{ detailDialog.phone || '暂无' }}</el-col>
+                <el-col :span='8'>房屋编号:
+                  <el-select style="width: 160px" @change='houseChange' v-model="houseArrIndex" placeholder="请选择">
+                    <el-option
+                      v-for="(item, index) in detailDialog.house"
+                      :key="index"
+                      :label="item.serialNumber"
+                      :value="index">
+                    </el-option>
+                  </el-select>
+                </el-col>
+              </el-row>
+              <el-row style="line-height:50px;height:50px">
+                <el-col :span='6'>邀请访客:{{ houseDetailsFrom.enableInviteVisitor === '1' ? '允许' : '禁止' }}</el-col>
+                <el-col :span='6'>邀请车辆:{{ houseDetailsFrom.enableInviteCar === '1' ? '允许' : '禁止' }}</el-col>
+                <el-col :span='6'>用户类型:{{ houseDetailsFrom.type | typeFilter }}</el-col>
+                <el-col :span='6'>注册时间:{{ houseDetailsFrom.createTime }}</el-col>
+              </el-row>
             </el-col>
           </el-row>
-          <el-row>
-            <el-col :span='6'>邀请访客:{{ houseDetailsFrom.enableInviteVisitor === '1' ? '允许' : '禁止' }}</el-col>
-            <el-col :span='6'>邀请车辆:{{ houseDetailsFrom.enableInviteCar === '1' ? '允许' : '禁止' }}</el-col>
-            <el-col :span='6'>用户类型:{{ houseDetailsFrom.type | typeFilter }}</el-col>
-            <el-col :span='6'>注册时间:{{ houseDetailsFrom.createTime }}</el-col>
-          </el-row>
+
+
         </el-tab-pane>
         <el-tab-pane label="通行记录" name="second">
           <el-table :data="dtailTable" style="width: 100%">
@@ -445,7 +450,7 @@ export default class OwnerManage extends Vue {
   phoneString:string = '' // 需要改成的电话
   noteString: string = '' // 需要改成的备注
   houseIndex: number = 0 // 合并单元格用
-  houseArrIndex: number = 0 // 详情显示对应房屋
+  houseArrIndex: any = 0 // 详情显示对应房屋
   houseDetailsFrom: object = {} // 多个房屋其中一个详情
   updateHouseVisible: boolean = false // 修改房屋弹框
   data: Array<object> =  [] // 未分单元格人员数据

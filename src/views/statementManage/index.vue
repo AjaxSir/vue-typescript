@@ -31,7 +31,6 @@ import { Component, Vue } from "vue-property-decorator";
 const ActionManage = () => import('@/views/dashboard/components/actionManage.vue')
 @Component
 export default class InformIssue extends Vue {
-  // showRoutes:Array<string> = ['traffic', 'person', 'house', 'device'] // 统计报表项
   private ArrRoute: Array<object> = [{
     meta: {
       title: '车辆'
@@ -66,7 +65,7 @@ export default class InformIssue extends Vue {
           bg_color: '#2c7fec',
           icon: 'icon-zhuzhai'
         },
-        path: ''
+        path: '/statementManage/personPassChart'
       },
       {
         meta: {
@@ -88,35 +87,12 @@ export default class InformIssue extends Vue {
   },
   {
     meta: {
-      title: '住宅统计'
+      title: '邮件报告'
     },
     children: [
       {
         meta: {
-          title: '单元楼进出次数统计',
-          bg_color: '#8FA8C7',
-          icon: 'icon-zhuzhai'
-        },
-        path: ''
-      },
-      {
-        meta: {
-          title: '出入口进出次数统计',
-          bg_color: '#83c9a6',
-          icon: 'icon-zhuzhai'
-        },
-        path: ''
-      }
-    ]
-  },
-  {
-    meta: {
-      title: '设备'
-    },
-    children: [
-      {
-        meta: {
-          title: '通行次数排序统计',
+          title: '定时报告',
           bg_color: '#DF788D',
           icon: 'icon-zhuzhai'
         },
@@ -124,19 +100,6 @@ export default class InformIssue extends Vue {
       }
     ]
   }]
-  // getRoutes() {
-    // this.$router['options'].routes.forEach(element => {
-    //   if (this.showRoutes.includes(element.name)) {
-    //     this.ArrRoute.push(element)
-    //   }
-    // })
-    // const [a, b, c, d] = this.ArrRoute
-    // this.ArrRoute = [c, b, a, d]
-
-  // }
-  // mounted() {
-  //   this.getRoutes()
-  // }
 }
 </script>
 
