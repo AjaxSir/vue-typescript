@@ -136,7 +136,7 @@ img {
 }
 
 .el-menu-item.is-active {
-  color: #303133 ;
+  color: #303133;
 }
 
 // .el-menu-item .showHidden{
@@ -169,7 +169,7 @@ img {
   line-height: 100px !important;
 }
 
-.indexNum{
+.indexNum {
   text-align: center;
   display: flex;
   justify-content: center;
@@ -181,24 +181,32 @@ img {
   left: 0px;
   top: 50%;
   margin-top: -11px;
+
   .iconfont {
     font-size: 19px;
     color: #8091a5;
     cursor: pointer;
   }
 }
-.el-submenu .el-menu-item{
+
+.el-submenu .el-menu-item {
   height: 50px;
   line-height: 50px;
   padding: 0 45px;
   min-width: 150px;
 }
+
 .el-upload-list--picture-card .el-upload-list__item,
 .el-upload-list--picture-card .el-upload-list__item-thumbnail {
   width: 100px !important;
   height: 100px !important;
 
 }
-.el-col-20{
+
+.el-col-20 {
   position: relative;
+}
+
+.vistorItemForm .el-form-item__content .el-form-item__error {
+  padding-top: 0px !important;
 }

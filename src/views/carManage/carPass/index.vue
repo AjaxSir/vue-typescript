@@ -37,7 +37,7 @@
               <el-input
                 class="input-filter"
                 size="small"
-                v-model="filterForm.ownerName"
+                v-model="filterForm.userName"
                 placeholder="请输入车主姓名"
               ></el-input>
             </div>
@@ -46,7 +46,7 @@
               <el-input
                 class="input-filter"
                 size="small"
-                v-model="filterForm.ownerPhone"
+                v-model="filterForm.userPhone"
                 placeholder="请输入车主电话"
               ></el-input>
             </div>
@@ -127,7 +127,29 @@
               </template>
             </el-table-column>
 
-            <el-table-column align="center" prop="isVisitCar" label="访客通行">
+            <el-table-column align="center" prop="isVisitCar" label="访客通行" width="100px">
+              <template slot="header">
+                <el-dropdown style="padding:0;" trigger="click" @command="filterType">
+                  <span class="el-dropdown-link">
+                    访客通行
+                    <i class="el-icon-caret-bottom el-icon--right"></i>
+                  </span>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item
+                      command="all"
+                      :class="commandType==='all' ? pitchOn : unchecked"
+                    >全部</el-dropdown-item>
+                    <el-dropdown-item
+                      command="yes"
+                      :class="commandType==='yes' ? pitchOn : unchecked"
+                    >是</el-dropdown-item>
+                    <el-dropdown-item
+                      command="no"
+                      :class="commandType==='no' ? pitchOn : unchecked"
+                    >否</el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
+              </template>
               <template slot-scope="scope">
                 <el-tag
                   size="small"
@@ -142,7 +164,32 @@
             <!-- <el-table-column align="center" prop="inOut" label="车辆类型"></el-table-column> -->
             <el-table-column align="center" prop="ownerName" label="车主姓名"></el-table-column>
             <el-table-column align="center" prop="ownerPhone" label="车主电话"></el-table-column>
-            <el-table-column align="center" prop="inOut" label="通行方向"></el-table-column>
+            <el-table-column align="center" prop="inOut" label="通行方向" width="100px">
+              <template slot="header">
+                <el-dropdown style="padding:0;" trigger="click" @command="filterStatus">
+                  <span class="el-dropdown-link">
+                    通行方向
+                    <i class="el-icon-caret-bottom el-icon--right"></i>
+                  </span>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item
+                      command="0"
+                      :class="commandType==='0' ? pitchOn : unchecked"
+                    >全部</el-dropdown-item>
+                    <el-dropdown-item command="1" :class="commandType==='1' ? pitchOn : unchecked">进</el-dropdown-item>
+                    <el-dropdown-item command="2" :class="commandType==='2' ? pitchOn : unchecked">出</el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
+              </template>
+              <template slot-scope="scope">
+                <el-tag
+                  size="small"
+                  style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
+                  :type="scope.row.inOut==='进'? 'success' : 'danger'"
+                  @click="editType(scope.row)"
+                >{{ scope.row.inOut }}</el-tag>
+              </template>
+            </el-table-column>
             <el-table-column
               align="center"
               prop="passTime"
@@ -183,7 +230,7 @@
       :before-close="handleClose"
       :close-on-click-modal="false"
     >
-      <el-tabs type="card" v-model="activeName">
+      <el-tabs type="card" v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="车主信息" name="first">
           <el-form label-width="100px" :model="CarDialogForm">
             <el-form-item style="margin-bottom:0" label="姓名:">
@@ -230,6 +277,7 @@
 import { Component, Prop, Vue, Mixins } from "vue-property-decorator";
 import { Getter, Action, Mutation } from "vuex-class";
 import mixin from "@/config/minxins";
+import { getvisitUser, getOwnerUser } from "@/api/carApi.ts";
 
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 const ImageMagni = () => import("@/components/BigImg/index.vue");
@@ -246,12 +294,13 @@ const StatisticDataDialog = () =>
 })
 export default class CardManage extends Vue {
   filterForm: object = {
-    ownerName: null, //车主姓名
-    ownerPhone: null, //车主电话
+    userName: null, //车主姓名
+    userPhone: null, //车主电话
     carNo: null, //车牌
     startTime: null, //时间段开始时间
     endTime: null, //时间段结束时间
-    isVisitCar: null //车辆类型
+    isVisitCar: null, //车辆类型
+    inOut: null //进出
   }; //根据关键字查询
   initForm: object = {
     //获取车辆列表url
@@ -271,6 +320,10 @@ export default class CardManage extends Vue {
   detailDialogVisible: boolean = false; // 详细信息dialog弹框
   private fromTitle: String = "统计查询"; // dialog Title
   private dialogStatisticData: Boolean = false; // 统计dialog
+  private commandType: string = "all"; //根据访客类型筛选 all默认为显示全部
+  private commandStatus: String = "0"; //根据访客状态  0 默认显示为全部
+  private pitchOn: string = "y"; //选中A
+  private unchecked: string = "n"; //未选中
 
   carTypeList: Array<Object> = [
     //车辆类型筛选
@@ -321,6 +374,38 @@ export default class CardManage extends Vue {
     });
   }
 
+  filterType(command) {
+    /**@description 对访客类型进行筛选 */
+    this.commandType = command;
+    if (command === "all") {
+      this.filterForm["isVisitCar"] = null;
+    } else if (command === "yes") {
+      this.filterForm["isVisitCar"] = true;
+    } else this.filterForm["isVisitCar"] = false;
+    this.refreshInfo();
+  }
+
+  filterStatus(command) {
+    /**@description 对访客状态进行筛选 */
+    this.commandStatus = command;
+    if (command === "0") {
+      this.filterForm["inOut"] = null;
+    } else if (command === "1") {
+      this.filterForm["inOut"] = "进";
+    } else this.filterForm["inOut"] = "出";
+    this.refreshInfo();
+  }
+
+  refreshInfo() {
+    /**@description 刷新数据 */
+    this.initForm["params"] = Object.assign(
+      this.initForm["params"],
+      this.page,
+      this.filterForm
+    );
+    this["fetchData"](this.initForm);
+  }
+
   created() {
     this.initForm["params"] = Object.assign(
       this.initForm["params"],
@@ -333,6 +418,41 @@ export default class CardManage extends Vue {
     /**@description 查看目标详情 */
     this.detailDialogVisible = true;
     this.CarDialogForm = Object.assign({}, row);
+    this.fetchUser();
+  }
+
+  async handleClick(tab) {
+    /**@description 查看车辆管理名单目标详情 */
+    if (tab.name === "first") {
+      this.fetchUser();
+    } else if (tab.name === "thirdly") {
+      this.fetchPass();
+    }
+  }
+
+  fetchUser() {
+    /**@description 查看车辆管理名单用户详情 */
+    console.log(this.CarDialogForm);
+    if (this.CarDialogForm["isVisitCar"]) {
+      getvisitUser(this.CarDialogForm["visitCarId"]).then(res => {
+        console.log(res.data.data, 1);
+        // this.carUserDetail = res.data.data.user;
+      });
+    } else {
+      getOwnerUser(this.CarDialogForm["ownerScenceUserId"]).then(res => {
+        console.log(res.data.data, 2);
+        // this.carUserDetail = res.data.data.user;
+      });
+    }
+  }
+
+  async fetchPass() {
+    /**@description 查看车辆管理名单目标通行记录 */
+    // const info = { ...this.listQuery, carId: this.CarDialogForm["id"] };
+    // const { data } = await getTargrtRecord(info);
+    // this.passList = data.data.records;
+    // this.listQuery["total"] = data.data.total;
+    // this.passTarget = false;
   }
 
   editType(item) {
@@ -422,5 +542,18 @@ export default class CardManage extends Vue {
 .capture-img {
   width: 30px;
   height: 30px;
+}
+
+.el-dropdown-link {
+  color: #20a0ff;
+}
+
+.y {
+  color: #20a0ff;
+  background: #ecf5ff;
+}
+.n {
+  color: black;
+  background: #fff;
 }
 </style>

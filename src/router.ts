@@ -159,7 +159,7 @@ export const constantRouterMap = [{
     path: 'carManage',
     component: _import_('carManage/carList/index'),
     meta: {
-      title: '车辆名单',
+      title: '车辆管理',
       icon: 'icon-cheliangpaiban',
       bg_color: '#68e0c6'
     }

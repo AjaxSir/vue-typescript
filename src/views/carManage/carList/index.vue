@@ -44,12 +44,12 @@
               ></el-input>
             </div>
             <div class="word-filter">
-              <span class="filter-name">联系电话:</span>
+              <span class="filter-name">车主电话:</span>
               <el-input
                 class="input-filter"
                 size="small"
                 v-model="filterForm.ownerPhone"
-                placeholder="请输入联系电话"
+                placeholder="请输入车主电话"
               ></el-input>
             </div>
           </div>
@@ -91,6 +91,8 @@
             </el-table-column>
 
             <el-table-column prop="ownerName" label="车主" :show-overflow-tooltip="true"></el-table-column>
+
+            <el-table-column prop="ownerPhone" label="电话" :show-overflow-tooltip="true"></el-table-column>
 
             <el-table-column prop="carNo" label="车牌号">
               <template slot-scope="scope">
@@ -196,10 +198,6 @@
       >
         <el-form-item
           prop="ownerPhone"
-          :rules="[
-              { required: true, message: '手机不能为空'},
-              { type: 'number', message: '请正确的填写手机号'}
-            ]"
           :show-message="showMessage"
           :error="errorMessage.ownerPhone"
           label="电话"
@@ -207,7 +205,7 @@
           <!-- :disabled="nameDisabled" -->
           <el-autocomplete
             style="width:340px"
-            v-model.number="createForm[0].ownerPhone"
+            v-model="createForm[0].ownerPhone"
             placeholder="手机11位限长，只能输入数字"
             popper-class="my-autocomplete"
             :fetch-suggestions="querySearch"
@@ -664,6 +662,11 @@ export default class CarList extends Vue {
 
   createCar() {
     /**@description 新增车辆处理 */
+    // if (+this.createForm[0]["ownerPhone"]) {
+    //   this.createForm[0]["ownerPhone"] = +this.createForm[0]["ownerPhone"];
+    // } else if (this.createForm[0]["ownerPhone"] === "") {
+    //   this.createForm[0]["ownerPhone"] = null;
+    // }
     this.$refs["dataForm"]["validate"](valid => {
       if (valid) {
         var form = [
@@ -678,11 +681,6 @@ export default class CarList extends Vue {
           this.nameDisabled = false;
           this["notify"]("添加车辆名单成功");
         });
-        // .catch(err => {
-        //   const { data } = err.response;
-        //   console.log(err.response);
-        //     this.errorMessage = data[k][0];
-        // });
       }
     });
   }
@@ -755,6 +753,9 @@ export default class CarList extends Vue {
     /** @description 关闭新增/修改dialog */
     this.dialogCreate = false; //车辆新增dialog
     this.dialogEdit = false; //修改dialog
+    for (const key in this.createForm) {
+      this.createForm[key] = "";
+    }
     this.$refs["dataForm"]["resetFields"]();
   }
 

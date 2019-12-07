@@ -14,6 +14,18 @@
         <span class="logo">stone</span>
         <span class="slogan">一石智能识别门禁系统</span>
       </div>
+      <el-form-item prop="scenceCode">
+        <span class="svg-container svg-container_login">
+          <i class="iconfont icon-fangzicopy"></i>
+        </span>
+        <el-input
+          name="scenceCode"
+          type="text"
+          v-model="loginForm.scenceCode"
+          auto-complete="on"
+          placeholder="小区名称"
+        />
+      </el-form-item>
       <el-form-item prop="account">
         <span class="svg-container svg-container_login">
           <i class="iconfont icon-user"></i>
@@ -57,6 +69,7 @@ import { Component, Prop, Vue, Mixins, Provide } from "vue-property-decorator";
 import { Getter, Action, Mutation } from "vuex-class";
 import mixin from "../../config/minxins";
 import { login } from "../../api/user";
+import { getName, setCode, getCode } from "@/utils/auth";
 @Component({
   mixins: [mixin]
 })
@@ -75,8 +88,9 @@ export default class Login extends Vue {
   @Action("SET_TOKEN") set_token: any;
 
   private loginForm: Object = {
-    account: "admin",
-    password: "123456"
+    account: "",
+    password: "123456",
+    scenceCode: ""
   };
 
   private loginRules: Object = {
@@ -94,6 +108,13 @@ export default class Login extends Vue {
       this.page,
       this.filterForm
     ); // 合并参数
+
+    if (getName()) {
+      this.loginForm["account"] = getName();
+    }
+    if (getCode()) {
+      this.loginForm["scenceCode"] = getCode();
+    }
   }
 
   mounted() {
@@ -114,13 +135,15 @@ export default class Login extends Vue {
         login(this.loginForm)
           .then(response => {
             this.loading = false;
+            setCode(this.loginForm["scenceCode"]);
             this.set_name(response.data.data.name);
             this.set_token(response.data.data.token);
             this.$router.push({ path: "/" });
           })
-          .catch(() => {
+          .catch(err => {
             this.loading = false;
-            this.loginInfo = "用户名或密码错误";
+            console.log(err);
+            this.loginInfo = err.response.data.message;
           });
       } else {
         console.log("error submit!!");
