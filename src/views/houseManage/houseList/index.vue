@@ -50,6 +50,7 @@
           <el-table
             :data="list_data"
             stripe
+            @sort-change='sortChange'
             style="max-height: 75vh;overflow:auto"
             v-loading='showLoading'
             highlight-current-row
@@ -91,14 +92,7 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="personCnt" align='center' label="注册人数"></el-table-column>
-
-            <!-- <el-table-column prop="visitorNum" align='center' label="累计访客次数"></el-table-column>
-
-            <el-table-column prop="sumPassTimes" align='center' label="累计进出次数"></el-table-column>
-
-            <el-table-column prop="sumPassTimesYes" align='center' label="昨日进出次数"></el-table-column> -->
-
+            <el-table-column prop="personCnt" align='center' sortable='custom' label="注册人数"></el-table-column>
             <el-table-column align='center' prop="type" label="状态">
               <template slot-scope="{row}">
                 <el-dropdown @command="changeStatus"
@@ -342,6 +336,12 @@ export default class CardManage extends Vue {
       ...row,
       houseStatus
     }
+  }
+  // 注册人数排序
+  sortChange({column, prop, order }){
+    this.initForm['params']['orderColumn'] = prop
+    this.initForm['params']['asc'] = order !== 'ascending'
+    this['fetchData'](this.initForm)
   }
   // 修改备注自动获取焦点
   focusNoteInput(row) {

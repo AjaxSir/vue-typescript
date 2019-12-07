@@ -50,5 +50,6 @@ export default class dashboart extends Vue {}
 <style rel="stylesheet/scss" lang="scss" scoped>
 .app-container {
   margin-bottom: 20px;
+  padding: 0px 15px;
 }
 </style>

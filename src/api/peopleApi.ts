@@ -88,6 +88,17 @@ export function getTargrtRecord(params: object) {
   })
 }
 
+// 获取人员通行位置的搜索建议
+export function getPassAddress(name:string) {
+  return _axios({
+    url: '/admin/hsBuilding/binds',
+    method: 'get',
+    params: {
+      name
+    }
+  })
+}
+
 /********* 物业人员 *********** */
 // 新增物业人员
 export function addPropert(data: object) {

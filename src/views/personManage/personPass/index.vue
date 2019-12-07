@@ -15,8 +15,27 @@
           </el-dropdown-menu>
           <div slot="houseNum">
             <div class="word-filter">
-              <span class="filter-name">通行位置:</span>
-              <el-input style='width:220px' placeholder="请输入通行位置" class="input-filter" v-model='filterForm.unitHouse' size="small"></el-input>
+              <span class="filter-name">通行位置:</span>&nbsp;
+              <el-autocomplete
+              style="width:220px"
+                class="floatForm"
+                v-model="filterForm.bindId"
+                :fetch-suggestions="querySearch"
+                placeholder="请输入通行位置查找"
+                @select="handleSelect"
+              >
+              <template slot-scope="{ item }">
+              <div class="value">{{ item.locationName }}</div>
+            </template>
+            </el-autocomplete>
+            </div>
+            <div class="word-filter">
+              <span class="filter-name">设备区分:</span>
+              <el-select  style="width:220px" class="input-filter" size="small" v-model="filterForm.bindType" placeholder="请选择">
+                <el-option label="全部" value=""></el-option>
+                <el-option label="单元楼" value="1"></el-option>
+                <el-option label="进出口" value="2"></el-option>
+              </el-select>
             </div>
              <div class="word-filter">
               <span class="filter-name">姓名:</span>
@@ -50,7 +69,7 @@
             </div>
             <div class="word-filter">
               <span class="filter-name">通行方式:</span>&nbsp;
-              <el-select class="input-filter" size="small" v-model="filterForm.passMethod" placeholder="请选择">
+              <el-select  style="width:220px" class="input-filter" size="small" v-model="filterForm.passMethod" placeholder="请选择">
                 <el-option label="全部" value=""></el-option>
                 <el-option label="蓝牙" value="3"></el-option>
                 <el-option label="人脸" value="1"></el-option>
@@ -62,7 +81,7 @@
             </div>
             <div class="word-filter">
               <span class="filter-name">类型:</span>&nbsp;
-              <el-select class="input-filter" size="small" v-model="filterForm.userType" placeholder="请选择">
+              <el-select  style="width:220px" class="input-filter" size="small" v-model="filterForm.userType" placeholder="请选择">
                 <el-option label="全部" value="all"></el-option>
                 <el-option label="住户" value="house"></el-option>
                 <el-option label="访客" value="rent"></el-option>
@@ -161,6 +180,8 @@
 <script lang="ts">
 import { Component, Prop, Vue, Mixins, Watch } from "vue-property-decorator";
 import { Getter, Action, Mutation } from "vuex-class";
+import { getPassAddress } from '@/api/peopleApi.ts'
+import { formatTimeObj } from '@/utils'
 import mixin from "@/config/minxins";
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 const ImageMagni = () => import("@/components/BigImg/index.vue");
@@ -200,7 +221,8 @@ export default class PersonPass extends Vue {
   private bigImg: String = ""; // 保存放大图片的地址
   imgTitle: string = '人脸'
   filterForm: object = {
-    unitHouse: '',
+    bindId: '',
+    bindType: '',
     userName: '',
     startPassTime: '',
     endPassTime: '',
@@ -215,7 +237,6 @@ export default class PersonPass extends Vue {
   pickOptionStart:any = []
   pickOptionEnd:any = []
   timeChange(){
-    console.log(1)
     const _this = this
     this.pickOptionStart = {
         disabledDate(time){
@@ -236,8 +257,32 @@ export default class PersonPass extends Vue {
     const type = this.filterForm['userType']
     this.filterForm['isVisitor'] = type === 'all' ? null : (type === 'house' ? false : true)
   }
+
+    setTime() {
+      const today = new Date().getTime()
+      const sevenDay = today - 30 * 24 * 60 * 60 * 1000
+      this.filterForm['startPassTime'] = formatTimeObj(sevenDay, 'detail')
+      this.filterForm['endPassTime'] =  formatTimeObj(today, 'detail')
+    }
+
   created() {
+    this.setTime()
     this.initForm['params'] = Object.assign(this.initForm['params'], this.page, this.filterForm) // 合并参数
+  }
+  // 通行位置搜索建议
+  querySearch(string: string, cb) {
+    let result = []
+    getPassAddress(string).then(res => {
+      if (res.data.data) {
+        result = res.data.data
+        result.splice(10)
+        cb(result)
+      }
+    })
+  }
+  // 选择搜索建议列表某项 并赋值
+  handleSelect(val: object) {
+    this.filterForm['bindId'] = val['id']
   }
 }
 </script>

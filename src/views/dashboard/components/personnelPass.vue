@@ -5,6 +5,9 @@
         <!-- <svg-icon icon-class="v_zanbi" class-name="scene-house" /> -->
         <i class="iconfont icon-renyuantongji1"></i>
         <span class="scene-titile">人员通行</span>
+        <router-link :to="{name: 'management'}">
+          <el-button style='float:right;padding:5px 0px 0px 0px'  type="text"  >查看更多</el-button>
+        </router-link>
       </div>
       <div>
         <ul>
@@ -37,9 +40,7 @@
         <div
         style="height: 250px;text-align:center;line-height:250px"
         v-show='!tableData.length'>暂无人员通行记录</div>
-        <router-link :to="{name: 'management'}">
-          <el-button class="button-list" type="primary" plain size="small">查看更多</el-button>
-        </router-link>
+
 
       </div>
     </div>

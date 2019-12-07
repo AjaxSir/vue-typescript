@@ -204,7 +204,7 @@
           <el-input v-model="Form.name" placeholder='输入物业人员姓名'></el-input>
         </el-form-item>
         <el-form-item  class="float"  label="电话:"  prop='phone'>
-          <el-input v-model="Form.phone"  maxlength="11" placeholder='输入物业人员电话'></el-input>
+          <el-input v-model="Form.phone" @input='constraintLength(Form.phone, "11")'  maxlength="11" placeholder='输入物业人员电话'></el-input>
         </el-form-item>
         <el-form-item  class="float"  label="性别:"  prop='sex'>
           <el-switch
@@ -218,7 +218,7 @@
           </el-switch>
         </el-form-item>
         <el-form-item   class="float" label="年龄:"  prop='age'>
-          <el-input v-model="Form.age"  maxlength="3" placeholder='输入物业人员年龄'></el-input>
+          <el-input v-model="Form.age"  maxlength="3" @input='constraintLength(Form.phone, "3")' placeholder='输入物业人员年龄'></el-input>
         </el-form-item>
         <el-form-item   class="float"
         label="身份证号:"
@@ -226,7 +226,7 @@
           <el-input maxlength="18" @input="constraintLength(Form.cardNo,'18')" v-model="Form.cardNo" placeholder='输入身份证号'></el-input>
         </el-form-item>
         <el-form-item label="权限组:"  prop='authId'>
-          <el-select v-model="Form.authId" placeholder="请选择">
+          <el-select style='width:180px' v-model="Form.authId" placeholder="请选择">
             <el-option
               v-for="item in TreeData"
               :key="item.id"
@@ -235,9 +235,8 @@
             </el-option>
           </el-select>
         </el-form-item>
-
         <el-form-item label="备注:"  prop='note'>
-          <el-input type='textarea'  maxlength="11" @input="constraintLength(Form.note,'200')" v-model="Form.note" placeholder='输入备注'></el-input>
+          <el-input style="width:444px" type='textarea'  maxlength="11" @input="constraintLength(Form.note,'200')" v-model="Form.note" placeholder='输入备注'></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">

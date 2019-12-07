@@ -96,14 +96,14 @@
     <el-dialog
       title="新增"
       :visible.sync="dialogCreate"
-      width="600px"
+      width="500px"
       :before-close="handleClose"
     >
       <el-form ref="Forms" :rules='rules' :model="Form" label-width="80px">
         <el-form-item label="角色名" prop='name'>
-          <el-input placeholder="输入角色名字" @input="constraintLength(Form.note,'10')" v-model="Form.name"></el-input>
+          <el-input placeholder="输入角色名字" maxlength="10" @input="constraintLength(Form.name,'10')" v-model="Form.name"></el-input>
         </el-form-item>
-        <el-form-item label="备注"  placeholder="输入角色备注说明(最多200字)" prop='note'>
+        <el-form-item label="备注" maxlength="200"  placeholder="输入角色备注说明(最多200字)" prop='note'>
           <el-input @input="constraintLength(Form.note,'200')" type="textarea" v-model="Form.note"></el-input>
         </el-form-item>
       </el-form>
