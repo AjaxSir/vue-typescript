@@ -4,6 +4,9 @@
       <div class="scene-header">
         <i class="iconfont icon-daohang_taofeicheliangtongji-"></i>
         <span class="scene-titile">车辆通行</span>
+        <router-link :to="{name: 'carPass'}">
+          <el-button style='float:right;padding:5px 0px 0px 0px'  type="text"  >查看更多</el-button>
+        </router-link>
       </div>
       <div>
         <ul>
@@ -34,9 +37,6 @@
           </div>
         </div>
         <div style="height: 250px;text-align:center;line-height:250px" v-show='!tableData.length'>暂无车辆通行记录</div>
-        <router-link :to="{name: 'carPass'}">
-          <el-button class="button-list" type="primary" plain size="small">查看更多</el-button>
-        </router-link>
       </div>
     </div>
   </div>

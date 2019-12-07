@@ -93,18 +93,18 @@
     >
       <el-form :rules='rules' ref="Forms" :model="Form" label-width="80px">
         <el-form-item v-if='!Form.id' prop='name' label="账号名">
-          <el-input placeholder="请输入账号名" @input="constraintLength(Form.name, '10')" v-model="Form.name"></el-input>
+          <el-input  style="width:300px" maxlength="10" placeholder="请输入账号名" @input="constraintLength(Form.name, '10')" v-model="Form.name"></el-input>
         </el-form-item>
         <el-form-item prop='password' v-if='!Form.id' label="密码">
-          <el-input placeholder="请输入密码" @input="constraintLength(Form.name, '10')" type='password' v-model="Form.password"></el-input>
+          <el-input style="width:300px" maxlength="10" placeholder="请输入密码" @input="constraintLength(Form.name, '10')" type='password' v-model="Form.password"></el-input>
         </el-form-item>
         <el-form-item prop='roleName' label="角色">
-          <el-select v-model="Form.roleName" placeholder="请选择角色">
+          <el-select style="width:300px" v-model="Form.roleName" placeholder="请选择角色">
             <el-option v-for='(item, index) in roleList' :label="item.name" :key='index' :value="item.name"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="备注">
-          <el-input  placeholder="请输入备注" @input="constraintLength(Form.name, '200')" type="textarea" v-model="Form.note"></el-input>
+          <el-input style="width:300px" maxlength="200" placeholder="请输入备注" @input="constraintLength(Form.name, '200')" type="textarea" v-model="Form.note"></el-input>
         </el-form-item>
 
       </el-form>
@@ -126,10 +126,10 @@
           <span>{{ resetForms.name }}</span>
         </el-form-item>
         <el-form-item label="新密码" prop="newPassword">
-          <el-input type='password' placeholder="请输入修改后的密码" v-model="resetForms.newPassword "></el-input>
+          <el-input maxlength="10" style="width:300px" type='password' placeholder="请输入修改后的密码" v-model="resetForms.newPassword "></el-input>
         </el-form-item>
         <el-form-item label="确认密码" prop='reNewPassword'>
-          <el-input type='password' placeholder="请再次确认密码" v-model="resetForms.reNewPassword "></el-input>
+          <el-input maxlength="10" style="width:300px" type='password' placeholder="请再次确认密码" v-model="resetForms.reNewPassword "></el-input>
         </el-form-item>
 
       </el-form>

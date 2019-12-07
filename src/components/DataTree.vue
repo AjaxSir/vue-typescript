@@ -640,6 +640,7 @@ export default class DataTree extends Vue {
     if(this.type === "house") {
       if(data.type === 'group') {
         this.selectId = data.id
+        this.initFormHeader["params"]['buildingId'] = ''
         this.initFormHeader["params"]['groupId'] = data.id
           this['page']["page"] = 1;
           this.initFormHeader["params"] = Object.assign(
@@ -650,6 +651,7 @@ export default class DataTree extends Vue {
       } else {
         this.selectId = data.id
         this.initFormHeader["params"]['buildingId'] = data.id
+        this.initFormHeader["params"]['groupId'] = ''
           this['page']["page"] = 1;
           this.initFormHeader["params"] = Object.assign(
             this.initFormHeader["params"],

@@ -2,6 +2,7 @@
 import { Vue, Component } from "vue-property-decorator";
 import { MessageBox, Message } from 'element-ui';
 import _axios from '@/plugins/axios.js'
+import Cookie from 'js-cookie'
 // import { deleteRow } from "./../api/common"
 declare module 'vue/types/vue' {
   interface Vue {
@@ -266,42 +267,53 @@ export default class GlobalMimins extends Vue {
  * 限制备注
  * @param action
  */
-  constraintLength(value, note) {
+  constraintLength(value:string, note: string) {
     switch (note) {
       case '200':
         if (value.length === 200) {
           value = value.slice(200)
           this.message('备注不能超过200个字符')
         }
-        return;
+        break;
       case '7':
         if (value.length === 7) {
           this.message('车牌不能超过7个字符')
         }
-        return;
+        break;
       case '10':
         if (value.length === 10) {
           this.message('此项不能超过10个字符')
         }
-        return;
+        break;
+        case '3':
+            if (!(/^[1-9]\d*$/).test(value)) {
+              return  this.message('年龄只能输入数字')
+            }
+            break;
       case '11':
+        if (!this.is_Phone(value)) {
+          return  this.message('电话只能输入数字')
+        }
         if (value.toString().length === 11) {
           this.message('电话不能超过11个字符')
         }
-        return;
+        break;
       case '18':
         if (value.length === 18) {
           this.message('身份证号不能超过18个字符')
         }
-        return;
+        break;
     }
 
   }
-  message(val) {
-    this.$message({
-      message: val,
-      type: "warning"
-    });
+  message(val: string) {
+    if (!Cookie.get('error')) {
+      Cookie.set('error', Date.now(), { expires: new Date(new Date().getTime() + 5 * 1000) }) // 五秒钟内不会重复出现提示框
+      this.$message({
+        message: val,
+        type: "warning"
+      });
+    }
   }
 
   channelInputLimit(e) {

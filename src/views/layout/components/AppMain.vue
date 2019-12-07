@@ -3,7 +3,7 @@
         <div class="navMenu" id='navMenu' v-if='status'>
           <NavMenu @MenuStatus='changeStatus' />
         </div>
-        <div class="routerView">
+        <div class="routerView" id='routerView1'>
           <transition  name='fade' mode="out-in">
             <router-view />
           </transition>
@@ -12,7 +12,7 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Vue, Watch } from 'vue-property-decorator';
 import NavMenu from '@/components/NavMenu/index.vue';
 @Component({
   components: {
@@ -22,6 +22,7 @@ import NavMenu from '@/components/NavMenu/index.vue';
 export default class AppMain extends Vue{
   get status (): boolean {
     const whiteList = ['dashboard', 'statistics']
+
     return !whiteList.includes(this.$route.name as string)
   }
   changeStatus(status) {
@@ -31,6 +32,16 @@ export default class AppMain extends Vue{
     } else {
       const dom = document.getElementById('navMenu') as HTMLElement
       dom.style.width = '177px'
+    }
+  }
+  @Watch('$route')
+  routeChange() {
+    const whiteList = ['dashboard', 'statistics']
+    const dom = document.getElementById('routerView1') as HTMLElement
+    if (whiteList.includes(this.$route.name as string)) {
+      dom.style.width = '100%'
+    } else {
+      dom.style.width = 'calc(100% - 188px)'
     }
   }
 }
