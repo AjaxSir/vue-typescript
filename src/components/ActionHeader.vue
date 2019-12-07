@@ -330,7 +330,7 @@ a {
   }
   .filterDialog {
     text-align: left;
-    width: 340px;
+    width: 350px;
     height: auto;
     padding: 20px 10px;
     position: absolute;
