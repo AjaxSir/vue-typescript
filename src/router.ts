@@ -106,8 +106,8 @@ export const constantRouterMap = [{
     }
   },
   {
-    name: 'vistormanage ',
-    path: 'vistormanage',
+    name: 'caller ',
+    path: 'caller',
     component: _import_('personManage/vistorManage/index'),
     meta: {
       title: '访客管理',
