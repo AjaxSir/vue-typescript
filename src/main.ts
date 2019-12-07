@@ -15,6 +15,10 @@ import '@/permission' // permission control
 import './plugins/element.js'
 import BaiduMap from 'vue-baidu-map'
 
+import echarts from 'echarts'
+
+Vue.prototype.$echarts = echarts
+
 Vue.use(BaiduMap, {
   ak: 'vCZU88Guz4BmAODWTm8k9BP0WlwId1V0'
 })

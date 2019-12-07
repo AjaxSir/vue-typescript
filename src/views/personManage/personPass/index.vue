@@ -9,15 +9,16 @@
         @fetchData='fetchData'
         :filterForm='filterForm'
         :btnStatus='2'
+        linkUrl='/statementManage/personPassChart'
         :total="page.total">
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>统计信息</el-dropdown-item>
+            <el-dropdown-item command='link'>统计信息</el-dropdown-item>
           </el-dropdown-menu>
           <div slot="houseNum">
             <div class="word-filter">
               <span class="filter-name">通行位置:</span>&nbsp;
               <el-autocomplete
-              style="width:220px"
+              style="width:250px"
                 class="floatForm"
                 v-model="filterForm.bindId"
                 :fetch-suggestions="querySearch"
@@ -31,7 +32,7 @@
             </div>
             <div class="word-filter">
               <span class="filter-name">设备区分:</span>
-              <el-select  style="width:220px" class="input-filter" size="small" v-model="filterForm.bindType" placeholder="请选择">
+              <el-select  style="width:250px" class="input-filter" size="small" v-model="filterForm.bindType" placeholder="请选择">
                 <el-option label="全部" value=""></el-option>
                 <el-option label="单元楼" value="1"></el-option>
                 <el-option label="进出口" value="2"></el-option>
@@ -39,37 +40,27 @@
             </div>
              <div class="word-filter">
               <span class="filter-name">姓名:</span>
-              <el-input style='width:220px' placeholder="请输入需查找的姓名" class="input-filter" v-model='filterForm.userName' size="small"></el-input>
+              <el-input style='width:250px' placeholder="请输入需查找的姓名" class="input-filter" v-model='filterForm.userName' size="small"></el-input>
             </div>
              <div class="word-filter">
               <span class="filter-name">开始时间:</span> &nbsp;&nbsp;
               <el-date-picker
-                :picker-options='pickOptionStart'
-                v-model="filterForm.startPassTime"
-                type="datetime"
-                format='yyyy-MM-dd HH:mm:ss'
-                 value-format="yyyy-MM-dd HH:mm:ss"
-                :clearable='false'
-                @change='timeChange'
-                placeholder="选择日期">
-              </el-date-picker>
-            </div>
-            <div class="word-filter">
-              <span class="filter-name">结束时间:</span>&nbsp;&nbsp;
-              <el-date-picker
-              :clearable='false'
-              format='yyyy-MM-dd HH:mm:ss'
-              value-format="yyyy-MM-dd HH:mm:ss"
-                v-model="filterForm.endPassTime"
-                :picker-options='pickOptionEnd'
-                type="datetime"
-                @change='timeChange'
-                placeholder="选择日期">
-              </el-date-picker>
+                style="width:320px"
+                  v-model="timeRange"
+                  type="datetimerange"
+                  range-separator="-"
+                  @change='timeRangeChange'
+                  format='yyyy-MM-dd'
+                  value-format="yyyy-MM-dd HH:mm:ss"
+                  start-placeholder="开始日期"
+                  :clearable='false'
+                  :picker-options="pickerOptions"
+                  end-placeholder="结束日期">
+                </el-date-picker>
             </div>
             <div class="word-filter">
               <span class="filter-name">通行方式:</span>&nbsp;
-              <el-select  style="width:220px" class="input-filter" size="small" v-model="filterForm.passMethod" placeholder="请选择">
+              <el-select  style="width:250px" class="input-filter" size="small" v-model="filterForm.passMethod" placeholder="请选择">
                 <el-option label="全部" value=""></el-option>
                 <el-option label="蓝牙" value="3"></el-option>
                 <el-option label="人脸" value="1"></el-option>
@@ -81,7 +72,7 @@
             </div>
             <div class="word-filter">
               <span class="filter-name">类型:</span>&nbsp;
-              <el-select  style="width:220px" class="input-filter" size="small" v-model="filterForm.userType" placeholder="请选择">
+              <el-select  style="width:250px" class="input-filter" size="small" v-model="filterForm.userType" placeholder="请选择">
                 <el-option label="全部" value="all"></el-option>
                 <el-option label="住户" value="house"></el-option>
                 <el-option label="访客" value="rent"></el-option>
@@ -230,39 +221,35 @@ export default class PersonPass extends Vue {
     userType: 'all',
     isVisitor: false
   }
+  timeRange: Array<string> = []
+  pickerOptions: object = {
+        disabledDate(time) {
+        return time.getTime() > Date.now() - 8.64e7;
+      }
+    }
   initForm: object = {
     url: '/admin/people-pass/',
     method: 'get'
   }
   pickOptionStart:any = []
   pickOptionEnd:any = []
-  timeChange(){
-    const _this = this
-    this.pickOptionStart = {
-        disabledDate(time){
-        if (_this.filterForm['endPassTime']) {
-            return time.getTime() > Date.now() -8.64e7 || time.getTime() > _this.filterForm['endPassTime'];
-          }
-          return time.getTime() > Date.now() -8.64e7;
-      }
-    }
-    this.pickOptionEnd = {
-        disabledDate(time){
-          return time.getTime() < _this.filterForm['startPassTime'] || time.getTime() > Date.now()
-      }
-    }
-  }
   @Watch('filterForm.userType')
   isVistorChange() {
     const type = this.filterForm['userType']
     this.filterForm['isVisitor'] = type === 'all' ? null : (type === 'house' ? false : true)
   }
-
+  // 时间变化
+    timeRangeChange(val) {
+      this.filterForm['startPassTime'] = val[0]
+      this.filterForm['endPassTime'] =  val[1]
+      console.log(this.filterForm)
+    }
     setTime() {
       const today = new Date().getTime()
       const sevenDay = today - 30 * 24 * 60 * 60 * 1000
       this.filterForm['startPassTime'] = formatTimeObj(sevenDay, 'detail')
       this.filterForm['endPassTime'] =  formatTimeObj(today, 'detail')
+      this.timeRange = [ formatTimeObj(sevenDay, 'detail'), formatTimeObj(today, 'detail') ]
     }
 
   created() {

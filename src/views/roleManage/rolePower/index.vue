@@ -50,8 +50,8 @@
             </el-table-column>
 
             <el-table-column align="center" label="权限">
-              <template>
-                 <el-button @click='dialogTableVisible = true' type='text'>修改权限</el-button>
+              <template slot-scope="{row}">
+                 <el-button @click='updateRoleAction(row)' type='text'>修改权限</el-button>
               </template>
             </el-table-column>
 
@@ -71,30 +71,31 @@
       </el-col>
     </el-row>
     <!-- 权限弹框 -->
-    <el-dialog class="dialog-rewrite" title="权限修改" :visible.sync="dialogTableVisible">
+    <el-dialog :close-on-click-modal='false' class="dialog-rewrite" title="权限修改" :visible.sync="dialogTableVisible">
       <el-table :data="roleData">
         <el-table-column align="center" label="权限名称" width="200">
-          <template slot-scope="{row}">{{ row.meta.title }}</template>
+          <template slot-scope="{row}">{{ row.meta && row.meta.title }}</template>
         </el-table-column>
         <el-table-column align="center" label="修改">
           <template slot-scope="{row}">
-            <el-checkbox @change="changeStatus(row)" v-model="row.UpdateStatus"></el-checkbox>
+            <el-checkbox @change="changeStatus(row)" v-model="row.Update"></el-checkbox>
           </template>
         </el-table-column>
         <el-table-column align="center" label="查看">
           <template slot-scope="{row}">
-            <el-checkbox :disabled="row.lookDisabled" v-model="row.LookStatus"></el-checkbox>
+            <el-checkbox :disabled="row.lookDisabled" v-model="row.Look"></el-checkbox>
           </template>
         </el-table-column>
       </el-table>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogTableVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogTableVisible = false">保 存</el-button>
+        <el-button type="primary" @click="saveRole">保 存</el-button>
       </div>
     </el-dialog>
     <!-- 新增或修改 -->
     <el-dialog
       title="新增"
+      :close-on-click-modal='false'
       :visible.sync="dialogCreate"
       width="500px"
       :before-close="handleClose"
@@ -135,18 +136,23 @@ export default class InformIssue extends Vue {
     const Route = [].concat(this.$router["options"].routes);
     Route.shift();
     Route.forEach((ele: any) => {
-      ele.UpdateStatus = false;
-      ele.LookStatus = false;
+      ele.Update = false;
+      ele.Look = false;
       ele.lookDisabled = false; // 当有其他权限存在时 查看权限必须有
     });
-    this.roleData = Route;
+    this.roleData = Route.splice(1);
   }
-
+  updateRoleForm: object = {
+    id: '',
+    name: '',
+    note: '',
+    permission: []
+  }
   private dialogTableVisible: boolean = false;
   private Form: Object = {
     name: null,
     note: null,
-    permission: ['']
+    permission: []
   };
   initForm: object = {
     url: '/admin/usrRole/page',
@@ -164,8 +170,33 @@ export default class InformIssue extends Vue {
           ],
   }
   changeStatus(row) {
-    row.LookStatus = row.UpdateStatus
-    row.lookDisabled = row.UpdateStatus
+    row.Look = row.Update
+    row.lookDisabled = row.Update
+  }
+  // 打开权限修改框
+  updateRoleAction(row) {
+    this.dialogTableVisible = true
+    this.updateRoleForm = Object.assign(this.updateRoleForm, row)
+  }
+  // 保存修改权限
+  saveRole() {
+    let role: Array<string> = []
+    this.roleData.forEach(ele => {
+      if (ele['Update']) {
+        role.push(ele['name'] + 'Update')
+      }
+      if (ele['Look']) {
+        role.push(ele['name'] + 'Look')
+      }
+    })
+    this.updateRoleForm['permission'] = role
+    updateRole(this.updateRoleForm).then(res => {
+      if (res.data.code === 200) {
+        this.$message.success('修改权限成功')
+        this.fetchData(this.initForm)
+        this.dialogTableVisible = false
+      }
+    })
   }
   // 新增角色
   addRoleConfirm() {
@@ -192,6 +223,7 @@ export default class InformIssue extends Vue {
     })
 
   }
+
   created() {
     this.initForm['params'] = Object.assign(this.initForm['params'], this.page) // 合并参数
   }
