@@ -72,3 +72,24 @@ export function getUserPropertyCar(id: string) {
     }
   })
 }
+
+export function getvisitUser(id: string) {
+  console.log(id)
+  return _axios({
+    url: '/admin/usr-visit-car/get-one/',
+    method: 'get',
+    params: {
+      id
+    }
+  })
+}
+
+export function getOwnerUser(id: string) {
+  return _axios({
+    url: '/admin/scence-user/',
+    method: 'get',
+    params: {
+      id
+    }
+  })
+}

@@ -43,27 +43,35 @@
             ></BaiduMap>
 
             <el-form-item label="图片展示" style="margin-top:22px">
-              <el-upload
-                multiple
-                :data="communityForm"
-                action
-                ref="personForm"
-                list-type="picture-card"
-                accept="image/jpeg, image/jpg, image/png"
-                name="picList"
-                :auto-upload="false"
-                :headers="header"
-                :file-list="fileList"
-                :on-success="succUpdatePerson"
-                :on-change="changefile"
-                :on-remove="removefile"
-                :on-error="errorUpdatePerson"
-              >
-                <i class="el-icon-plus"></i>
-              </el-upload>
-              <el-dialog :visible.sync="dialogVisible" size="tiny">
-                <img width="100px" :src="imageUrl" alt />
-              </el-dialog>
+              <div class="uplolad-img">
+                <span v-if="showPic">
+                  <img class="show-img" v-for="(item,index) in picList" :key="index" :src="item" alt />
+                </span>
+                <el-upload
+                  multiple
+                  :data="communityForm"
+                  action
+                  ref="personForm"
+                  list-type="picture-card"
+                  accept="image/jpeg, image/jpg, image/png"
+                  name="picList"
+                  :limit="3"
+                  :auto-upload="false"
+                  :headers="header"
+                  :before-upload="beforeAvatarUpload"
+                  :file-list="fileList"
+                  :on-success="succUpdatePerson"
+                  :on-exceed="beyondFile"
+                  :on-change="changefile"
+                  :on-remove="removefile"
+                  :on-error="errorUpdatePerson"
+                >
+                  <i class="el-icon-plus"></i>
+                </el-upload>
+                <el-dialog :visible.sync="dialogVisible" size="tiny">
+                  <img width="100px" :src="imageUrl" alt />
+                </el-dialog>
+              </div>
             </el-form-item>
 
             <el-form-item label="小区概况">
@@ -90,7 +98,7 @@
 import { Component, Prop, Vue, Mixins } from "vue-property-decorator";
 import { Getter, Action, Mutation } from "vuex-class";
 import mixin from "@/config/minxins";
-import { editCommunity } from "@/api/systemApi.ts";
+import { editCommunity, getSceneInfo } from "@/api/screenApi.ts";
 
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 const DataTree = () => import("@/components/DataTree.vue");
@@ -127,19 +135,15 @@ export default class InformIssue extends Vue {
   };
   private selectPic: Object = {};
   private userRules: Object = {
-    name: [
-      { required: true, message: "请输入小区名称", trigger: "blur" }
-      // { min: 10, max: 11, message: "长度在 10 个字符", trigger: "blur" }
-    ],
-    address: [
-      { required: true, message: "请输入具体位置", trigger: "blur" }
-      // { min: 1, max: 20, message: "长度在 20 个字符内", trigger: "blur" }
-    ]
+    name: [{ required: true, message: "请输入小区名称", trigger: "blur" }],
+    address: [{ required: true, message: "请输入具体位置", trigger: "blur" }]
   };
   private upPathPerson: string = "/v1/admin/hs-scence/info/";
   private imageUrl: any = "";
   private dialogVisible: Boolean = false;
   private fileList: Array<Object> = [];
+  private picList: Array<Object> = [];
+  private showPic: Boolean = true;
 
   created() {
     this.initForm["params"] = Object.assign(
@@ -147,6 +151,16 @@ export default class InformIssue extends Vue {
       this.page,
       this.filterForm
     ); // 合并参数
+    this.getSceneData();
+  }
+
+  async getSceneData() {
+    const { data } = await getSceneInfo();
+    for (const key in this.communityForm) {
+      this.communityForm[key] = data.data[key];
+    }
+    console.log(data.data)
+    this.picList = data.data.picList;
   }
 
   editType(item) {
@@ -154,7 +168,12 @@ export default class InformIssue extends Vue {
     console.log(item);
   }
 
+  beyondFile(files, fileList) {
+    this.$message({ message: "只能上传3张", type: "error" });
+  }
+
   changefile(file, fileList) {
+    this.showPic = false;
     const reader = new FileReader();
     reader.onload = () => {
       const imgBase64: any = reader.result;
@@ -176,16 +195,9 @@ export default class InformIssue extends Vue {
         }
         editCommunity(this.communityForm).then(res => {
           this["notify"]("修改小区成功");
-          this.$refs["formInfo"]["resetFields"]();
           this.fileList = [];
-          this.communityForm = {
-            address: "",
-            latitude: "", //纬度
-            longitude: "", //经度
-            name: "", //名称
-            note: "", //备注
-            picList: [] //图片
-          };
+          this.showPic = true;
+          this.getSceneData();
         });
       }
     });
@@ -239,16 +251,12 @@ export default class InformIssue extends Vue {
   }
 
   beforeAvatarUpload(file) {
-    const isJPG = file.type === "image/jpeg";
+    console.log(123);
     const isLt2M = file.size / 1024 / 1024 < 2;
-
-    if (!isJPG) {
-      this.$message.error("上传头像图片只能是 JPG 格式!");
-    }
     if (!isLt2M) {
       this.$message.error("上传头像图片大小不能超过 2MB!");
     }
-    return isJPG && isLt2M;
+    return isLt2M;
   }
 }
 </script>
@@ -334,5 +342,14 @@ td {
   width: 80px;
   height: 80px;
   display: block;
+}
+.show-img {
+  width: 100px;
+  height: 100px;
+  border-radius: 5px;
+  margin-right: 5px;
+}
+.uplolad-img {
+  display: flex;
 }
 </style>
