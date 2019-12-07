@@ -118,26 +118,6 @@
                 placeholder="选择日期"
               ></el-date-picker>
             </div>
-            <div class="word-filter word-filter-rewrite">
-              <span class="filter-name">访客类型:</span>
-              <el-radio-group class="filter-grop" v-model="filterForm.visitType">
-                <el-radio
-                  v-for="item in visitType"
-                  :key="item.value"
-                  :label="item.value"
-                >{{item.label}}</el-radio>
-              </el-radio-group>
-            </div>
-            <div class="word-filter word-filter-rewrite">
-              <span class="filter-name">访客状态:</span>
-              <el-radio-group class="filter-grop" v-model="filterForm.status">
-                <el-radio
-                  v-for="item in selectType"
-                  :key="item.command"
-                  :label="item.command"
-                >{{item.lable}}</el-radio>
-              </el-radio-group>
-            </div>
           </div>
         </ActionHeader>
       </el-col>
@@ -192,6 +172,28 @@
               :show-overflow-tooltip="true"
               width="100px"
             >
+              <template slot="header">
+                <el-dropdown style="padding:0;" trigger="click" @command="filterType">
+                  <span class="el-dropdown-link">
+                    访客类型
+                    <i class="el-icon-caret-bottom el-icon--right"></i>
+                  </span>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item
+                      command="all"
+                      :class="commandType==='all' ? pitchOn : unchecked"
+                    >全部</el-dropdown-item>
+                    <el-dropdown-item
+                      command="1"
+                      :class="commandType==='App' ? pitchOn : unchecked"
+                    >APP</el-dropdown-item>
+                    <el-dropdown-item
+                      command="2"
+                      :class="commandType==='访客机' ? pitchOn : unchecked"
+                    >访客机</el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
+              </template>
               <template slot-scope="scope">
                 <span>{{scope.row.visitType ==='1' ?'APP' : scope.row.visitType ==='2' ?'访客机' : '--'}}</span>
               </template>
@@ -221,6 +223,22 @@
               :show-overflow-tooltip="true"
             ></el-table-column>
             <el-table-column prop="status" align="center" label="状态" :show-overflow-tooltip="true">
+              <template slot="header">
+                <el-dropdown style="padding:0;" trigger="click" @command="filterStatus">
+                  <span class="el-dropdown-link">
+                    状态
+                    <i class="el-icon-caret-bottom el-icon--right"></i>
+                  </span>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item
+                      v-for="item in selectType"
+                      :key="item.command"
+                      :command="item.command"
+                      :class="commandType===item.command ? pitchOn : unchecked"
+                    >{{item.lable}}</el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
+              </template>
               <template slot-scope="scope">
                 <span>{{statusFilter(scope.row.status)}}</span>
               </template>
@@ -462,40 +480,24 @@ export default class VistoryManage extends Vue {
   private activeName: string = "first"; //目标访客详细信息 tab Title
   private selectType: Array<Object> = [
     {
-      command: null,
+      command: "0",
       lable: "全部"
-    },
-    {
-      command: "2",
-      lable: "正常"
     },
     {
       command: "1",
       lable: "未开始"
     },
     {
-      command: "4",
-      lable: "其他"
+      command: "2",
+      lable: "正常"
     },
     {
       command: "3",
       lable: "已结束"
-    }
-  ];
-
-  visitType: Array<Object> = [
-    //车辆类型筛选
-    {
-      label: "全部",
-      value: null
     },
     {
-      label: "App",
-      value: "1"
-    },
-    {
-      label: "访客机",
-      value: "2"
+      command: "4",
+      lable: "其他"
     }
   ];
 
@@ -589,6 +591,24 @@ export default class VistoryManage extends Vue {
         return "成员";
         break;
     }
+  }
+
+  filterType(command) {
+    /**@description 对访客类型进行筛选 */
+    this.commandType = command;
+    if (command === "all") {
+      this.filterForm["visitType"] = null;
+    } else this.filterForm["visitType"] = command;
+    this.refreshInfo();
+  }
+
+  filterStatus(command) {
+    /**@description 对访客状态进行筛选 */
+    this.commandStatus = command;
+    if (command === "0") {
+      this.filterForm["status"] = null;
+    } else this.filterForm["status"] = command;
+    this.refreshInfo();
   }
 
   refreshInfo() {

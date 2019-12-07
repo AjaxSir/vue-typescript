@@ -228,7 +228,7 @@ export default class InformIssue extends Vue {
 
   getlocLat() {
     _axios({
-      url: `/v2/`,
+      url: `/map-api/v2`,
       params: {
         address: this.communityForm["address"],
         ak: "vCZU88Guz4BmAODWTm8k9BP0WlwId1V0",
