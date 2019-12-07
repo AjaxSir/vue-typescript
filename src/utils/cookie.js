@@ -1,7 +1,7 @@
 import Cookies from "js-cookie";
 
 const namespace = "yishi-access-v3";
-const saveCookie = []; // 退出时不清除cookie的key
+const saveCookie = [`${namespace}-username`,`${namespace}-codetype`]; // 退出时不清除cookie的key
 
 export function setCookie(cookieName, data) {
   return Cookies.set(`${namespace}-${cookieName}`, data);
