@@ -24,6 +24,27 @@
           </el-dropdown-menu>
           <div slot="houseNum">
             <div class="word-filter">
+              <span class="filter-name">时间段:</span>
+              <el-date-picker
+                size="small"
+                style="width:165px"
+                :picker-options="pickOptionStart"
+                v-model="filterForm.startTime"
+                type="datetime"
+                value-format="yyyy-MM-dd HH:mm:ss"
+                placeholder="选择日期"
+              ></el-date-picker>&nbsp;&nbsp;-&nbsp;&nbsp;
+              <el-date-picker
+                size="small"
+                style="width:165px"
+                v-model="filterForm.endTime"
+                :picker-options="pickOptionEnd"
+                type="datetime"
+                value-format="yyyy-MM-dd HH:mm:ss"
+                placeholder="选择日期"
+              ></el-date-picker>
+            </div>
+            <div class="word-filter">
               <span class="filter-name">车牌号:</span>
               <el-input
                 class="input-filter"
@@ -50,37 +71,26 @@
                 placeholder="请输入车主电话"
               ></el-input>
             </div>
-            <div class="word-filter">
-              <span class="filter-name">时间段:</span>
-              <el-date-picker
-                size="small"
-                style="width:165px"
-                :picker-options="pickOptionStart"
-                v-model="filterForm.startTime"
-                type="datetime"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                placeholder="选择日期"
-              ></el-date-picker>&nbsp;&nbsp;-&nbsp;&nbsp;
-              <el-date-picker
-                size="small"
-                style="width:165px"
-                v-model="filterForm.endTime"
-                :picker-options="pickOptionEnd"
-                type="datetime"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                placeholder="选择日期"
-              ></el-date-picker>
-            </div>
-            <div class="word-filter">
+
+            <div class="word-filter word-filter-rewrite">
               <span class="filter-name">车辆类型:</span>
-              <el-select size="small" v-model="filterForm.isVisitCar" placeholder="请选择车辆类型">
-                <el-option
+              <el-radio-group class="filter-grop" v-model="filterForm.isVisitCar">
+                <el-radio
                   v-for="item in carTypeList"
                   :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                ></el-option>
-              </el-select>
+                  :label="item.value"
+                >{{item.label}}</el-radio>
+              </el-radio-group>
+            </div>
+            <div class="word-filter word-filter-rewrite">
+              <span class="filter-name">通行方向:</span>
+              <el-radio-group class="filter-grop" v-model="filterForm.inOut">
+                <el-radio
+                  v-for="item in carPassType"
+                  :key="item.value"
+                  :label="item.value"
+                >{{item.label}}</el-radio>
+              </el-radio-group>
             </div>
           </div>
         </action-header>
@@ -127,67 +137,28 @@
               </template>
             </el-table-column>
 
-            <el-table-column align="center" prop="isVisitCar" label="访客通行" width="100px">
-              <template slot="header">
-                <el-dropdown style="padding:0;" trigger="click" @command="filterType">
-                  <span class="el-dropdown-link">
-                    访客通行
-                    <i class="el-icon-caret-bottom el-icon--right"></i>
-                  </span>
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item
-                      command="all"
-                      :class="commandType==='all' ? pitchOn : unchecked"
-                    >全部</el-dropdown-item>
-                    <el-dropdown-item
-                      command="yes"
-                      :class="commandType==='yes' ? pitchOn : unchecked"
-                    >是</el-dropdown-item>
-                    <el-dropdown-item
-                      command="no"
-                      :class="commandType==='no' ? pitchOn : unchecked"
-                    >否</el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown>
-              </template>
+            <el-table-column align="center" prop="isVisitCar" label="车辆类型" width="100px">
               <template slot-scope="scope">
                 <el-tag
                   size="small"
                   style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
                   :type="scope.row.isVisitCar? 'success' : 'danger'"
                   @click="editType(scope.row)"
-                >{{ scope.row.isVisitCar? "是" : "否" }}</el-tag>
+                >{{ scope.row.isVisitCar? "访客" : "常驻" }}</el-tag>
               </template>
             </el-table-column>
 
             <!-- <el-table-column align="center" prop="car" label="车辆颜色"></el-table-column> -->
-            <!-- <el-table-column align="center" prop="inOut" label="车辆类型"></el-table-column> -->
             <el-table-column align="center" prop="ownerName" label="车主姓名"></el-table-column>
             <el-table-column align="center" prop="ownerPhone" label="车主电话"></el-table-column>
             <el-table-column align="center" prop="inOut" label="通行方向" width="100px">
-              <template slot="header">
-                <el-dropdown style="padding:0;" trigger="click" @command="filterStatus">
-                  <span class="el-dropdown-link">
-                    通行方向
-                    <i class="el-icon-caret-bottom el-icon--right"></i>
-                  </span>
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item
-                      command="0"
-                      :class="commandType==='0' ? pitchOn : unchecked"
-                    >全部</el-dropdown-item>
-                    <el-dropdown-item command="1" :class="commandType==='1' ? pitchOn : unchecked">进</el-dropdown-item>
-                    <el-dropdown-item command="2" :class="commandType==='2' ? pitchOn : unchecked">出</el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown>
-              </template>
               <template slot-scope="scope">
                 <el-tag
                   size="small"
                   style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
                   :type="scope.row.inOut==='进'? 'success' : 'danger'"
                   @click="editType(scope.row)"
-                >{{ scope.row.inOut }}</el-tag>
+                >{{ scope.row.inOut==="进" ? '进入' : '出行' }}</el-tag>
               </template>
             </el-table-column>
             <el-table-column
@@ -232,35 +203,157 @@
     >
       <el-tabs type="card" v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="车主信息" name="first">
-          <el-form label-width="100px" :model="CarDialogForm">
-            <el-form-item style="margin-bottom:0" label="姓名:">
-              <span>{{CarDialogForm.ownerName}}</span>
-            </el-form-item>
-            <el-form-item style="margin-bottom:0" label="电话:">
-              <span>{{CarDialogForm.ownerPhone}}</span>
-            </el-form-item>
+          <el-form label-width="130px" :model="CarDialogForm">
+            <el-row :gutter="20">
+              <el-col :span="12" class="col-line">
+                <el-form-item style="margin-bottom:0" label="姓名:">
+                  <span>{{CarDialogForm.isVisitCar ? carUserDetail.ownerName : carVisitDetail.name}}</span>
+                </el-form-item>
+
+                <el-form-item v-if="!CarDialogForm.isVisitCar " style="margin-bottom:0" label="年龄:">
+                  <span>{{carVisitDetail.age}}</span>
+                </el-form-item>
+
+                <el-form-item v-if="!CarDialogForm.isVisitCar " style="margin-bottom:0" label="性别:">
+                  <span>{{carVisitDetail.sex}}</span>
+                </el-form-item>
+
+                <el-form-item style="margin-bottom:0" label="电话:">
+                  <span>{{CarDialogForm.isVisitCar ? carUserDetail.ownerPhone : carVisitDetail.phone}}</span>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item v-if="CarDialogForm.isVisitCar" style="margin-bottom:0" label="邀请人:">
+                  <span>{{carUserDetail.visitName}}</span>
+                </el-form-item>
+
+                <el-form-item v-if="CarDialogForm.isVisitCar" style="margin-bottom:0" label="备注信息:">
+                  <span>{{ carUserDetail.note ? carUserDetail.note : '--' }}</span>
+                </el-form-item>
+                <el-form-item
+                  v-if="!CarDialogForm.isVisitCar "
+                  style="margin-bottom:0"
+                  label="出生日期:"
+                >
+                  <span>{{carVisitDetail.birthday}}</span>
+                </el-form-item>
+
+                <el-form-item
+                  v-if="!CarDialogForm.isVisitCar "
+                  style="margin-bottom:0"
+                  label="证件类型:"
+                >
+                  <span>{{carVisitDetail.cardName}}</span>
+                </el-form-item>
+
+                <el-form-item
+                  v-if="!CarDialogForm.isVisitCar "
+                  style="margin-bottom:0"
+                  label="证件号码:"
+                >
+                  <span>{{carVisitDetail.cardNo}}</span>
+                </el-form-item>
+
+                <el-form-item
+                  v-if="!CarDialogForm.isVisitCar "
+                  style="margin-bottom:0"
+                  label="备注信息:"
+                >
+                  <span>{{ carVisitDetail.note ? carVisitDetail.note : '--'}}</span>
+                </el-form-item>
+              </el-col>
+            </el-row>
           </el-form>
         </el-tab-pane>
         <el-tab-pane label="详细信息" name="second">
-          <el-form label-width="100px" :model="CarDialogForm">
-            <el-form-item style="margin-bottom:0" label="访客通行:">
-              <span>{{CarDialogForm.isVisitCar ? '是':'否'}}</span>
-            </el-form-item>
-            <el-form-item style="margin-bottom:0" label="通行类型:">
-              <span>{{CarDialogForm.inOut}}</span>
-            </el-form-item>
-            <el-form-item style="margin-bottom:0" label="通行时间:">
-              <span>{{CarDialogForm.passTime}}</span>
-            </el-form-item>
-            <el-form-item style="margin-bottom:0" label="抓拍照片:">
-              <img
-                class="capture-img"
-                @mouseout="imgVisible=false"
-                @mouseover="imgVisible=true,bigImg=CarDialogForm.photos"
-                :src="CarDialogForm.photos"
-                alt
-              />
-            </el-form-item>
+          <el-form label-width="130px" :model="CarDialogForm">
+            <el-row v-if="CarDialogForm.isVisitCar" :gutter="20">
+              <el-col :span="12" class="col-line">
+                <el-form-item style="margin-bottom:0" label="车辆类型:">
+                  <span>{{CarDialogForm.isVisitCar ? '访客' : '常驻'}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="车辆品牌:">
+                  <span>{{ carUserDetail.modal}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="车辆型号:">
+                  <span>{{carUserDetail.carType}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="随同人数:">
+                  <span>{{carUserDetail.numPeople}}</span>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item style="margin-bottom:0" label="备注信息:">
+                  <span>{{carUserDetail.note ? carUserDetail.note : '--'}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="通行类型:">
+                  <span>{{CarDialogForm.inOut}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="通行时间:">
+                  <span>{{CarDialogForm.passTime}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="抓拍照片:">
+                  <img
+                    class="capture-img"
+                    @mouseout="imgVisible=false"
+                    @mouseover="imgVisible=true,bigImg=CarDialogForm.photos"
+                    :src="CarDialogForm.photos"
+                    alt
+                  />
+                </el-form-item>
+              </el-col>
+            </el-row>
+
+            <el-row v-else :gutter="20">
+              <el-col :span="12" class="col-line">
+                <el-form-item style="margin-bottom:0" label="车辆品牌:">
+                  <span>{{carUserDetail.modal ? carUserDetail.modal : '--'}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="车辆型号:">
+                  <span>{{carUserDetail.carType ? carUserDetail.carType :'--'}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="车辆状态:">
+                  <span>{{carUserDetail.status &&carUserDetail.status=='1' ? '正常' :'禁用'}}</span>
+                </el-form-item>
+
+                <el-form-item style="margin-bottom:0" label="最后一次进时间:">
+                  <span>{{carUserDetail.lastInTime ? carUserDetail.lastInTime :'--'}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="最后一次进照片:">
+                  <img
+                    class="capture-img"
+                    @mouseout="imgVisible=false"
+                    @mouseover="imgVisible=true,bigImg=carUserDetail.lastInPhoto"
+                    :src="carUserDetail.lastInPhoto"
+                    alt
+                  />
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item style="margin-bottom:0" label="车主姓名:">
+                  <span>{{carUserDetail.ownerName ? carUserDetail.ownerName :'--'}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="车主电话:">
+                  <span>{{carUserDetail.ownerPhone ? carUserDetail.ownerPhone : '--'}}</span>
+                </el-form-item>
+
+                <el-form-item style="margin-bottom:0" label="备注信息:">
+                  <span>{{carUserDetail.note ? carUserDetail.note :'--'}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="最后一次出时间:">
+                  <span>{{carUserDetail.lastOutTime ? carUserDetail.lastOutTime :'--'}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="最后一次出照片:">
+                  <img
+                    class="capture-img"
+                    @mouseout="imgVisible=false"
+                    @mouseover="imgVisible=true,bigImg=carUserDetail.lastOutPhoto"
+                    :src="carUserDetail.lastOutPhoto"
+                    alt
+                  />
+                </el-form-item>
+              </el-col>
+            </el-row>
           </el-form>
         </el-tab-pane>
       </el-tabs>
@@ -277,7 +370,7 @@
 import { Component, Prop, Vue, Mixins } from "vue-property-decorator";
 import { Getter, Action, Mutation } from "vuex-class";
 import mixin from "@/config/minxins";
-import { getvisitUser, getOwnerUser } from "@/api/carApi.ts";
+import { getvisitUser, getOwnerUser, getCarRecord } from "@/api/carApi.ts";
 
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 const ImageMagni = () => import("@/components/BigImg/index.vue");
@@ -320,13 +413,16 @@ export default class CardManage extends Vue {
   detailDialogVisible: boolean = false; // 详细信息dialog弹框
   private fromTitle: String = "统计查询"; // dialog Title
   private dialogStatisticData: Boolean = false; // 统计dialog
-  private commandType: string = "all"; //根据访客类型筛选 all默认为显示全部
-  private commandStatus: String = "0"; //根据访客状态  0 默认显示为全部
-  private pitchOn: string = "y"; //选中A
-  private unchecked: string = "n"; //未选中
+
+  private carUserDetail: Object = {}; //车主信息
+  private carVisitDetail: Object = {}; //访客车主信息
 
   carTypeList: Array<Object> = [
     //车辆类型筛选
+    {
+      label: "全部",
+      value: null
+    },
     {
       label: "常驻",
       value: false
@@ -334,10 +430,21 @@ export default class CardManage extends Vue {
     {
       label: "访客",
       value: true
+    }
+  ];
+  carPassType: Array<Object> = [
+    //车辆类型筛选
+    {
+      label: "全部",
+      value: null
     },
     {
-      label: "所有",
-      value: null
+      label: "进入",
+      value: "进"
+    },
+    {
+      label: "出行",
+      value: "出"
     }
   ];
   pickOptionStart: object = {}; //按照时间段查询的开始时间
@@ -374,28 +481,6 @@ export default class CardManage extends Vue {
     });
   }
 
-  filterType(command) {
-    /**@description 对访客类型进行筛选 */
-    this.commandType = command;
-    if (command === "all") {
-      this.filterForm["isVisitCar"] = null;
-    } else if (command === "yes") {
-      this.filterForm["isVisitCar"] = true;
-    } else this.filterForm["isVisitCar"] = false;
-    this.refreshInfo();
-  }
-
-  filterStatus(command) {
-    /**@description 对访客状态进行筛选 */
-    this.commandStatus = command;
-    if (command === "0") {
-      this.filterForm["inOut"] = null;
-    } else if (command === "1") {
-      this.filterForm["inOut"] = "进";
-    } else this.filterForm["inOut"] = "出";
-    this.refreshInfo();
-  }
-
   refreshInfo() {
     /**@description 刷新数据 */
     this.initForm["params"] = Object.assign(
@@ -425,34 +510,39 @@ export default class CardManage extends Vue {
     /**@description 查看车辆管理名单目标详情 */
     if (tab.name === "first") {
       this.fetchUser();
-    } else if (tab.name === "thirdly") {
-      this.fetchPass();
+    } else if (tab.name === "second") {
+      this.fetchCarDetail();
     }
   }
 
   fetchUser() {
-    /**@description 查看车辆管理名单用户详情 */
-    console.log(this.CarDialogForm);
+    /**@description 查看车辆管理名单用户详情
+     * @argument isVisitCar: true 访客车辆;  false 用户车辆
+     */
     if (this.CarDialogForm["isVisitCar"]) {
-      getvisitUser(this.CarDialogForm["visitCarId"]).then(res => {
-        console.log(res.data.data, 1);
-        // this.carUserDetail = res.data.data.user;
-      });
+      this.getvisitCar();
     } else {
       getOwnerUser(this.CarDialogForm["ownerScenceUserId"]).then(res => {
-        console.log(res.data.data, 2);
-        // this.carUserDetail = res.data.data.user;
+        this.carVisitDetail = res.data.data.user;
       });
     }
   }
 
-  async fetchPass() {
-    /**@description 查看车辆管理名单目标通行记录 */
-    // const info = { ...this.listQuery, carId: this.CarDialogForm["id"] };
-    // const { data } = await getTargrtRecord(info);
-    // this.passList = data.data.records;
-    // this.listQuery["total"] = data.data.total;
-    // this.passTarget = false;
+  async getvisitCar() {
+    /**@description 获取访客用户详情及车辆详情 */
+    const { data } = await getvisitUser(this.CarDialogForm["visitCarId"]);
+    this.carUserDetail = data.data;
+  }
+
+  async fetchCarDetail() {
+    /**@description 获取车辆详细信息 isVisitCar: true 访客车辆;  false 用户车辆*/
+    if (this.CarDialogForm["isVisitCar"]) {
+      this.getvisitCar();
+    } else {
+      const { data } = await getCarRecord(this.CarDialogForm["carId"]);
+      console.log(data.data);
+      this.carUserDetail = data.data;
+    }
   }
 
   editType(item) {
