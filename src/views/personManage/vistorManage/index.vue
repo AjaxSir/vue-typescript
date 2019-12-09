@@ -119,7 +119,7 @@
               ></el-date-picker>
             </div>
             <div class="word-filter word-filter-rewrite">
-              <span class="filter-name">访客类型:</span>
+              <span class="filter-name">访客来源:</span>
               <el-radio-group class="filter-grop" v-model="filterForm.visitType">
                 <el-radio
                   v-for="item in visitType"
@@ -188,7 +188,7 @@
             <el-table-column
               prop="visitType"
               align="center"
-              label="访客类型"
+              label="访客来源"
               :show-overflow-tooltip="true"
               width="100px"
             >
@@ -271,7 +271,7 @@
                 <el-form-item style="margin-bottom:0" label="访客姓名:">
                   <span>{{visitorDialogForm.name ? visitorDialogForm.name :'--'}}</span>
                 </el-form-item>
-                <el-form-item style="margin-bottom:0" label="访客类型:">
+                <el-form-item style="margin-bottom:0" label="访客来源:">
                   <span>{{visitorDialogForm.visitType ==='1' ?'APP' : visitorDialogForm.visitType ==='2' ?'访客机' : '--'}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="证件号码:">
@@ -425,7 +425,7 @@ export default class VistoryManage extends Vue {
     endCreateTime: null, //创建结束时间
     endInvalidDate: null, //有效期开始时间
     startInvalidDate: null, //有效期结束时间
-    visitType: null, //访客类型
+    visitType: null, //访客来源
     status: null //访客状态
   }; //根据关键字查询
   initForm: object = {
