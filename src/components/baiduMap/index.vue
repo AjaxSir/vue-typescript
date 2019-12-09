@@ -104,7 +104,7 @@ export default class BaiDuMap extends Vue {
         })
         addRess = Object.assign(addRess, e.point)
         axios({
-        url: `/v2/`,
+        url: `/map-api/v2/`,
         params: {
           address: addRess['address'],
           ak: 'vCZU88Guz4BmAODWTm8k9BP0WlwId1V0',

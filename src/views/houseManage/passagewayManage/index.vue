@@ -267,7 +267,7 @@ export default class InformIssue extends Vue {
         creatPassageway(form).then(res => {
           this.handleClose();
           this["fetchData"](this.initForm);
-          this["notify"]("添加出入口成功");
+          this["notify"]("success", "成功", "添加出入口成功");
         });
       }
     });
@@ -291,7 +291,7 @@ export default class InformIssue extends Vue {
     editPassageway(form).then(() => {
       this.handleClose();
       this["fetchData"](this.initForm);
-      this["notify"]("修改出入口成功");
+      this["notify"]("success", "成功", "修改出入口成功");
     });
   }
 
@@ -319,7 +319,7 @@ export default class InformIssue extends Vue {
     /**@description 修改备注 */
     const form = { note: this.editForm["note"], id: item.id };
     editPassageway(form).then(() => {
-      this["notify"]("修改出入口备注成功");
+      this["notify"]("success", "成功", "修改出入口备注成功");
       this["fetchData"](this.initForm);
     });
   }

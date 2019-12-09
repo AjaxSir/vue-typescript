@@ -133,10 +133,7 @@ export default class ActionManage extends Vue {
       return {};
     }
   })
-  @Prop({ default: '' }) linkUrl: string
-  @Prop({ default: () =>  {
-    return {}
-  } }) filterForm: object; // 筛选条件
+  filterForm: object; // 筛选条件
   private visible: boolean = false; // 数据显示条数dialog状态
   private size: string = "10"; // 默认每页显示10条
   private levelList: Object = {}; // 当前路由的子路由
@@ -189,7 +186,6 @@ export default class ActionManage extends Vue {
   emitFetchData() {
     this.visibleFilter = false;
     this.page["page"] = 1;
-    console.log(this.filterForm)
     this.initFormHeader["params"] = Object.assign(
       this.initFormHeader["params"],
       this.filterForm,
@@ -240,10 +236,6 @@ export default class ActionManage extends Vue {
         const filterUrl = qs.stringify(this.initFormHeader["params"]);
         this["exportFunc"](this.exportName, this.exportUrl + "/?" + filterUrl);
         break
-      case 'link':
-        this.$router.push({
-          path: this.linkUrl
-        })
       case 'exportTemplate':
          this["exportFunc"]('用户导入模板.xls', '/v1/admin/uploadFile/exportModel');
          break

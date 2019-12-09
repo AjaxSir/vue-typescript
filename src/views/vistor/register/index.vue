@@ -750,7 +750,7 @@ export default class VistorRegister extends Vue {
 
           addVisitor(form, this.deviceId).then(() => {
             this.clearBtn();
-            this["notify"]("注册访客成功");
+            this["notify"]("success", "成功", "注册访客成功");
             this.startFetch = true;
             this.getVisitorData();
             this.$refs["dataForm"]["resetFields"]();
@@ -769,7 +769,7 @@ export default class VistorRegister extends Vue {
 
           addVisitorManual(form, this.deviceId).then(() => {
             this.clearBtn();
-            this["notify"]("注册访客成功");
+            this["notify"]("success", "成功", "注册访客成功");
             this.$refs["dataForm"]["resetFields"]();
           });
         }
@@ -782,7 +782,7 @@ export default class VistorRegister extends Vue {
     cancelVisitor(this.deviceId).then(() => {
       this.vistorForm = {};
       this.writeVisitor = {};
-      this["notify"]("取消注册成功");
+      this["notify"]("success", "成功", "取消注册成功");
       this.startFetch = true;
       this.getVisitorData();
     });

@@ -15,13 +15,13 @@ module.exports = {
           "^/v1": "/"
         }
       },
-      '/v2': {
+      '/map-api/': {
         target: 'http://api.map.baidu.com/geocoder/', // http://192.168.3.19:8000/ 192.168.2.175:9000
         changeOrigin: true,
         pathRewrite: {
-          '^/v2': '/v2' // 需要rewrite的,
+          '^/map-api/': '' // 需要rewrite的,
         }
-      }
+      },
     },
     host: 'localhost'
   },
