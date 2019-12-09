@@ -679,7 +679,7 @@ export default class CarList extends Vue {
           this.handleClose();
           this["fetchData"](this.initForm);
           this.nameDisabled = false;
-          this["notify"]("添加车辆名单成功");
+          this["notify"]("success", "成功", "添加车辆名单成功");
         });
       }
     });
@@ -721,7 +721,7 @@ export default class CarList extends Vue {
     /**@description 修改备注 */
     const form = { note: this.editForm["note"], id: item.id };
     editCar(form).then(() => {
-      this["notify"]("修改车辆备注成功");
+      this["notify"]("success", "成功", "修改车辆备注成功");
       this["fetchData"](this.initForm);
     });
   }
@@ -729,7 +729,7 @@ export default class CarList extends Vue {
   handleCommand(val) {
     const form = { status: val, id: this.editForm["id"] };
     editCar(form).then(() => {
-      this["notify"]("修改车辆状态成功");
+      this["notify"]("success", "成功", "修改车辆状态成功");
       this["fetchData"](this.initForm);
     });
   }
@@ -745,7 +745,7 @@ export default class CarList extends Vue {
     editCar(form).then(() => {
       this.handleClose();
       this["fetchData"](this.initForm);
-      this["notify"]("修改车辆成功");
+      this["notify"]("success", "成功", "修改车辆成功");
     });
   }
 

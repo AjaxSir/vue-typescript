@@ -56,8 +56,18 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column prop="content" align="center" label="发布内容" :show-overflow-tooltip="true"></el-table-column>
-            <el-table-column prop="createTime" label="发布时间" align="center" :show-overflow-tooltip="true"></el-table-column>
+            <el-table-column
+              prop="content"
+              align="center"
+              label="发布内容"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
+            <el-table-column
+              prop="createTime"
+              label="发布时间"
+              align="center"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
           </el-table>
         </div>
         <el-pagination
@@ -314,7 +324,7 @@ export default class InformIssue extends Vue {
         postMessage(form).then(res => {
           this.handleClose();
           this["fetchData"](this.initForm);
-          this["notify"]("发布消息成功");
+          this["notify"]("success", "成功", "发布消息成功");
         });
       }
     });

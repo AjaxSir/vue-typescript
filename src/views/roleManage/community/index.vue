@@ -45,7 +45,13 @@
             <el-form-item label="图片展示" style="margin-top:22px">
               <div class="uplolad-img">
                 <span v-if="showPic">
-                  <img class="show-img" v-for="(item,index) in picList" :key="index" :src="item" alt />
+                  <img
+                    class="show-img"
+                    v-for="(item,index) in picList"
+                    :key="index"
+                    :src="item"
+                    alt
+                  />
                 </span>
                 <el-upload
                   multiple
@@ -159,7 +165,7 @@ export default class InformIssue extends Vue {
     for (const key in this.communityForm) {
       this.communityForm[key] = data.data[key];
     }
-    console.log(data.data)
+    console.log(data.data);
     this.picList = data.data.picList;
   }
 
@@ -194,7 +200,7 @@ export default class InformIssue extends Vue {
           this.communityForm["picList"].push(this.selectPic[key]);
         }
         editCommunity(this.communityForm).then(res => {
-          this["notify"]("修改小区成功");
+          this["notify"]("success", "成功", "修改小区成功");
           this.fileList = [];
           this.showPic = true;
           this.getSceneData();
@@ -240,10 +246,7 @@ export default class InformIssue extends Vue {
         this.communityForm["longitude"] = res.data.result.location.lng;
         this.communityForm["latitude"] = res.data.result.location.lat;
       } else {
-        this.$message({
-          message: "没有找到对应的位置信息",
-          type: "error"
-        });
+        this["notify"]("warning", "警告", "没有找到对应的位置信息");
         this.communityForm["longitude"] = "";
         this.communityForm["latitude"] = "";
       }

@@ -845,7 +845,7 @@ export default class FocusPeople extends Vue {
         addFocusPeople(form).then(res => {
           this.handleClose();
           this["fetchData"](this.initForm);
-          this["notify"]("添加关注人员成功");
+          this["notify"]("success", "成功", "添加关注人员成功");
         });
       }
     });
@@ -892,7 +892,7 @@ export default class FocusPeople extends Vue {
         form["earlyPeriod"] = Number(form["earlyPeriod"]);
         editFocusPeople(form).then(() => {
           this.editClose();
-          this["notify"]("修改关注人员成功");
+          this["notify"]("success", "成功", "修改关注人员成功");
           this["fetchData"](this.initForm);
         });
       }
@@ -923,7 +923,7 @@ export default class FocusPeople extends Vue {
     /**@description 修改备注 */
     const form = { note: this.editForm["note"], id: item.id };
     editFocusPeople(form).then(() => {
-      this["notify"]("修改关注人员备注成功");
+      this["notify"]("success", "成功", "修改关注人员备注成功");
       this["fetchData"](this.initForm);
     });
   }
@@ -961,7 +961,7 @@ export default class FocusPeople extends Vue {
     })
       .then(() => {
         deleteFocusPeople(item.id).then(() => {
-          this["notify"]("删除关注人员成功");
+          this["notify"]("success", "成功", "删除关注人员成功");
           this["fetchData"](this.initForm);
         });
       })

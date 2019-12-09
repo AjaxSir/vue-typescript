@@ -410,7 +410,7 @@ export default class WarningLink extends Vue {
           .then(res => {
             this.createClose();
             this["fetchData"](this.initForm);
-            this["notify"]("添加预警联系人成功");
+            this["notify"]("success", "成功", "添加预警联系人成功");
           })
           .catch(err => {
             if (err.response.data.data[0].key === "phone") {
@@ -491,7 +491,7 @@ export default class WarningLink extends Vue {
       if (valid) {
         editWarning(this.editForm).then(() => {
           this.editClose();
-          this["notify"]("修改预警联系人成功");
+          this["notify"]("success", "成功", "修改预警联系人成功");
           this["fetchData"](this.initForm);
         });
       }
@@ -525,7 +525,7 @@ export default class WarningLink extends Vue {
     })
       .then(() => {
         deleteWarning(item.id).then(() => {
-          this["notify"]("删除预警联系人成功");
+          this["notify"]("success", "成功", "删除预警联系人成功");
           this["fetchData"](this.initForm);
         });
       })
