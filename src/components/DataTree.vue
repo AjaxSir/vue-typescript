@@ -584,7 +584,6 @@ export default class DataTree extends Vue {
   }
   // 获取单位列表
   fetchUnitList(type:string = 'group'){
-    console.log(type)
     getUnitList(type).then(res => {
       if (type === 'build') {
         this.UnitTags = res.data.data
@@ -732,7 +731,6 @@ export default class DataTree extends Vue {
    */
   commandTreeClick(treeData) {
     this.nodeAction = treeData.action
-    console.log(treeData)
     switch (treeData.action) {
       case 'addGroup' :
         this.HouseForm['title'] = '添加子分组'
