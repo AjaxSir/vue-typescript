@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="pass">
+    <div class="pass scene-rename">
       <div class="scene-header">
         <!-- <svg-icon icon-class="v_zanbi" class-name="scene-house" /> -->
         <i class="iconfont icon-renyuantongji1"></i>
@@ -38,7 +38,7 @@
           </div>
         </div>
         <div
-        style="height: 250px;text-align:center;line-height:250px"
+        style="height: 250px;text-align:center;line-height:250px;font-size:15px;color:#474758"
         v-show='!tableData.length'>暂无人员通行记录</div>
 
 

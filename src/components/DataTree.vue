@@ -75,7 +75,7 @@
                 :value="item.name">
               </el-option>
             </el-select>
-            <el-button @click='showUnitSetting = !showUnitSetting' type='text'>序号单元设置</el-button>
+            <el-button @click='showUnitSetting = !showUnitSetting' type='text'>分组单元设置</el-button>
             <div v-if='showUnitSetting'>
               <el-tag
               style="margin-left:5px"
@@ -83,7 +83,7 @@
                 v-for="(tag, index) in Tags"
                 closable
                 :disable-transitions="false"
-                @close="deleteTag(tag, index)">
+                @close="deleteTag(tag, 'group')">
                 {{tag.name}}
               </el-tag>
               <el-input
@@ -92,7 +92,7 @@
                 v-model="newTagValue"
                 ref="saveTagInput"
                 size="small"
-                @blur="handleInputConfirm"
+                @blur="handleInputConfirm('group')"
               >
               </el-input>
               <el-button v-else class="button-new-tag" size="small" @click="showInput">新增单位</el-button>
@@ -117,7 +117,7 @@
               :value="item.name">
             </el-option>
           </el-select>
-          <el-button @click='showUnitSetting = !showUnitSetting' type='text'>序号单元设置</el-button>
+          <el-button @click='showUnitSetting = !showUnitSetting' type='text'>分组单元设置</el-button>
             <div v-if='showUnitSetting'>
               <el-tag
               style="margin-left:5px"
@@ -125,7 +125,7 @@
                 v-for="(tag, index) in Tags"
                 closable
                 :disable-transitions="false"
-                @close="deleteTag(tag, index)">
+                @close="deleteTag(tag, 'group')">
                 {{tag.name}}
               </el-tag>
               <el-input
@@ -134,7 +134,7 @@
                 v-model="newTagValue"
                 ref="saveTagInput"
                 size="small"
-                @blur="handleInputConfirm"
+                @blur="handleInputConfirm('group')"
               >
               </el-input>
               <el-button v-else class="button-new-tag" size="small" @click="showInput">新增单位</el-button>
@@ -158,15 +158,15 @@
     <el-dialog :close-on-click-modal='false' width="500px"  class='formDialog' title="添加单元楼" :visible.sync="HouseUnitVisible">
       <el-form  ref='buildings' :rules="unitRules" :model="UnitForm">
          <el-form-item label="名称:" prop='name' label-width="85px">
-          <el-input v-model="UnitForm.name" autocomplete="off"></el-input>
+          <el-input style="width:250px" v-model="UnitForm.name" autocomplete="off"></el-input>
           <!-- <el-input style='width:50px' v-model="UnitForm.max" autocomplete="off"></el-input> -->
         </el-form-item>
         <el-form-item v-if='!this.UnitForm.id' label="序号:" prop='serialNumber' label-width="85px">
-          <el-input v-model="UnitForm.serialNumber" autocomplete="off"></el-input>
+          <el-input style="width:250px" v-model="UnitForm.serialNumber" autocomplete="off"></el-input>
           <!-- <el-input style='width:50px' v-model="UnitForm.max" autocomplete="off"></el-input> -->
         </el-form-item>
         <el-form-item v-if='!this.UnitForm.id' label="序号单元:" prop='serialNumberUnit' label-width="85px">
-          <el-select v-model="UnitForm.serialNumberUnit" placeholder="请选择">
+          <el-select style="width:250px" v-model="UnitForm.serialNumberUnit" placeholder="请选择">
             <el-option
               v-for="item in Tags"
               :key="item.name"
@@ -174,13 +174,34 @@
               :value="item.name">
             </el-option>
           </el-select>
-
+          <el-button @click='showUnitSetting = !showUnitSetting' type='text'>单元楼单元设置</el-button>
+            <div v-if='showUnitSetting'>
+              <el-tag
+              style="margin-left:5px"
+                :key="index"
+                v-for="(tag, index) in UnitTags"
+                closable
+                :disable-transitions="false"
+                @close="deleteTag(tag, 'build')">
+                {{tag.name}}
+              </el-tag>
+              <el-input
+                class="input-new-tag"
+                v-if="newTag"
+                v-model="newTagValue"
+                ref="saveTagInput"
+                size="small"
+                @blur="handleInputConfirm('build')"
+              >
+              </el-input>
+              <el-button v-else class="button-new-tag" size="small" @click="showInput">新增单位</el-button>
+            </div>
         </el-form-item>
         <el-form-item label="楼层数:" prop='storeyNum' label-width="85px">
-          <el-input v-model="UnitForm.storeyNum" autocomplete="off"></el-input>
+          <el-input style="width:250px" v-model="UnitForm.storeyNum" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="每层户数:" prop='houseNum' label-width="85px">
-          <el-input v-model="UnitForm.houseNum" autocomplete="off"></el-input>
+          <el-input style="width:250px" v-model="UnitForm.houseNum" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -434,6 +455,7 @@ export default class DataTree extends Vue {
   showUnitSetting: boolean = false
     // 单位序号设置 数组
   Tags: Array<object> = []
+  UnitTags: Array<object> = []
   // 新增序号单元input框状态
   newTag: boolean = false
   // 新增单元的值
@@ -443,6 +465,7 @@ export default class DataTree extends Vue {
   created() {
     this.fetchDeviceList(1)
     this.fetchUnitList()
+    this.fetchUnitList('build')
   }
   // 获取设备列表
   fetchDeviceList(page: number) {
@@ -559,12 +582,18 @@ export default class DataTree extends Vue {
     })
 
   }
-  // 获取单元楼单位列表
-  fetchUnitList(){
-    getUnitList().then(res => {
-      this.Tags = res.data.data
-      this.HouseForm['serialNumberUnit'] = this.Tags[0]['name']
-      this.batchForm['serialNumberUnit'] = this.Tags[0]['name']
+  // 获取单位列表
+  fetchUnitList(type:string = 'group'){
+    console.log(type)
+    getUnitList(type).then(res => {
+      if (type === 'build') {
+        this.UnitTags = res.data.data
+        this.UnitForm['serialNumberUnit'] = this.UnitTags[0]['name']
+      } else {
+        this.Tags = res.data.data
+        this.HouseForm['serialNumberUnit'] = this.Tags[0]['name']
+        this.batchForm['serialNumberUnit'] = this.Tags[0]['name']
+      }
     })
   }
   /** 新增或修改分组信息 */
@@ -670,10 +699,10 @@ export default class DataTree extends Vue {
     }
   }
   /*** 删除序号单元 */
-  deleteTag(tag, index) {
+  deleteTag(tag, type) {
     deleteUnit(tag.id).then(res =>{
       if (res.data.code === 200) {
-        this.fetchUnitList()
+        this.fetchUnitList(type)
       }
     })
   }
@@ -682,11 +711,11 @@ export default class DataTree extends Vue {
     this.showMenu = val;
   }
   /*** 新增单元序号 */
-  handleInputConfirm() {
+  handleInputConfirm(type: string) {
     this.newTag = false
-    addUnit(this.newTagValue).then(res => {
+    addUnit(this.newTagValue, type).then(res => {
       if(res.data.code === 200) {
-        this.fetchUnitList()
+        this.fetchUnitList(type)
         this.newTagValue = ''
       }
     })

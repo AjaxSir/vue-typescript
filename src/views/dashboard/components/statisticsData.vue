@@ -68,6 +68,6 @@ $block: inline-block;
 .statics-data p {
   font-size: 15px;
   color: #474758;
-  line-height: 75px;
+  line-height: 68px;
 }
 </style>

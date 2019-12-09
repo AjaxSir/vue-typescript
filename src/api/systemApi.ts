@@ -49,7 +49,7 @@ export function addRole(data: object) {
 // 修改角色
 export function updateRole(data: object) {
   return _axios({
-    url: '/admin/usrRole',
+    url: '/admin/usrRole/updatePermission',
     method: 'put',
     data
   })

@@ -36,7 +36,7 @@
             </ul>
           </div>
         </div>
-        <div style="height: 250px;text-align:center;line-height:250px" v-show='!tableData.length'>暂无车辆通行记录</div>
+        <div style="height: 250px;text-align:center;line-height:250px;font-size:15px;color:#474758" v-show='!tableData.length'>暂无车辆通行记录</div>
       </div>
     </div>
   </div>
