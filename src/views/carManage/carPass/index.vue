@@ -24,27 +24,6 @@
           </el-dropdown-menu>
           <div slot="houseNum">
             <div class="word-filter">
-              <span class="filter-name">时间段:</span>
-              <el-date-picker
-                size="small"
-                style="width:165px"
-                :picker-options="pickOptionStart"
-                v-model="filterForm.startTime"
-                type="datetime"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                placeholder="选择日期"
-              ></el-date-picker>&nbsp;&nbsp;-&nbsp;&nbsp;
-              <el-date-picker
-                size="small"
-                style="width:165px"
-                v-model="filterForm.endTime"
-                :picker-options="pickOptionEnd"
-                type="datetime"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                placeholder="选择日期"
-              ></el-date-picker>
-            </div>
-            <div class="word-filter">
               <span class="filter-name">车牌号:</span>
               <el-input
                 class="input-filter"
@@ -72,25 +51,59 @@
               ></el-input>
             </div>
 
-            <div class="word-filter word-filter-rewrite">
+            <div class="word-filter">
               <span class="filter-name">车辆类型:</span>
-              <el-radio-group class="filter-grop" v-model="filterForm.isVisitCar">
-                <el-radio
+              <el-select
+                class="select-class"
+                size="small"
+                v-model="filterForm.isVisitCar"
+                placeholder="请选择车辆类型"
+              >
+                <el-option
                   v-for="item in carTypeList"
                   :key="item.value"
-                  :label="item.value"
-                >{{item.label}}</el-radio>
-              </el-radio-group>
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </el-select>
             </div>
-            <div class="word-filter word-filter-rewrite">
+
+            <div class="word-filter">
               <span class="filter-name">通行方向:</span>
-              <el-radio-group class="filter-grop" v-model="filterForm.inOut">
-                <el-radio
+              <el-select
+                class="select-class"
+                size="small"
+                v-model="filterForm.inOut"
+                placeholder="请选择通行方向"
+              >
+                <el-option
                   v-for="item in carPassType"
                   :key="item.value"
-                  :label="item.value"
-                >{{item.label}}</el-radio>
-              </el-radio-group>
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </el-select>
+            </div>
+            <div class="word-filter">
+              <span class="filter-name">时间段:</span>
+              <el-date-picker
+                size="small"
+                style="width:165px"
+                :picker-options="pickOptionStart"
+                v-model="filterForm.startTime"
+                type="datetime"
+                value-format="yyyy-MM-dd HH:mm:ss"
+                placeholder="选择日期"
+              ></el-date-picker>&nbsp;&nbsp;-&nbsp;&nbsp;
+              <el-date-picker
+                size="small"
+                style="width:165px"
+                v-model="filterForm.endTime"
+                :picker-options="pickOptionEnd"
+                type="datetime"
+                value-format="yyyy-MM-dd HH:mm:ss"
+                placeholder="选择日期"
+              ></el-date-picker>
             </div>
           </div>
         </action-header>

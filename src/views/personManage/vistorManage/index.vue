@@ -56,6 +56,39 @@
               ></el-input>
             </div>
             <div class="word-filter">
+              <span class="filter-name">访客类型:</span>
+              <el-select
+                class="select-class"
+                size="small"
+                v-model="filterForm.visitType"
+                placeholder="请选择访客类型"
+              >
+                <el-option
+                  v-for="item in visitType"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </el-select>
+            </div>
+
+            <div class="word-filter">
+              <span class="filter-name">访客状态:</span>
+              <el-select
+                class="select-class"
+                size="small"
+                v-model="filterForm.status"
+                placeholder="请选择访客状态"
+              >
+                <el-option
+                  v-for="item in selectType"
+                  :key="item.command"
+                  :label="item.lable"
+                  :value="item.command"
+                ></el-option>
+              </el-select>
+            </div>
+            <div class="word-filter">
               <span class="filter-name">同行人数:</span>
               <el-input
                 style="width:165px"
@@ -118,26 +151,6 @@
                 placeholder="选择日期"
               ></el-date-picker>
             </div>
-            <div class="word-filter word-filter-rewrite">
-              <span class="filter-name">访客来源:</span>
-              <el-radio-group class="filter-grop" v-model="filterForm.visitType">
-                <el-radio
-                  v-for="item in visitType"
-                  :key="item.value"
-                  :label="item.value"
-                >{{item.label}}</el-radio>
-              </el-radio-group>
-            </div>
-            <div class="word-filter word-filter-rewrite">
-              <span class="filter-name">访客状态:</span>
-              <el-radio-group class="filter-grop" v-model="filterForm.status">
-                <el-radio
-                  v-for="item in selectType"
-                  :key="item.command"
-                  :label="item.command"
-                >{{item.lable}}</el-radio>
-              </el-radio-group>
-            </div>
           </div>
         </ActionHeader>
       </el-col>
@@ -188,7 +201,7 @@
             <el-table-column
               prop="visitType"
               align="center"
-              label="访客来源"
+              label="访客类型"
               :show-overflow-tooltip="true"
               width="100px"
             >
@@ -271,7 +284,7 @@
                 <el-form-item style="margin-bottom:0" label="访客姓名:">
                   <span>{{visitorDialogForm.name ? visitorDialogForm.name :'--'}}</span>
                 </el-form-item>
-                <el-form-item style="margin-bottom:0" label="访客来源:">
+                <el-form-item style="margin-bottom:0" label="访客类型:">
                   <span>{{visitorDialogForm.visitType ==='1' ?'APP' : visitorDialogForm.visitType ==='2' ?'访客机' : '--'}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="证件号码:">
@@ -425,7 +438,7 @@ export default class VistoryManage extends Vue {
     endCreateTime: null, //创建结束时间
     endInvalidDate: null, //有效期开始时间
     startInvalidDate: null, //有效期结束时间
-    visitType: null, //访客来源
+    visitType: null, //访客类型
     status: null //访客状态
   }; //根据关键字查询
   initForm: object = {
