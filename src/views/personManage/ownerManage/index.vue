@@ -29,11 +29,11 @@
           <div slot="houseNum">
             <div class="word-filter">
               <span class="filter-name">姓&nbsp;&nbsp;&nbsp;名:</span>
-              <el-input class="input-filter" v-model="filterForm.name" size="small"></el-input>
+              <el-input style="width:215px" class="input-filter" v-model="filterForm.name" size="small"></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">手机号:</span>
-              <el-input class="input-filter" v-model="filterForm.phone" size="small"></el-input>
+              <el-input style="width:215px" class="input-filter" v-model="filterForm.phone" size="small"></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">用户类型:</span>
@@ -45,7 +45,7 @@
             </div>
             <div class="word-filter">
               <span class="filter-name">房号:</span>
-              <el-input class="input-filter" v-model="filterForm.houseNo" size="small"></el-input>
+              <el-input style="width:215px" class="input-filter" v-model="filterForm.houseNo" size="small"></el-input>
             </div>
           </div>
         </ActionHeader>

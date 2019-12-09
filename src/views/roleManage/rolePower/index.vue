@@ -177,6 +177,19 @@ export default class InformIssue extends Vue {
   updateRoleAction(row) {
     this.dialogTableVisible = true
     this.updateRoleForm = Object.assign(this.updateRoleForm, row)
+    const permissionList = row.permission ? row.permission : []
+    this.roleData.forEach(ele => {
+       this.$set(ele, 'Look', false)
+       this.$set(ele, 'Update', false)
+       this.$set(ele, 'lookDisabled', false)
+      if (permissionList.includes((ele['name'] + 'Look'))) {
+        this.$set(ele, 'Look', true)
+      }
+      if (permissionList.includes((ele['name'] + 'Update'))) {
+        this.$set(ele, 'Update', true)
+        this.$set(ele, 'lookDisabled', true)
+      }
+    })
   }
   // 保存修改权限
   saveRole() {

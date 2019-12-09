@@ -17,7 +17,7 @@
           <div slot="houseNum">
             <div class="word-filter">
               <span class="filter-name">房屋编号:</span>
-              <el-input class="input-filter" v-model="filterForm.keys" placeholder='输入房屋编号筛选' size="small"></el-input>
+              <el-input style="width:215px" class="input-filter" v-model="filterForm.keys" placeholder='输入房屋编号筛选' size="small"></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">状态:</span>

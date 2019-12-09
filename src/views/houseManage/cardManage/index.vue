@@ -18,11 +18,11 @@
           <div slot="houseNum">
             <div class="word-filter">
               <span class="filter-name">关联房屋:</span>
-              <el-input class="input-filter" placeholder="请输入关联房屋查找" v-model='filterForm.houseName' size="small"></el-input>
+              <el-input  style="width:215px" class="input-filter" placeholder="请输入关联房屋查找" v-model='filterForm.houseName' size="small"></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">卡号:</span>
-              <el-input class="input-filter" placeholder="请输入卡号查找" v-model='filterForm.cardNo' size="small"></el-input>
+              <el-input style="width:215px" class="input-filter" placeholder="请输入卡号查找" v-model='filterForm.cardNo' size="small"></el-input>
             </div>
              <div class="word-filter">
               <span class="filter-name">状态:</span>
@@ -93,10 +93,12 @@
                 @click='showUpdateTime(scope.row)'
                 v-show='!scope.row.validDateStatus'>{{ scope.row.validDate }}</span>
                 <el-date-picker
+                :clearable="false"
                   v-show='scope.row.validDateStatus'
                   :ref='scope.row.id'
                   v-model="scope.row.validDate"
                   type="date"
+                  @blur='blurDate(scope.row)'
                   @change='validDateChange($event, scope.row.id)'
                   placeholder="选择日期">
                 </el-date-picker>
@@ -280,12 +282,18 @@ export default class CardManage extends Vue {
     }
   // 切换到修改时间框
   showUpdateTime(row){
+    this['list_data'].forEach(element => {
+      element['validDateStatus'] = false
+    });
     row.validDateStatus = !row.validDateStatus
     this.$nextTick(() => {
       const timeInput = this.$refs[row.id] as HTMLElement
-      console.log(timeInput)
       timeInput.focus()
     })
+  }
+  // 时间修改失去焦点
+  blurDate(row){
+    row.validDateStatus = false
   }
   /// 修改门禁卡过期时间
   validDateChange(date: string, id: string) {

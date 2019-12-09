@@ -20,7 +20,8 @@
               <el-autocomplete
               style="width:250px"
                 class="floatForm"
-                v-model="filterForm.bindId"
+                clearable
+                v-model="filterForm.bindName"
                 :fetch-suggestions="querySearch"
                 placeholder="请输入通行位置查找"
                 @select="handleSelect"
@@ -212,6 +213,7 @@ export default class PersonPass extends Vue {
   private bigImg: String = ""; // 保存放大图片的地址
   imgTitle: string = '人脸'
   filterForm: object = {
+    bindName:'',
     bindId: '',
     bindType: '',
     userName: '',
@@ -269,6 +271,7 @@ export default class PersonPass extends Vue {
   }
   // 选择搜索建议列表某项 并赋值
   handleSelect(val: object) {
+    this.filterForm['bindName'] = val['locationName']
     this.filterForm['bindId'] = val['id']
   }
 }

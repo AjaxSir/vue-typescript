@@ -64,20 +64,25 @@ export function deleteBuilding(id: string) {
 }
 
 // 获取单元楼单位
-export function getUnitList() {
+export function getUnitList(type: string = 'group') {
   return _axios({
     url: '/admin/unit',
-    method: 'get'
+    method: 'get',
+    params: {
+      type
+    }
   })
 }
 
 // 增加单元楼单位
-export function addUnit(name:string) {
+export function addUnit(name:string, type: string) {
+  console.log(type)
   return _axios({
     url: '/admin/unit',
     method: 'post',
     data: {
-      name
+      name,
+      type
     }
   })
 }
