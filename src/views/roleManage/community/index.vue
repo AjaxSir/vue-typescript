@@ -169,11 +169,6 @@ export default class InformIssue extends Vue {
     this.picList = data.data.picList;
   }
 
-  editType(item) {
-    /**@description 修改状态 */
-    console.log(item);
-  }
-
   beyondFile(files, fileList) {
     this.$message({ message: "只能上传3张", type: "error" });
   }
@@ -254,7 +249,6 @@ export default class InformIssue extends Vue {
   }
 
   beforeAvatarUpload(file) {
-    console.log(123);
     const isLt2M = file.size / 1024 / 1024 < 2;
     if (!isLt2M) {
       this.$message.error("上传头像图片大小不能超过 2MB!");
