@@ -76,7 +76,6 @@ export function getUnitList(type: string = 'group') {
 
 // 增加单元楼单位
 export function addUnit(name:string, type: string) {
-  console.log(type)
   return _axios({
     url: '/admin/unit',
     method: 'post',

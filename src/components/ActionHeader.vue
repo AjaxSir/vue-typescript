@@ -209,7 +209,6 @@ export default class ActionManage extends Vue {
     this.visibleFilter = false
     // this.$emit('fetchData', this.initFormHeader)
     this.visible = false;
-    console.log(this.initFormHeader);
     return this.initFormHeader;
   }
   getRouter() {

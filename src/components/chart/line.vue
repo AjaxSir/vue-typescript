@@ -79,7 +79,7 @@ export default {
         _this.myChart.resize()
       }
       this.myChart.on('click', params => {
-        console.log(params)
+
       })
       window.addEventListener('resize', this.handle, false)
       setTimeout(() => {
