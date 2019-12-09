@@ -42,7 +42,7 @@ export default class GlobalMimins extends Vue {
   mounted() {
     this.fetchData(this.initForm)
   }
-  is_Phone(str:string) {
+  is_Phone(str: string) {
     return (/^1([358][0-9]|4[579]|66|7[0135678]|9[89])[0-9]{8}$/).test(str)
   }
   fetchData(option: object) {
@@ -199,12 +199,12 @@ export default class GlobalMimins extends Vue {
         this.Form = Object.assign(this.Form, options['row'])
         this.dialogCreate = true
         break
-        case 'rebind':
-          const copyForm = Object.assign({}, this.Form)
-            this.Form = Object.assign(this.Form, options['row'])
-            this.Form['bindingType'] = copyForm['bindingType']
-            this.dialogCreate = true
-            break
+      case 'rebind':
+        const copyForm = Object.assign({}, this.Form)
+        this.Form = Object.assign(this.Form, options['row'])
+        this.Form['bindingType'] = copyForm['bindingType']
+        this.dialogCreate = true
+        break
       case 'resetPassword':
         this['resetVisible'] = true
         this['resetForms'] = Object.assign(this['resetForms'], options['row'])
@@ -252,14 +252,14 @@ export default class GlobalMimins extends Vue {
    * 新增成功弹出框
    * @param action
    */
-  notify(val: string) {
+  notify(type: any, title: any, message: string) {
     if (this.notifyInstance) {
       this.notifyInstance.close();
     }
     this.notifyInstance = this.$notify({
-      type: "success",
-      title: "成功",
-      message: val
+      type,
+      title,
+      message
     });
   }
 
@@ -267,7 +267,7 @@ export default class GlobalMimins extends Vue {
  * 限制备注
  * @param action
  */
-  constraintLength(value:string, note: string) {
+  constraintLength(value: string, note: string) {
     switch (note) {
       case '200':
         if (value.length === 200) {
@@ -285,14 +285,14 @@ export default class GlobalMimins extends Vue {
           this.message('此项不能超过10个字符')
         }
         break;
-        case '3':
-            if (!(/^[1-9]\d*$/).test(value)) {
-              return  this.message('年龄只能输入数字')
-            }
-            break;
+      case '3':
+        if (!(/^[1-9]\d*$/).test(value)) {
+          return this.message('年龄只能输入数字')
+        }
+        break;
       case '11':
         if (!this.is_Phone(value)) {
-          return  this.message('电话只能输入数字')
+          return this.message('电话只能输入数字')
         }
         if (value.toString().length === 11) {
           this.message('电话不能超过11个字符')
