@@ -354,7 +354,7 @@ export default class DeviceManage extends Vue {
     /** 获取经纬度 */
     getlocLat() {
       axios({
-        url: `/map-api/v2`,
+        url: `/map-api/v2/`,
         params: {
           address: this.Form['address'],
           ak: 'vCZU88Guz4BmAODWTm8k9BP0WlwId1V0',
