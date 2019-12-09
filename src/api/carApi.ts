@@ -86,7 +86,17 @@ export function getvisitUser(id: string) {
 
 export function getOwnerUser(id: string) {
   return _axios({
-    url: '/admin/scence-user/',
+    url: '/admin/scence-user',
+    method: 'get',
+    params: {
+      id
+    }
+  })
+}
+
+export function getCarRecord(id: string) {
+  return _axios({
+    url: '/admin/usr-car/get-one',
     method: 'get',
     params: {
       id
