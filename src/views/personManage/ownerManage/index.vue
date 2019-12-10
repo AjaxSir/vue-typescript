@@ -297,7 +297,7 @@
               <el-input v-model="Form.cardName"  placeholder='输入卡名'></el-input>
             </el-form-item> -->
             <el-form-item label="身份证号:"  label-width="85px"  prop='cardNo'>
-              <el-input style="width: 280px" v-model="Form.cardNo" placeholder='输入身份证号'></el-input>
+              <el-input style="width: 280px" maxlength="18"   v-model="Form.cardNo" placeholder='输入身份证号'></el-input>
             </el-form-item>
             <el-form-item label="房屋:" style='clear:both'  prop='houseName'>
               <el-autocomplete
@@ -508,8 +508,13 @@ export default class OwnerManage extends Vue {
               }, trigger: 'blur' }
           ],
     cardNo: [
-            { required: true, message: '请输入身份证号', trigger: 'blur' },
-            { min:15, max: 18, message: '身份证在15到18位' }
+            { required: true, trigger: 'blur', validator: (rule, value, callback) => {
+                if (value.length < 15 || value.length > 15 && value.length < 18) {
+                  callback(new Error('填写正确的身份证号'))
+                } else {
+                  callback()
+                }
+              } }
           ],
     house: [
       { required: true, validator: (rule, value, callback) => {
