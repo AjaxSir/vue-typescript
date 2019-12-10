@@ -180,7 +180,7 @@
 
         <el-form-item class="phone-input" label="绑定位置: " prop="bindingAddress">
           <el-input style="width:310px" placeholder="点击右方设备绑定选择对应设备" v-model="Form.bindingAddress"></el-input>
-          <el-button type='text' @click='deviceBindingVisible = true'>设备绑定</el-button>
+          <el-button type='text' @click='deviceBindBtn'>设备绑定</el-button>
         </el-form-item>
          <el-form-item class="phone-input" label="具体位置: " prop="subAddress">
           <el-input style="width:310px" placeholder="例如:楼上/楼下" v-model="Form.subAddress"></el-input>
@@ -223,14 +223,14 @@
           align='center'
           label="设备名">
         </el-table-column>
-        <el-table-column
+        <!-- <el-table-column
           prop="locationName"
           align='center'
           label="地址">
           <template slot-scope="{row}">
             <span>{{ row.locationName || '暂无' }}</span>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column
           prop="note"
           align='center'
@@ -362,6 +362,7 @@ export default class DeviceManage extends Vue {
         },
         method: 'get'
       }).then(res => {
+        console.log(res)
         if (!res.data.status) {
           this.Form['longitude'] = res.data.result.location.lng
           this.Form['latitude'] = res.data.result.location.lat
@@ -380,7 +381,6 @@ export default class DeviceManage extends Vue {
     this.Form['address'] = Object['province'] + Object['city'] + Object['district'] + Object['street']
     this.Form['latitude'] = Object['lat']
     this.Form['longitude'] = Object['lng']
-    console.log(1)
   }
   // 获取单元楼列表
   fetchBuilding() {
@@ -390,6 +390,13 @@ export default class DeviceManage extends Vue {
       });
       this.deviceBindingData = res.data.data
     })
+  }
+  deviceBindBtn() {
+    this.deviceBindingVisible = true
+    this.deviceBindingData.forEach(ele => {
+      ele['bindStatus'] = false
+    })
+    this.Form['bindingId'] = ''
   }
   // 绑定设备
   bindDevice(row) {
@@ -433,6 +440,15 @@ export default class DeviceManage extends Vue {
         }
       }
     })
+  }
+  handleClose() {
+    for (let key in this.Form) {
+      this.Form[key] = ''
+    }
+    this.Form['bindingType'] = '1'
+    this.Form['inOut'] = '出'
+    this.$refs['Forms']['resetFields']();
+    this['dialogCreate'] = false
   }
   /*** 查看设备详情*/
   showDetails(row) {

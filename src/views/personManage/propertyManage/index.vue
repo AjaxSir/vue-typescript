@@ -204,7 +204,7 @@
           <el-input v-model="Form.name" placeholder='输入物业人员姓名'></el-input>
         </el-form-item>
         <el-form-item  class="float"  label="电话:"  prop='phone'>
-          <el-input v-model="Form.phone" @input='constraintLength(Form.phone, "11")'  maxlength="11" placeholder='输入物业人员电话'></el-input>
+          <el-input v-model="Form.phone" @input='constraintLength(Form.phone, "11")' placeholder='输入物业人员电话'></el-input>
         </el-form-item>
         <el-form-item  class="float"  label="性别:"  prop='sex'>
           <el-switch
@@ -311,14 +311,7 @@ export default class PropertyManage extends Vue {
             { required: true, message: '请输入物业人员名称', trigger: 'blur' }
           ],
     phone: [
-            { required: true, trigger: 'blur', validator: (rule, value, callback) => {
-                if (!this['is_Phone'](value)) {
-                  callback(new Error('填写正确的手机号'))
-                } else {
-                  callback()
-                }
-              }
-            }
+            { required: true, trigger: 'blur', message: '请输入物业人员电话' }
           ],
     authId: [
             { required: true, message: '请选择对应的权限组', trigger: 'change' }
@@ -448,6 +441,7 @@ export default class PropertyManage extends Vue {
             this.$message.success('新增成功')
             this['dialogCreate'] = false
             this['fetchData'](this.initForm)
+            this['handleClose']()
           }
         })
       }
