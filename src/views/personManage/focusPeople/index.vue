@@ -36,9 +36,9 @@
               ></el-input>
             </div>
             <div class="word-filter">
-              <span class="filter-name" style="min-width: 86px;">预警组别:</span>
+              <span class="filter-name" style="min-width: 90px;">预警组别:</span>
               <el-select
-                class="input-filter"
+                class="select-rewrite"
                 v-model="filterForm.earlyGroupId"
                 size="small"
                 placeholder="请选择预警组别"
@@ -207,7 +207,7 @@
       >
         <div style="display: flex;">
           <el-form-item
-            label="名字:"
+            label="姓名:"
             prop="scenceUser"
             :show-message="showMessage"
             :error="errorMessage.scenceUser"
@@ -263,7 +263,7 @@
           <el-input
             v-model.number="createForm.emergencyPhone"
             autocomplete="off"
-            placeholder="手机11位限长，只能输入数字"
+            placeholder="请输入紧急联系人电话"
             :maxlength="11"
             @input="constraintLength(createForm.emergencyPhone,'11')"
           ></el-input>
@@ -1050,4 +1050,5 @@ export default class FocusPeople extends Vue {
 .serial-num {
   position: relative;
 }
+
 </style>

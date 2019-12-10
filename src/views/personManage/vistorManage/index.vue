@@ -24,8 +24,12 @@
           :exportName="'访客列表'"
         >
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>进出次数排序</el-dropdown-item>
-            <el-dropdown-item>次数统计</el-dropdown-item>
+            <router-link to="/statementManage/info">
+              <el-dropdown-item>进出次数排序</el-dropdown-item>
+            </router-link>
+            <router-link to="/statementManage/info">
+              <el-dropdown-item>次数统计</el-dropdown-item>
+            </router-link>
           </el-dropdown-menu>
           <div slot="houseNum">
             <div class="word-filter">
