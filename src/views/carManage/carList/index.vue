@@ -763,9 +763,7 @@ export default class CarList extends Vue {
     /** @description 关闭新增/修改dialog */
     this.dialogCreate = false; //车辆新增dialog
     this.dialogEdit = false; //修改dialog
-    for (const key in this.createForm) {
-      this.createForm[key] = "";
-    }
+    this.createForm[0]["carType"] = "";
     this.$refs["dataForm"]["resetFields"]();
   }
 
