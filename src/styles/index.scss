@@ -93,6 +93,10 @@ a:hover {
   text-align: right;
 }
 
+.filter-rewrite {
+  margin-right: 6px !important;
+}
+
 .input-filter {
   margin-left: 6px;
 }
@@ -223,9 +227,9 @@ img {
 }
 
 .select-class .el-input--small .el-input__inner {
-  width: 257px !important;
+  width: 252px !important;
 }
 
-.select-rewrite .el-input--small .el-input__inner {
-  width: 232px !important;
-}
+// .select-rewrite .el-input--small .el-input__inner {
+//   width: 232px !important;
+// }

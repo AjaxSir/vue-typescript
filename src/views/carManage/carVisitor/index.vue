@@ -66,7 +66,7 @@
               ></el-input>
             </div>
             <div class="word-filter">
-              <span class="filter-name">有效时间:</span>
+              <span class="filter-name filter-rewrite">有效时间:</span>
               <el-date-picker
                 size="small"
                 style="width:165px"
@@ -87,7 +87,7 @@
               ></el-date-picker>
             </div>
             <div class="word-filter">
-              <span class="filter-name">创建时间:</span>
+              <span class="filter-name filter-rewrite">创建时间:</span>
               <el-date-picker
                 size="small"
                 style="width:165px"

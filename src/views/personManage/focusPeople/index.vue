@@ -18,7 +18,7 @@
           </el-dropdown-menu>-->
           <div slot="houseNum">
             <div class="word-filter">
-              <span class="filter-name" style="min-width: 86px;">关注人姓名:</span>
+              <span class="filter-name">姓名:</span>
               <el-input
                 class="input-filter"
                 size="small"
@@ -27,7 +27,7 @@
               ></el-input>
             </div>
             <div class="word-filter">
-              <span class="filter-name" style="min-width: 86px;">紧急联系电话:</span>
+              <span class="filter-name">紧急电话:</span>
               <el-input
                 class="input-filter"
                 size="small"
@@ -36,9 +36,9 @@
               ></el-input>
             </div>
             <div class="word-filter">
-              <span class="filter-name" style="min-width: 90px;">预警组别:</span>
+              <span class="filter-name filter-rewrite">预警组别:</span>
               <el-select
-                class="select-rewrite"
+                class="select-class"
                 v-model="filterForm.earlyGroupId"
                 size="small"
                 placeholder="请选择预警组别"
@@ -129,7 +129,7 @@
             <el-table-column
               prop="emergencyPhone"
               align="center"
-              label="紧急联系人电话"
+              label="紧急电话"
               :show-overflow-tooltip="true"
             ></el-table-column>
 
@@ -251,7 +251,7 @@
         </div>
 
         <el-form-item
-          label="紧急联系人:"
+          label="紧急电话:"
           prop="emergencyPhone"
           :rules="[
               { required: true, message: '手机不能为空'},

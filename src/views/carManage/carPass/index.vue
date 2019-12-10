@@ -24,6 +24,27 @@
           </el-dropdown-menu>
           <div slot="houseNum">
             <div class="word-filter">
+              <span class="filter-name filter-rewrite">时间段:</span>
+              <el-date-picker
+                size="small"
+                style="width:165px"
+                :picker-options="pickOptionStart"
+                v-model="filterForm.startTime"
+                type="datetime"
+                value-format="yyyy-MM-dd HH:mm:ss"
+                placeholder="选择日期"
+              ></el-date-picker>&nbsp;&nbsp;-&nbsp;&nbsp;
+              <el-date-picker
+                size="small"
+                style="width:165px"
+                v-model="filterForm.endTime"
+                :picker-options="pickOptionEnd"
+                type="datetime"
+                value-format="yyyy-MM-dd HH:mm:ss"
+                placeholder="选择日期"
+              ></el-date-picker>
+            </div>
+            <div class="word-filter">
               <span class="filter-name">车牌号:</span>
               <el-input
                 class="input-filter"
@@ -52,7 +73,7 @@
             </div>
 
             <div class="word-filter">
-              <span class="filter-name">车辆类型:</span>
+              <span class="filter-name filter-rewrite">车辆类型:</span>
               <el-select
                 class="select-class"
                 size="small"
@@ -69,7 +90,7 @@
             </div>
 
             <div class="word-filter">
-              <span class="filter-name">通行方向:</span>
+              <span class="filter-name filter-rewrite">通行方向:</span>
               <el-select
                 class="select-class"
                 size="small"
@@ -83,27 +104,6 @@
                   :value="item.value"
                 ></el-option>
               </el-select>
-            </div>
-            <div class="word-filter">
-              <span class="filter-name">时间段:</span>
-              <el-date-picker
-                size="small"
-                style="width:165px"
-                :picker-options="pickOptionStart"
-                v-model="filterForm.startTime"
-                type="datetime"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                placeholder="选择日期"
-              ></el-date-picker>&nbsp;&nbsp;-&nbsp;&nbsp;
-              <el-date-picker
-                size="small"
-                style="width:165px"
-                v-model="filterForm.endTime"
-                :picker-options="pickOptionEnd"
-                type="datetime"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                placeholder="选择日期"
-              ></el-date-picker>
             </div>
           </div>
         </action-header>

@@ -60,7 +60,7 @@
               ></el-input>
             </div>
             <div class="word-filter">
-              <span class="filter-name">访客类型:</span>
+              <span class="filter-name filter-rewrite">访客类型:</span>
               <el-select
                 class="select-class"
                 size="small"
@@ -77,7 +77,7 @@
             </div>
 
             <div class="word-filter">
-              <span class="filter-name">访客状态:</span>
+              <span class="filter-name filter-rewrite">访客状态:</span>
               <el-select
                 class="select-class"
                 size="small"
@@ -93,7 +93,7 @@
               </el-select>
             </div>
             <div class="word-filter">
-              <span class="filter-name">同行人数:</span>
+              <span class="filter-name filter-rewrite">同行人数:</span>
               <el-input
                 style="width:165px"
                 size="small"
@@ -114,7 +114,7 @@
               ></el-input>
             </div>
             <div class="word-filter">
-              <span class="filter-name">有效时间:</span>
+              <span class="filter-name filter-rewrite">有效时间:</span>
               <el-date-picker
                 size="small"
                 style="width:165px"
@@ -135,7 +135,7 @@
               ></el-date-picker>
             </div>
             <div class="word-filter">
-              <span class="filter-name">创建时间:</span>
+              <span class="filter-name filter-rewrite">创建时间:</span>
               <el-date-picker
                 size="small"
                 style="width:165px"
