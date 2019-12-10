@@ -41,6 +41,39 @@
               ></el-input>
             </div>
             <div class="word-filter">
+              <span class="filter-name filter-rewrite">访客类型:</span>
+              <el-select
+                class="select-class"
+                size="small"
+                v-model="filterForm.visitType"
+                placeholder="请选择访客类型"
+              >
+                <el-option
+                  v-for="item in visitType"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </el-select>
+            </div>
+
+            <div class="word-filter">
+              <span class="filter-name filter-rewrite">访客状态:</span>
+              <el-select
+                class="select-class"
+                size="small"
+                v-model="filterForm.status"
+                placeholder="请选择访客状态"
+              >
+                <el-option
+                  v-for="item in selectType"
+                  :key="item.command"
+                  :label="item.lable"
+                  :value="item.command"
+                ></el-option>
+              </el-select>
+            </div>
+            <div class="word-filter">
               <span class="filter-name filter-rewrite">有效时间:</span>
               <el-date-picker
                 size="small"
@@ -115,7 +148,6 @@
       <el-col :span="rowSpan.row2" class="table-col">
         <div class="rightContent">
           <el-table
-
             height="65vh"
             v-loading="showLoading"
             :data="list_data"
@@ -158,28 +190,6 @@
               width="101"
               :show-overflow-tooltip="true"
             >
-              <template slot="header">
-                <el-dropdown style="padding:0;" trigger="click" @command="filterType">
-                  <span class="el-dropdown-link">
-                    访客类型
-                    <i class="el-icon-caret-bottom el-icon--right"></i>
-                  </span>
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item
-                      command="all"
-                      :class="commandType==='all' ? pitchOn : unchecked"
-                    >全部</el-dropdown-item>
-                    <el-dropdown-item
-                      command="1"
-                      :class="commandType==='App' ? pitchOn : unchecked"
-                    >APP</el-dropdown-item>
-                    <el-dropdown-item
-                      command="2"
-                      :class="commandType==='访客机' ? pitchOn : unchecked"
-                    >访客机</el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown>
-              </template>
               <template slot-scope="scope">
                 <span>{{scope.row.visitType ==='1' ?'APP' : scope.row.visitType ==='2' ?'访客机' : '--'}}</span>
               </template>
@@ -203,22 +213,6 @@
               :show-overflow-tooltip="true"
             ></el-table-column>
             <el-table-column prop="status" label="状态" align="center" :show-overflow-tooltip="true">
-              <template slot="header">
-                <el-dropdown style="padding:0;" trigger="click" @command="filterStatus">
-                  <span class="el-dropdown-link">
-                    状态
-                    <i class="el-icon-caret-bottom el-icon--right"></i>
-                  </span>
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item
-                      v-for="item in selectType"
-                      :key="item.command"
-                      :command="item.command"
-                      :class="commandType===item.command ? pitchOn : unchecked"
-                    >{{item.lable}}</el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown>
-              </template>
               <template slot-scope="scope">
                 <span>{{statusFilter(scope.row.status)}}</span>
               </template>
@@ -331,24 +325,40 @@ export default class VistorRegister extends Vue {
 
   private selectType: Array<Object> = [
     {
-      command: "0",
+      command: null,
       lable: "全部"
-    },
-    {
-      command: "1",
-      lable: "未开始"
     },
     {
       command: "2",
       lable: "正常"
     },
     {
-      command: "3",
-      lable: "已结束"
+      command: "1",
+      lable: "未开始"
     },
     {
       command: "4",
       lable: "其他"
+    },
+    {
+      command: "3",
+      lable: "已结束"
+    }
+  ];
+
+  visitType: Array<Object> = [
+    //车辆类型筛选
+    {
+      label: "全部",
+      value: null
+    },
+    {
+      label: "App",
+      value: "1"
+    },
+    {
+      label: "访客机",
+      value: "2"
     }
   ];
 
@@ -403,15 +413,6 @@ export default class VistorRegister extends Vue {
     this["fetchData"](this.initForm);
   }
 
-  filterType(command) {
-    /**@description 对访客类型进行筛选 */
-    this.commandType = command;
-    if (command === "all") {
-      this.filterForm["visitType"] = null;
-    } else this.filterForm["visitType"] = command;
-    this.refreshInfo();
-  }
-
   refreshInfo() {
     /**@description 刷新数据 */
     this.initForm["params"] = Object.assign(
@@ -420,15 +421,6 @@ export default class VistorRegister extends Vue {
       this.filterForm
     );
     this["fetchData"](this.initForm);
-  }
-
-  filterStatus(command) {
-    /**@description 对访客状态进行筛选 */
-    this.commandStatus = command;
-    if (command === "0") {
-      this.filterForm["status"] = null;
-    } else this.filterForm["status"] = command;
-    this.refreshInfo();
   }
 
   menuVisible() {
@@ -455,8 +447,6 @@ export default class VistorRegister extends Vue {
     flex: 1;
   }
 }
-
-
 
 .menu-control {
   position: absolute;
