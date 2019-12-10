@@ -613,6 +613,11 @@ export default class VistorRegister extends Vue {
       this.vistorForm[key] = "";
     }
 
+    for (const key in this.errorMessage) {
+      this.errorMessage[key] = "";
+    }
+     this.$refs["dataForm"]["resetFields"]();
+
     if (this.inputStatus) {
       this.startFetch = false;
       this.getVisitorData();
@@ -711,7 +716,7 @@ export default class VistorRegister extends Vue {
   }
 
   constraint(value, type) {
-    if (type === "phone" && value.toString().length === 12) {
+    if (type === "phone" && value.toString().length > 11) {
       this.$message("电话不能超过11个字符");
     }
     if (value === "") {

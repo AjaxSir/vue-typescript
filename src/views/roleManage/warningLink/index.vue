@@ -106,7 +106,7 @@
             v-model.number="createForm.phone"
             autocomplete="off"
             placeholder="手机11位限长，只能输入数字"
-            @input="constraintLength(createForm.phone,'12')"
+            @input="constraintLength(createForm.phone,'11')"
           ></el-input>
         </el-form-item>
         <el-form-item
@@ -472,7 +472,7 @@ export default class WarningLink extends Vue {
   }
 
   constraint(value, type) {
-    if (type === "phone" && value.toString().length === 12) {
+    if (type === "phone" && value.toString().length > 11) {
       this.$message("电话不能超过11个字符");
     }
     if (value === "") {
