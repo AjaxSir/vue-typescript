@@ -39,21 +39,21 @@
               ></el-input>
             </div>
             <div class="word-filter">
+              <span class="filter-name">邀&nbsp;请&nbsp;人&nbsp;:</span>
+              <el-input
+                class="input-filter"
+                size="small"
+                v-model="filterForm.visitName"
+                placeholder="请输入邀请人姓名"
+              ></el-input>
+            </div>
+            <div class="word-filter">
               <span class="filter-name">车主姓名:</span>
               <el-input
                 class="input-filter"
                 size="small"
                 v-model="filterForm.ownerUserName"
                 placeholder="请输入车主姓名"
-              ></el-input>
-            </div>
-            <div class="word-filter">
-              <span class="filter-name">邀请人:</span>
-              <el-input
-                class="input-filter"
-                size="small"
-                v-model="filterForm.visitName"
-                placeholder="请输入邀请人姓名"
               ></el-input>
             </div>
             <div class="word-filter">
@@ -118,7 +118,6 @@
             height="65vh"
             :data="list_data"
             stripe
-
             highlight-current-row
             v-loading="showLoading"
             @cell-mouse-enter="enterRowChange"
@@ -560,8 +559,6 @@ export default class CardManage extends Vue {
 .serial-num {
   position: relative;
 }
-
-
 
 .menu-control {
   position: absolute;
