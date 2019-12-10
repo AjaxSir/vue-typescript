@@ -230,6 +230,11 @@ img {
   width: 252px !important;
 }
 
+.el-tooltip__popper {
+  max-width: 30% !important;
+  line-height: 20px;
+}
+
 // .select-rewrite .el-input--small .el-input__inner {
 //   width: 232px !important;
 // }
