@@ -165,7 +165,6 @@ export default class InformIssue extends Vue {
     for (const key in this.communityForm) {
       this.communityForm[key] = data.data[key];
     }
-    console.log(data.data);
     this.picList = data.data.picList;
   }
 

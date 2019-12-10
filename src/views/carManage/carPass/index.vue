@@ -24,7 +24,7 @@
           </el-dropdown-menu>
           <div slot="houseNum">
             <div class="word-filter">
-              <span class="filter-name filter-rewrite">时间段:</span>
+              <span class="filter-name filter-rewrite">时&nbsp;间&nbsp;段&nbsp;:</span>
               <el-date-picker
                 size="small"
                 style="width:165px"
@@ -45,7 +45,7 @@
               ></el-date-picker>
             </div>
             <div class="word-filter">
-              <span class="filter-name">车牌号:</span>
+              <span class="filter-name">车&nbsp;牌&nbsp;号&nbsp;:</span>
               <el-input
                 class="input-filter"
                 size="small"
