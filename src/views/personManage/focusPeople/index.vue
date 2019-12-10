@@ -264,8 +264,7 @@
             v-model.number="createForm.emergencyPhone"
             autocomplete="off"
             placeholder="请输入紧急联系人电话"
-            :maxlength="11"
-            @input="constraintLength(createForm.emergencyPhone,'11')"
+            @input="constraintLength(createForm.emergencyPhone,'12')"
           ></el-input>
         </el-form-item>
 
@@ -427,7 +426,6 @@
             v-model.number="editForm.emergencyPhone"
             autocomplete="off"
             placeholde="手机11位限长，只能输入数字"
-            :maxlength="11"
             @input="constraint(editForm.emergencyPhone,'emergencyPhone')"
           ></el-input>
         </el-form-item>
@@ -875,7 +873,7 @@ export default class FocusPeople extends Vue {
   }
 
   constraint(value, type) {
-    if (type==='emergencyPhone' && value.toString().length === 11) {
+    if (type==='emergencyPhone' && value.toString().length === 12) {
       this.$message("电话不能超过11个字符");
     }
     if (value === "") {

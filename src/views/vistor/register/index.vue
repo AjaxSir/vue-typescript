@@ -309,7 +309,6 @@
                             v-model.number="vistorForm.phone"
                             placeholder="手机11位限长，只能输入数字"
                             @input="constraint(vistorForm.phone,'phone')"
-                            :maxlength="11"
                           ></el-input>
                         </el-form-item>
                       </el-col>
@@ -712,7 +711,7 @@ export default class VistorRegister extends Vue {
   }
 
   constraint(value, type) {
-    if (value.toString().length === 11) {
+    if (type === "phone" && value.toString().length === 12) {
       this.$message("电话不能超过11个字符");
     }
     if (value === "") {
