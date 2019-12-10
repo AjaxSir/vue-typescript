@@ -291,9 +291,9 @@ export default class GlobalMimins extends Vue {
         }
         break;
       case '11':
-        if (!(/^[0-9]*$/).test(value)) {
-          return this.message('电话只能输入数字')
-        }
+        // if (!this.is_Phone(value)) {
+        //   return this.message('电话只能输入数字')
+        // }
         if(value.toString().length > 11) {
           return this.message('电话最多输入11位')
         }

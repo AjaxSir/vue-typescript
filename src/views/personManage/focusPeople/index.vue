@@ -18,7 +18,7 @@
           </el-dropdown-menu>-->
           <div slot="houseNum">
             <div class="word-filter">
-              <span class="filter-name" style="min-width: 86px;">关注人姓名:</span>
+              <span class="filter-name">姓名:</span>
               <el-input
                 class="input-filter"
                 size="small"
@@ -27,7 +27,7 @@
               ></el-input>
             </div>
             <div class="word-filter">
-              <span class="filter-name" style="min-width: 86px;">紧急联系电话:</span>
+              <span class="filter-name">紧急电话:</span>
               <el-input
                 class="input-filter"
                 size="small"
@@ -36,9 +36,9 @@
               ></el-input>
             </div>
             <div class="word-filter">
-              <span class="filter-name" style="min-width: 86px;">预警组别:</span>
+              <span class="filter-name filter-rewrite">预警组别:</span>
               <el-select
-                class="input-filter"
+                class="select-class"
                 v-model="filterForm.earlyGroupId"
                 size="small"
                 placeholder="请选择预警组别"
@@ -129,7 +129,7 @@
             <el-table-column
               prop="emergencyPhone"
               align="center"
-              label="紧急联系人电话"
+              label="紧急电话"
               :show-overflow-tooltip="true"
             ></el-table-column>
 
@@ -207,7 +207,7 @@
       >
         <div style="display: flex;">
           <el-form-item
-            label="名字:"
+            label="姓名:"
             prop="scenceUser"
             :show-message="showMessage"
             :error="errorMessage.scenceUser"
@@ -251,7 +251,7 @@
         </div>
 
         <el-form-item
-          label="紧急联系人:"
+          label="紧急电话:"
           prop="emergencyPhone"
           :rules="[
               { required: true, message: '手机不能为空'},
@@ -263,8 +263,7 @@
           <el-input
             v-model.number="createForm.emergencyPhone"
             autocomplete="off"
-            placeholder="手机11位限长，只能输入数字"
-            :maxlength="11"
+            placeholder="请输入紧急联系人电话"
             @input="constraintLength(createForm.emergencyPhone,'11')"
           ></el-input>
         </el-form-item>
@@ -427,7 +426,6 @@
             v-model.number="editForm.emergencyPhone"
             autocomplete="off"
             placeholde="手机11位限长，只能输入数字"
-            :maxlength="11"
             @input="constraint(editForm.emergencyPhone,'emergencyPhone')"
           ></el-input>
         </el-form-item>
@@ -553,24 +551,30 @@
       <el-tabs type="card" v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="人员信息" name="first">
           <el-form label-width="130px" :model="userDetail">
-            <el-form-item style="margin-bottom:0" label="姓名:">
-              <span>{{userDetail.name ? userDetail.name :'--'}}</span>
-            </el-form-item>
-            <el-form-item style="margin-bottom:0" label="年龄:">
-              <span>{{userDetail.age ? userDetail.age : '--'}}</span>
-            </el-form-item>
-            <el-form-item style="margin-bottom:0" label="性别:">
-              <span>{{userDetail.sex ? userDetail.sex :'--'}}</span>
-            </el-form-item>
-            <el-form-item style="margin-bottom:0" label="电话:">
-              <span>{{userDetail.phone ? userDetail.phone:'--'}}</span>
-            </el-form-item>
-            <el-form-item style="margin-bottom:0" label="身份证号:">
-              <span>{{userDetail.cardNo ? userDetail.cardNo :'--'}}</span>
-            </el-form-item>
-            <el-form-item style="margin-bottom:0" label="备注信息:">
-              <span>{{userDetail.note ? userDetail.note :'--'}}</span>
-            </el-form-item>
+            <el-row :gutter="20">
+              <el-col :span="12" class="col-line">
+                <el-form-item style="margin-bottom:0" label="姓名:">
+                  <span>{{userDetail.name ? userDetail.name :'--'}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="年龄:">
+                  <span>{{userDetail.age ? userDetail.age : '--'}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="性别:">
+                  <span>{{userDetail.sex ? userDetail.sex :'--'}}</span>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item style="margin-bottom:0" label="电话:">
+                  <span>{{userDetail.phone ? userDetail.phone:'--'}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="身份证号:">
+                  <span>{{userDetail.cardNo ? userDetail.cardNo :'--'}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="备注信息:">
+                  <span>{{userDetail.note ? userDetail.note :'--'}}</span>
+                </el-form-item>
+              </el-col>
+            </el-row>
           </el-form>
         </el-tab-pane>
         <el-tab-pane label="通行记录" name="second">
@@ -875,7 +879,7 @@ export default class FocusPeople extends Vue {
   }
 
   constraint(value, type) {
-    if (value.toString().length === 11) {
+    if (type === "emergencyPhone" && value.toString().length > 11) {
       this.$message("电话不能超过11个字符");
     }
     if (value === "") {
