@@ -371,7 +371,7 @@
           <div class="imgInfo" style="margin-left:80px;">
             <el-button
               v-if="!inputStatus"
-              :disabled="deviceId ===''"
+              :disabled="vistorForm.id===''"
               type="warning"
               size="small"
               @click="cancelBtn"
@@ -495,7 +495,7 @@ export default class VistorRegister extends Vue {
     cardNo: "",
     scenceUserId: "",
     houseId: "",
-    qCardName: "",
+    qCardName: ""
   };
 
   private sexType: Array<Object> = [
@@ -583,7 +583,6 @@ export default class VistorRegister extends Vue {
   }
 
   created() {
-    console.log(this.vistorForm);
     this.getDevice();
     this.initForm["params"] = Object.assign(
       this.initForm["params"],
@@ -716,7 +715,6 @@ export default class VistorRegister extends Vue {
     if (value.toString().length === 11) {
       this.$message("电话不能超过11个字符");
     }
-    console.log(typeof value, 1);
     if (value === "") {
       this.vistorForm[type] = null;
     }

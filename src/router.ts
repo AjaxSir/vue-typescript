@@ -106,8 +106,8 @@ export const constantRouterMap = [{
     }
   },
   {
-    name: 'vistormanage ',
-    path: 'vistormanage',
+    name: 'caller ',
+    path: 'caller',
     component: _import_('personManage/vistorManage/index'),
     meta: {
       title: '访客管理',
@@ -368,16 +368,6 @@ export const constantRouterMap = [{
     component: _import_('statementManage/index'),
     meta: {
       title: '报表管理',
-      bg_color: '#bf5d76',
-      icon: 'icon-icon-p_mrpbaobiao'
-    }
-  },
-  {
-    name: 'personPassChart',
-    path: 'personPassChart',
-    component: _import_('statementManage/components/personPassChart'),
-    meta: {
-      title: '人员通行统计',
       bg_color: '#bf5d76',
       icon: 'icon-icon-p_mrpbaobiao'
     }

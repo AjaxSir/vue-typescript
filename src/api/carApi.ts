@@ -74,7 +74,6 @@ export function getUserPropertyCar(id: string) {
 }
 
 export function getvisitUser(id: string) {
-  console.log(id)
   return _axios({
     url: '/admin/usr-visit-car/get-one/',
     method: 'get',
