@@ -19,7 +19,7 @@ module.exports = {
         target: 'http://api.map.baidu.com/geocoder/', // http://192.168.3.19:8000/ 192.168.2.175:9000
         changeOrigin: true,
         pathRewrite: {
-          '^/map-api/': '/v2' // 需要rewrite的,
+          '^/map-api/': '' // 需要rewrite的,
         }
       },
     },
