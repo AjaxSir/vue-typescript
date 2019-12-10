@@ -271,34 +271,37 @@
       </span>
     </el-dialog>
 
-    <el-dialog :close-on-click-modal='false' title="创建用户" :visible.sync="dialogCreate" width="30%" :before-close="handleClose">
-          <el-form :model="Form" :rules="rules" ref='Forms' label-width="55px">
+    <el-dialog :close-on-click-modal='false' title="创建用户" :visible.sync="dialogCreate" width="500px" :before-close="handleClose">
+          <el-form :model="Form" :rules="rules" ref='Forms' label-width="85px">
 
 
-            <el-form-item class="floatForm" label="姓名:"  prop='name'>
-              <el-input v-model="Form.name" placeholder='输入姓名'></el-input>
+            <el-form-item label="姓名:"  prop='name'>
+              <el-input  style="width: 280px" v-model="Form.name" placeholder='输入姓名'></el-input>
             </el-form-item>
             <el-form-item label="性别:" prop='sex'>
               <el-switch
+
                 v-model="Form.sex"
                  active-value="1"
+                 active-color="#13ce66"
+                inactive-color="#ff4949"
                 inactive-value="0"
                 active-text="男"
                 inactive-text="女">
               </el-switch>
             </el-form-item>
-            <el-form-item class="floatForm" label="电话:"  prop='phone'>
-              <el-input v-model="Form.phone" @input='constraintLength(Form.phone, "11")' placeholder='输入电话'></el-input>
+            <el-form-item  label="电话:"  prop='phone'>
+              <el-input style="width: 280px" v-model="Form.phone" @input='constraintLength(Form.phone, "11")' placeholder='输入电话'></el-input>
             </el-form-item>
             <!-- <el-form-item class="floatForm" label="身份证号:"  prop='cardName'>
               <el-input v-model="Form.cardName"  placeholder='输入卡名'></el-input>
             </el-form-item> -->
-            <el-form-item label="身份证号:"  class="floatForm" label-width="85px"  prop='cardNo'>
-              <el-input v-model="Form.cardNo" placeholder='输入身份证号'></el-input>
+            <el-form-item label="身份证号:"  label-width="85px"  prop='cardNo'>
+              <el-input style="width: 280px" v-model="Form.cardNo" placeholder='输入身份证号'></el-input>
             </el-form-item>
             <el-form-item label="房屋:" style='clear:both'  prop='houseName'>
               <el-autocomplete
-                class="floatForm"
+                 style="width: 280px"
                 v-model="Form.houseName"
 
                 :fetch-suggestions="querySearch"
@@ -320,7 +323,7 @@
               <span v-else>通过上面房屋搜索查找需要关联的房屋</span>
             </el-form-item>
             <el-form-item label="备注:"  prop='note'>
-              <el-input type='textarea' v-model="Form.note" placeholder='输入备注'></el-input>
+              <el-input style="width: 280px" type='textarea' v-model="Form.note" placeholder='输入备注'></el-input>
             </el-form-item>
           </el-form>
       <span slot="footer" class="dialog-footer">
@@ -359,6 +362,8 @@
             v-model="updateHouseForm.enableInviteVisitor"
             active-text="允许"
             active-value="1"
+            active-color="#13ce66"
+            inactive-color="#ff4949"
             inactive-value="0"
             inactive-text="禁止">
           </el-switch>
@@ -368,6 +373,8 @@
             v-model="updateHouseForm.enableInviteCar"
             active-value="1"
             inactive-value="0"
+            active-color="#13ce66"
+            inactive-color="#ff4949"
             active-text="允许"
             inactive-text="禁止">
           </el-switch>
@@ -378,6 +385,8 @@
             active-value="1"
             inactive-value="0"
             active-text="允许"
+            active-color="#13ce66"
+            inactive-color="#ff4949"
             inactive-text="禁止">
           </el-switch>
         </el-form-item>
@@ -428,7 +437,7 @@ const ExportIn = () => import("@/components/exportIn/index.vue");
       const data = {
         "0": '在住',
         "-1": '不在住',
-        "-2": '过期'
+        "-2": '过期1'
       }
       return data[val]
     },

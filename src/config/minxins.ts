@@ -308,7 +308,7 @@ export default class GlobalMimins extends Vue {
   }
   message(val: string) {
     if (!Cookie.get('error')) {
-      Cookie.set('error', Date.now(), { expires: new Date(new Date().getTime() + 5 * 1000) }) // 五秒钟内不会重复出现提示框
+      Cookie.set('error', Date.now(), { expires: new Date(new Date().getTime() + 3 * 1000) }) // 五秒钟内不会重复出现提示框
       this.$message({
         message: val,
         type: "warning"

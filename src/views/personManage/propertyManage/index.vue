@@ -225,7 +225,7 @@
         label-width="90px" prop='cardNo'>
           <el-input maxlength="18" @input="constraintLength(Form.cardNo,'18')" v-model="Form.cardNo" placeholder='输入身份证号'></el-input>
         </el-form-item>
-        <el-form-item label="权限组:"  prop='authId'>
+        <el-form-item label="权限组:" class="float"  prop='authId'>
           <el-select style='width:180px' v-model="Form.authId" placeholder="请选择">
             <el-option
               v-for="item in TreeData"
@@ -318,7 +318,7 @@ export default class PropertyManage extends Vue {
           ],
     cardNo: [
       { required: true, trigger: 'blur', validator: (rule, value, callback) => {
-                if (value.length !== 18) {
+                if (value.length !== 18 || value.length !== 15) {
                   callback(new Error('填写正确的身份证号'))
                 } else {
                   callback()

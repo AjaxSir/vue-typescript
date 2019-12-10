@@ -44,7 +44,7 @@
               <el-input style='width:250px' placeholder="请输入需查找的姓名" class="input-filter" v-model='filterForm.userName' size="small"></el-input>
             </div>
              <div class="word-filter">
-              <span class="filter-name">开始时间:</span> &nbsp;&nbsp;
+              <span class="filter-name">通行时间:</span> &nbsp;&nbsp;
               <el-date-picker
                 style="width:320px"
                   v-model="timeRange"
