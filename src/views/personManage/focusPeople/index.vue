@@ -875,7 +875,7 @@ export default class FocusPeople extends Vue {
   }
 
   constraint(value, type) {
-    if (value.toString().length === 11) {
+    if (type==='emergencyPhone' && value.toString().length === 11) {
       this.$message("电话不能超过11个字符");
     }
     if (value === "") {
