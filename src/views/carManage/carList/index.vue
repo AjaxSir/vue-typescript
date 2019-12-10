@@ -354,77 +354,87 @@
     <!-- 目标详情 -->
     <el-dialog
       class="dialog-rewrite"
-      :title="'车牌: ' + CarDialogForm.carNo?CarDialogForm.carNo:'未知'"
+      :title="'车牌: ' + CarDialogForm.carNo ? CarDialogForm.carNo: '未知'"
       :visible.sync="detailDialogVisible"
       :before-close="closeBtn"
     >
       <el-tabs type="card" v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="车辆详情" name="first">
           <el-form label-width="130px" :model="CarDialogForm">
-            <el-form-item style="margin-bottom:0" label="车牌:">
-              <span>{{CarDialogForm.carNo ? CarDialogForm.carNo :'--'}}</span>
-            </el-form-item>
-            <el-form-item style="margin-bottom:0" label="车辆品牌:">
-              <span>{{CarDialogForm.modal ? CarDialogForm.modal : '--'}}</span>
-            </el-form-item>
-            <el-form-item style="margin-bottom:0" label="车辆型号:">
-              <span>{{CarDialogForm.carType ? CarDialogForm.carType :'--'}}</span>
-            </el-form-item>
-            <el-form-item style="margin-bottom:0" label="车辆状态:">
-              <span>{{CarDialogForm.status &&CarDialogForm.status=='1' ? '正常' :'禁用'}}</span>
-            </el-form-item>
-            <el-form-item style="margin-bottom:0" label="备注信息:">
-              <span>{{CarDialogForm.note ? CarDialogForm.note :'--'}}</span>
-            </el-form-item>
-            <el-form-item style="margin-bottom:0" label="最后一次进时间:">
-              <span>{{CarDialogForm.lastInTime ? CarDialogForm.lastInTime :'--'}}</span>
-            </el-form-item>
-            <el-form-item style="margin-bottom:0" label="最后一次进照片:">
-              <img
-                class="capture-img"
-                @mouseout="imgVisible=false"
-                @mouseover="imgVisible=true,bigImg=CarDialogForm.lastInPhoto"
-                :src="CarDialogForm.lastInPhoto"
-                alt
-              />
-            </el-form-item>
-            <el-form-item style="margin-bottom:0" label="最后一次出时间:">
-              <span>{{CarDialogForm.lastOutTime ? CarDialogForm.lastOutTime :'--'}}</span>
-            </el-form-item>
-            <el-form-item style="margin-bottom:0" label="最后一次出照片:">
-              <img
-                class="capture-img"
-                @mouseout="imgVisible=false"
-                @mouseover="imgVisible=true,bigImg=CarDialogForm.lastOutPhoto"
-                :src="CarDialogForm.lastOutPhoto"
-                alt
-              />
-            </el-form-item>
+            <el-row :gutter="20">
+              <el-col :span="12" class="col-line">
+                <el-form-item style="margin-bottom:0" label="车辆品牌:">
+                  <span>{{CarDialogForm.modal ? CarDialogForm.modal : '--'}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="车辆型号:">
+                  <span>{{CarDialogForm.carType ? CarDialogForm.carType :'--'}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="最后一次进时间:">
+                  <span>{{CarDialogForm.lastInTime ? CarDialogForm.lastInTime :'--'}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="最后一次进照片:">
+                  <img
+                    class="capture-img"
+                    @mouseout="imgVisible=false"
+                    @mouseover="imgVisible=true,bigImg=CarDialogForm.lastInPhoto"
+                    :src="CarDialogForm.lastInPhoto"
+                    alt
+                  />
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item style="margin-bottom:0" label="车辆状态:">
+                  <span>{{CarDialogForm.status &&CarDialogForm.status=='1' ? '正常' :'禁用'}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="备注信息:">
+                  <span>{{CarDialogForm.note ? CarDialogForm.note :'--'}}</span>
+                </el-form-item>
+
+                <el-form-item style="margin-bottom:0" label="最后一次出时间:">
+                  <span>{{CarDialogForm.lastOutTime ? CarDialogForm.lastOutTime :'--'}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="最后一次出照片:">
+                  <img
+                    class="capture-img"
+                    @mouseout="imgVisible=false"
+                    @mouseover="imgVisible=true,bigImg=CarDialogForm.lastOutPhoto"
+                    :src="CarDialogForm.lastOutPhoto"
+                    alt
+                  />
+                </el-form-item>
+              </el-col>
+            </el-row>
           </el-form>
         </el-tab-pane>
         <el-tab-pane label="车主信息" name="second">
           <el-form label-width="100px" v-model="carUserDetail">
-            <el-form-item style="margin-bottom:0" label="姓名:">
-              <span>{{carUserDetail.name}}</span>
-            </el-form-item>
-            <el-form-item style="margin-bottom:0" label="性别:">
-              <span>{{carUserDetail.sex}}</span>
-            </el-form-item>
-            <el-form-item style="margin-bottom:0" label="年龄:">
-              <span>{{carUserDetail.age}}</span>
-            </el-form-item>
-            <el-form-item style="margin-bottom:0" label="电话:">
-              <span>{{carUserDetail.phone}}</span>
-            </el-form-item>
-            <el-form-item style="margin-bottom:0" label="证件类型:">
-              <span>{{carUserDetail.cardName}}</span>
-            </el-form-item>
-            <el-form-item style="margin-bottom:0" label="身份证:">
-              <span>{{carUserDetail.cardNo}}</span>
-            </el-form-item>
-            <el-form-item style="margin-bottom:0" label="备注:">
-              <span>{{carUserDetail.note}}</span>
-            </el-form-item>
+            <el-row :gutter="20">
+              <el-col :span="12" class="col-line">
+                <el-form-item style="margin-bottom:0" label="姓名:">
+                  <span>{{carUserDetail.name}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="性别:">
+                  <span>{{carUserDetail.sex}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="年龄:">
+                  <span>{{carUserDetail.age}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="备注:">
+                  <span>{{carUserDetail.note}}</span>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item style="margin-bottom:0" label="电话:">
+                  <span>{{carUserDetail.phone}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="身份证:">
+                  <span>{{carUserDetail.cardNo}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="证件类型:">
+                  <span>{{carUserDetail.cardName}}</span>
+                </el-form-item>
+              </el-col>
+            </el-row>
           </el-form>
         </el-tab-pane>
         <el-tab-pane label="通行记录" name="thirdly">
