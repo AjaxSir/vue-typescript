@@ -11,19 +11,12 @@
         :dialogCreate.sync="dialogCreate" :total="page.total">
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>
-              <el-upload
-                class="upload-demo"
-                :show-file-list='false'
-                :on-error='errorUpload'
-                :on-success='successUpload'
-                action="/v1/admin/usrUser/import"
-                >
-                <!-- <el-button size="small" type="primary">点击上传</el-button> -->
+              <div @click='showExportIn'>
                 导入
-              </el-upload>
+              </div>
             </el-dropdown-item>
             <el-dropdown-item command='export'>导出</el-dropdown-item>
-            <el-dropdown-item command='exportTemplate'>下载导入模板</el-dropdown-item>
+            <!-- <el-dropdown-item command='exportTemplate'>下载导入模板</el-dropdown-item> -->
             <el-dropdown-item>统计信息</el-dropdown-item>
           </el-dropdown-menu>
           <div slot="houseNum">
@@ -398,6 +391,12 @@
       </div>
     </el-dialog>
     <BigImg :centerDialogVisible="imgVisible" bigTitle="抓拍图片" :bigImg="bigImg" />
+    <ExportIn
+    uploadUrl='/v1/admin/usrUser/import'
+    downTemplateUrl='/v1/admin/uploadFile/exportModel'
+    @closeVisible='closeVisible'
+    @successUpload='fetchData(initForm)'
+    :visible.sync='visible' />
   </div>
 </template>
 <script lang="ts">
@@ -415,12 +414,14 @@ import { getUserPropertyCar } from '@/api/carApi.ts'
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 const DiaLog = () => import("@/components/dialog.vue");
 const BigImg = () => import("@/components/BigImg/index.vue");
+const ExportIn = () => import("@/components/exportIn/index.vue");
 @Component({
   mixins: [mixin],
   components: {
     ActionHeader,
     DiaLog,
-    BigImg
+    BigImg,
+    ExportIn
   },
   filters: {
     statusFilter(val: string){
@@ -482,6 +483,7 @@ export default class OwnerManage extends Vue {
     method: 'delete',
     data: []
   }
+  visible: boolean = false // 批量导入状态
   updateArray: Array<string> = ['noteStatus', 'phoneStatus']
   rules: any = {
     name: [
@@ -497,10 +499,17 @@ export default class OwnerManage extends Vue {
               }, trigger: 'blur' }
           ],
     cardNo: [
-            { required: true, message: '请输入身份证号', trigger: 'blur' }
+            { required: true, message: '请输入身份证号', trigger: 'blur' },
+            { min:15, max: 18, message: '身份证在15到18位' }
           ],
-    note: [
-       { required: true, message: '请输入备注且最多不超过200字', trigger: 'blur', max: 200 }
+    house: [
+      { required: true, validator: (rule, value, callback) => {
+                if (!value.length) {
+                  callback(new Error('请添加房屋'))
+                } else {
+                  callback()
+                }
+              }, trigger: 'change' }
     ]
   }
   private imgVisible: Boolean = false; // 控制放大图片的visible
@@ -523,16 +532,11 @@ export default class OwnerManage extends Vue {
   created() {
     this.initForm['params'] = Object.assign(this.initForm['params'], this.page, this.filterForm) // 合并参数
   }
-  // 导入失败
-  errorUpload(err) {
-    this.$message.error('导入失败')
+  closeVisible(flag: boolean) {
+    this.visible = flag
   }
-  // 导入成功
-  successUpload(res) {
-    if(res.code === '400') {
-      return this.$message.error(res.message)
-    }
-    this['fetchData'](this.initForm)
+  showExportIn() {
+    this.visible = true
   }
   phoneChange(row) {
     this['list_data'].forEach(el => {

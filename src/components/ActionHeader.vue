@@ -235,9 +235,9 @@ export default class ActionManage extends Vue {
         const filterUrl = qs.stringify(this.initFormHeader["params"]);
         this["exportFunc"](this.exportName, this.exportUrl + "/?" + filterUrl);
         break
-      case 'exportTemplate':
-         this["exportFunc"]('用户导入模板.xls', '/v1/admin/uploadFile/exportModel');
-         break
+      // case 'exportTemplate':
+      //    this["exportFunc"]('用户导入模板.xls', '/v1/admin/uploadFile/exportModel');
+      //    break
     }
   }
 }
