@@ -295,7 +295,7 @@
               </el-switch>
             </el-form-item>
             <el-form-item class="floatForm" label="电话:"  prop='phone'>
-              <el-input v-model="Form.phone" placeholder='输入电话'></el-input>
+              <el-input v-model="Form.phone" @input='constraintLength(Form.phone, "11")' placeholder='输入电话'></el-input>
             </el-form-item>
             <!-- <el-form-item class="floatForm" label="身份证号:"  prop='cardName'>
               <el-input v-model="Form.cardName"  placeholder='输入卡名'></el-input>

@@ -204,7 +204,7 @@
           <el-input v-model="Form.name" placeholder='输入物业人员姓名'></el-input>
         </el-form-item>
         <el-form-item  class="float"  label="电话:"  prop='phone'>
-          <el-input v-model="Form.phone" @input='constraintLength(Form.phone, "11")'  maxlength="11" placeholder='输入物业人员电话'></el-input>
+          <el-input v-model="Form.phone" @input='constraintLength(Form.phone, "11")' placeholder='输入物业人员电话'></el-input>
         </el-form-item>
         <el-form-item  class="float"  label="性别:"  prop='sex'>
           <el-switch
