@@ -38,6 +38,7 @@
             <div class="word-filter">
               <span class="filter-name">用户类型:</span>
               <el-select class="input-filter" size="small" v-model="filterForm.type" placeholder="请选择">
+                <el-option label="全部" value=""></el-option>
                 <el-option label="业主" value="1"></el-option>
                 <el-option label="租户" value="2"></el-option>
                 <el-option label="成员" value="3"></el-option>
@@ -85,8 +86,8 @@
             </el-table-column>
             <el-table-column :show-overflow-tooltip='true' prop="phone" align="center" label="电话">
               <template slot-scope="{row}">
-                <span class="rowUpdate" v-if='!row.phoneStatus'  @click='row.phoneStatus = !row.phoneStatus'>{{ row.phone }}</span>
-                <el-input v-else @blur="phoneBlur(row)" @keyup.enter.native="confirmUpdatePhone(row)" v-model="phoneString" placeholder="输入电话"></el-input>
+                <span class="rowUpdate" v-show='!row.phoneStatus'  @click='phoneChange(row)'>{{ row.phone }}</span>
+                <el-input v-show='row.phoneStatus' @blur="phoneBlur(row)" :ref='row.id' @keyup.enter.native="confirmUpdatePhone(row)" v-model="phoneString" placeholder="输入电话"></el-input>
               </template>
             </el-table-column>
             <el-table-column :show-overflow-tooltip='true' prop="sex" align="center" width="50" label="性别">
@@ -187,7 +188,7 @@
                 <el-col :span='8'>房屋编号:
                   <el-select style="width: 160px" @change='houseChange' v-model="houseArrIndex" placeholder="请选择">
                     <el-option
-                      v-for="(item, index) in detailDialog.house"
+                      v-for="(item, index) in newData"
                       :key="index"
                       :label="item.serialNumber"
                       :value="index">
@@ -516,6 +517,7 @@ export default class OwnerManage extends Vue {
       address: "上海市普陀区金沙江路 1518 弄"
     }
   ];
+  newData: Array<object> = []
   private carDtailTable: Array<Object> =[];
   private houseDtailTable: Array<Object> =[];
   created() {
@@ -531,6 +533,16 @@ export default class OwnerManage extends Vue {
       return this.$message.error(res.message)
     }
     this['fetchData'](this.initForm)
+  }
+  phoneChange(row) {
+    this['list_data'].forEach(el => {
+      this.$set(el, 'phoneStatus', false)
+    })
+    row.phoneStatus = !row.phoneStatus
+    this.$nextTick(() => {
+      const input = this.$refs[row.id] as HTMLElement
+      input.focus()
+    })
   }
 // 确定添加用户
   addUserConfirm() {
@@ -596,7 +608,6 @@ export default class OwnerManage extends Vue {
     this.houseIndex = index
     this.updateHouseVisible = true
     this.updateHouseForm = Object.assign({}, item)
-    console.log(this.updateHouseForm)
   }
   // 将重新定义的数据 换到 house字段去
   confirmHouse() {
@@ -629,16 +640,14 @@ export default class OwnerManage extends Vue {
             ele['house'].forEach(item => {
               singleObj = Object.assign({}, ele)
               singleObj['house'] = []
-              singleObj['showMenu'] = false
+              this.$set(singleObj, 'showMenu', false)
               singleObj['house'].push(item)
               this['list_data'].push(singleObj)
             })
           } else {
-            ele['showMenu'] = false
+            this.$set(ele, 'showMenu', false)
              this['list_data'].push(ele)
           }
-
-          // ele['showMenu'] = false
         })
         this['list_data'].forEach(ele => {
           this['updateArray'].forEach((itemStatus: string) => {
@@ -714,13 +723,20 @@ export default class OwnerManage extends Vue {
   }
   /*** row 列表数据 查看详情*/
   showDetail(row, index) {
+    this.activeName = 'first'
     this.passList['id'] = row.id
     this.dialogFormVisible = true;
-    this.detailDialog = Object.assign(this.detailDialog, this.data[index]);
+    this.detailDialog = Object.assign(this.detailDialog, this['list_data'][index]);
+    this.newData = []
+    this['data'].forEach(ele => {
+      if (ele['id'] === this.detailDialog['id']) {
+        this.newData = ele['house']
+      }
+    })
     this.houseDtailTable = []
     if (row.house.length) {
-      this.houseDetailsFrom = this.data[index]['house'][0]
-      this.houseDtailTable = this.data[index]['house']
+      this.houseDetailsFrom = this.newData[0]
+      this.houseDtailTable = this.newData
     }
     this.pagePassChange(1)
     // 获取物业人员的车辆信息
@@ -738,7 +754,7 @@ export default class OwnerManage extends Vue {
   }
   // 切换房屋时
   houseChange(index: number) {
-    this.houseDetailsFrom = this.detailDialog['house'][index]
+    this.houseDetailsFrom = this.newData[index]
   }
   // 获取特定用户的通行记录
   pagePassChange(page: number) {

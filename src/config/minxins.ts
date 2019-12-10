@@ -43,7 +43,7 @@ export default class GlobalMimins extends Vue {
     this.fetchData(this.initForm)
   }
   is_Phone(str: string) {
-    return (/^1([358][0-9]|4[579]|66|7[0135678]|9[89])[0-9]{8}$/).test(str)
+    return (/^1[3|4|5|8][0-9]\d{4,8}$/).test(str)
   }
   fetchData(option: object) {
     /**@description init数据
@@ -291,11 +291,8 @@ export default class GlobalMimins extends Vue {
         }
         break;
       case '11':
-        if (!this.is_Phone(value)) {
+        if (!(/^[0-9]*$/).test(value)) {
           return this.message('电话只能输入数字')
-        }
-        if (value.toString().length === 11) {
-          this.message('电话不能超过11个字符')
         }
         break;
       case '18':
