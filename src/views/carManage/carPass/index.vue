@@ -24,7 +24,7 @@
           </el-dropdown-menu>
           <div slot="houseNum">
             <div class="word-filter">
-              <span class="filter-name">时间段:</span>
+              <span class="filter-name filter-rewrite">时间段:</span>
               <el-date-picker
                 size="small"
                 style="width:165px"
@@ -72,25 +72,38 @@
               ></el-input>
             </div>
 
-            <div class="word-filter word-filter-rewrite">
-              <span class="filter-name">车辆类型:</span>
-              <el-radio-group class="filter-grop" v-model="filterForm.isVisitCar">
-                <el-radio
+            <div class="word-filter">
+              <span class="filter-name filter-rewrite">车辆类型:</span>
+              <el-select
+                class="select-class"
+                size="small"
+                v-model="filterForm.isVisitCar"
+                placeholder="请选择车辆类型"
+              >
+                <el-option
                   v-for="item in carTypeList"
                   :key="item.value"
-                  :label="item.value"
-                >{{item.label}}</el-radio>
-              </el-radio-group>
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </el-select>
             </div>
-            <div class="word-filter word-filter-rewrite">
-              <span class="filter-name">通行方向:</span>
-              <el-radio-group class="filter-grop" v-model="filterForm.inOut">
-                <el-radio
+
+            <div class="word-filter">
+              <span class="filter-name filter-rewrite">通行方向:</span>
+              <el-select
+                class="select-class"
+                size="small"
+                v-model="filterForm.inOut"
+                placeholder="请选择通行方向"
+              >
+                <el-option
                   v-for="item in carPassType"
                   :key="item.value"
-                  :label="item.value"
-                >{{item.label}}</el-radio>
-              </el-radio-group>
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </el-select>
             </div>
           </div>
         </action-header>
@@ -361,7 +374,7 @@
         <el-button type="primary" @click="detailDialogVisible = false">确 定</el-button>
       </span>-->
     </el-dialog>
-    <ImageMagni :centerDialogVisible="imgVisible" bigTitle="抓拍图片" :bigImg="bigImg" />
+    <!-- <ImageMagni :centerDialogVisible="imgVisible" bigTitle="抓拍图片" :bigImg="bigImg" /> -->
     <StatisticDataDialog :formShowStatistic.sync="dialogStatisticData" :fromTitle="fromTitle" />
   </div>
 </template>
