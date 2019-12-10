@@ -189,7 +189,11 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="name" align="center" label="姓名" :show-overflow-tooltip="true"></el-table-column>
+            <el-table-column prop="name" align="center" label="姓名" :show-overflow-tooltip="true">
+              <template slot-scope="{ row }">
+                <el-button type="text" @click="showDetail(row)">{{ row.name }}</el-button>
+              </template>
+            </el-table-column>
             <el-table-column prop="phone" align="center" label="电话" :show-overflow-tooltip="true"></el-table-column>
             <el-table-column
               prop="visitName"
@@ -197,9 +201,9 @@
               label="受访人"
               :show-overflow-tooltip="true"
             >
-              <template slot-scope="{ row }">
+              <!-- <template slot-scope="{ row }">
                 <el-button type="text" @click="showDetail(row)">{{ row.visitName }}</el-button>
-              </template>
+              </template> -->
             </el-table-column>
 
             <el-table-column

@@ -551,24 +551,30 @@
       <el-tabs type="card" v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="人员信息" name="first">
           <el-form label-width="130px" :model="userDetail">
-            <el-form-item style="margin-bottom:0" label="姓名:">
-              <span>{{userDetail.name ? userDetail.name :'--'}}</span>
-            </el-form-item>
-            <el-form-item style="margin-bottom:0" label="年龄:">
-              <span>{{userDetail.age ? userDetail.age : '--'}}</span>
-            </el-form-item>
-            <el-form-item style="margin-bottom:0" label="性别:">
-              <span>{{userDetail.sex ? userDetail.sex :'--'}}</span>
-            </el-form-item>
-            <el-form-item style="margin-bottom:0" label="电话:">
-              <span>{{userDetail.phone ? userDetail.phone:'--'}}</span>
-            </el-form-item>
-            <el-form-item style="margin-bottom:0" label="身份证号:">
-              <span>{{userDetail.cardNo ? userDetail.cardNo :'--'}}</span>
-            </el-form-item>
-            <el-form-item style="margin-bottom:0" label="备注信息:">
-              <span>{{userDetail.note ? userDetail.note :'--'}}</span>
-            </el-form-item>
+            <el-row :gutter="20">
+              <el-col :span="12" class="col-line">
+                <el-form-item style="margin-bottom:0" label="姓名:">
+                  <span>{{userDetail.name ? userDetail.name :'--'}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="年龄:">
+                  <span>{{userDetail.age ? userDetail.age : '--'}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="性别:">
+                  <span>{{userDetail.sex ? userDetail.sex :'--'}}</span>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item style="margin-bottom:0" label="电话:">
+                  <span>{{userDetail.phone ? userDetail.phone:'--'}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="身份证号:">
+                  <span>{{userDetail.cardNo ? userDetail.cardNo :'--'}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="备注信息:">
+                  <span>{{userDetail.note ? userDetail.note :'--'}}</span>
+                </el-form-item>
+              </el-col>
+            </el-row>
           </el-form>
         </el-tab-pane>
         <el-tab-pane label="通行记录" name="second">
