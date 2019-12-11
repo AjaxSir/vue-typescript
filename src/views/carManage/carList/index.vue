@@ -219,6 +219,7 @@
             popper-class="my-autocomplete"
             :fetch-suggestions="querySearch"
             @select="handleSelectWatchlist"
+            :maxlength="12"
           >
             <template slot-scope="{ item }">
               <div class="name">{{ item.value }}</div>
@@ -639,7 +640,7 @@ export default class CarList extends Vue {
     /**@description 验证*/
     var regPos = /^\d+(\.\d+)?$/; //非负浮点数
     if (queryString === "") {
-      this.errorMessage["ownerPhone"] = "车主电话不能为空";
+      this.errorMessage["ownerPhone"] = "电话不能为空";
     } else if (!regPos.test(queryString)) {
       this.errorMessage["ownerPhone"] = "电话必须是数值";
     } else if (queryString.length > 11) {

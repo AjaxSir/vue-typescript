@@ -102,6 +102,7 @@
             v-model="createForm.phone"
             autocomplete="off"
             placeholder="手机11位限长，只能输入数字"
+            :maxlength="12"
             @input="verification(createForm.phone,'phone')"
           ></el-input>
         </el-form-item>
@@ -215,6 +216,7 @@
             v-model="editForm.phone"
             autocomplete="off"
             placeholder="手机11位限长，只能输入数字"
+            :maxlength="12"
             @input="verification(editForm.phone,'editPhone')"
           ></el-input>
         </el-form-item>

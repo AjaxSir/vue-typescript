@@ -234,9 +234,6 @@
           <el-form-item
             label="年龄:"
             prop="age"
-            :rules="[
-              { type: 'number', message: '年龄必须为数值'}
-            ]"
             :show-message="showMessage"
             :error="errorMessage.age"
           >
@@ -244,6 +241,7 @@
               autocomplete="off"
               placeholder="输入年龄"
               min="0"
+              maxlength="3"
               v-model.number="createForm.age"
               @input="constraint(createForm.age,'age')"
             ></el-input>
@@ -258,6 +256,7 @@
           <el-input
             v-model="createForm.emergencyPhone"
             placeholder="请输入紧急联系人电话"
+            :maxlength="12"
             @input="verification(createForm.emergencyPhone,'emergencyPhone')"
           ></el-input>
         </el-form-item>
@@ -277,6 +276,7 @@
             autocomplete="off"
             placeholder="请输入预警周期为多少天"
             min="0"
+            maxlength="10"
             @keydown.native="channelInputLimit"
           ></el-input>
         </el-form-item>
@@ -403,6 +403,7 @@
             autocomplete="off"
             placeholder="输入年龄"
             min="0"
+            maxlength="3"
             v-model.number="editForm.age"
             @input="constraint(editForm.age,'age')"
           ></el-input>
@@ -416,8 +417,8 @@
         >
           <el-input
             v-model="editForm.emergencyPhone"
-            autocomplete="off"
-            placeholde="请输入紧急联系人电话"
+            placeholder="请输入紧急联系人电话"
+            :maxlength="12"
             @input="verification(editForm.emergencyPhone,'editEmergencyPhone')"
           ></el-input>
         </el-form-item>
@@ -436,6 +437,7 @@
             autocomplete="off"
             placeholder="请输入预警周期为多少天"
             min="0"
+            maxlength="10"
             @input="constraint(editForm.earlyPeriod,'earlyPeriod')"
           ></el-input>
         </el-form-item>
@@ -670,6 +672,7 @@ export default class FocusPeople extends Vue {
     editEmergencyPhone: [
       { required: false, message: "请输入紧急联系人", trigger: "blur" }
     ],
+    age: [{ required: false }, { type: "number", message: "年龄必须为数值" }],
     earlyGroupId: [
       { required: true, message: "请选择预警组别", trigger: "blur" }
     ],
@@ -685,7 +688,8 @@ export default class FocusPeople extends Vue {
     scenceUser: "",
     email: "",
     earlyGroupId: "",
-    note: ""
+    note: "",
+    age: ""
   };
   private nameList: Array<Object> = []; //人员
   private loading: Boolean = false; //姓名模糊查询
@@ -901,8 +905,8 @@ export default class FocusPeople extends Vue {
   }
 
   constraint(value, type) {
-    if (type === "emergencyPhone" && value.toString().length > 11) {
-      this.$message("电话不能超过11个字符");
+    if (value > 200 && type === "age") {
+      this["message"]("年龄不能大于200");
     }
     if (value === "") {
       this.editForm[type] = null;

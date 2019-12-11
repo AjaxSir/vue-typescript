@@ -284,6 +284,7 @@
                           <el-input
                             size="small"
                             min="0"
+                            :maxlength="3"
                             type="number"
                             v-model="vistorForm.numPeople"
                             @keydown.native="channelInputLimit"
@@ -306,6 +307,7 @@
                             size="small"
                             v-model="vistorForm.phone"
                             placeholder="手机11位限长，只能输入数字"
+                            :maxlength="12"
                             @input="verification(vistorForm.phone,'phone')"
                           ></el-input>
                         </el-form-item>
