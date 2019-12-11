@@ -207,9 +207,9 @@
       >
         <el-form-item
           prop="ownerPhone"
+          label="电话"
           :show-message="showMessage"
           :error="errorMessage.ownerPhone"
-          label="电话"
         >
           <!-- :disabled="nameDisabled" -->
           <el-autocomplete
@@ -285,7 +285,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose">取 消</el-button>
-        <el-button type="primary" @click="createCar">确 定</el-button>
+        <el-button type="primary" :disabled="restaurants==[]" @click="createCar">确 定</el-button>
       </span>
     </el-dialog>
     <!-- 车辆修改 -->
@@ -555,6 +555,7 @@ export default class CarList extends Vue {
       note: "" //备注
     }
   ];
+
   private rules: Object = {
     // 表单验证
     ownerPhone: [
@@ -634,8 +635,23 @@ export default class CarList extends Vue {
     ); // 合并参数
   }
 
+  verification(queryString) {
+    /**@description 验证*/
+    var regPos = /^\d+(\.\d+)?$/; //非负浮点数
+    if (queryString === "") {
+      this.errorMessage["ownerPhone"] = "车主电话不能为空";
+    } else if (!regPos.test(queryString)) {
+      this.errorMessage["ownerPhone"] = "电话必须是数值";
+    } else if (queryString.length > 11) {
+      this.errorMessage["ownerPhone"] = "电话号码为11位,请检查是否输入正确";
+    } else {
+      this.errorMessage["ownerPhone"] = "";
+    }
+  }
+
   async querySearch(queryString, cb) {
     /**@description 新增时对车主电话进行迷糊查询 */
+    this.verification(queryString);
     if (
       queryString === "" ||
       (this.restaurants.length === 1 &&
@@ -681,27 +697,37 @@ export default class CarList extends Vue {
 
   createCar() {
     /**@description 新增车辆处理 */
-    // if (+this.createForm[0]["ownerPhone"]) {
-    //   this.createForm[0]["ownerPhone"] = +this.createForm[0]["ownerPhone"];
-    // } else if (this.createForm[0]["ownerPhone"] === "") {
-    //   this.createForm[0]["ownerPhone"] = null;
-    // }
-    this.$refs["dataForm"]["validate"](valid => {
-      if (valid) {
-        var form = [
-          {
-            ...this.createForm[0],
-            scenceUserId: this.restaurants[0]["scenceUserId"]
+    this.verification(this.createForm[0]["ownerPhone"]);
+    if (
+      this.errorMessage["ownerPhone"] === "" &&
+      this.createForm[0]["ownerPhone"].length === 11
+    ) {
+      if (this.restaurants.length > 0) {
+        this.$refs["dataForm"]["validate"](valid => {
+          if (valid) {
+            var form = [
+              {
+                ...this.createForm[0],
+                scenceUserId: this.restaurants[0]["scenceUserId"]
+              }
+            ];
+            addCar(form).then(res => {
+              this.handleClose();
+              this["fetchData"](this.initForm);
+              this.nameDisabled = false;
+              this["notify"]("success", "成功", "添加车辆名单成功");
+            });
           }
-        ];
-        addCar(form).then(res => {
-          this.handleClose();
-          this["fetchData"](this.initForm);
-          this.nameDisabled = false;
-          this["notify"]("success", "成功", "添加车辆名单成功");
         });
+      } else {
+        this.errorMessage["ownerPhone"] = "电话号码不存在";
       }
-    });
+    } else if (
+      this.createForm[0]["ownerPhone"].length !== 0 &&
+      this.createForm[0]["ownerPhone"].length < 11
+    ) {
+      this.errorMessage["ownerPhone"] = "电话号码为11位,请检查是否输入正确";
+    }
   }
 
   editType(item) {
