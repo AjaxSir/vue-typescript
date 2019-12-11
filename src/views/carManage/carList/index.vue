@@ -291,7 +291,7 @@
     </el-dialog>
     <!-- 车辆修改 -->
     <el-dialog
-      :title="'修改：'+editForm.carNo"
+      :title="editForm.carNo"
       :visible.sync="dialogEdit"
       width="500px"
       :before-close="handleClose"

@@ -376,7 +376,7 @@
 
     <!-- 修改关注人员 -->
     <el-dialog
-      :title="'修改：'+ editForm.name"
+      :title="editForm.name"
       :visible.sync="dialogEdit"
       width="500px"
       :before-close="editClose"
