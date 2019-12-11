@@ -376,7 +376,7 @@
 
     <!-- 修改关注人员 -->
     <el-dialog
-      title="修改"
+      :title="'修改：'+ editForm.name"
       :visible.sync="dialogEdit"
       width="500px"
       :before-close="editClose"
@@ -707,6 +707,7 @@ export default class FocusPeople extends Vue {
   private dialogEdit: Boolean = false; // 修改弹出表单
   private editForm: Object = {
     //修改表单字段
+    name: "", //姓名
     age: "", //年龄
     earlyGroupId: "", //预警组别
     emergencyPhone: "", // 紧急联系人电话
@@ -925,6 +926,7 @@ export default class FocusPeople extends Vue {
         if (valid) {
           var form = { ...this.editForm };
           form["earlyPeriod"] = Number(form["earlyPeriod"]);
+          delete form["name"];
           editFocusPeople(form).then(() => {
             this.editClose();
             this["notify"]("success", "成功", "修改关注人员成功");

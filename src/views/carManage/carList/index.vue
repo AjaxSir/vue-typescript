@@ -291,7 +291,7 @@
     </el-dialog>
     <!-- 车辆修改 -->
     <el-dialog
-      title="修改"
+      :title="'修改：'+editForm.carNo"
       :visible.sync="dialogEdit"
       width="500px"
       :before-close="handleClose"
@@ -579,7 +579,7 @@ export default class CarList extends Vue {
     ownerPhone: "", //车主电话
     ownerUserName: "", //车主
     scenceUserId: "", //车主id
-    // carNo: "", //车牌号
+    carNo: "", //车牌号
     carType: "", //车型
     id: "",
     modal: "", //品牌
@@ -789,6 +789,7 @@ export default class CarList extends Vue {
         delete form[key];
       }
     }
+    delete form["carNo"];
     editCar(form).then(() => {
       this.handleClose();
       this["fetchData"](this.initForm);
