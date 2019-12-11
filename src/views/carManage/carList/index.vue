@@ -685,6 +685,7 @@ export default class CarList extends Vue {
   }
 
   handleSelectWatchlist(item) {
+    this.errorMessage["ownerPhone"] = "";
     this.createForm[0]["ownerPhone"] = item.value;
     if (item.name) {
       this.createForm[0]["ownerUserName"] = item.name;
