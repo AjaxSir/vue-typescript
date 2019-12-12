@@ -105,7 +105,13 @@
       :before-close="handleClose"
       :close-on-click-modal="false"
     >
-      <el-form :model="createForm" :rules="rules" ref="dataForm" label-width="110px">
+      <el-form
+        :model="createForm"
+        :rules="rules"
+        ref="dataForm"
+        label-width="110px"
+        style="margin-right:40px;"
+      >
         <el-form-item
           label="出入口名称:"
           prop="name"
@@ -122,12 +128,14 @@
           ></el-input>
         </el-form-item>
         <el-form-item
-          label="备注:"
+          label="备注信息:"
           prop="note"
           :show-message="showMessage"
           :error="errorMessage.note"
         >
           <el-input
+            type="textarea"
+            :rows="9"
             v-model="createForm.note"
             :maxlength="200"
             placeholder="输入备注信息"
@@ -173,12 +181,14 @@
           ></el-input>
         </el-form-item>
         <el-form-item
-          label="备注:"
+          label="备注信息:"
           prop="note"
           :show-message="showMessage"
           :error="errorMessage.note"
         >
           <el-input
+            type="textarea"
+            :rows="9"
             v-model="editForm.note"
             :maxlength="200"
             placeholder="输入备注信息"

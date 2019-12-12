@@ -3,6 +3,7 @@
     <el-row>
       <el-col :span="24">
         <ActionHeader
+          ref="actionHeader"
           :moreStatus="false"
           :btnStatus="2"
           :initFormHeader="initForm"
@@ -19,7 +20,9 @@
                 class="input-filter"
                 size="small"
                 v-model="filterForm.name"
+                clearable
                 placeholder="请输入访客姓名"
+                @keyup.enter.native="emitFetchData"
               ></el-input>
             </div>
             <div class="word-filter">
@@ -28,7 +31,9 @@
                 class="input-filter"
                 size="small"
                 v-model="filterForm.visitName"
+                clearable
                 placeholder="请输入受访者姓名"
+                @keyup.enter.native="emitFetchData"
               ></el-input>
             </div>
             <div class="word-filter">
@@ -38,8 +43,14 @@
                 size="small"
                 v-model="filterForm.cardNo"
                 placeholder="请输入联系电话"
+                clearable
+                @keyup.enter.native="emitFetchData"
+                @keyup.native="filterNumber"
+                @keydown.native="filterNumber"
               ></el-input>
+              <!-- <span>{{phoneNum}}/11</span> -->
             </div>
+
             <div class="word-filter">
               <span class="filter-name filter-rewrite">访客类型:</span>
               <el-select
@@ -163,7 +174,7 @@
                 <span>{{scope.$index+1}}</span>
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start" @command="commandClick">
-                       <el-tooltip class="item" effect="dark" content="点击操作" placement="top">
+                    <el-tooltip class="item" effect="dark" content="点击操作" placement="top">
                       <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
                     </el-tooltip>
                     <el-dropdown-menu slot="dropdown">

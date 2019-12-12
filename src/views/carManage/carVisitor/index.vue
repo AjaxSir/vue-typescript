@@ -15,6 +15,7 @@
           total:总条数
         -->
         <action-header
+          ref="actionHeader"
           :houseStatus="false"
           :initFormHeader="initForm"
           @fetchData="fetchData"
@@ -36,6 +37,8 @@
                 size="small"
                 v-model="filterForm.carNo"
                 placeholder="请输入车牌号"
+                clearable
+                @keyup.enter.native="emitFetchData"
               ></el-input>
             </div>
             <div class="word-filter">
@@ -45,6 +48,8 @@
                 size="small"
                 v-model="filterForm.visitName"
                 placeholder="请输入邀请人姓名"
+                clearable
+                @keyup.enter.native="emitFetchData"
               ></el-input>
             </div>
             <div class="word-filter">
@@ -54,6 +59,8 @@
                 size="small"
                 v-model="filterForm.ownerUserName"
                 placeholder="请输入车主姓名"
+                clearable
+                @keyup.enter.native="emitFetchData"
               ></el-input>
             </div>
             <div class="word-filter">
@@ -63,8 +70,14 @@
                 size="small"
                 v-model="filterForm.ownerPhone"
                 placeholder="请输入联系电话"
+                clearable
+                @keyup.enter.native="emitFetchData"
+                @keyup.native="filterNumber"
+                @keydown.native="filterNumber"
               ></el-input>
+              <!-- <span>{{phoneNum}}/11</span> -->
             </div>
+
             <div class="word-filter">
               <span class="filter-name filter-rewrite">有效时间:</span>
               <el-date-picker
@@ -131,7 +144,7 @@
                 <span>{{scope.$index+1}}</span>
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start" @command="commandClick">
-                       <el-tooltip class="item" effect="dark" content="点击操作" placement="top">
+                    <el-tooltip class="item" effect="dark" content="点击操作" placement="top">
                       <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
                     </el-tooltip>
                     <el-dropdown-menu slot="dropdown">

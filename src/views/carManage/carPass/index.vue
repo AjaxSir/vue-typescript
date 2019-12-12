@@ -3,6 +3,7 @@
     <el-row>
       <el-col :span="24">
         <action-header
+          ref="actionHeader"
           :initFormHeader="initForm"
           @fetchData="fetchData"
           :filterForm="filterForm"
@@ -51,6 +52,8 @@
                 size="small"
                 v-model="filterForm.carNo"
                 placeholder="请输入车牌号"
+                clearable
+                @keyup.enter.native="emitFetchData"
               ></el-input>
             </div>
             <div class="word-filter">
@@ -60,6 +63,8 @@
                 size="small"
                 v-model="filterForm.userName"
                 placeholder="请输入车主姓名"
+                clearable
+                @keyup.enter.native="emitFetchData"
               ></el-input>
             </div>
             <div class="word-filter">
@@ -69,7 +74,12 @@
                 size="small"
                 v-model="filterForm.userPhone"
                 placeholder="请输入车主电话"
+                clearable
+                @keyup.enter.native="emitFetchData"
+                @keyup.native="filterNumber"
+                @keydown.native="filterNumber"
               ></el-input>
+              <!-- <span>{{phoneNum}}/11</span> -->
             </div>
 
             <div class="word-filter">

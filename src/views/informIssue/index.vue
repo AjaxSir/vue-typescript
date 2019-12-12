@@ -45,7 +45,7 @@
                 <span>{{scope.row.title}}</span>
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start" @command="commandClick">
-                       <el-tooltip class="item" effect="dark" content="点击操作" placement="top">
+                    <el-tooltip class="item" effect="dark" content="点击操作" placement="top">
                       <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
                     </el-tooltip>
                     <el-dropdown-menu slot="dropdown">
@@ -97,7 +97,7 @@
         :model="createForm"
         label-position="right"
         label-width="100px"
-        style
+        style="margin-right:40px;"
       >
         <el-form-item
           class="phone-input"
@@ -110,8 +110,9 @@
             style="width:310px"
             v-model="createForm.title"
             placeholder="请输入标题"
-            @input="constraintLength(createForm.title,'10')"
-            :maxlength="10"
+            clearable
+            @input="constraintLength(createForm.title,'30')"
+            :maxlength="30"
           ></el-input>
         </el-form-item>
 
@@ -207,6 +208,7 @@
             :rows="9"
             placeholder="请输入通知内容"
             v-model="createForm.content"
+            clearable
             @input="constraintLength(createForm.content,'200')"
             :maxlength="200"
           ></el-input>

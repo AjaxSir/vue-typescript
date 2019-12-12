@@ -42,7 +42,7 @@
             </div>
           </div>
           <div class="write">
-            <el-button size="small" @click="manualInput()">{{inputStatus ? '刷卡注册' : '手动输入'}}</el-button>
+            <el-button size="small" @click="manualInput">{{inputStatus ? '刷卡注册' : '手动输入'}}</el-button>
           </div>
           <div class="imgInfo" style="margin-left:80px;width:700px;height:auto;display:block">
             <el-form
@@ -309,6 +309,9 @@
                             placeholder="手机11位限长，只能输入数字"
                             :maxlength="11"
                             @input="verification(vistorForm.phone,'phone')"
+                            clearable
+                            @keyup.native="phoneNumber"
+                            @keydown.native="phoneNumber"
                           ></el-input>
                         </el-form-item>
                       </el-col>
@@ -632,6 +635,7 @@ export default class VistorRegister extends Vue {
     for (const key in this.vistorForm) {
       this.vistorForm[key] = "";
     }
+    this.vistorForm["numPeople"] = 0;
 
     for (const key in this.errorMessage) {
       this.errorMessage[key] = "";
@@ -742,6 +746,12 @@ export default class VistorRegister extends Vue {
     if (value === "") {
       this.vistorForm[type] = null;
     }
+  }
+
+  phoneNumber(e: any) {
+    var v = e.target.value;
+    e.target.value = v.replace(this["upNum"], "");
+    this["phoneNum"] = v.length;
   }
 
   createVisitor() {

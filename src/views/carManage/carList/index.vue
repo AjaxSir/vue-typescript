@@ -3,6 +3,7 @@
     <el-row>
       <el-col :span="24">
         <action-header
+          ref="actionHeader"
           exportUrl="/v1/admin/usr-car/export/"
           exportName="车辆管理列表.xls"
           :initFormHeader="initForm"
@@ -32,6 +33,8 @@
                 size="small"
                 v-model="filterForm.carNo"
                 placeholder="请输入车牌号"
+                clearable
+                @keyup.enter.native="emitFetchData"
               ></el-input>
             </div>
             <div class="word-filter">
@@ -41,6 +44,8 @@
                 size="small"
                 v-model="filterForm.ownerName"
                 placeholder="请输入车主姓名"
+                clearable
+                @keyup.enter.native="emitFetchData"
               ></el-input>
             </div>
             <div class="word-filter">
@@ -50,7 +55,12 @@
                 size="small"
                 v-model="filterForm.ownerPhone"
                 placeholder="请输入车主电话"
+                clearable
+                @keyup.enter.native="emitFetchData"
+                @keyup.native="filterNumber"
+                @keydown.native="filterNumber"
               ></el-input>
+              <!-- <span>{{phoneNum}}/11</span> -->
             </div>
           </div>
         </action-header>
@@ -76,7 +86,7 @@
                 <span>{{scope.$index+1}}</span>
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start" @command="commandClick">
-                       <el-tooltip class="item" effect="dark" content="点击操作" placement="top">
+                    <el-tooltip class="item" effect="dark" content="点击操作" placement="top">
                       <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
                     </el-tooltip>
                     <el-dropdown-menu slot="dropdown">
@@ -207,28 +217,37 @@
         label-width="80px"
         style="margin-right:40px;"
       >
-        <el-form-item
-          prop="ownerPhone"
-          label="电话"
-          :show-message="showMessage"
-          :error="errorMessage.ownerPhone"
-        >
-          <!-- :disabled="nameDisabled" -->
-          <el-autocomplete
-            style="width:340px"
-            v-model="createForm[0].ownerPhone"
-            placeholder="手机11位限长，只能输入数字"
-            popper-class="my-autocomplete"
-            :fetch-suggestions="querySearch"
-            @select="handleSelectWatchlist"
-            :maxlength="11"
+        <div style="display: flex;">
+          <el-form-item
+            class="ei-input-rewrite"
+            prop="ownerPhone"
+            label="电话"
+            :show-message="showMessage"
+            :error="errorMessage.ownerPhone"
           >
-            <template slot-scope="{ item }">
-              <div class="name">{{ item.value }}</div>
-              <span class="addr">姓名:{{ item.name ? item.name : '未知'}}</span>
-            </template>
-          </el-autocomplete>
-        </el-form-item>
+            <!-- :disabled="nameDisabled" -->
+            <!--  -->
+            <el-autocomplete
+              style="width:100%"
+              v-model="createForm[0].ownerPhone"
+              placeholder="请输入车主电话"
+              popper-class="my-autocomplete"
+              :fetch-suggestions="querySearch"
+              @select="handleSelectWatchlist"
+              :maxlength="11"
+              clearable
+              @keyup.native="phoneNumber"
+              @keydown.native="phoneNumber"
+              @change="clearableBtn"
+            >
+              <template slot-scope="{ item }">
+                <div class="name">{{ item.value }}</div>
+                <span class="addr">姓名:{{ item.name ? item.name : '未知'}}</span>
+              </template>
+            </el-autocomplete>
+          </el-form-item>
+          <p class="ei-input-hint">{{phoneNum}}/11</p>
+        </div>
 
         <el-form-item label="姓名">
           <el-input :disabled="true" v-model="createForm[0].ownerUserName" placeholder="请输入姓名"></el-input>
@@ -244,6 +263,7 @@
             v-model="createForm[0].carNo"
             placeholder="车牌号7位限长"
             :maxlength="7"
+            clearable
             @input="constraintLength(createForm[0].carNo,'7')"
           ></el-input>
         </el-form-item>
@@ -258,6 +278,7 @@
             v-model="createForm[0].modal"
             placeholder="请输入品牌"
             :maxlength="10"
+            clearable
             @input="constraintLength(createForm[0].modal,'10')"
           ></el-input>
         </el-form-item>
@@ -267,6 +288,7 @@
             v-model="createForm[0].carType"
             placeholder="请输入车型"
             :maxlength="10"
+            clearable
             @input="constraintLength(createForm[0].carType,'10')"
           ></el-input>
         </el-form-item>
@@ -331,6 +353,7 @@
             placeholder="请输入品牌"
             :maxlength="10"
             @input="constraintLength(editForm.modal,'10')"
+            clearable
           ></el-input>
         </el-form-item>
 
@@ -340,6 +363,7 @@
             placeholder="请输入车型"
             :maxlength="10"
             @input="constraintLength(editForm.carType,'10')"
+            clearable
           ></el-input>
         </el-form-item>
 
@@ -355,6 +379,7 @@
             :maxlength="200"
             placeholder="输入备注信息"
             @input="constraintLength(editForm.note,'200')"
+            clearable
           ></el-input>
         </el-form-item>
       </el-form>
@@ -697,6 +722,12 @@ export default class CarList extends Vue {
       this.createForm[0]["userName"] = null;
       this.nameDisabled = false;
     }
+  }
+
+  phoneNumber(e: any) {
+    var v = e.target.value;
+    e.target.value = v.replace(this["upNum"], "");
+    this["phoneNum"] = v.length;
   }
 
   createCar() {

@@ -280,6 +280,12 @@ export default class GlobalMimins extends Vue {
           this.message('备注不能超过200个字符')
         }
         break;
+      case '30':
+        if (value.length === 30) {
+          value = value.slice(30)
+          this.message('不能超过30个字符')
+        }
+        break;
       case '7':
         if (value.length === 7) {
           this.message('车牌不能超过7个字符')
@@ -319,6 +325,14 @@ export default class GlobalMimins extends Vue {
         type: "warning"
       });
     }
+  }
+
+  filterNumber(e: any) {
+    var v = e.target.value
+    if (v !== "" && !this.regPos.test(v)) {
+      this.message('手机号码必须是数值')
+    }
+    e.target.value = v.replace(this.upNum, "");
   }
 
   // phone只可输入数字
