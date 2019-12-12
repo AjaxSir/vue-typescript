@@ -91,7 +91,7 @@
 
             <el-table-column prop="buildingName" :show-overflow-tooltip='true' width="120" align='center' label="所属单元"></el-table-column>
 
-            <el-table-column align='center' width="200px" :show-overflow-tooltip='true' label="房屋编号">
+            <el-table-column align='center' prop='serialNumber' width="200px" sortable='custom' :show-overflow-tooltip='true' label="房屋编号">
               <template slot-scope="scope">
                 <el-button @click='showHouseDetails(scope.row)' type='text'>{{ scope.row.serialNumber }}</el-button>
               </template>
@@ -100,7 +100,8 @@
             <el-table-column prop="personCnt" width="120" align='center' sortable='custom' label="注册人数"></el-table-column>
             <el-table-column width="120" align='center' prop="type" label="状态">
               <template slot-scope="{row}">
-                <el-dropdown @command="changeStatus"
+                <span>{{ row.status | status }}</span>
+                <!-- <el-dropdown @command="changeStatus"
                 trigger="click">
                   <span class="el-dropdown-link">
                     <el-tag
@@ -112,12 +113,9 @@
                   <el-dropdown-menu  slot="dropdown">
                     <el-dropdown-item :command='ComponentCommand("1", row)'>业主居住</el-dropdown-item>
                     <el-dropdown-item :command='ComponentCommand("2", row)'>出租中</el-dropdown-item>
-                    <!-- <el-dropdown-item :command='ComponentCommand("3", row)'>待售中</el-dropdown-item>
-                    <el-dropdown-item :command='ComponentCommand("4", row)'>待租中</el-dropdown-item> -->
                     <el-dropdown-item :command='ComponentCommand("3", row)'>闲置</el-dropdown-item>
-                    <!-- <el-dropdown-item :command='ComponentCommand("6", row)'>其他</el-dropdown-item> -->
                   </el-dropdown-menu>
-                </el-dropdown>
+                </el-dropdown> -->
               </template>
             </el-table-column>
 
@@ -299,7 +297,11 @@ export default class CardManage extends Vue {
   };
   initForm: object = {
     url: '/admin/hsHouse/list',
-    method: 'get'
+    method: 'get',
+    params: {
+      orderColumn: 'serialNumber',
+      asc: true
+    }
   }
   filterForm: object = {
     keys: '',
