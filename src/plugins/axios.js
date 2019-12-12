@@ -2,7 +2,7 @@
 
 import Vue from "vue";
 import axios from "axios";
-import store from '../store'
+import store from '../store/index.ts'
 import { MessageBox, Message } from 'element-ui';
 import { getToken, getName } from '@/utils/auth'
 

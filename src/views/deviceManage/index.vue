@@ -23,9 +23,8 @@
           <el-table
             :data="list_data"
             stripe
-
             v-loading='showLoading'
-            style="max-height: 75vh;overflow:auto"
+            height='65vh'
             highlight-current-row
             @selection-change="handleSelectionChange"
             @cell-mouse-enter="enterRowChange"
@@ -38,11 +37,13 @@
                <span>{{scope.$index +1}}</span>
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start" @command="commandClick">
-                    <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
+                    <el-tooltip class="item" effect="dark" content="点击操作" placement="top">
+                      <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
+                    </el-tooltip>
                     <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item :command="returnCommand('rebind', scope.row)">重新绑定</el-dropdown-item>
+                      <!-- <el-dropdown-item :command="returnCommand('rebind', scope.row)">重新绑定</el-dropdown-item> -->
                       <el-dropdown-item :command="returnCommand('delete', scope.row)">
-                        {{ deleteForm.data.length ? '批量删除' : '删除' }}
+                        {{ deleteForm.data.length ? '批量解绑' : '解绑' }}
                       </el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
@@ -50,7 +51,7 @@
               </template>
             </el-table-column>
 
-            <el-table-column align="center" prop="name" label="设备名字" width="90">
+            <el-table-column align="center" prop="name" label="设备名字" width="180">
               <template slot-scope="scope">
                 <el-button @click="showDetails(scope.row)" type="text">{{scope.row.name}}</el-button>
               </template>
@@ -104,14 +105,15 @@
       <el-tabs type="card" v-model="activeName">
         <el-tab-pane label="详细信息" name="first">
           <el-form label-width="100px" :model="detailDialogForm">
-            <el-form-item class="marginForm" label="所属单元信息:">
+            <el-form-item  class="marginForm" label="所属单元信息:">
               <span>{{detailDialogForm.address}}</span>
+            </el-form-item>
+
+            <el-form-item class="marginForm" label="门禁类型:">
+              <span>{{detailDialogForm.type | devType}}</span>
             </el-form-item>
             <el-form-item class="marginForm" label="状态:">
               <span>{{detailDialogForm.type === '1' ? "连线中" : "离线中"}}</span>
-            </el-form-item>
-            <el-form-item class="marginForm" label="门禁类型:">
-              <span>{{detailDialogForm.type | devType}}</span>
             </el-form-item>
             <el-form-item class="marginForm" label="绑定时间:">
               <span>{{detailDialogForm.bindTime || '--'}}</span>
@@ -221,7 +223,7 @@
         <el-table-column
           prop="name"
           align='center'
-          label="设备名">
+          label="地址">
         </el-table-column>
         <!-- <el-table-column
           prop="locationName"
@@ -233,6 +235,7 @@
         </el-table-column> -->
         <el-table-column
           prop="note"
+          :show-overflow-tooltip='true'
           align='center'
           label="备注">
            <template slot-scope="{row}">
@@ -305,7 +308,7 @@ export default class DeviceManage extends Vue {
     method: 'get'
   }
   deleteForm: object = {
-    url: '/admin/dev-manage/batch-delete',
+    url: '/admin/dev-manage/unbind',
     method: 'delete',
     data: []
   }
@@ -519,6 +522,8 @@ export default class DeviceManage extends Vue {
   width: 60px;
 }
 .marginForm{
+  float: left;
+  width: 50%;
   margin-bottom: 0px;
 }
 </style>

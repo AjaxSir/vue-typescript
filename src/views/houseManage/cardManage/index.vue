@@ -6,6 +6,7 @@
         :dialogCreate.sync="dialogCreate"
         :initFormHeader='initForm'
         @fetchData='fetchData'
+        ref="actionHeader"
         exportUrl='/v1/admin/hsDoorCard/export'
         exportName='门禁卡.xls'
         :filterForm='filterForm'
@@ -18,11 +19,13 @@
           <div slot="houseNum">
             <div class="word-filter">
               <span class="filter-name">关联房屋:</span>
-              <el-input  style="width:215px" class="input-filter" placeholder="请输入关联房屋查找" v-model='filterForm.houseName' size="small"></el-input>
+              <el-input clearable
+              @keyup.enter.native="emitFetchData"  style="width:215px" class="input-filter" placeholder="请输入关联房屋查找" v-model='filterForm.houseName' size="small"></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">卡号:</span>
-              <el-input style="width:215px" class="input-filter" placeholder="请输入卡号查找" v-model='filterForm.cardNo' size="small"></el-input>
+              <el-input clearable
+              @keyup.enter.native="emitFetchData" style="width:215px" class="input-filter" placeholder="请输入卡号查找" v-model='filterForm.cardNo' size="small"></el-input>
             </div>
              <div class="word-filter">
               <span class="filter-name">状态:</span>
@@ -45,7 +48,7 @@
             :data="list_data"
             stripe
             v-loading='showLoading'
-            style="max-height: 75vh;overflow:auto"
+            height='65vh'
             highlight-current-row
             @cell-mouse-enter="enterRowChange"
             @selection-change="handleSelectionChange"
@@ -58,7 +61,9 @@
                 <span>{{ scope.$index + 1 }}</span>
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start" @command='commandClick'>
-                    <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
+                    <el-tooltip class="item" effect="dark" content="点击操作" placement="top">
+                      <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
+                    </el-tooltip>
                     <el-dropdown-menu slot="dropdown">
                       <el-dropdown-item :command="returnCommand('delete', scope.row)">
                         {{ deleteForm.data.length ? '批量删除' : '删除' }}
@@ -78,9 +83,9 @@
               </template>
             </el-table-column>
 
-            <el-table-column align="center" width='300' prop="houseName" label="关联房屋"></el-table-column>
+            <el-table-column align="center" prop="houseName" label="关联房屋"></el-table-column>
 
-            <el-table-column align="center" :show-overflow-tooltip='true' prop="createTime" label="创建时间"></el-table-column>
+            <el-table-column align="center" width="220" :show-overflow-tooltip='true' prop="createTime" label="创建时间"></el-table-column>
 
             <!-- <el-table-column align="center" prop="lastUseTime" label="最近刷卡时间">
               <template slot-scope="scope">
@@ -104,7 +109,7 @@
                 </el-date-picker>
               </template>
             </el-table-column>
-            <el-table-column align="center" prop="status" label="状态">
+            <el-table-column align="center" width="120" prop="status" label="状态">
               <template slot-scope="{row}">
                 <el-dropdown @command="cardStatusChange"
                 trigger="click">

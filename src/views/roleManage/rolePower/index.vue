@@ -17,7 +17,7 @@
             stripe
             v-loading='showLoading'
 
-            style="max-height: 75vh;overflow:auto"
+            height='65vh'
             highlight-current-row
             @selection-change="handleSelectionChange"
             @cell-mouse-enter="enterRowChange"
@@ -30,7 +30,9 @@
                 <span>{{scope.$index + 1}}</span>
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start" @command="commandClick">
-                    <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
+                    <el-tooltip class="item" effect="dark" content="点击操作" placement="top">
+                      <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
+                    </el-tooltip>
                     <el-dropdown-menu slot="dropdown">
                       <el-dropdown-item :command='returnCommand("update", scope.row)'>修改</el-dropdown-item>
                       <!-- <el-dropdown-item :command='returnCommand("delete", scope.row)'>删除</el-dropdown-item> -->
@@ -43,7 +45,7 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="name" class="serial-num" label="角色" align="center">
+            <el-table-column prop="name"  :show-overflow-tooltip='true' width="160" class="serial-num" label="角色" align="center">
               <template slot-scope="scope">
                 <span>{{scope.row.name}}</span>
               </template>
@@ -61,7 +63,7 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="createTime" label="创建时间" align="center"></el-table-column>
+            <el-table-column  :show-overflow-tooltip='true' width="200" prop="createTime" label="创建时间" align="center"></el-table-column>
           </el-table>
         </div>
         <el-pagination
@@ -94,7 +96,7 @@
     </el-dialog>
     <!-- 新增或修改 -->
     <el-dialog
-      title="新增"
+      :title="Form.id ? '修改' : '新增'"
       :close-on-click-modal='false'
       :visible.sync="dialogCreate"
       width="500px"
@@ -105,7 +107,7 @@
           <el-input placeholder="输入角色名字" maxlength="10" @input="constraintLength(Form.name,'10')" v-model="Form.name"></el-input>
         </el-form-item>
         <el-form-item label="备注" maxlength="200"  placeholder="输入角色备注说明(最多200字)" prop='note'>
-          <el-input maxlength="200" @input="constraintLength(Form.note,'200')" type="textarea" v-model="Form.note"></el-input>
+          <el-input maxlength="200" placeholder="请输入角色备注信息" @input="constraintLength(Form.note,'200')" type="textarea" v-model="Form.note"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -177,7 +179,7 @@ export default class InformIssue extends Vue {
   updateRoleAction(row) {
     this.dialogTableVisible = true
     this.updateRoleForm = Object.assign(this.updateRoleForm, row)
-    const permissionList = row.permission ? row.permission : []
+    const permissionList = row.permissionList ? row.permissionList : []
     this.roleData.forEach(ele => {
        this.$set(ele, 'Look', false)
        this.$set(ele, 'Update', false)
