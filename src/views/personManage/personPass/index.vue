@@ -50,12 +50,12 @@
              <div class="word-filter">
               <span class="filter-name">通行时间:</span> &nbsp;&nbsp;
               <el-date-picker
-                style="width:320px"
+                style="width:300px"
                   v-model="timeRange"
                   type="datetimerange"
                   range-separator="-"
                   @change='timeRangeChange'
-                  format='yyyy-MM-dd'
+                  format='yyyy - MM - dd HH:mm:ss'
                   value-format="yyyy-MM-dd HH:mm:ss"
                   start-placeholder="开始日期"
                   :clearable='false'

@@ -57,14 +57,14 @@
       </span>
     </el-tree>
     <!-- 楼栋dialog添加分组 -->
-    <el-dialog  :close-on-click-modal='false' width="420px" class='formDialog' :title="HouseForm.title" :visible.sync="HouseVisible">
-      <el-tabs v-model="activeName" type="card">
-      <el-tab-pane v-if='nodeAction !== "updateGroup"' label="批量添加" name="first">
+    <el-dialog :before-close="closeDialog" :close-on-click-modal='false' width="420px" class='formDialog' :title="HouseForm.title" :visible.sync="HouseVisible">
+      <el-tabs  v-if='nodeAction !== "updateGroup"' v-model="activeName" type="card">
+      <el-tab-pane label="批量添加" name="first">
         <el-form  ref='batchForm' :rules='batchRules' :model="batchForm" label-width="80px">
           <el-form-item prop='min' label="编号:">
             <el-input style="width:120px" placeholder="开始编号" v-model="batchForm.min"></el-input>
               至
-            <el-input prop='max'  placeholder="结束编号"  style="width:120px" v-model="batchForm.max"></el-input>
+            <el-input placeholder="结束编号"  style="width:120px" v-model="batchForm.max"></el-input>
           </el-form-item>
           <el-form-item label="序号单位:" prop='serialNumberUnit' label-width="85px">
             <el-select style="width:130px" v-model="batchForm.serialNumberUnit" placeholder="请选择">
@@ -75,7 +75,7 @@
                 :value="item.name">
               </el-option>
             </el-select>
-            <el-button @click='showUnitSetting = !showUnitSetting'>分组单位设置</el-button>
+            <el-button @click='showUnitSetting = !showUnitSetting'>单位设置</el-button>
             <div v-if='showUnitSetting'>
               <el-tag
               style="margin-left:5px"
@@ -100,14 +100,60 @@
             </div>
           </el-form-item>
           <el-form-item label="备注:" prop='note' label-width="85px">
-            <el-input style="width:260px" @input="constraintLength(batchForm.note, '200')" type='textarea' v-model="batchForm.note" autocomplete="off"></el-input>
+            <el-input style="width:260px" placeholder="填写分组的备注信息" @input="constraintLength(batchForm.note, '200')" type='textarea' v-model="batchForm.note" autocomplete="off"></el-input>
           </el-form-item>
         </el-form>
       </el-tab-pane>
-      <el-tab-pane :label="HouseForm.id ? '' :'手动添加'" name="second">
+      <el-tab-pane label="手动添加" name="second">
         <el-form ref='HouseForm' :rules='HouseRules' :model="HouseForm">
         <el-form-item label="序号:" prop='serialNumber' label-width="85px">
-          <el-input @input='autoName'  style="width:240px" v-model="HouseForm.serialNumber" autocomplete="off"></el-input>
+          <el-input @input='autoName'  placeholder="填写分组的序号" style="width:240px" v-model="HouseForm.serialNumber" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="序号单位:" prop='serialNumberUnit' label-width="85px">
+          <el-select @change='autoName' style="width:110px" v-model="HouseForm.serialNumberUnit" placeholder="请选择">
+            <el-option
+              v-for="item in Tags"
+              :key="item.name"
+              :label="item.name"
+              :value="item.name">
+            </el-option>
+          </el-select>
+          <el-button @click='showUnitSetting = !showUnitSetting'>单元设置</el-button>
+            <div v-if='showUnitSetting'>
+              <el-tag
+              style="margin-left:5px"
+                :key="index"
+                v-for="(tag, index) in Tags"
+                closable
+                :disable-transitions="false"
+                @close="deleteTag(tag, 'group')">
+                {{tag.name}}
+              </el-tag>
+              <el-input
+                class="input-new-tag"
+                v-if="newTag"
+                v-model="newTagValue"
+                ref="saveTagInput"
+                size="small"
+                @keyup.enter.native="handleInputConfirm('group')"
+                @blur="handleInputConfirm('group')"
+              >
+              </el-input>
+              <el-button v-else class="button-new-tag" size="small" @click="showInput">新增单位</el-button>
+            </div>
+        </el-form-item>
+        <el-form-item label="别名:" prop='name' label-width="85px">
+          <el-input style="width:240px" placeholder="填写分组的别名" v-model="HouseForm.name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="备注:" prop='note' label-width="85px">
+          <el-input style="width:240px" placeholder="填写分组的备注信息" type='textarea' v-model="HouseForm.note" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      </el-tab-pane>
+      </el-tabs>
+      <el-form v-else ref='HouseForms' :rules='HouseRules' :model="HouseForm">
+        <el-form-item label="序号:" prop='serialNumber' label-width="85px">
+          <el-input @input='autoName'  placeholder="填写分组的序号" style="width:240px" v-model="HouseForm.serialNumber" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="序号单位:" prop='serialNumberUnit' label-width="85px">
           <el-select @change='autoName' style="width:110px" v-model="HouseForm.serialNumberUnit" placeholder="请选择">
@@ -143,21 +189,20 @@
             </div>
         </el-form-item>
         <el-form-item label="别名:" prop='name' label-width="85px">
-          <el-input style="width:240px" v-model="HouseForm.name" autocomplete="off"></el-input>
+          <el-input style="width:240px" placeholder="填写分组的别名" v-model="HouseForm.name" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="备注:" prop='note' label-width="85px">
-          <el-input style="width:240px" type='textarea' v-model="HouseForm.note" autocomplete="off"></el-input>
+          <el-input style="width:240px" placeholder="填写分组的备注信息" type='textarea' v-model="HouseForm.note" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
-      </el-tab-pane>
-      </el-tabs>
       <div slot="footer" class="dialog-footer">
+
+        <el-button @click="closeDialog">取 消</el-button>
         <el-button type="primary" @click="GroupAction">确 定</el-button>
-        <el-button @click="closeDialog(['batchForm', 'HouseForm'])">取 消</el-button>
       </div>
     </el-dialog>
     <!-- 楼栋dialog添加单元楼 -->
-    <el-dialog :close-on-click-modal='false' width="460px"  class='formDialog' :title="UnitForm.id ? '修改单元楼' : '添加单元楼'" :visible.sync="HouseUnitVisible">
+    <el-dialog :before-close="closeDialog" :close-on-click-modal='false' width="460px"  class='formDialog' :title="UnitForm.id ? '修改单元楼' : '添加单元楼'" :visible.sync="HouseUnitVisible">
       <el-form  ref='buildings' :rules="unitRules" :model="UnitForm">
          <el-form-item label="名称:" prop='name' label-width="85px">
           <el-input style="width:280px" v-model="UnitForm.name" autocomplete="off"></el-input>
@@ -176,7 +221,7 @@
               :value="item.name">
             </el-option>
           </el-select>
-          <el-button @click='showUnitSetting = !showUnitSetting'>单元楼单元设置</el-button>
+          <el-button @click='showUnitSetting = !showUnitSetting'>单位设置</el-button>
             <div v-if='showUnitSetting'>
               <el-tag
               style="margin-left:5px"
@@ -207,8 +252,9 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
+
+        <el-button @click="closeDialog">取 消</el-button>
         <el-button type="primary" @click="addUpdateUnitConfim">确 定</el-button>
-        <el-button @click="closeDialog(['buildings'])">取 消</el-button>
       </div>
     </el-dialog>
     <!-- 权限dialog -->
@@ -481,13 +527,25 @@ export default class DataTree extends Vue {
     this.HouseForm['name'] = this.HouseForm['serialNumber'] + this.HouseForm['serialNumberUnit']
   }
   // 关闭弹框
-  closeDialog(arr:Array<string>) {
-    this.$nextTick(() => {
-      arr.forEach(ele => {
-        this.$refs[ele]['resetFields']()
-      })
-    })
-    this.batchForm['max'] = ''
+  closeDialog() {
+      // 新增分组表单
+  this.HouseForm= {
+    serialNumber: '', // 序号
+    serialNumberUnit: this.Tags[0]['name'],
+    name: '',
+    note: '',
+    parentId: '',
+    title: '添加子分组'
+  }
+  // 楼栋表单
+  this.UnitForm = {
+    buildingGroupId: '',
+    name: '', // 名称
+    serialNumber: '', // 编号
+    serialNumberUnit: this.UnitTags[0]['name'], // 序号单元
+    storeyNum: '', // 楼层数
+    houseNum: '' // 每层户数
+  }
     this.HouseUnitVisible = false
     this.HouseVisible = false
   }
@@ -608,7 +666,7 @@ export default class DataTree extends Vue {
       if (this.nodeAction === 'addGroup') {
         addHouseGroup(this.HouseForm).then(res => {
           if (res.data.code === 200) {
-            this.closeDialog(['batchForm', 'HouseForm'])
+            this.closeDialog()
             Message({
               type: 'success',
               message: '新增成功'
@@ -620,7 +678,7 @@ export default class DataTree extends Vue {
       } else if (this.nodeAction === 'updateGroup') {
         updateHouseGroup(this.HouseForm).then(res => {
           if (res.data.code === 200) {
-            this.closeDialog(['batchForm', 'HouseForm'])
+            this.closeDialog()
             Message({
               type: 'success',
               message: '修改成功'
@@ -740,6 +798,8 @@ export default class DataTree extends Vue {
     this.nodeAction = treeData.action
     switch (treeData.action) {
       case 'addGroup' :
+        this.closeDialog()
+
         this.HouseForm['title'] = '添加子分组'
         this.HouseForm['parentId'] = treeData.data ? treeData.data.id : ''
         this.batchForm['parentId'] = treeData.data ? treeData.data.id : ''
@@ -771,7 +831,10 @@ export default class DataTree extends Vue {
         break
       case 'addBuilding' :
         this.UnitForm['buildingGroupId'] = treeData.data.id
+        this.UnitForm['id'] = ''
+        this.closeDialog()
         this.HouseUnitVisible = true
+
         break
       case 'updateGroup':
         this.activeName = 'second'
