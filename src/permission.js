@@ -1,5 +1,5 @@
 import router from './router'
-import store from './store'
+import store from './store/index.ts'
 import { getToken, removeToken} from '@/utils/auth'
 import NProgress from 'nprogress' // Progress 进度条
 import 'nprogress/nprogress.css'// Progress 进度条样式

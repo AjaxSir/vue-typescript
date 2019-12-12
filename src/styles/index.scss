@@ -140,10 +140,14 @@ img {
 
 .el-submenu .el-submenu__title {
   border-bottom: 1px solid #c0c4cc;
+  height: 46px;
+  line-height: 46px;
 }
 
 .el-menu-item {
   border-bottom: 1px solid #c0c4cc;
+  height: 46px;
+  line-height: 46px;
 }
 
 .el-submenu .el-menu-item {
@@ -238,3 +242,32 @@ img {
 // .select-rewrite .el-input--small .el-input__inner {
 //   width: 232px !important;
 // }
+
+.el-textarea__inner{
+  color: #606266;font-size: 14px;
+  font-family: '微软雅黑';
+}
+.el-submenu .el-menu-item{
+  height: 40px;
+  line-height: 40px;;
+}
+/*修改滚动条样式*/
+div::-webkit-scrollbar{
+  width:6px;
+  height:10px;
+  /**/
+}
+div::-webkit-scrollbar-track{
+  background: rgb(239, 239, 239);
+  border-radius:2px;
+}
+div::-webkit-scrollbar-thumb{
+  background: #bfbfbf;
+  border-radius:10px;
+}
+div::-webkit-scrollbar-thumb:hover{
+  background: #333;
+}
+div::-webkit-scrollbar-corner{
+  background: #179a16;
+}

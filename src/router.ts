@@ -371,6 +371,16 @@ export const constantRouterMap = [{
       bg_color: '#bf5d76',
       icon: 'icon-icon-p_mrpbaobiao'
     }
+  },
+  {
+    name: 'personPassChart',
+    path: 'personPassChart',
+    component: _import_('statementManage/components/personPassChart'),
+    meta: {
+      title: '人员通信统计',
+      bg_color: '#bf5d76',
+      icon: 'icon-icon-p_mrpbaobiao'
+    }
   }]
 },
 {

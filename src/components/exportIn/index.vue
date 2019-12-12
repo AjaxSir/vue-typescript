@@ -27,7 +27,7 @@
                 >
                <i class="el-icon-plus"></i>
                 添加文件
-              </el-upload><span>目前仅支持*.xls</span>
+              </el-upload><span>目前仅支持*.xlsx</span>
     <span slot="footer" class="dialog-footer">
       <el-button @click="handleClose">取 消</el-button>
       <el-button type="primary" @click="confirmUpload">确 定</el-button>

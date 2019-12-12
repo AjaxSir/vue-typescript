@@ -57,17 +57,17 @@
       </span>
     </el-tree>
     <!-- 楼栋dialog添加分组 -->
-    <el-dialog  :close-on-click-modal='false' width="500px" class='formDialog' :title="HouseForm.title" :visible.sync="HouseVisible">
+    <el-dialog  :close-on-click-modal='false' width="420px" class='formDialog' :title="HouseForm.title" :visible.sync="HouseVisible">
       <el-tabs v-model="activeName" type="card">
       <el-tab-pane v-if='nodeAction !== "updateGroup"' label="批量添加" name="first">
         <el-form  ref='batchForm' :rules='batchRules' :model="batchForm" label-width="80px">
           <el-form-item prop='min' label="编号:">
-            <el-input style="width:100px" placeholder="开始编号" v-model="batchForm.min"></el-input>
+            <el-input style="width:120px" placeholder="开始编号" v-model="batchForm.min"></el-input>
               至
-            <el-input prop='max' placeholder="结束编号"  style="width:100px" v-model="batchForm.max"></el-input>
+            <el-input prop='max'  placeholder="结束编号"  style="width:120px" v-model="batchForm.max"></el-input>
           </el-form-item>
           <el-form-item label="序号单位:" prop='serialNumberUnit' label-width="85px">
-            <el-select v-model="batchForm.serialNumberUnit" placeholder="请选择">
+            <el-select style="width:130px" v-model="batchForm.serialNumberUnit" placeholder="请选择">
               <el-option
                 v-for="item in Tags"
                 :key="item.name"
@@ -75,7 +75,7 @@
                 :value="item.name">
               </el-option>
             </el-select>
-            <el-button @click='showUnitSetting = !showUnitSetting' type='text'>分组单元设置</el-button>
+            <el-button @click='showUnitSetting = !showUnitSetting'>分组单位设置</el-button>
             <div v-if='showUnitSetting'>
               <el-tag
               style="margin-left:5px"
@@ -92,6 +92,7 @@
                 v-model="newTagValue"
                 ref="saveTagInput"
                 size="small"
+                  @keyup.enter.native="handleInputConfirm('group')"
                 @blur="handleInputConfirm('group')"
               >
               </el-input>
@@ -99,17 +100,17 @@
             </div>
           </el-form-item>
           <el-form-item label="备注:" prop='note' label-width="85px">
-            <el-input style="width:217px" @input="constraintLength(batchForm.note, '200')" type='textarea' v-model="batchForm.note" autocomplete="off"></el-input>
+            <el-input style="width:260px" @input="constraintLength(batchForm.note, '200')" type='textarea' v-model="batchForm.note" autocomplete="off"></el-input>
           </el-form-item>
         </el-form>
       </el-tab-pane>
-      <el-tab-pane label="手动添加" name="second">
+      <el-tab-pane :label="HouseForm.id ? '' :'手动添加'" name="second">
         <el-form ref='HouseForm' :rules='HouseRules' :model="HouseForm">
         <el-form-item label="序号:" prop='serialNumber' label-width="85px">
-          <el-input  style="width:217px" v-model="HouseForm.serialNumber" autocomplete="off"></el-input>
+          <el-input @input='autoName'  style="width:240px" v-model="HouseForm.serialNumber" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="序号单位:" prop='serialNumberUnit' label-width="85px">
-          <el-select  style="width:217px" v-model="HouseForm.serialNumberUnit" placeholder="请选择">
+          <el-select @change='autoName' style="width:110px" v-model="HouseForm.serialNumberUnit" placeholder="请选择">
             <el-option
               v-for="item in Tags"
               :key="item.name"
@@ -117,7 +118,7 @@
               :value="item.name">
             </el-option>
           </el-select>
-          <el-button @click='showUnitSetting = !showUnitSetting' type='text'>分组单元设置</el-button>
+          <el-button @click='showUnitSetting = !showUnitSetting'>分组单元设置</el-button>
             <div v-if='showUnitSetting'>
               <el-tag
               style="margin-left:5px"
@@ -134,6 +135,7 @@
                 v-model="newTagValue"
                 ref="saveTagInput"
                 size="small"
+                @keyup.enter.native="handleInputConfirm('group')"
                 @blur="handleInputConfirm('group')"
               >
               </el-input>
@@ -141,10 +143,10 @@
             </div>
         </el-form-item>
         <el-form-item label="别名:" prop='name' label-width="85px">
-          <el-input style="width:217px" v-model="HouseForm.name" autocomplete="off"></el-input>
+          <el-input style="width:240px" v-model="HouseForm.name" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="备注:" prop='note' label-width="85px">
-          <el-input style="width:217px" type='textarea' v-model="HouseForm.note" autocomplete="off"></el-input>
+          <el-input style="width:240px" type='textarea' v-model="HouseForm.note" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
       </el-tab-pane>
@@ -155,26 +157,26 @@
       </div>
     </el-dialog>
     <!-- 楼栋dialog添加单元楼 -->
-    <el-dialog :close-on-click-modal='false' width="500px"  class='formDialog' title="添加单元楼" :visible.sync="HouseUnitVisible">
+    <el-dialog :close-on-click-modal='false' width="460px"  class='formDialog' :title="UnitForm.id ? '修改单元楼' : '添加单元楼'" :visible.sync="HouseUnitVisible">
       <el-form  ref='buildings' :rules="unitRules" :model="UnitForm">
          <el-form-item label="名称:" prop='name' label-width="85px">
-          <el-input style="width:250px" v-model="UnitForm.name" autocomplete="off"></el-input>
+          <el-input style="width:280px" v-model="UnitForm.name" autocomplete="off"></el-input>
           <!-- <el-input style='width:50px' v-model="UnitForm.max" autocomplete="off"></el-input> -->
         </el-form-item>
         <el-form-item v-if='!this.UnitForm.id' label="序号:" prop='serialNumber' label-width="85px">
-          <el-input style="width:250px" v-model="UnitForm.serialNumber" autocomplete="off"></el-input>
+          <el-input style="width:280px" v-model="UnitForm.serialNumber" autocomplete="off"></el-input>
           <!-- <el-input style='width:50px' v-model="UnitForm.max" autocomplete="off"></el-input> -->
         </el-form-item>
-        <el-form-item v-if='!this.UnitForm.id' label="序号单元:" prop='serialNumberUnit' label-width="85px">
-          <el-select style="width:250px" v-model="UnitForm.serialNumberUnit" placeholder="请选择">
+        <el-form-item v-if='!this.UnitForm.id' label="序号单位:" prop='serialNumberUnit' label-width="85px">
+          <el-select style="width:140px" v-model="UnitForm.serialNumberUnit" placeholder="请选择">
             <el-option
-              v-for="item in Tags"
+              v-for="item in UnitTags"
               :key="item.name"
               :label="item.name"
               :value="item.name">
             </el-option>
           </el-select>
-          <el-button @click='showUnitSetting = !showUnitSetting' type='text'>单元楼单元设置</el-button>
+          <el-button @click='showUnitSetting = !showUnitSetting'>单元楼单元设置</el-button>
             <div v-if='showUnitSetting'>
               <el-tag
               style="margin-left:5px"
@@ -198,10 +200,10 @@
             </div>
         </el-form-item>
         <el-form-item label="楼层数:" prop='storeyNum' label-width="85px">
-          <el-input style="width:250px" v-model="UnitForm.storeyNum" autocomplete="off"></el-input>
+          <el-input style="width:280px" v-model="UnitForm.storeyNum" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="每层户数:" prop='houseNum' label-width="85px">
-          <el-input style="width:250px" v-model="UnitForm.houseNum" autocomplete="off"></el-input>
+          <el-input style="width:280px" v-model="UnitForm.houseNum" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -474,6 +476,10 @@ export default class DataTree extends Vue {
       this.devicePage['total'] = res.data.data.total
     })
   }
+  // 自动补充别名
+  autoName() {
+    this.HouseForm['name'] = this.HouseForm['serialNumber'] + this.HouseForm['serialNumberUnit']
+  }
   // 关闭弹框
   closeDialog(arr:Array<string>) {
     this.$nextTick(() => {
@@ -587,6 +593,7 @@ export default class DataTree extends Vue {
     getUnitList(type).then(res => {
       if (type === 'build') {
         this.UnitTags = res.data.data
+        console.log(res.data.data)
         this.UnitForm['serialNumberUnit'] = this.UnitTags[0]['name']
       } else {
         this.Tags = res.data.data
@@ -769,7 +776,7 @@ export default class DataTree extends Vue {
       case 'updateGroup':
         this.activeName = 'second'
         this.HouseVisible = true
-        this.HouseForm['title'] = '修改子分组'
+        this.HouseForm['title'] = '修改分组'
         this.HouseForm = Object.assign(this.HouseForm, treeData.data)
         break
       case 'updateBuilding':

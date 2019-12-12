@@ -5,6 +5,7 @@
         <action-header
         exportUrl='/v1/admin/hsHouse/export'
         exportName='房屋.xls'
+         ref="actionHeader"
         :initFormHeader='initForm'
         @fetchData='fetchData'
         :filterForm='filterForm'
@@ -17,7 +18,9 @@
           <div slot="houseNum">
             <div class="word-filter">
               <span class="filter-name">房屋编号:</span>
-              <el-input style="width:215px" class="input-filter" v-model="filterForm.keys" placeholder='输入房屋编号筛选' size="small"></el-input>
+              <el-input clearable  
+              @keyup.enter.native="emitFetchData"
+              style="width:215px" class="input-filter" v-model="filterForm.keys" placeholder='输入房屋编号筛选' size="small"></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">状态:</span>
@@ -25,10 +28,10 @@
                 <el-option label="所有" value=""></el-option>
                 <el-option label="业主居住" value="1"></el-option>
                 <el-option label="出租中" value="2"></el-option>
-                <el-option label="待售中" value="3"></el-option>
-                <el-option label="待租中" value="4"></el-option>
-                <el-option label="闲置" value="5"></el-option>
-                <el-option label="其他" value="6"></el-option>
+                <!-- <el-option label="待售中" value="3"></el-option>
+                <el-option label="待租中" value="4"></el-option> -->
+                <el-option label="闲置" value="3"></el-option>
+                <!-- <el-option label="其他" value="6"></el-option> -->
               </el-select>
             </div>
           </div>
@@ -51,7 +54,7 @@
             :data="list_data"
             stripe
             @sort-change='sortChange'
-            style="max-height: 75vh;overflow:auto"
+            height="65vh"
             v-loading='showLoading'
             highlight-current-row
             @cell-mouse-enter="enterRowChange"
@@ -65,7 +68,9 @@
                 <span>{{scope.$index + 1}}</span>
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start" @command='commandClick'>
-                    <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
+                    <el-tooltip class="item" effect="dark" content="点击操作" placement="top">
+                      <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
+                    </el-tooltip>
                     <el-dropdown-menu slot="dropdown">
                       <!-- <el-dropdown-item :command='returnCommand("update", scope.row)'>远程开门</el-dropdown-item> -->
                       <el-dropdown-item :command="returnCommand('delete', scope.row)">
@@ -84,16 +89,16 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="buildingName" align='center' label="所属单元"></el-table-column>
+            <el-table-column prop="buildingName" :show-overflow-tooltip='true' width="120" align='center' label="所属单元"></el-table-column>
 
-            <el-table-column align='center' label="房屋编号">
+            <el-table-column align='center' width="200px" :show-overflow-tooltip='true' label="房屋编号">
               <template slot-scope="scope">
                 <el-button @click='showHouseDetails(scope.row)' type='text'>{{ scope.row.serialNumber }}</el-button>
               </template>
             </el-table-column>
 
-            <el-table-column prop="personCnt" align='center' sortable='custom' label="注册人数"></el-table-column>
-            <el-table-column align='center' prop="type" label="状态">
+            <el-table-column prop="personCnt" width="120" align='center' sortable='custom' label="注册人数"></el-table-column>
+            <el-table-column width="120" align='center' prop="type" label="状态">
               <template slot-scope="{row}">
                 <el-dropdown @command="changeStatus"
                 trigger="click">
@@ -107,10 +112,10 @@
                   <el-dropdown-menu  slot="dropdown">
                     <el-dropdown-item :command='ComponentCommand("1", row)'>业主居住</el-dropdown-item>
                     <el-dropdown-item :command='ComponentCommand("2", row)'>出租中</el-dropdown-item>
-                    <el-dropdown-item :command='ComponentCommand("3", row)'>待售中</el-dropdown-item>
-                    <el-dropdown-item :command='ComponentCommand("4", row)'>待租中</el-dropdown-item>
-                    <el-dropdown-item :command='ComponentCommand("5", row)'>闲置</el-dropdown-item>
-                    <el-dropdown-item :command='ComponentCommand("6", row)'>其他</el-dropdown-item>
+                    <!-- <el-dropdown-item :command='ComponentCommand("3", row)'>待售中</el-dropdown-item>
+                    <el-dropdown-item :command='ComponentCommand("4", row)'>待租中</el-dropdown-item> -->
+                    <el-dropdown-item :command='ComponentCommand("3", row)'>闲置</el-dropdown-item>
+                    <!-- <el-dropdown-item :command='ComponentCommand("6", row)'>其他</el-dropdown-item> -->
                   </el-dropdown-menu>
                 </el-dropdown>
               </template>
@@ -119,22 +124,30 @@
             <el-table-column align='center' :show-overflow-tooltip='true' prop="note" label="备注">
               <template slot-scope="scope">
               <span class="rowUpdate" v-show='!scope.row.noteStatus' @click='focusNoteInput(scope.row)'>{{ scope.row.note || '点击编辑' }}</span>
-              <el-input type='textarea' :ref='scope.row.id'  @keyup.enter.native="confirmUpdateNote(scope.row)" @blur="noteBlur(scope.row)" v-model="noteString"  v-show='scope.row.noteStatus' placeholder="输入备注"></el-input>
+              <el-input
+              :ref='scope.row.id'
+               @keyup.enter.native="confirmUpdateNote(scope.row)"
+               @blur="noteBlur(scope.row)"
+               v-model="noteString"
+               v-show='scope.row.noteStatus'
+               :clearable="true"
+               placeholder="输入备注"></el-input>
               </template>
             </el-table-column>
           </el-table>
           <el-pagination @current-change='pageChange' :page-size="page.limit" style="margin-top:10px;" background layout="prev, pager, next" :total="page.total"></el-pagination>
-        </div>
-        <div :class="rowSpan.row1===4 ? menuControl1 : menuControl2" @click="menuVisible">
+          <div :class="rowSpan.row1===3 ? menuControl1 : menuControl2" @click="menuVisible">
           <p class="close-menu">
-            <i v-if="rowSpan.row1===4" class="iconfont icon-left icon-class"></i>
+            <i v-if="rowSpan.row1===3" class="iconfont icon-left icon-class"></i>
             <i v-else class="iconfont icon-zuo icon-class"></i>
           </p>
         </div>
+        </div>
+
       </el-col>
     </el-row>
     <!-- 新建房屋 -->
-    <el-dialog :close-on-click-modal='false' title="创建房屋" :visible.sync="dialogCreate" width="500px" :before-close="handleClose">
+    <el-dialog :close-on-click-modal='false' title="创建房屋" :visible.sync="dialogCreate" width="440px" :before-close="handleClose">
       <el-form :model="Form" :rules="rules" ref='Forms' label-width="110px">
         <el-form-item label="所属组别:"  prop='cardNo'>
           <el-cascader
@@ -150,7 +163,7 @@
         <el-form-item label="楼层:"  prop='storeyNum'>
           <el-input style="width:217px" v-model="Form.storeyNum" placeholder='输入楼层'></el-input>
         </el-form-item>
-        <el-form-item label="状态:"  prop='status'>
+        <!-- <el-form-item label="状态:"  prop='status'>
           <el-select  style="width:217px" size="small" v-model="Form.status" placeholder="请选择">
                 <el-option label="业主居住" value="1"></el-option>
                 <el-option label="出租中" value="2"></el-option>
@@ -159,7 +172,7 @@
                 <el-option label="闲置" value="5"></el-option>
                 <el-option label="其他" value="6"></el-option>
               </el-select>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="备注:"  prop='note'>
           <el-input  style="width:217px" type='textarea' v-model="Form.note" placeholder='输入备注'></el-input>
         </el-form-item>
@@ -173,7 +186,7 @@
     <el-dialog
     :close-on-click-modal='false'
       class="dialog-rewrite"
-      :title="'编号: '+ detailDialog.name"
+      :title="'编号: '+ detailDialog.serialNumber"
       :visible.sync="dialogFormVisible"
     >
       <el-tabs type="card" v-model="activeName">
@@ -189,8 +202,8 @@
             <el-col :span='6'>房屋状态:{{ detailDialog.status | status }}</el-col>
             <!-- <el-col :span='6'>业主电话:{{ detailDialog.phone || '--' }}</el-col> -->
           </el-row>
-          <div style='margin-top:10px'>
-            备注：<el-input type='textarea' v-model='detailDialog.note'></el-input>
+          <div style='margin-top:10px;'>
+            备注：<el-input style='' type='textarea' v-model='detailDialog.note'></el-input>
           </div>
 
         </el-tab-pane>
@@ -254,10 +267,10 @@ const DataTree = () => import("@/components/DataTree.vue");
       const data = {
         "1": '业主居住',
         "2": '出租中',
-        "3": '待售中',
-        "4": '待租中',
-        "5": '闲置',
-        "6": '其他'
+        // "3": '待售中',
+        // "4": '待租中',
+        "3": '闲置'
+        // "6": '其他'
       }
       return data[val]
     },
@@ -281,8 +294,8 @@ const DataTree = () => import("@/components/DataTree.vue");
 })
 export default class CardManage extends Vue {
   private rowSpan: any = {
-    row1: 4,
-    row2: 20
+    row1: 3,
+    row2: 21
   };
   initForm: object = {
     url: '/admin/hsHouse/list',
@@ -357,6 +370,7 @@ export default class CardManage extends Vue {
     this.dialogFormVisible = true
     this.activeName = '详细信息'
     this.detailDialog = Object.assign(this.detailDialog, row)
+    console.log(this.detailDialog)
     getRegisterPeople(row.id).then(res => {
       this.dtailTable = res.data.data
     })
@@ -438,8 +452,8 @@ export default class CardManage extends Vue {
       };
     } else {
       this.rowSpan = {
-        row1: 4,
-        row2: 20
+        row1: 3,
+        row2: 21
       };
     }
   }
@@ -463,12 +477,16 @@ export default class CardManage extends Vue {
   position: relative;
 }
 
-
+.rightContent {
+  flex: 1;
+  box-shadow: 0px 6px 5px 0px lightgray;
+  position: relative;
+}
 
 .menu-control {
   position: absolute;
   top: 32vh;
-  left: -5px;
+  left: -10px;
 }
 
 .menu-visible {

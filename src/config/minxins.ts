@@ -186,6 +186,8 @@ export default class GlobalMimins extends Vue {
         this.deleteForm['data'] = []
         this.$message.success('删除成功')
         this.fetchData(this.initForm)
+      } else {
+        this.deleteForm['data'] = []
       }
     })
   }
@@ -292,7 +294,7 @@ export default class GlobalMimins extends Vue {
         break;
       case '11':
         // if (!this.is_Phone(value)) {
-        //   return this.message('电话只能输入数字')
+        //   return this.message('请输入正确格式的电话号码')
         // }
         if(value.toString().length > 11) {
           return this.message('电话最多输入11位')
@@ -325,6 +327,8 @@ export default class GlobalMimins extends Vue {
     }
     return true;
   }
-
+  emitFetchData() {
+    this.$refs.actionHeader['emitFetchData']()
+  }
 }
 

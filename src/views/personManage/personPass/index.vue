@@ -5,6 +5,7 @@
         <action-header
         exportUrl='/v1/admin/people-pass/export'
         exportName='人员通行.xls'
+        ref="actionHeader"
         :initFormHeader='initForm'
         @fetchData='fetchData'
         :filterForm='filterForm'
@@ -16,11 +17,17 @@
           </el-dropdown-menu>
           <div slot="houseNum">
             <div class="word-filter">
+              <span class="filter-name">用户姓名:</span>
+              <el-input style='width:250px' clearable
+              @keyup.enter.native="emitFetchData" placeholder="请输入需查找的姓名" class="input-filter" v-model='filterForm.userName' size="small"></el-input>
+            </div>
+            <div class="word-filter">
               <span class="filter-name">通行位置:</span>&nbsp;
               <el-autocomplete
               style="width:250px"
                 class="floatForm"
-                clearable
+                 clearable
+                @keyup.enter.native="emitFetchData"
                 v-model="filterForm.bindName"
                 :fetch-suggestions="querySearch"
                 placeholder="请输入通行位置查找"
@@ -39,10 +46,7 @@
                 <el-option label="进出口" value="2"></el-option>
               </el-select>
             </div>
-             <div class="word-filter">
-              <span class="filter-name">姓名:</span>
-              <el-input style='width:250px' placeholder="请输入需查找的姓名" class="input-filter" v-model='filterForm.userName' size="small"></el-input>
-            </div>
+
              <div class="word-filter">
               <span class="filter-name">通行时间:</span> &nbsp;&nbsp;
               <el-date-picker
@@ -72,7 +76,7 @@
               </el-select>
             </div>
             <div class="word-filter">
-              <span class="filter-name">类型:</span>&nbsp;
+              <span class="filter-name">用户类型:</span>&nbsp;
               <el-select  style="width:250px" class="input-filter" size="small" v-model="filterForm.userType" placeholder="请选择">
                 <el-option label="全部" value="all"></el-option>
                 <el-option label="住户" value="house"></el-option>
@@ -91,24 +95,24 @@
             :data="list_data"
             stripe
             v-loading='showLoading'
-            style="max-height: 75vh;overflow:auto"
+            height='65vh'
 
             highlight-current-row
             @cell-mouse-enter="enterRowChange"
             @cell-mouse-leave="leaveRowChange"
           >
             <el-table-column type="index" align='center' label="序号" width="50"></el-table-column>
-            <el-table-column align='center' prop="userName" label="姓名">
+            <el-table-column  :show-overflow-tooltip='true' width="120" align='center' prop="userName" label="姓名">
               <template slot-scope="scope">
                 <span class="serial-num">{{scope.row.name || '--'}}</span>
               </template>
             </el-table-column>
-            <el-table-column align='center' prop="passMethod" label="通行方式">
+            <el-table-column  :show-overflow-tooltip='true' width="120" align='center' prop="passMethod" label="通行方式">
               <template slot-scope="{row}">
                 <span>{{ row.passMethod | passMethod }}</span>
               </template>
             </el-table-column>
-            <el-table-column  align='center' prop="devId" label="设备编号">
+            <el-table-column  :show-overflow-tooltip='true' width="120" align='center' prop="devId" label="设备编号">
               <template slot-scope="scope">
                 <span class="serial-num">{{scope.row.serialNumber }}</span>
               </template>
@@ -123,17 +127,17 @@
                 <span class="serial-num">{{scope.row.devAddress}} - {{ scope.row.devSubAddress }}</span>
               </template>
              </el-table-column>
-            <el-table-column align='center' prop="devType" label="设备型号">
+            <el-table-column  :show-overflow-tooltip='true' width="120" align='center' prop="devType" label="设备型号">
               <template slot-scope="{row}">
                 <span>{{ row.devType | devType }}</span>
               </template>
             </el-table-column>
-            <el-table-column align='center' prop="devType" label="是否访客">
+            <el-table-column  :show-overflow-tooltip='true' width="100" align='center' prop="devType" label="是否访客">
               <template slot-scope="{row}">
                 <span>{{ row.isVisitor ? '是' : '否' }}</span>
               </template>
             </el-table-column>
-             <el-table-column align='center' prop="img" label="人脸">
+             <el-table-column width="60" align='center' prop="img" label="人脸">
               <template slot-scope="scope">
                 <img
                   class="capture-img"
@@ -144,7 +148,7 @@
                 />
               </template>
             </el-table-column>
-             <el-table-column align='center' prop="img" label="注册人脸">
+             <el-table-column width="100" align='center' prop="img" label="注册人脸">
               <template slot-scope="scope">
                 <img
                   class="capture-img"

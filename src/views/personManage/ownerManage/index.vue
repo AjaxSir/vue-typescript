@@ -6,6 +6,7 @@
         exportUrl='/v1/admin/usrUser/export'
         exportName='用户管理.xls'
         :initFormHeader="initForm"
+         ref="actionHeader"
           @fetchData="fetchData"
           :filterForm="filterForm"
         :dialogCreate.sync="dialogCreate" :total="page.total">
@@ -21,12 +22,19 @@
           </el-dropdown-menu>
           <div slot="houseNum">
             <div class="word-filter">
+              <span class="filter-name">房号:</span>
+              <el-input clearable  
+              @keyup.enter.native="emitFetchData" style="width:215px" class="input-filter" v-model="filterForm.houseNo" size="small"></el-input>
+            </div>
+            <div class="word-filter">
               <span class="filter-name">姓&nbsp;&nbsp;&nbsp;名:</span>
-              <el-input style="width:215px" class="input-filter" v-model="filterForm.name" size="small"></el-input>
+              <el-input  clearable  
+              @keyup.enter.native="emitFetchData" style="width:215px" class="input-filter" v-model="filterForm.name" size="small"></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">手机号:</span>
-              <el-input style="width:215px" class="input-filter" v-model="filterForm.phone" size="small"></el-input>
+              <el-input clearable  
+              @keyup.enter.native="emitFetchData" style="width:215px" class="input-filter" v-model="filterForm.phone" size="small"></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">用户类型:</span>
@@ -37,10 +45,7 @@
                 <el-option label="成员" value="3"></el-option>
               </el-select>
             </div>
-            <div class="word-filter">
-              <span class="filter-name">房号:</span>
-              <el-input style="width:215px" class="input-filter" v-model="filterForm.houseNo" size="small"></el-input>
-            </div>
+
           </div>
         </ActionHeader>
       </el-col>
@@ -51,7 +56,7 @@
           <el-table :data="list_data" border
           highlight-current-row
           v-loading='showLoading'
-          style="max-height: 75vh;overflow:auto"
+          height="65vh"
           :span-method="objectSpanMethod"
           @selection-change="handleSelectionChange"
             @cell-mouse-enter="enterRowChange"
@@ -62,7 +67,9 @@
                 <span>{{ scope.$index + 1 }}</span>
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start" @command='commandClick'>
-                    <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
+                    <el-tooltip class="item" effect="dark" content="点击操作" placement="top">
+                      <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
+                    </el-tooltip>
                     <el-dropdown-menu slot="dropdown">
                       <el-dropdown-item :command="returnCommand('delete', scope.row)">
                         {{ deleteForm.data.length ? '批量删除' : '删除' }}
@@ -72,12 +79,12 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column :show-overflow-tooltip='true' align="center" class="serial-num" label="姓名">
+            <el-table-column :show-overflow-tooltip='true' align="center" width="100" class="serial-num" label="姓名">
               <template slot-scope="scope">
                 <el-button style="padding:0px;" type="text" @click="showDetail(scope.row, scope.$index)">{{scope.row.name }}</el-button>
               </template>
             </el-table-column>
-            <el-table-column :show-overflow-tooltip='true' prop="phone" align="center" label="电话">
+            <el-table-column :show-overflow-tooltip='true' width="120" prop="phone" align="center" label="电话">
               <template slot-scope="{row}">
                 <span class="rowUpdate" v-show='!row.phoneStatus'  @click='phoneChange(row)'>{{ row.phone }}</span>
                 <el-input v-show='row.phoneStatus' @blur="phoneBlur(row)" :ref='row.id' @keyup.enter.native="confirmUpdatePhone(row)" v-model="phoneString" placeholder="输入电话"></el-input>
@@ -88,7 +95,7 @@
                 <span>{{ row.sex === '1' ? '男' : '女' }}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="img" align="center" label="人脸">
+            <el-table-column prop="img" align="center" width="60" label="人脸">
               <template slot-scope="scope">
                 <img
                   class="capture-img"
@@ -110,12 +117,12 @@
                  placeholder="输入备注"></el-input>
               </template>
             </el-table-column> -->
-            <el-table-column :show-overflow-tooltip='true' prop="car" align="center" label="访客车辆">
+            <el-table-column :show-overflow-tooltip='true' width="100" prop="car" align="center" label="访客车辆">
               <template slot-scope="{row}">
                 <span>{{ row.house[0] && row.house[0].enableInviteCar === '1' ? '允许' : '禁止' }}</span>
               </template>
             </el-table-column>
-            <el-table-column :show-overflow-tooltip='true' prop="car" align="center" label="邀请访客">
+            <el-table-column :show-overflow-tooltip='true' prop="car" width="100" align="center" label="邀请访客">
                <template slot-scope="{row}">
                 <span>{{ row.house[0] && row.house[0].enableInviteVisitor === '1' ? '允许' : '禁止' }}</span>
               </template>
@@ -125,12 +132,12 @@
                 <span>{{ row.house[0] && row.house[0].buildingName || '--' }}</span>
               </template>
             </el-table-column>
-            <el-table-column :show-overflow-tooltip='true' prop="far_door" align="center" label="远程开门">
+            <el-table-column :show-overflow-tooltip='true'  width="100" prop="far_door" align="center" label="远程开门">
               <template slot-scope="{row}">
                 <span>{{ row.house[0] && row.house[0].enableRemoteOpen === '1' ? '允许' : '禁止' }}</span>
               </template>
             </el-table-column>
-            <el-table-column :show-overflow-tooltip='true' prop="far_door" align="center" label="用户类型">
+            <el-table-column :show-overflow-tooltip='true'  width="100" prop="far_door" align="center" label="用户类型">
               <template slot-scope="{row}">
                 <span>{{ row.house[0] && row.house[0].type | typeFilter }}</span>
               </template>
@@ -140,7 +147,7 @@
                 <span>{{ row.house[0] && row.house[0].overTime }}</span>
               </template>
             </el-table-column>
-            <el-table-column :show-overflow-tooltip='true' prop="status" align="center" label="状态">
+            <el-table-column :show-overflow-tooltip='true'  width="100" prop="status" align="center" label="状态">
               <template slot-scope="{row}">
                 <span>{{  row.house[0] && row.house[0].status | statusFilter}}</span>
               </template>
@@ -165,7 +172,7 @@
       </el-col>
     </el-row>
 
-    <el-dialog :close-on-click-modal='false' class="dialog-rewrite" :title="detailDialog.name" :visible.sync="dialogFormVisible">
+    <el-dialog :close-on-click-modal='false' class="dialog-rewrite" width="1000px" :title="detailDialog.name" :visible.sync="dialogFormVisible">
       <el-tabs type="card" v-model="activeName">
         <el-tab-pane label="详细信息" name="first">
           <el-row style="margin-top:10px">
@@ -271,7 +278,7 @@
       </span>
     </el-dialog>
 
-    <el-dialog :close-on-click-modal='false' title="创建用户" :visible.sync="dialogCreate" width="500px" :before-close="handleClose">
+    <el-dialog :close-on-click-modal='false' title="创建用户" :visible.sync="dialogCreate" width="450px" :before-close="handleClose">
           <el-form :model="Form" :rules="rules" ref='Forms' label-width="85px">
 
 
@@ -291,7 +298,7 @@
               </el-switch>
             </el-form-item>
             <el-form-item  label="电话:"  prop='phone'>
-              <el-input style="width: 280px" v-model="Form.phone" @input='constraintLength(Form.phone, "11")' placeholder='输入电话'></el-input>
+              <el-input style="width: 280px" v-model.number="Form.phone" @input='constraintLength(Form.phone, "11")' placeholder='输入电话'></el-input>
             </el-form-item>
             <!-- <el-form-item class="floatForm" label="身份证号:"  prop='cardName'>
               <el-input v-model="Form.cardName"  placeholder='输入卡名'></el-input>
@@ -437,7 +444,7 @@ const ExportIn = () => import("@/components/exportIn/index.vue");
       const data = {
         "0": '在住',
         "-1": '不在住',
-        "-2": '过期1'
+        "-2": '过期'
       }
       return data[val]
     },
@@ -552,7 +559,9 @@ export default class OwnerManage extends Vue {
   showExportIn() {
     this.visible = true
   }
+  // 修改手机号
   phoneChange(row) {
+    this.phoneString = row.phone
     this['list_data'].forEach(el => {
       this.$set(el, 'phoneStatus', false)
     })

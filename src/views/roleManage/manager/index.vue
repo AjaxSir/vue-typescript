@@ -30,7 +30,9 @@
                 <span>{{scope.$index + 1}}</span>
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start" @command="commandClick">
-                    <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
+                    <el-tooltip class="item" effect="dark" content="点击操作" placement="top">
+                      <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
+                    </el-tooltip>
                     <el-dropdown-menu slot="dropdown">
                       <el-dropdown-item :command="returnCommand('update', scope.row)">修改</el-dropdown-item>
                       <el-dropdown-item :command="returnCommand('resetPassword', scope.row)">重置密码</el-dropdown-item>
@@ -43,7 +45,7 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="name" class="serial-num" label="账号名" align="center">
+            <el-table-column prop="name"  :show-overflow-tooltip='true' width="200" class="serial-num" label="账号名" align="center">
               <template slot-scope="scope">
                 <span>{{scope.row.name}}</span>
               </template>
@@ -57,7 +59,7 @@
               </template>
             </el-table-column>
 
-            <el-table-column label="操作" align="center">
+            <el-table-column  :show-overflow-tooltip='true' width="180" label="操作" align="center">
               <template slot-scope="{row}">
                 <el-dropdown @command="changeStatus"
                 trigger="click">
@@ -85,18 +87,33 @@
     </el-row>
     <!-- 新增或修改 -->
     <el-dialog
-      :title="Form.id ? '修改' : '新增'"
+      :title="Form.id ? '修改管理员' : '新增管理员'"
       :visible.sync="dialogCreate"
-      width="500px"
+      width="460px"
       :close-on-click-modal='false'
       :before-close="handleClose"
     >
       <el-form :rules='rules' ref="Forms" :model="Form" label-width="80px">
         <el-form-item v-if='!Form.id' prop='name' label="账号名">
-          <el-input  style="width:300px" maxlength="10" placeholder="请输入账号名" @input="constraintLength(Form.name, '10')" v-model="Form.name"></el-input>
+          <el-input style='position:fixed;bottom:-999999px' type='password' ></el-input>
+          <el-input
+          style="width:300px"
+          auto-complete="off"
+          maxlength="10"
+          type='text'
+          placeholder="请输入账号名"
+          @input="constraintLength(Form.name, '10')"
+          v-model="Form.name"></el-input>
         </el-form-item>
         <el-form-item prop='password' v-if='!Form.id' label="密码">
-          <el-input style="width:300px" maxlength="10" placeholder="请输入密码" @input="constraintLength(Form.name, '10')" type='password' v-model="Form.password"></el-input>
+          <el-input style='position:fixed;bottom:-999999px' type='password'></el-input>
+          <el-input style="width:300px"
+          auto-complete="off"
+          maxlength="10"
+          placeholder="请输入密码"
+          @input="constraintLength(Form.name, '10')"
+          type='password'
+          v-model="Form.password"></el-input>
         </el-form-item>
         <el-form-item prop='roleName' label="角色">
           <el-select style="width:300px" v-model="Form.roleName" placeholder="请选择角色">
@@ -117,7 +134,7 @@
     <el-dialog
       title="重置密码"
       :visible.sync="resetVisible"
-      width="500px"
+      width="460px"
       :close-on-click-modal='false'
       :before-close="handleCloseReset"
     >

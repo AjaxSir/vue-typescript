@@ -6,22 +6,25 @@
         :initFormHeader='initForm'
         @fetchData='fetchData'
         :filterForm='filterForm'
+        ref="actionHeader"
         :moreStatus='false'
         :dialogCreate.sync="dialogCreate" :total="page.total">
           <div slot="houseNum">
             <div class="word-filter">
               <span class="filter-name">姓&nbsp;&nbsp;&nbsp;名:</span>
-              <el-input style="width:215px" class="input-filter" placeholder="输入需要查找的姓名" v-model="filterForm.name" size="small"></el-input>
+              <el-input clearable  
+              @keyup.enter.native="emitFetchData" style="width:215px" class="input-filter" placeholder="输入需要查找的姓名" v-model="filterForm.name" size="small"></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">手机号:</span>
-              <el-input style="width:215px" class="input-filter"  placeholder="输入需要查找的手机号"  v-model="filterForm.phone" size="small"></el-input>
+              <el-input clearable  
+              @keyup.enter.native="emitFetchData" style="width:215px" class="input-filter"  placeholder="输入需要查找的手机号"  v-model="filterForm.phone" size="small"></el-input>
             </div>
           </div>
         </ActionHeader>
       </el-col>
     </el-row>
-    <el-row :gutter="20">
+    <el-row :gutter="10">
       <el-col :span="rowSpan.row1">
         <DataTree
          @fetchData='fetchData'
@@ -34,7 +37,7 @@
         <div class="rightContent">
           <el-table :data="list_data"
           v-loading='showLoading'
-          style="max-height: 75vh;overflow:auto"
+          height="65vh"
           @selection-change="handleSelectionChange"
           @cell-mouse-enter="enterRowChange"
           @cell-mouse-leave="leaveRowChange"
@@ -45,7 +48,9 @@
                 <span>{{ scope.$index + 1 }}</span>
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start" @command='commandClick'>
-                    <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
+                    <el-tooltip class="item" effect="dark" content="点击操作" placement="top">
+                      <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
+                    </el-tooltip>
                     <el-dropdown-menu slot="dropdown">
                       <el-dropdown-item :command="returnCommand('delete', scope.row)">
                         {{ deleteForm.data.length ? '批量删除' : '删除' }}
@@ -55,20 +60,34 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column prop="name" align="center" label="姓名">
+            <el-table-column prop="name" width="120" :show-overflow-tooltip='true' align="center" label="姓名">
               <template slot-scope="{row}">
                 <el-button style="padding:0px;" type="text" @click="showDetail(row)">{{row.name }}</el-button>
               </template>
             </el-table-column>
-            <el-table-column prop="age" align="center" label="年龄"></el-table-column>
-            <el-table-column prop="sex" align="center" label="性别">
+            <el-table-column prop="age" width="120" align="center" label="年龄"></el-table-column>
+            <el-table-column prop="sex" width="120" align="center" label="性别">
               <template slot-scope="{row}">
                 <span>{{ row.sex === '1' ? '男' : '女' }}</span>
               </template>
             </el-table-column>
             <!-- <el-table-column prop="cardNo" align="center" label="身份证号"></el-table-column> -->
-            <el-table-column prop="phone" align="center" label="联系电话"></el-table-column>
-            <el-table-column prop="authName" align="center" label="权限组">
+            <el-table-column prop="phone" align="center" label="联系电话">
+              <template slot-scope="{row}">
+                <span class="rowUpdate"
+                v-show='!row.phoneStatus'
+                @click='phoneChange(row)'>{{ row.phone }}</span>
+                <el-input
+                :clearable="true"
+                v-show='row.phoneStatus'
+                @blur="phoneBlur(row)"
+                :ref='"name" + row.id'
+                @keyup.enter.native="confirmUpdatePhone(row)"
+                v-model="phoneString"
+                placeholder="输入电话"></el-input>
+              </template>
+            </el-table-column>
+            <el-table-column prop="authName" width="120" align="center" label="权限组">
               <template slot-scope="{row}">
                 <el-dropdown @command="changeGroupRole"
                 trigger="click">
@@ -86,7 +105,7 @@
                 </el-dropdown>
               </template>
             </el-table-column>
-            <el-table-column prop="status" align="center" label="状态">
+            <el-table-column prop="status" width="120" align="center" label="状态">
               <template slot-scope="{row}">
                 <el-dropdown @command="changeStatus"
                 trigger="click">
@@ -111,7 +130,7 @@
               v-show='!scope.row.noteStatus'
               @click='focusNoteInput(scope.row)'>{{ scope.row.note || '点击编辑' }}</span>
               <el-input
-              type='textarea'
+              :clearable="true"
               :ref='scope.row.id'
               @keyup.enter.native="confirmUpdateNote(scope.row)"
               @blur="noteBlur(scope.row)"
@@ -121,22 +140,22 @@
               </el-input>
               </template>
             </el-table-column>
-            <el-table-column :show-overflow-tooltip='true' prop="createTime" align="center" label="创建时间"></el-table-column>
+            <el-table-column width="200" :show-overflow-tooltip='true' prop="createTime" align="center" label="创建时间"></el-table-column>
           </el-table>
           <el-pagination
         @current-change='pageChange'
         :page-size="page.limit"
         style="margin-top:10px;" background layout="prev, pager, next" :total="page.total"></el-pagination>
-        <div :class="rowSpan.row1===4 ? menuControl1 : menuControl2" @click="menuVisible">
+        <div :class="rowSpan.row1===3 ? menuControl1 : menuControl2" @click="menuVisible">
           <p class="close-menu">
-            <i v-if="rowSpan.row1===4" class="iconfont icon-left icon-class"></i>
+            <i v-if="rowSpan.row1===3" class="iconfont icon-left icon-class"></i>
             <i v-else class="iconfont icon-zuo icon-class"></i>
           </p>
         </div>
         </div>
       </el-col>
     </el-row>
-    <el-dialog :close-on-click-modal='false' width="600" :title="Dialog.name" :visible.sync="dialogFormVisible">
+    <el-dialog :close-on-click-modal='false' width="650px" :title="Dialog.name" :visible.sync="dialogFormVisible">
       <el-tabs v-model="activeName">
         <el-tab-pane label="详细信息" name="first">
           <div class="singleInfo">姓名:&nbsp;&nbsp;{{ Dialog.name }}</div>
@@ -204,7 +223,7 @@
           <el-input v-model="Form.name" placeholder='输入物业人员姓名'></el-input>
         </el-form-item>
         <el-form-item  class="float"  label="电话:"  prop='phone'>
-          <el-input v-model="Form.phone" @input='constraintLength(Form.phone, "11")' placeholder='输入物业人员电话'></el-input>
+          <el-input v-model="Form.phone" maxlength='11' @input='constraintLength(Form.phone, "11")' placeholder='输入物业人员电话'></el-input>
         </el-form-item>
         <el-form-item  class="float"  label="性别:"  prop='sex'>
           <el-switch
@@ -218,12 +237,12 @@
           </el-switch>
         </el-form-item>
         <el-form-item   class="float" label="年龄:"  prop='age'>
-          <el-input v-model="Form.age"  maxlength="3" @input='constraintLength(Form.phone, "3")' placeholder='输入物业人员年龄'></el-input>
+          <el-input v-model="Form.age"  maxlength="3" @input='constraintLength(Form.age, "3")' placeholder='输入物业人员年龄'></el-input>
         </el-form-item>
         <el-form-item   class="float"
         label="身份证号:"
         label-width="90px" prop='cardNo'>
-          <el-input maxlength="18" @input="constraintLength(Form.cardNo,'18')" v-model="Form.cardNo" placeholder='输入身份证号'></el-input>
+          <el-input maxlength="18"  v-model="Form.cardNo" placeholder='输入身份证号'></el-input>
         </el-form-item>
         <el-form-item label="权限组:" class="float"  prop='authId'>
           <el-select style='width:180px' v-model="Form.authId" placeholder="请选择">
@@ -250,7 +269,7 @@
 import { Component, Prop, Vue, Mixins } from "vue-property-decorator";
 import { Getter, Action, Mutation } from "vuex-class";
 import { getRoleGroup, addPropert, resetDisabledUser, watchPropert,
-getUserPropertyPass, changeRoleGroup, updateUserNote } from '@/api/peopleApi.ts'
+getUserPropertyPass, changeRoleGroup, updateUserNote, updateUserPhone } from '@/api/peopleApi.ts'
 import { getUserPropertyCar } from '@/api/carApi.ts'
 import mixin from "@/config/minxins";
 const ActionHeader = () => import("@/components/ActionHeader.vue");
@@ -267,8 +286,8 @@ export default class PropertyManage extends Vue {
   private dialogFormVisible: boolean = false;
   private title: string = "详情";
   private rowSpan: any = {
-    row1: 4,
-    row2: 20
+    row1: 3,
+    row2: 21
   };
   private menuControl1: String = "menu-control";
   private menuControl2: String = "menu-visible";
@@ -304,21 +323,28 @@ export default class PropertyManage extends Vue {
     limit: 10,
     total:1
   }
-  updateArray: Array<string> = ['noteStatus'] //需要行内修改的
+  phoneString:string = '' // 手机号
+  updateArray: Array<string> = ['noteStatus', 'phoneStatus'] //需要行内修改的
   TreeData: Array<object> = [] // 权限组
   FormRules: object = {
     name: [
             { required: true, message: '请输入物业人员名称', trigger: 'blur' }
           ],
     phone: [
-            { required: true, trigger: 'blur', message: '请输入物业人员电话' }
+            { required: true, trigger: 'blur', validator: (rule, value, callback) => {
+                if (value.length !== 11 || !(/^1[3|4|5|8][0-9]\d{4,8}$/).test(value)) {
+                  callback(new Error('填写正确的物业人员手机号'))
+                } else {
+                  callback()
+                }
+              } }
           ],
     authId: [
             { required: true, message: '请选择对应的权限组', trigger: 'change' }
           ],
     cardNo: [
       { required: true, trigger: 'blur', validator: (rule, value, callback) => {
-                if (value.length !== 18 || value.length !== 15) {
+                if (value.length !== 18 && value.length !== 15) {
                   callback(new Error('填写正确的身份证号'))
                 } else {
                   callback()
@@ -331,15 +357,15 @@ export default class PropertyManage extends Vue {
   };
   menuVisible() {
     /**@description 控制楼栋 */
-    if (this.rowSpan.row1 === 4) {
+    if (this.rowSpan.row1 === 3) {
       this.rowSpan = {
         row1: 0,
         row2: 24
       };
     } else {
       this.rowSpan = {
-        row1: 4,
-        row2: 20
+        row1: 3,
+        row2: 21
       };
     }
   }
@@ -358,6 +384,40 @@ export default class PropertyManage extends Vue {
     row.noteStatus = !row.noteStatus
     this.$nextTick(() =>{
       const input = this.$refs[row.id] as HTMLElement
+      input.focus()
+    })
+  }
+  // 确定修改 电话
+  confirmUpdatePhone(row) {
+    if(!(/^1[3456789]\d{9}$/.test(this.phoneString))){
+      this.$message.error('请输入正确的手机格式');
+      return
+    }
+    updateUserPhone(row.id, this.phoneString).then(res => {
+      if (res.data.code === 200) {
+        this.$message.success('修改成功')
+        row.phoneStatus = false
+        this.phoneString = ''
+        this.fetchData(this.initForm)
+      } else {
+        this.$message.error(res.data.message)
+      }
+    })
+  }
+  // 修改电话离开输入框
+  phoneBlur(row) {
+    row.phoneStatus = false
+    this.phoneString = ''
+  }
+  // 修改手机号
+  phoneChange(row) {
+    this.phoneString = row.phone
+    this['list_data'].forEach(el => {
+      this.$set(el, 'phoneStatus', false)
+    })
+    row.phoneStatus = !row.phoneStatus
+    this.$nextTick(() => {
+      const input = this.$refs['name' + row.id] as HTMLElement
       input.focus()
     })
   }
@@ -459,6 +519,7 @@ export default class PropertyManage extends Vue {
 .rightContent {
   flex: 1;
   box-shadow: 0px 6px 5px 0px lightgray;
+  position: relative;
 }
 .float{
   width: 260px;
@@ -487,7 +548,7 @@ export default class PropertyManage extends Vue {
 .menu-control {
   position: absolute;
   top: 32vh;
-  left: -5px;
+  left: -10px;
 }
 
 .menu-visible {
@@ -496,7 +557,7 @@ export default class PropertyManage extends Vue {
   left: -15px;
 }
 .singleInfo{
-  width: 50%;
+  width: 33%;
   height: 40px;;
   padding: 0px 10px;
   text-align: left;
