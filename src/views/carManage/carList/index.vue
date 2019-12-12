@@ -76,7 +76,9 @@
                 <span>{{scope.$index+1}}</span>
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start" @command="commandClick">
-                    <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
+                       <el-tooltip class="item" effect="dark" content="点击操作" placement="top">
+                      <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
+                    </el-tooltip>
                     <el-dropdown-menu slot="dropdown">
                       <div @click="editType(scope.row)">
                         <el-dropdown-item command="update">修改</el-dropdown-item>
@@ -219,7 +221,7 @@
             popper-class="my-autocomplete"
             :fetch-suggestions="querySearch"
             @select="handleSelectWatchlist"
-            :maxlength="12"
+            :maxlength="11"
           >
             <template slot-scope="{ item }">
               <div class="name">{{ item.value }}</div>

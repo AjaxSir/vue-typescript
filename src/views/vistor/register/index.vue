@@ -307,7 +307,7 @@
                             size="small"
                             v-model="vistorForm.phone"
                             placeholder="手机11位限长，只能输入数字"
-                            :maxlength="12"
+                            :maxlength="11"
                             @input="verification(vistorForm.phone,'phone')"
                           ></el-input>
                         </el-form-item>
@@ -849,7 +849,7 @@ export default class VistorRegister extends Vue {
 .menu-visible {
   position: absolute;
   top: 32vh;
-  left: -15px;
+  left: -8px;
 }
 
 .close-menu {

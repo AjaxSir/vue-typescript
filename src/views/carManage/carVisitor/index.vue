@@ -131,7 +131,9 @@
                 <span>{{scope.$index+1}}</span>
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start" @command="commandClick">
-                    <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
+                       <el-tooltip class="item" effect="dark" content="点击操作" placement="top">
+                      <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
+                    </el-tooltip>
                     <el-dropdown-menu slot="dropdown">
                       <el-dropdown-item
                         :command="returnCommand('delete', scope.row)"
@@ -569,7 +571,7 @@ export default class CardManage extends Vue {
 .menu-visible {
   position: absolute;
   top: 32vh;
-  left: -15px;
+  left: -8px;
 }
 
 .close-menu {

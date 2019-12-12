@@ -494,7 +494,7 @@ export default class CardManage extends Vue {
 .menu-visible {
   position: absolute;
   top: 32vh;
-  left: -15px;
+  left: -8px;
 }
 
 .close-menu {

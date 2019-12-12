@@ -31,7 +31,9 @@
           <span>{{scope.$index+1}}</span>
           <div class="fun-btn">
             <el-dropdown trigger="click" placement="bottom-start" @command="commandClick">
-              <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
+                 <el-tooltip class="item" effect="dark" content="点击操作" placement="top">
+                      <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
+                    </el-tooltip>
               <el-dropdown-menu slot="dropdown">
                 <div @click="editTarget(scope.row)">
                   <el-dropdown-item command="update">修改</el-dropdown-item>
@@ -102,7 +104,7 @@
             v-model="createForm.phone"
             autocomplete="off"
             placeholder="手机11位限长，只能输入数字"
-            :maxlength="12"
+            :maxlength="11"
             @input="verification(createForm.phone,'phone')"
           ></el-input>
         </el-form-item>
@@ -216,7 +218,7 @@
             v-model="editForm.phone"
             autocomplete="off"
             placeholder="手机11位限长，只能输入数字"
-            :maxlength="12"
+            :maxlength="11"
             @input="verification(editForm.phone,'editPhone')"
           ></el-input>
         </el-form-item>
