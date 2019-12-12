@@ -15,6 +15,7 @@
           total:总条数
         -->
         <ActionHeader
+          ref="actionHeader"
           :btnStatus="2"
           :initFormHeader="initForm"
           @fetchData="fetchData"
@@ -39,6 +40,8 @@
                 size="small"
                 v-model="filterForm.name"
                 placeholder="请输入访客姓名"
+                clearable
+                @keyup.enter.native="emitFetchData"
               ></el-input>
             </div>
             <div class="word-filter">
@@ -48,6 +51,8 @@
                 size="small"
                 v-model="filterForm.visitName"
                 placeholder="请输入受访人姓名"
+                clearable
+                @keyup.enter.native="emitFetchData"
               ></el-input>
             </div>
             <div class="word-filter">
@@ -57,6 +62,8 @@
                 size="small"
                 v-model="filterForm.cardNo"
                 placeholder="请输入证件号码"
+                clearable
+                @keyup.enter.native="emitFetchData"
               ></el-input>
             </div>
             <div class="word-filter">
@@ -100,8 +107,9 @@
                 min="0"
                 v-model.number="filterForm.minNumPeople"
                 type="number"
-                @keydown.native="channelInputLimit"
                 placeholder="同行人数"
+                clearable
+                @keydown.native="channelInputLimit"
               ></el-input>&nbsp;&nbsp;-&nbsp;&nbsp;
               <el-input
                 style="width:165px"
@@ -109,8 +117,10 @@
                 min="0"
                 v-model.number="filterForm.maxNumPeople"
                 type="number"
-                @keydown.native="channelInputLimit"
                 placeholder="同行人数"
+                clearable
+                @keyup.enter.native="emitFetchData"
+                @keydown.native="channelInputLimit"
               ></el-input>
             </div>
             <div class="word-filter">
@@ -178,7 +188,10 @@
                 <span>{{scope.$index+1}}</span>
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start" @command="commandClick">
-                    <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
+                    <el-tooltip class="item" effect="dark" content="点击操作" placement="top">
+                      <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
+                    </el-tooltip>
+
                     <el-dropdown-menu slot="dropdown">
                       <el-dropdown-item
                         :command="returnCommand('delete', scope.row)"
@@ -203,7 +216,7 @@
             >
               <!-- <template slot-scope="{ row }">
                 <el-button type="text" @click="showDetail(row)">{{ row.visitName }}</el-button>
-              </template> -->
+              </template>-->
             </el-table-column>
 
             <el-table-column
