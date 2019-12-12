@@ -49,6 +49,7 @@
               style="overflow:hidden"
               ref="dataForm"
               :line="true"
+              :rules="rules"
               :model="vistorForm"
               label-width="90px"
               class="demo-form-inline"
@@ -283,6 +284,7 @@
                           <el-input
                             size="small"
                             min="0"
+                            :maxlength="3"
                             type="number"
                             v-model="vistorForm.numPeople"
                             @keydown.native="channelInputLimit"
@@ -297,18 +299,16 @@
                           class="vistorItemForm"
                           label="手机号:"
                           prop="phone"
-                          :rules="[
-                            { type: 'number', message: '请正确的填写手机号'}
-                          ]"
                           :show-message="showMessage"
                           :error="errorMessage.phone"
                         >
                           <el-input
                             style="width:240px"
                             size="small"
-                            v-model.number="vistorForm.phone"
+                            v-model="vistorForm.phone"
                             placeholder="手机11位限长，只能输入数字"
-                            @input="constraint(vistorForm.phone,'phone')"
+                            :maxlength="12"
+                            @input="verification(vistorForm.phone,'phone')"
                           ></el-input>
                         </el-form-item>
                       </el-col>
@@ -496,6 +496,10 @@ export default class VistorRegister extends Vue {
     houseId: "",
     qCardName: ""
   };
+  private rules: Object = {
+    // 表单验证
+    phone: [{ required: false, message: "请输入电话", trigger: "blur" }]
+  };
 
   private sexType: Array<Object> = [
     {
@@ -594,6 +598,22 @@ export default class VistorRegister extends Vue {
     this.startFetch = false;
   }
 
+  verification(queryString, key) {
+    /**@description 验证*/
+    var regPos = /^\d+(\.\d+)?$/; //非负浮点数
+    if (queryString === "") {
+      this.vistorForm["phone"] = null;
+    } else if (!regPos.test(queryString)) {
+      this.errorMessage[key] = "电话必须是数值";
+    } else if (queryString.length > 11) {
+      this.errorMessage[key] = "电话号码最多11位";
+    } else if (queryString.length < 11) {
+      this.errorMessage[key] = "电话号码为11位";
+    } else {
+      this.errorMessage[key] = "";
+    }
+  }
+
   async getDevice() {
     const { data } = await regDevice();
     this.TreeData = data.data;
@@ -616,7 +636,7 @@ export default class VistorRegister extends Vue {
     for (const key in this.errorMessage) {
       this.errorMessage[key] = "";
     }
-     this.$refs["dataForm"]["resetFields"]();
+    this.$refs["dataForm"]["resetFields"]();
 
     if (this.inputStatus) {
       this.startFetch = false;

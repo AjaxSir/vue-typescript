@@ -234,9 +234,6 @@
           <el-form-item
             label="年龄:"
             prop="age"
-            :rules="[
-              { type: 'number', message: '年龄必须为数值'}
-            ]"
             :show-message="showMessage"
             :error="errorMessage.age"
           >
@@ -244,27 +241,23 @@
               autocomplete="off"
               placeholder="输入年龄"
               min="0"
+              maxlength="3"
               v-model.number="createForm.age"
               @input="constraint(createForm.age,'age')"
             ></el-input>
           </el-form-item>
         </div>
-
         <el-form-item
           label="紧急电话:"
           prop="emergencyPhone"
-          :rules="[
-              { required: true, message: '手机不能为空'},
-              { type: 'number', message: '请正确的填写手机号'}
-            ]"
           :show-message="showMessage"
           :error="errorMessage.emergencyPhone"
         >
           <el-input
-            v-model.number="createForm.emergencyPhone"
-            autocomplete="off"
+            v-model="createForm.emergencyPhone"
             placeholder="请输入紧急联系人电话"
-            @input="constraintLength(createForm.emergencyPhone,'11')"
+            :maxlength="12"
+            @input="verification(createForm.emergencyPhone,'emergencyPhone')"
           ></el-input>
         </el-form-item>
 
@@ -283,6 +276,7 @@
             autocomplete="off"
             placeholder="请输入预警周期为多少天"
             min="0"
+            maxlength="10"
             @keydown.native="channelInputLimit"
           ></el-input>
         </el-form-item>
@@ -382,7 +376,7 @@
 
     <!-- 修改关注人员 -->
     <el-dialog
-      title="修改"
+      :title="'修改：'+ editForm.name"
       :visible.sync="dialogEdit"
       width="500px"
       :before-close="editClose"
@@ -391,6 +385,7 @@
       <el-form
         ref="updateForm"
         :model="editForm"
+        :rules="rules"
         label-position="right"
         label-width="100px"
         style="margin-right:40px;"
@@ -408,25 +403,23 @@
             autocomplete="off"
             placeholder="输入年龄"
             min="0"
+            maxlength="3"
             v-model.number="editForm.age"
             @input="constraint(editForm.age,'age')"
           ></el-input>
         </el-form-item>
 
         <el-form-item
-          label="紧急联系人:"
-          prop="emergencyPhone"
-          :rules="[
-              { type: 'number', message: '请正确的填写手机号'}
-            ]"
+          label="紧急电话:"
+          prop="editEmergencyPhone"
           :show-message="showMessage"
-          :error="errorMessage.emergencyPhone"
+          :error="errorMessage.editEmergencyPhone"
         >
           <el-input
-            v-model.number="editForm.emergencyPhone"
-            autocomplete="off"
-            placeholde="手机11位限长，只能输入数字"
-            @input="constraint(editForm.emergencyPhone,'emergencyPhone')"
+            v-model="editForm.emergencyPhone"
+            placeholder="请输入紧急联系人电话"
+            :maxlength="12"
+            @input="verification(editForm.emergencyPhone,'editEmergencyPhone')"
           ></el-input>
         </el-form-item>
 
@@ -444,6 +437,7 @@
             autocomplete="off"
             placeholder="请输入预警周期为多少天"
             min="0"
+            maxlength="10"
             @input="constraint(editForm.earlyPeriod,'earlyPeriod')"
           ></el-input>
         </el-form-item>
@@ -673,8 +667,12 @@ export default class FocusPeople extends Vue {
       { required: true, message: "请输入关注人员姓名", trigger: "blur" }
     ],
     emergencyPhone: [
-      { required: true, message: "请s输入紧急联系人", trigger: "blur" }
+      { required: true, message: "请输入紧急联系人", trigger: "blur" }
     ],
+    editEmergencyPhone: [
+      { required: false, message: "请输入紧急联系人", trigger: "blur" }
+    ],
+    age: [{ required: false }, { type: "number", message: "年龄必须为数值" }],
     earlyGroupId: [
       { required: true, message: "请选择预警组别", trigger: "blur" }
     ],
@@ -690,7 +688,8 @@ export default class FocusPeople extends Vue {
     scenceUser: "",
     email: "",
     earlyGroupId: "",
-    note: ""
+    note: "",
+    age: ""
   };
   private nameList: Array<Object> = []; //人员
   private loading: Boolean = false; //姓名模糊查询
@@ -708,6 +707,7 @@ export default class FocusPeople extends Vue {
   private dialogEdit: Boolean = false; // 修改弹出表单
   private editForm: Object = {
     //修改表单字段
+    name: "", //姓名
     age: "", //年龄
     earlyGroupId: "", //预警组别
     emergencyPhone: "", // 紧急联系人电话
@@ -832,27 +832,58 @@ export default class FocusPeople extends Vue {
     }
   }
 
+  verification(queryString, key) {
+    /**@description 验证*/
+    var regPos = /^\d+(\.\d+)?$/; //非负浮点数
+
+    if (queryString === "" && key === "emergencyPhone") {
+      this.errorMessage[key] = "电话不能为空";
+    } else if (queryString === "" && key === "editEmergencyPhone") {
+      this.editForm["emergencyPhone"] = null;
+    } else if (!regPos.test(queryString)) {
+      this.errorMessage[key] = "电话必须是数值";
+    } else if (queryString.length > 11) {
+      this.errorMessage[key] = "电话号码最多11位";
+    } else if (queryString.length < 11) {
+      this.errorMessage[key] = "电话号码为11位";
+    } else {
+      this.errorMessage[key] = "";
+    }
+  }
+
   createFocusPeople() {
     /**@description 新增关注人员 */
+    this.verification(this.createForm["emergencyPhone"], "emergencyPhone");
     if (this.createForm["age"] === "") {
       this.createForm["age"] = null;
     }
-    this.$refs["dataForm"]["validate"](valid => {
-      if (valid) {
-        var form = {
-          ...this.createForm,
-          scenceUserId: this.createForm["scenceUser"][0],
-          name: this.createForm["scenceUser"][1]
-        };
-        delete form["scenceUser"];
-        form["earlyPeriod"] = Number(form["earlyPeriod"]);
-        addFocusPeople(form).then(res => {
-          this.handleClose();
-          this["fetchData"](this.initForm);
-          this["notify"]("success", "成功", "添加关注人员成功");
+    if (
+      this.errorMessage["emergencyPhone"] === "" &&
+      this.createForm["emergencyPhone"].length === 11
+    ) {
+      if (this.createForm["scenceUser"].length > 0) {
+        this.$refs["dataForm"]["validate"](valid => {
+          if (valid) {
+            var form = {
+              ...this.createForm,
+              scenceUserId: this.createForm["scenceUser"][0],
+              name: this.createForm["scenceUser"][1]
+            };
+            delete form["scenceUser"];
+            form["earlyPeriod"] = Number(form["earlyPeriod"]);
+            addFocusPeople(form).then(res => {
+              this.handleClose();
+              this["fetchData"](this.initForm);
+              this["notify"]("success", "成功", "添加关注人员成功");
+            });
+          }
         });
+      } else {
+        this.errorMessage["scenceUser"] = "姓名不能为空";
       }
-    });
+    } else {
+      this["message"]("请输入正确的电话号码");
+    }
   }
 
   editTarget(item) {
@@ -865,11 +896,7 @@ export default class FocusPeople extends Vue {
     } else if (item["age"] === "") {
       this.editForm["age"] = null;
     }
-    if (+item["emergencyPhone"]) {
-      this.editForm["emergencyPhone"] = +item["emergencyPhone"];
-    } else if (item["emergencyPhone"] === "") {
-      this.editForm["emergencyPhone"] = null;
-    }
+
     if (+item["earlyPeriod"]) {
       this.editForm["earlyPeriod"] = +item["earlyPeriod"];
     } else if (item["earlyPeriod"] === "") {
@@ -879,8 +906,8 @@ export default class FocusPeople extends Vue {
   }
 
   constraint(value, type) {
-    if (type === "emergencyPhone" && value.toString().length > 11) {
-      this.$message("电话不能超过11个字符");
+    if (value > 200 && type === "age") {
+      this["message"]("年龄不能大于200");
     }
     if (value === "") {
       this.editForm[type] = null;
@@ -889,18 +916,27 @@ export default class FocusPeople extends Vue {
 
   updateFocusPeople() {
     /**@description 修改预警联系人 */
-
-    this.$refs["updateForm"]["validate"](valid => {
-      if (valid) {
-        var form = { ...this.editForm };
-        form["earlyPeriod"] = Number(form["earlyPeriod"]);
-        editFocusPeople(form).then(() => {
-          this.editClose();
-          this["notify"]("success", "成功", "修改关注人员成功");
-          this["fetchData"](this.initForm);
-        });
-      }
-    });
+    this.verification(this.editForm["emergencyPhone"], "editEmergencyPhone");
+    if (
+      this.errorMessage["editEmergencyPhone"] === "" ||
+      this.editForm["emergencyPhone"] === null ||
+      this.editForm["emergencyPhone"].length === 11
+    ) {
+      this.$refs["updateForm"]["validate"](valid => {
+        if (valid) {
+          var form = { ...this.editForm };
+          form["earlyPeriod"] = Number(form["earlyPeriod"]);
+          delete form["name"];
+          editFocusPeople(form).then(() => {
+            this.editClose();
+            this["notify"]("success", "成功", "修改关注人员成功");
+            this["fetchData"](this.initForm);
+          });
+        }
+      });
+    } else {
+      this["message"]("请输入正确的电话号码");
+    }
   }
 
   editNote(row) {
