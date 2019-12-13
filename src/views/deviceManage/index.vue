@@ -129,16 +129,22 @@
             </el-form-item>
           </el-form>
         </el-tab-pane>
-        <el-tab-pane label="门禁记录" name="second">
+        <el-tab-pane v-if='detailDialogForm.type === "1" || detailDialogForm.type === "2"' label="门禁记录" name="second">
           <el-table :data="doorRecordTable" style="width: 100%">
             <el-table-column align="center" prop="name" label="姓名" width="150px"></el-table-column>
-            <el-table-column align="passTime" prop="date" label="通行时间" width="150px"></el-table-column>
-            <el-table-column align="center" prop="devAddress" label="通行地址"></el-table-column>
+            <el-table-column align="center" prop="passTime" label="通行时间" width="150px"></el-table-column>
+            <el-table-column align="center" :show-overflow-tooltip='true' prop="devAddress" label="通行地址"></el-table-column>
+            <el-table-column align="center" prop="devAddress" label="是否访客">
+              <template slot-scope="{row}">
+               <span>{{ row.isVisitor ? '否' : '是' }}</span></template>
+            </el-table-column>
             <el-table-column prop="passMethod" align='center' label="抓拍图片">
               <template slot-scope="{row}">
                 <img :src="row.photos" alt=""></template>
             </el-table-column>
           </el-table>
+           <el-pagination
+         @current-change='passPageChange' :page-size="passPage.limit" style="margin-top:10px;" background layout="prev, pager, next" :total="passPage.total"></el-pagination>
         </el-tab-pane>
       </el-tabs>
       <span slot="footer" class="dialog-footer">
@@ -312,6 +318,11 @@ export default class DeviceManage extends Vue {
     method: 'delete',
     data: []
   }
+  passPage: object = {
+    total: 1,
+    limit: 10,
+    page: 1
+  }
   mapVisible: boolean = false // 地图显示框状态
   activeName: string = "first";
   detailDialogVisible: boolean = false; // 设备详情dialog弹框状态
@@ -455,15 +466,22 @@ export default class DeviceManage extends Vue {
   }
   /*** 查看设备详情*/
   showDetails(row) {
+    this.passPage['page'] = 1
     this.detailDialogVisible = true;
     this.deviceId = row.id
     this.detailDialogForm = Object.assign({}, row);
     this.deviceRecord(1)
   }
+  // 门禁通行记录翻页
+  passPageChange(page) {
+    this.passPage['page'] = page
+    this.deviceRecord(page)
+  }
   // 查看该设备的抓拍记录
   deviceRecord(page: number) {
     getUserPass({ devId: this.deviceId, page, limit: 10  }).then(res => {
-      console.log(res)
+      this.doorRecordTable = res.data.data.records
+      this.passPage['total'] = res.data.data.total
     })
   }
 }

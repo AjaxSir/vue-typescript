@@ -148,11 +148,14 @@
     >
       <el-tabs type="card" v-model="activeName">
         <el-tab-pane label="详细信息" name="详细信息">
-          <p class="detai-info">关联房屋:&nbsp;&nbsp;&nbsp;{{detailDialog.houseName}}</p>
-          <p class="detai-info">最近刷卡时间:&nbsp;&nbsp;&nbsp;{{detailDialog.lastUseTime || '- -'}}</p>
-          <p class="detai-info">创建时间:&nbsp;&nbsp;&nbsp;{{detailDialog.createTime}}</p>
-          <p class="detai-info">过期时间:&nbsp;&nbsp;&nbsp;{{detailDialog.validDate}}</p>
-          <p class="detai-info">状态:&nbsp;&nbsp;&nbsp;
+          <p class="detai-info">
+            <span class='labelTitle'>关联房屋</span>
+            :&nbsp;&nbsp;&nbsp;{{detailDialog.houseName}}</p>
+          <p class="detai-info">
+            <span class='labelTitle'>最近刷卡时间</span> :&nbsp;&nbsp;&nbsp;{{detailDialog.lastUseTime || '- -'}}</p>
+          <p class="detai-info"><span class='labelTitle'>创建时间</span> :&nbsp;&nbsp;&nbsp;{{detailDialog.createTime}}</p>
+          <p class="detai-info"><span class='labelTitle'>过期时间</span> :&nbsp;&nbsp;&nbsp;{{detailDialog.validDate}}</p>
+          <p class="detai-info"><span class='labelTitle'>状态</span> :&nbsp;&nbsp;&nbsp;
             <el-tag
                   size="small"
                   style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
@@ -421,7 +424,13 @@ export default class CardManage extends Vue {
   border-bottom-right-radius: 20px;
   position: relative;
 }
-
+.labelTitle{
+  width: 85px;
+  display: inline-block;
+  height: 40px;;
+  line-height: 40px;
+  text-align: right;
+}
 .icon-class {
   font-size: 12px;
   color: #e7eaeb;
