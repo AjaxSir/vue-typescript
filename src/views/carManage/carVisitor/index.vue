@@ -184,7 +184,7 @@
               <template slot-scope="scope">
                 <el-tag
                   size="small"
-                  style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
+                  style="border-radius: 50px;padding: 0 10px;"
                   :type="scope.row.status==='1' ? 'success' : 'warning'"
                   @click="editType(scope.row)"
                 >{{ scope.row.status && scope.row.status =='1' ? "未到访" : "已到访" }}</el-tag>
