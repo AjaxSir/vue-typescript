@@ -3,6 +3,7 @@
     <el-row>
       <el-col :span="24">
         <action-header
+          :moreStatus="false"
           :filterStatus="false"
           :pageStatus="false"
           :initFormHeader="initForm"

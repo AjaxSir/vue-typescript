@@ -8,6 +8,13 @@ export function getSceneInfo() {
   })
 }
 
+export function getScene() {
+  return _axios({
+    url: '/admin/hs-scence/info/',
+    method: 'get'
+  })
+}
+
 //小区修改
 export function editCommunity(data: any) {
   return _axios({

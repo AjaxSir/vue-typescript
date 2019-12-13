@@ -109,27 +109,33 @@
           <el-input v-model="createForm.email" autocomplete="off" clearable placeholder="请输入邮箱"></el-input>
         </el-form-item>
 
-        <div style="display: flex;">
-          <el-form-item
-            class="ei-input-rewrite"
-            label="电话:"
-            prop="phone"
-            :show-message="showMessage"
-            :error="errorMessage.phone"
-          >
-            <el-input
-              v-model="createForm.phone"
-              autocomplete="off"
-              placeholder="请输入手机号码"
-              clearable
-              :maxlength="11"
-              @keyup.native="UpNumber"
-              @keydown.native="UpNumber"
-              @change="clearableBtn"
-            ></el-input>
-          </el-form-item>
-          <p class="ei-input-hint">{{phoneNum}}/11</p>
-        </div>
+        <!-- <div style="display: flex;"> -->
+        <el-form-item
+          label="电话:"
+          prop="phone"
+          :show-message="showMessage"
+          :error="errorMessage.phone"
+        >
+          <el-input
+            class="phone-position"
+            v-model="createForm.phone"
+            autocomplete="off"
+            placeholder="请输入手机号码"
+            clearable
+            :maxlength="11"
+            @keyup.native="UpNumber"
+            @keydown.native="UpNumber"
+            @change="clearableBtn"
+            @input="hint"
+            @focus="hintFocus"
+            @blur="hintBlur"
+            @mouseover.native="hint(createForm.phone)"
+            @mouseout.native="hint(createForm.phone)"
+          ></el-input>
+          <span v-show="hintPhone" class="ei-input-hint">{{phoneNum}}/11</span>
+        </el-form-item>
+        <!-- <p class="ei-input-hint">{{phoneNum}}/11</p> -->
+        <!-- </div> -->
 
         <el-form-item
           label="分组:"
@@ -242,27 +248,33 @@
           ></el-input>
         </el-form-item>
 
-        <div style="display: flex;">
-          <el-form-item
-            class="ei-input-rewrite"
-            label="电话:"
-            prop="editPhone"
-            :show-message="showMessage"
-            :error="errorMessage.editPhone"
-          >
-            <el-input
-              v-model="editForm.phone"
-              autocomplete="off"
-              placeholder="请输入手机号码"
-              clearable
-              :maxlength="11"
-              @keyup.native="UpNumber"
-              @keydown.native="UpNumber"
-              @change="clearableBtn"
-            ></el-input>
-          </el-form-item>
-          <p class="ei-input-hint">{{phoneNum}}/11</p>
-        </div>
+        <!-- <div style="display: flex;"> -->
+        <el-form-item
+          label="电话:"
+          prop="editPhone"
+          :show-message="showMessage"
+          :error="errorMessage.editPhone"
+        >
+          <el-input
+            class="phone-position"
+            v-model="editForm.phone"
+            autocomplete="off"
+            placeholder="请输入手机号码"
+            clearable
+            :maxlength="11"
+            @keyup.native="UpNumber"
+            @keydown.native="UpNumber"
+            @change="clearableBtn"
+            @input="hint"
+            @focus="hintFocus"
+            @blur="hintBlur"
+            @mouseover.native="hint(editForm.phone)"
+            @mouseout.native="hint(editForm.phone)"
+          ></el-input>
+          <span v-show="hintPhone" class="ei-input-hint">{{phoneNum}}/11</span>
+        </el-form-item>
+        <!-- <p class="ei-input-hint">{{phoneNum}}/11</p> -->
+        <!-- </div> -->
 
         <el-form-item
           label="分组:"
@@ -525,6 +537,10 @@ export default class WarningLink extends Vue {
     this.editForm["phone"] = +item.phone;
     this.editForm["earlyGroupId"] = item.groupId;
     this.dialogEdit = true;
+
+    if (item.phone) {
+      this["phoneNum"] = item.phone.length;
+    }
   }
 
   constraint(value, type) {

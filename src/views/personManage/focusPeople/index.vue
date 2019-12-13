@@ -263,26 +263,31 @@
           <p class="ei-input-hint">岁</p>
         </div>-->
 
-        <div style="display: flex;">
-          <el-form-item
-            class="ei-input-rewrite"
-            label="紧急电话:"
-            prop="emergencyPhone"
-            :show-message="showMessage"
-            :error="errorMessage.emergencyPhone"
-          >
-            <el-input
-              v-model="createForm.emergencyPhone"
-              placeholder="请输入手机号码"
-              clearable
-              :maxlength="11"
-              @keyup.native="UpNumber"
-              @keydown.native="UpNumber"
-              @change="clearableBtn"
-            ></el-input>
-          </el-form-item>
-          <p class="ei-input-hint">{{phoneNum}}/11</p>
-        </div>
+        <!-- <div style="display: flex;"> -->
+        <el-form-item
+          label="紧急电话:"
+          prop="emergencyPhone"
+          :show-message="showMessage"
+          :error="errorMessage.emergencyPhone"
+        >
+          <el-input
+            class="phone-position"
+            v-model="createForm.emergencyPhone"
+            placeholder="请输入手机号码"
+            clearable
+            :maxlength="11"
+            @keyup.native="UpNumber"
+            @keydown.native="UpNumber"
+            @change="clearableBtn"
+            @input="hint"
+            @focus="hintFocus"
+            @blur="hintBlur"
+            @mouseover.native="hint(createForm.emergencyPhone)"
+            @mouseout.native="hint(createForm.emergencyPhone)"
+          ></el-input>
+          <span v-show="hintPhone" class="ei-input-hint">{{phoneNum}}/11</span>
+        </el-form-item>
+        <!-- </div> -->
 
         <!-- <div style="display: flex;"> -->
         <el-form-item
@@ -461,26 +466,31 @@
           <p class="ei-input-hint">岁</p>
         </div>-->
 
-        <div style="display: flex;">
-          <el-form-item
-            class="ei-input-rewrite"
-            label="紧急电话:"
-            prop="editEmergencyPhone"
-            :show-message="showMessage"
-            :error="errorMessage.editEmergencyPhone"
-          >
-            <el-input
-              v-model="editForm.emergencyPhone"
-              placeholder="请输入紧急联系人电话"
-              :maxlength="11"
-              clearable
-              @keyup.native="UpNumber"
-              @keydown.native="UpNumber"
-              @change="clearableBtn"
-            ></el-input>
-          </el-form-item>
-          <p class="ei-input-hint">{{phoneNum}}/11</p>
-        </div>
+        <!-- <div style="display: flex;"> -->
+        <el-form-item
+          label="紧急电话:"
+          prop="editEmergencyPhone"
+          :show-message="showMessage"
+          :error="errorMessage.editEmergencyPhone"
+        >
+          <el-input
+            class="phone-position"
+            v-model="editForm.emergencyPhone"
+            placeholder="请输入紧急联系人电话"
+            :maxlength="11"
+            clearable
+            @keyup.native="UpNumber"
+            @keydown.native="UpNumber"
+            @change="clearableBtn"
+            @input="hint"
+            @focus="hintFocus"
+            @blur="hintBlur"
+            @mouseover.native="hint(createForm.emergencyPhone)"
+            @mouseout.native="hint(createForm.emergencyPhone)"
+          ></el-input>
+          <span v-show="hintPhone" class="ei-input-hint">{{phoneNum}}/11</span>
+        </el-form-item>
+        <!-- </div> -->
 
         <!-- <div style="display: flex;"> -->
         <el-form-item label="预警周期:" :show-message="showMessage" :error="errorMessage.earlyPeriod">
