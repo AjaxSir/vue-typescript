@@ -220,7 +220,7 @@
     <el-dialog :close-on-click-modal='false' title="新建物业人员" :visible.sync="dialogCreate" width="600px" :before-close="handleClose">
       <el-form :model="Form" :rules="FormRules" ref='Forms' label-width="80px">
         <el-form-item class="float"  label="姓名:"  prop='name'>
-          <el-input v-model="Form.name" placeholder='输入物业人员姓名'></el-input>
+          <el-input  clearable v-model="Form.name" placeholder='输入物业人员姓名'></el-input>
         </el-form-item>
         <el-form-item  class="float"  label="电话:"  prop='phone'>
           <el-input
@@ -253,12 +253,12 @@
           </el-switch>
         </el-form-item>
         <el-form-item   class="float" label="年龄:"  prop='age'>
-          <el-input v-model="Form.age"  maxlength="3" @input='constraintLength(Form.age, "3")' placeholder='输入物业人员年龄'></el-input>
+          <el-input  clearable v-model="Form.age"  maxlength="3" @input='constraintLength(Form.age, "3")' placeholder='输入物业人员年龄'></el-input>
         </el-form-item>
         <el-form-item   class="float"
         label="身份证号:"
         label-width="90px" prop='cardNo'>
-          <el-input maxlength="18"  v-model="Form.cardNo" placeholder='输入身份证号'></el-input>
+          <el-input  clearable maxlength="18"  v-model="Form.cardNo" placeholder='输入身份证号'></el-input>
         </el-form-item>
         <el-form-item label="权限组:" class="float"  prop='authId'>
           <el-select style='width:180px' v-model="Form.authId" placeholder="请选择">

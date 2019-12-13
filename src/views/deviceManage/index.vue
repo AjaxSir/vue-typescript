@@ -168,7 +168,7 @@
 
       >
         <el-form-item class="phone-input" label="设备编号: " prop="serialNumber">
-          <el-input style="width:310px" placeholder="请输入设备编号" v-model="Form.serialNumber"></el-input>
+          <el-input clearable style="width:310px" placeholder="请输入设备编号" v-model="Form.serialNumber"></el-input>
         </el-form-item>
         <el-form-item class="phone-input" label="设备进出: " prop="inOut">
           <el-switch
@@ -182,19 +182,19 @@
           </el-switch>
         </el-form-item>
         <el-form-item class="phone-input" label="设备地址: " prop="address">
-          <el-input @change="getlocLat" placeholder="输入设备所在地址" style="width:310px" v-model="Form.address"></el-input>
+          <el-input clearable @change="getlocLat" placeholder="输入设备所在地址" style="width:310px" v-model="Form.address"></el-input>
           <el-button @click='mapVisible = true' type='text'>地图选点</el-button>
         </el-form-item>
 
         <el-form-item class="phone-input" label="绑定位置: " prop="bindingAddress">
-          <el-input style="width:310px" placeholder="点击右方设备绑定选择对应设备" v-model="Form.bindingAddress"></el-input>
+          <el-input clearable style="width:310px" placeholder="点击右方设备绑定选择对应设备" v-model="Form.bindingAddress"></el-input>
           <el-button type='text' @click='deviceBindBtn'>设备绑定</el-button>
         </el-form-item>
          <el-form-item class="phone-input" label="具体位置: " prop="subAddress">
-          <el-input style="width:310px" placeholder="例如:楼上/楼下" v-model="Form.subAddress"></el-input>
+          <el-input clearable style="width:310px" placeholder="例如:楼上/楼下" v-model="Form.subAddress"></el-input>
         </el-form-item>
         <el-form-item class="phone-input" label="设备备注: " prop="note">
-          <el-input type='textarea' placeholder="请输入设备备注" style="width:310px" v-model="Form.note"></el-input>
+          <el-input clearable type='textarea' placeholder="请输入设备备注" style="width:310px" v-model="Form.note"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -265,7 +265,7 @@
     </el-dialog>
     <!-- 设备地址选择 -->
     <el-dialog :close-on-click-modal='false' title="选取设备地址" :visible.sync="mapVisible">
-      <el-input v-model="Form.address" placeholder="输入设备地址"></el-input>
+      <el-input  clearable v-model="Form.address" placeholder="输入设备地址"></el-input>
       <BaiduMap @pointClick='pointClick' :keyword='Form.address' />
       <div slot="footer" class="dialog-footer">
         <el-button @click="mapVisible = false">取 消</el-button>

@@ -62,9 +62,9 @@
       <el-tab-pane label="批量添加" name="first">
         <el-form  ref='batchForm' :rules='batchRules' :model="batchForm" label-width="80px">
           <el-form-item prop='min' label="编号:">
-            <el-input style="width:120px" placeholder="开始编号" v-model="batchForm.min"></el-input>
+            <el-input  clearable style="width:120px" placeholder="开始编号" v-model="batchForm.min"></el-input>
               至
-            <el-input placeholder="结束编号"  style="width:120px" v-model="batchForm.max"></el-input>
+            <el-input clearable placeholder="结束编号"  style="width:120px" v-model="batchForm.max"></el-input>
           </el-form-item>
           <el-form-item label="序号单位:" prop='serialNumberUnit' label-width="85px">
             <el-select style="width:130px" v-model="batchForm.serialNumberUnit" placeholder="请选择">
@@ -107,7 +107,7 @@
       <el-tab-pane label="手动添加" name="second">
         <el-form ref='HouseForm' :rules='HouseRules' :model="HouseForm">
         <el-form-item label="序号:" prop='serialNumber' label-width="85px">
-          <el-input @input='autoName'  placeholder="填写分组的序号" style="width:240px" v-model="HouseForm.serialNumber" autocomplete="off"></el-input>
+          <el-input clearable @input='autoName'  placeholder="填写分组的序号" style="width:240px" v-model="HouseForm.serialNumber" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="序号单位:" prop='serialNumberUnit' label-width="85px">
           <el-select @change='autoName' style="width:110px" v-model="HouseForm.serialNumberUnit" placeholder="请选择">
@@ -143,7 +143,7 @@
             </div>
         </el-form-item>
         <el-form-item label="别名:" prop='name' label-width="85px">
-          <el-input style="width:240px" placeholder="填写分组的别名" v-model="HouseForm.name" autocomplete="off"></el-input>
+          <el-input clearable style="width:240px" placeholder="填写分组的别名" v-model="HouseForm.name" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="备注:" prop='note' label-width="85px">
           <el-input style="width:240px" placeholder="填写分组的备注信息" type='textarea' v-model="HouseForm.note" autocomplete="off"></el-input>
@@ -153,7 +153,7 @@
       </el-tabs>
       <el-form v-else ref='HouseForms' :rules='HouseRules' :model="HouseForm">
         <el-form-item label="序号:" prop='serialNumber' label-width="85px">
-          <el-input @input='autoName'  placeholder="填写分组的序号" style="width:240px" v-model="HouseForm.serialNumber" autocomplete="off"></el-input>
+          <el-input clearable @input='autoName'  placeholder="填写分组的序号" style="width:240px" v-model="HouseForm.serialNumber" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="序号单位:" prop='serialNumberUnit' label-width="85px">
           <el-select @change='autoName' style="width:110px" v-model="HouseForm.serialNumberUnit" placeholder="请选择">
@@ -181,6 +181,7 @@
                 v-model="newTagValue"
                 ref="saveTagInput"
                 size="small"
+                 clearable
                 @keyup.enter.native="handleInputConfirm('group')"
                 @blur="handleInputConfirm('group')"
               >
@@ -189,7 +190,7 @@
             </div>
         </el-form-item>
         <el-form-item label="别名:" prop='name' label-width="85px">
-          <el-input style="width:240px" placeholder="填写分组的别名" v-model="HouseForm.name" autocomplete="off"></el-input>
+          <el-input clearable style="width:240px" placeholder="填写分组的别名" v-model="HouseForm.name" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="备注:" prop='note' label-width="85px">
           <el-input style="width:240px" placeholder="填写分组的备注信息" type='textarea' v-model="HouseForm.note" autocomplete="off"></el-input>
@@ -205,11 +206,11 @@
     <el-dialog :before-close="closeDialog" :close-on-click-modal='false' width="460px"  class='formDialog' :title="UnitForm.id ? '修改单元楼' : '添加单元楼'" :visible.sync="HouseUnitVisible">
       <el-form  ref='buildings' :rules="unitRules" :model="UnitForm">
          <el-form-item label="名称:" prop='name' label-width="85px">
-          <el-input style="width:280px" v-model="UnitForm.name" autocomplete="off"></el-input>
+          <el-input clearable style="width:280px" v-model="UnitForm.name" autocomplete="off"></el-input>
           <!-- <el-input style='width:50px' v-model="UnitForm.max" autocomplete="off"></el-input> -->
         </el-form-item>
         <el-form-item v-if='!this.UnitForm.id' label="序号:" prop='serialNumber' label-width="85px">
-          <el-input style="width:280px" v-model="UnitForm.serialNumber" autocomplete="off"></el-input>
+          <el-input clearable style="width:280px" v-model="UnitForm.serialNumber" autocomplete="off"></el-input>
           <!-- <el-input style='width:50px' v-model="UnitForm.max" autocomplete="off"></el-input> -->
         </el-form-item>
         <el-form-item v-if='!this.UnitForm.id' label="序号单位:" prop='serialNumberUnit' label-width="85px">
@@ -238,6 +239,7 @@
                 v-model="newTagValue"
                 ref="saveTagInput"
                 size="small"
+                 clearable
                 @blur="handleInputConfirm('build')"
               >
               </el-input>
@@ -245,10 +247,10 @@
             </div>
         </el-form-item>
         <el-form-item label="楼层数:" prop='storeyNum' label-width="85px">
-          <el-input style="width:280px" v-model="UnitForm.storeyNum" autocomplete="off"></el-input>
+          <el-input clearable style="width:280px" v-model="UnitForm.storeyNum" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="每层户数:" prop='houseNum' label-width="85px">
-          <el-input style="width:280px" v-model="UnitForm.houseNum" autocomplete="off"></el-input>
+          <el-input clearable style="width:280px" v-model="UnitForm.houseNum" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -261,7 +263,7 @@
     <el-dialog :before-close="roleHandClose" :close-on-click-modal='false' width="800px" :title="RoleForm.id ? '修改权限组' : '新建权限组'" :visible.sync="RoleVisible">
       <el-form :rules="RoleRules" style="overflow:hidden" ref='roleForm' :model="RoleForm">
         <el-form-item prop='name' label="权限名称:" label-width="85px">
-          <el-input v-model="RoleForm.name" autocomplete="off"></el-input>
+          <el-input clearable v-model="RoleForm.name" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item prop='enableInviteCar' style="float:left;width:350px" label="邀请车辆:" label-width="85px">
           <el-switch

@@ -156,10 +156,10 @@
             @change="handleChange"></el-cascader>
         </el-form-item>
         <el-form-item label="房屋编号:"  prop='serialNumber'>
-          <el-input style="width:217px" v-model="Form.serialNumber" placeholder='输入房屋编号'></el-input>
+          <el-input clearable style="width:217px" v-model="Form.serialNumber" placeholder='输入房屋编号'></el-input>
         </el-form-item>
         <el-form-item label="楼层:"  prop='storeyNum'>
-          <el-input style="width:217px" v-model="Form.storeyNum" placeholder='输入楼层'></el-input>
+          <el-input clearable style="width:217px" v-model="Form.storeyNum" placeholder='输入楼层'></el-input>
         </el-form-item>
         <!-- <el-form-item label="状态:"  prop='status'>
           <el-select  style="width:217px" size="small" v-model="Form.status" placeholder="请选择">
