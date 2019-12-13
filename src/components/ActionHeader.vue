@@ -173,7 +173,9 @@ export default class ActionManage extends Vue {
   }
   handleHouse() {
     /** @description 创建楼栋 */
+    this.visibleFilter = false;
     this.$emit("update:dialogCreate", true);
+    this["phoneNum"] = 0;
   }
   // 导出
   exportTable() {
@@ -191,7 +193,12 @@ export default class ActionManage extends Vue {
       this.filterForm,
       this.page
     );
-    this.visible = false
+    this.visible = false;
+
+    for (const key in this.filterForm) {
+      this.filterForm[key] = null;
+    }
+    this["phoneNum"] = 0;
     return this.initFormHeader;
   }
   /**
@@ -206,7 +213,7 @@ export default class ActionManage extends Vue {
       this.initFormHeader["params"],
       this.page
     );
-    this.visibleFilter = false
+    this.visibleFilter = false;
     // this.$emit('fetchData', this.initFormHeader)
     this.visible = false;
     return this.initFormHeader;
@@ -234,7 +241,7 @@ export default class ActionManage extends Vue {
         }
         const filterUrl = qs.stringify(this.initFormHeader["params"]);
         this["exportFunc"](this.exportName, this.exportUrl + "/?" + filterUrl);
-        break
+        break;
       // case 'exportTemplate':
       //    this["exportFunc"]('用户导入模板.xls', '/v1/admin/uploadFile/exportModel');
       //    break

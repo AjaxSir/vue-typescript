@@ -39,7 +39,9 @@
                 <el-button style="padding:0px;" type="text" @click="queryIdetity">{{scope.row.name}}</el-button>
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start">
-                    <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
+                       <el-tooltip class="item" effect="dark" content="点击操作" placement="top">
+                      <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
+                    </el-tooltip>
                     <el-dropdown-menu slot="dropdown">
                       <el-dropdown-item>修改</el-dropdown-item>
                       <el-dropdown-item>删除</el-dropdown-item>

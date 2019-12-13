@@ -28,6 +28,9 @@ export default class GlobalMimins extends Vue {
   public Form: Object = {} // 新增修改弹框表单信息
   public TreeData: Array<Object> = []
   public list_data: Array<Object> = [];
+  public phoneNum: any = 0
+  public regPos = /^\d+(\.\d+)?$/
+  public upNum = /[^\d]/g
   updateArray: Array<string> = [] /// 行内需要修改的状态
   initForm: object = {
     url: '',
@@ -277,6 +280,12 @@ export default class GlobalMimins extends Vue {
           this.message('备注不能超过200个字符')
         }
         break;
+      case '30':
+        if (value.length === 30) {
+          value = value.slice(30)
+          this.message('不能超过30个字符')
+        }
+        break;
       case '7':
         if (value.length === 7) {
           this.message('车牌不能超过7个字符')
@@ -296,7 +305,7 @@ export default class GlobalMimins extends Vue {
         // if (!this.is_Phone(value)) {
         //   return this.message('请输入正确格式的电话号码')
         // }
-        if(value.toString().length > 11) {
+        if (value.toString().length > 11) {
           return this.message('电话最多输入11位')
         }
         break;
@@ -318,6 +327,55 @@ export default class GlobalMimins extends Vue {
     }
   }
 
+  filterNumber(e: any) {
+    var v = e.target.value
+    if (v !== "" && !this.regPos.test(v)) {
+      this.message('手机号码必须是数值')
+    }
+    e.target.value = v.replace(this.upNum, "");
+  }
+
+  // phone只可输入数字
+  UpNumber(e: any) {
+    var v = e.target.value
+    if (v !== "" && !this.regPos.test(v)) {
+      this.message('手机号码必须是数值')
+    }
+    e.target.value = v.replace(this.upNum, "");
+    this.phoneNum = v.length
+  }
+
+  clearableBtn(v) {
+    //清除
+    if (v) {
+      this.phoneNum = v.length
+    } else {
+      this.phoneNum = 0
+    }
+  }
+
+  //年龄
+  ageNumber(e: any) {
+    var v = e.target.value
+    if (v !== "" && !this.regPos.test(v)) {
+      this.message('年龄必须是数值')
+    }
+    e.target.value = v.replace(this.upNum, "");
+  }
+
+  //预警周期
+  earlyPeriodNumber(e: any) {
+    var v = e.target.value
+    if (v !== "" && !this.regPos.test(v)) {
+      this.message('预警周期必须是数值')
+    }
+    e.target.value = v.replace(this.upNum, "");
+  }
+  //筛选
+  emitFetchData() {
+    this.$refs.actionHeader["emitFetchData"]();
+  }
+
   channelInputLimit(e) {
     let key = e.key;
     // 不允许输入'e'和'.'
@@ -327,8 +385,6 @@ export default class GlobalMimins extends Vue {
     }
     return true;
   }
-  emitFetchData() {
-    this.$refs.actionHeader['emitFetchData']()
-  }
+
 }
 

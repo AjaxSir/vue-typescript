@@ -3,6 +3,7 @@
     <el-row>
       <el-col :span="24">
         <ActionHeader
+          ref="actionHeader"
           :btnStatus="1"
           :moreStatus="false"
           :initFormHeader="initForm"
@@ -24,15 +25,8 @@
                 size="small"
                 v-model="filterForm.name"
                 placeholder="请输入关注人姓名"
-              ></el-input>
-            </div>
-            <div class="word-filter">
-              <span class="filter-name">紧急电话:</span>
-              <el-input
-                class="input-filter"
-                size="small"
-                v-model="filterForm.emergencyPhone"
-                placeholder="请输入紧急联系人电话"
+                clearable
+                @keyup.enter.native="emitFetchData"
               ></el-input>
             </div>
             <div class="word-filter">
@@ -50,6 +44,19 @@
                   :value="tag.id"
                 ></el-option>
               </el-select>
+            </div>
+            <div class="word-filter">
+              <span class="filter-name">紧急电话:</span>
+              <el-input
+                class="input-filter"
+                size="small"
+                v-model="filterForm.emergencyPhone"
+                placeholder="请输入手机号码"
+                clearable
+                @keyup.enter.native="emitFetchData"
+                @keyup.native="filterNumber"
+                @keydown.native="filterNumber"
+              ></el-input>
             </div>
           </div>
         </ActionHeader>
@@ -75,7 +82,9 @@
                 <span>{{scope.$index+1}}</span>
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start" @command="commandClick">
-                    <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
+                    <el-tooltip class="item" effect="dark" content="点击操作" placement="top">
+                      <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
+                    </el-tooltip>
                     <el-dropdown-menu slot="dropdown">
                       <div @click="editTarget(scope.row)">
                         <el-dropdown-item command="update">修改</el-dropdown-item>
@@ -168,12 +177,12 @@
                   :ref="row.id"
                   v-show="row.noteStatus&&editForm.id === row.id"
                   size="small"
-                  @keyup.enter.native="confirmUpdateNote(row)"
-                  @blur="noteBlur(row)"
-                  @input="constraintLength(editForm.note,'200')"
+                  clearable
                   :maxlength="200"
                   v-model="editForm.note"
                   placeholder="输入备注"
+                  @keyup.enter.native="noteBlur(row,'2')"
+                  @input="constraintLength(editForm.note,'200')"
                 ></el-input>
               </template>
             </el-table-column>
@@ -205,33 +214,36 @@
         label-width="100px"
         style="margin-right:40px;"
       >
+        <el-form-item
+          label="姓名:"
+          prop="scenceUser"
+          :show-message="showMessage"
+          :error="errorMessage.scenceUser"
+        >
+          <el-select
+            style="width:100%"
+            v-model="createForm.scenceUser"
+            filterable
+            remote
+            :remote-method="remoteMethod"
+            :loading="loading"
+            placeholder="请输入姓名进行模糊查询"
+          >
+            <el-option
+              v-for="item in nameList"
+              :key="item.scenceUserId"
+              :label="item.name"
+              :value="[item.scenceUserId,item.name]"
+            >
+              <span style="float: left">{{ item.name }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item. value }}</span>
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <!--
         <div style="display: flex;">
           <el-form-item
-            label="姓名:"
-            prop="scenceUser"
-            :show-message="showMessage"
-            :error="errorMessage.scenceUser"
-          >
-            <el-select
-              v-model="createForm.scenceUser"
-              filterable
-              remote
-              :remote-method="remoteMethod"
-              :loading="loading"
-              placeholder="请输入姓名进行模糊查询"
-            >
-              <el-option
-                v-for="item in nameList"
-                :key="item.scenceUserId"
-                :label="item.name"
-                :value="[item.scenceUserId,item.name]"
-              >
-                <span style="float: left">{{ item.name }}</span>
-                <span style="float: right; color: #8492a6; font-size: 13px">{{ item. value }}</span>
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item
+            class="ei-input-rewrite"
             label="年龄:"
             prop="age"
             :show-message="showMessage"
@@ -239,47 +251,59 @@
           >
             <el-input
               autocomplete="off"
-              placeholder="输入年龄"
+              placeholder="请输入年龄"
               min="0"
               maxlength="3"
-              v-model.number="createForm.age"
-              @input="constraint(createForm.age,'age')"
+              clearable
+              v-model="createForm.age"
+              @keyup.native="ageNumber"
+              @keydown.native="ageNumber"
             ></el-input>
           </el-form-item>
-        </div>
-        <el-form-item
-          label="紧急电话:"
-          prop="emergencyPhone"
-          :show-message="showMessage"
-          :error="errorMessage.emergencyPhone"
-        >
-          <el-input
-            v-model="createForm.emergencyPhone"
-            placeholder="请输入紧急联系人电话"
-            :maxlength="12"
-            @input="verification(createForm.emergencyPhone,'emergencyPhone')"
-          ></el-input>
-        </el-form-item>
+          <p class="ei-input-hint">岁</p>
+        </div>-->
 
+        <div style="display: flex;">
+          <el-form-item
+            class="ei-input-rewrite"
+            label="紧急电话:"
+            prop="emergencyPhone"
+            :show-message="showMessage"
+            :error="errorMessage.emergencyPhone"
+          >
+            <el-input
+              v-model="createForm.emergencyPhone"
+              placeholder="请输入手机号码"
+              clearable
+              :maxlength="11"
+              @keyup.native="UpNumber"
+              @keydown.native="UpNumber"
+              @change="clearableBtn"
+            ></el-input>
+          </el-form-item>
+          <p class="ei-input-hint">{{phoneNum}}/11</p>
+        </div>
+
+        <!-- <div style="display: flex;"> -->
         <el-form-item
           label="预警周期:"
           prop="earlyPeriod"
-          :rules="[
-              { required: true, message: '预警周期不能为空'},
-              { type: 'number', message: '请正确的填写预警周期'}
-            ]"
           :show-message="showMessage"
           :error="errorMessage.earlyPeriod"
         >
           <el-input
-            v-model.number="createForm.earlyPeriod"
+            v-model="createForm.earlyPeriod"
             autocomplete="off"
-            placeholder="请输入预警周期为多少天"
+            placeholder="预警周期 如: 3 天"
             min="0"
             maxlength="10"
-            @keydown.native="channelInputLimit"
+            clearable
+            @keydown.native="earlyPeriodNumber"
+            @keyup.native="earlyPeriodNumber"
           ></el-input>
         </el-form-item>
+        <!-- <p class="ei-input-hint">天</p> -->
+        <!-- </div> -->
 
         <el-form-item
           label="预警组别:"
@@ -310,6 +334,7 @@
               v-if="newTag"
               v-model="newTagValue"
               :maxlength="10"
+              clearable
               ref="saveTagInput"
               size="small"
               placeholder="请输入新增分组名称"
@@ -341,6 +366,7 @@
             >{{tag.typeName}}</el-tag>
             <el-input
               class="input-new-tag"
+              clearable
               v-if="newTypeTag"
               v-model="newTypeTagValue"
               ref="saveTagInput"
@@ -355,7 +381,7 @@
         </el-form-item>
 
         <el-form-item
-          label="备注:"
+          label="备注信息:"
           prop="note"
           :show-message="showMessage"
           :error="errorMessage.note"
@@ -364,6 +390,8 @@
             v-model="createForm.note"
             :maxlength="200"
             placeholder="输入备注信息"
+            clearable
+            type="textarea"
             @input="constraintLength(createForm.note,'200')"
           ></el-input>
         </el-form-item>
@@ -376,7 +404,7 @@
 
     <!-- 修改关注人员 -->
     <el-dialog
-      :title="'修改：'+ editForm.name"
+      title="修改"
       :visible.sync="dialogEdit"
       width="500px"
       :before-close="editClose"
@@ -390,57 +418,85 @@
         label-width="100px"
         style="margin-right:40px;"
       >
-        <el-form-item
-          label="年龄:"
-          prop="age"
-          :rules="[
-              { type: 'number', message: '年龄必须为数值'}
-            ]"
-          :show-message="showMessage"
-          :error="errorMessage.age"
-        >
-          <el-input
-            autocomplete="off"
-            placeholder="输入年龄"
-            min="0"
-            maxlength="3"
-            v-model.number="editForm.age"
-            @input="constraint(editForm.age,'age')"
-          ></el-input>
-        </el-form-item>
+        <!-- <el-form-item label="姓名:" :show-message="showMessage" :error="errorMessage.scenceUser">
+          <el-select
+            style="width:100%"
+            v-model="editForm.name"
+            filterable
+            remote
+            :remote-method="remoteMethod"
+            :loading="loading"
+            placeholder="请输入姓名进行模糊查询"
+          >
+            <el-option
+              v-for="item in nameList"
+              :key="item.scenceUserId"
+              :label="item.name"
+              :value="[item.scenceUserId,item.name]"
+            >
+              <span style="float: left">{{ item.name }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item. value }}</span>
+            </el-option>
+          </el-select>
+        </el-form-item>-->
+        <!-- <div style="display: flex;">
+          <el-form-item
+            class="ei-input-rewrite"
+            label="年龄:"
+            prop="age"
+            :show-message="showMessage"
+            :error="errorMessage.age"
+          >
+            <el-input
+              autocomplete="off"
+              placeholder="输入年龄"
+              min="0"
+              maxlength="3"
+              clearable
+              v-model="editForm.age"
+              @keyup.native="ageNumber"
+              @keydown.native="ageNumber"
+            ></el-input>
+          </el-form-item>
+          <p class="ei-input-hint">岁</p>
+        </div>-->
 
-        <el-form-item
-          label="紧急电话:"
-          prop="editEmergencyPhone"
-          :show-message="showMessage"
-          :error="errorMessage.editEmergencyPhone"
-        >
-          <el-input
-            v-model="editForm.emergencyPhone"
-            placeholder="请输入紧急联系人电话"
-            :maxlength="12"
-            @input="verification(editForm.emergencyPhone,'editEmergencyPhone')"
-          ></el-input>
-        </el-form-item>
+        <div style="display: flex;">
+          <el-form-item
+            class="ei-input-rewrite"
+            label="紧急电话:"
+            prop="editEmergencyPhone"
+            :show-message="showMessage"
+            :error="errorMessage.editEmergencyPhone"
+          >
+            <el-input
+              v-model="editForm.emergencyPhone"
+              placeholder="请输入紧急联系人电话"
+              :maxlength="11"
+              clearable
+              @keyup.native="UpNumber"
+              @keydown.native="UpNumber"
+              @change="clearableBtn"
+            ></el-input>
+          </el-form-item>
+          <p class="ei-input-hint">{{phoneNum}}/11</p>
+        </div>
 
-        <el-form-item
-          label="预警周期:"
-          prop="earlyPeriod"
-          :rules="[
-              { type: 'number', message: '预警周期为数值'}
-            ]"
-          :show-message="showMessage"
-          :error="errorMessage.earlyPeriod"
-        >
+        <!-- <div style="display: flex;"> -->
+        <el-form-item label="预警周期:" :show-message="showMessage" :error="errorMessage.earlyPeriod">
           <el-input
             v-model.number="editForm.earlyPeriod"
             autocomplete="off"
-            placeholder="请输入预警周期为多少天"
+            placeholder="预警周期 如: 3 天"
             min="0"
             maxlength="10"
-            @input="constraint(editForm.earlyPeriod,'earlyPeriod')"
+            clearable
+            @keydown.native="earlyPeriodNumber"
+            @keyup.native="earlyPeriodNumber"
           ></el-input>
         </el-form-item>
+        <!-- <p class="ei-input-hint">天</p> -->
+        <!-- </div> -->
 
         <el-form-item
           label="预警组别:"
@@ -473,6 +529,7 @@
               ref="saveTagInput"
               size="small"
               :maxlength="10"
+              clearable
               placeholder="请输入新增分组名称"
               @input="constraintLength(newTagValue,'10')"
               @blur="handleInputConfirm('group')"
@@ -508,6 +565,7 @@
               size="small"
               placeholder="请输入新增类别名称"
               :maxlength="10"
+              clearable
               @input="constraintLength(newTypeTagValue,'10')"
               @blur="handleInputConfirm('type')"
             ></el-input>
@@ -516,7 +574,7 @@
         </el-form-item>
 
         <el-form-item
-          label="备注:"
+          label="备注信息:"
           prop="note"
           :show-message="showMessage"
           :error="errorMessage.note"
@@ -525,6 +583,8 @@
             v-model="editForm.note"
             :maxlength="200"
             placeholder="输入备注信息"
+            type="textarea"
+            clearable
             @input="constraintLength(editForm.note,'200')"
           ></el-input>
         </el-form-item>
@@ -575,7 +635,7 @@
           <el-table v-loading="passTarget" :data="passList" style="width: 100%" stripe>
             <el-table-column type="index" label="序号" width="50" align="center"></el-table-column>
             <el-table-column align="center" prop="name" label="姓名"></el-table-column>
-            <el-table-column align="center" prop="age" label="通行地址">
+            <el-table-column align="center" prop="devAddress" label="通行地址">
               <template slot-scope="scope">{{scope.row.devAddress}} - {{scope.row.devSubAddress}}</template>
             </el-table-column>
             <el-table-column align="center" prop="passTime" label="通行时间" width="150px"></el-table-column>
@@ -654,10 +714,10 @@ export default class FocusPeople extends Vue {
   private createForm: Object = {
     //新增表单字段
     scenceUser: [], //用户id
-    age: "", //年龄
+    // age: "", //年龄
     earlyGroupId: "", //预警组别
     emergencyPhone: "", // 紧急联系人电话
-    earlyPeriod: 0, //预警周期
+    earlyPeriod: "", //预警周期
     typeId: "", //人员类别
     note: "" //备注
   };
@@ -672,7 +732,7 @@ export default class FocusPeople extends Vue {
     editEmergencyPhone: [
       { required: false, message: "请输入紧急联系人", trigger: "blur" }
     ],
-    age: [{ required: false }, { type: "number", message: "年龄必须为数值" }],
+    // age: [{ required: false }, { type: "number", message: "年龄必须为数值" }],
     earlyGroupId: [
       { required: true, message: "请选择预警组别", trigger: "blur" }
     ],
@@ -688,8 +748,8 @@ export default class FocusPeople extends Vue {
     scenceUser: "",
     email: "",
     earlyGroupId: "",
-    note: "",
-    age: ""
+    note: ""
+    // age: ""
   };
   private nameList: Array<Object> = []; //人员
   private loading: Boolean = false; //姓名模糊查询
@@ -708,7 +768,7 @@ export default class FocusPeople extends Vue {
   private editForm: Object = {
     //修改表单字段
     name: "", //姓名
-    age: "", //年龄
+    // age: "", //年龄
     earlyGroupId: "", //预警组别
     emergencyPhone: "", // 紧急联系人电话
     earlyPeriod: 0, //预警周期
@@ -854,9 +914,9 @@ export default class FocusPeople extends Vue {
   createFocusPeople() {
     /**@description 新增关注人员 */
     this.verification(this.createForm["emergencyPhone"], "emergencyPhone");
-    if (this.createForm["age"] === "") {
-      this.createForm["age"] = null;
-    }
+    // if (this.createForm["age"] === "") {
+    //   this.createForm["age"] = null;
+    // }
     if (
       this.errorMessage["emergencyPhone"] === "" &&
       this.createForm["emergencyPhone"].length === 11
@@ -891,11 +951,14 @@ export default class FocusPeople extends Vue {
     for (const key in this.editForm) {
       this.editForm[key] = item[key];
     }
-    if (+item["age"]) {
-      this.editForm["age"] = +item["age"];
-    } else if (item["age"] === "") {
-      this.editForm["age"] = null;
+    if (item.emergencyPhone) {
+      this["phoneNum"] = item.emergencyPhone.length;
     }
+    // if (+item["age"]) {
+    //   this.editForm["age"] = +item["age"];
+    // } else if (item["age"] === "") {
+    //   this.editForm["age"] = null;
+    // }
 
     if (+item["earlyPeriod"]) {
       this.editForm["earlyPeriod"] = +item["earlyPeriod"];
@@ -906,9 +969,9 @@ export default class FocusPeople extends Vue {
   }
 
   constraint(value, type) {
-    if (value > 200 && type === "age") {
-      this["message"]("年龄不能大于200");
-    }
+    // if (value > 200 && type === "age") {
+    //   this["message"]("年龄不能大于200");
+    // }
     if (value === "") {
       this.editForm[type] = null;
     }
@@ -980,7 +1043,7 @@ export default class FocusPeople extends Vue {
     this.dialogCreate = false; //新增dialog
     this.createForm = {
       //清空新增表单字段
-      age: "",
+      // age: "",
       earlyGroupId: "",
       emergencyPhone: "",
       earlyPeriod: 0,

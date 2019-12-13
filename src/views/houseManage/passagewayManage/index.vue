@@ -43,7 +43,9 @@
                 <span>{{scope.$index+1}}</span>
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start" @command="commandClick">
-                    <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
+                    <el-tooltip class="item" effect="dark" content="点击操作" placement="top">
+                      <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
+                    </el-tooltip>
                     <el-dropdown-menu slot="dropdown">
                       <!-- <div @click="editFrom(scope.row)">
                         <el-dropdown-item :command="returnCommand('update', scope.row)">修改</el-dropdown-item>
@@ -82,12 +84,12 @@
                   :ref="row.id"
                   v-show="row.noteStatus&&editForm.id === row.id"
                   size="small"
-                  @keyup.enter.native="confirmUpdateNote(row)"
-                  @blur="noteBlur(row)"
-                  @input="constraintLength(editForm.note,'200')"
                   :maxlength="200"
                   v-model="editForm.note"
                   placeholder="输入备注"
+                  clearable
+                  @keyup.enter.native="noteBlur(row,'2')"
+                  @input="constraintLength(editForm.note,'200')"
                 ></el-input>
               </template>
             </el-table-column>
@@ -103,7 +105,13 @@
       :before-close="handleClose"
       :close-on-click-modal="false"
     >
-      <el-form :model="createForm" :rules="rules" ref="dataForm" label-width="110px">
+      <el-form
+        :model="createForm"
+        :rules="rules"
+        ref="dataForm"
+        label-width="110px"
+        style="margin-right:40px;"
+      >
         <el-form-item
           label="出入口名称:"
           prop="name"
@@ -114,20 +122,26 @@
             v-model="createForm.name"
             placeholder="输入出入口名称"
             :maxlength="10"
+            clearable
             @input="constraintLength(createForm.name,'10')"
+            @keyup.enter.native="addPassageway"
           ></el-input>
         </el-form-item>
         <el-form-item
-          label="备注:"
+          label="备注信息:"
           prop="note"
           :show-message="showMessage"
           :error="errorMessage.note"
         >
           <el-input
+            type="textarea"
+            :rows="9"
             v-model="createForm.note"
             :maxlength="200"
             placeholder="输入备注信息"
+            clearable
             @input="constraintLength(createForm.note,'200')"
+            @keyup.enter.native="addPassageway"
           ></el-input>
         </el-form-item>
       </el-form>
@@ -161,20 +175,26 @@
             v-model="editForm.name"
             :maxlength="10"
             placeholder="输入出入口名称"
+            clearable
             @input="constraintLength(editForm.name,'10')"
+            @keyup.enter.native="modifPassageway"
           ></el-input>
         </el-form-item>
         <el-form-item
-          label="备注:"
+          label="备注信息:"
           prop="note"
           :show-message="showMessage"
           :error="errorMessage.note"
         >
           <el-input
+            type="textarea"
+            :rows="9"
             v-model="editForm.note"
             :maxlength="200"
             placeholder="输入备注信息"
+            clearable
             @input="constraintLength(editForm.note,'200')"
+            @keyup.enter.native="modifPassageway"
           ></el-input>
         </el-form-item>
       </el-form>
@@ -282,6 +302,7 @@ export default class InformIssue extends Vue {
   }
 
   modifPassageway() {
+    console.log(123);
     const form = { ...this.editForm };
     for (let key in form) {
       if (form[key] === "") {
@@ -331,7 +352,6 @@ export default class InformIssue extends Vue {
       name: "",
       note: ""
     };
-
     this.dialogEdit = false; //修改dialog
     this.$refs["dataForm"]["resetFields"]();
   }

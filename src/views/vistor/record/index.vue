@@ -3,6 +3,7 @@
     <el-row>
       <el-col :span="24">
         <ActionHeader
+          ref="actionHeader"
           :moreStatus="false"
           :btnStatus="2"
           :initFormHeader="initForm"
@@ -19,7 +20,9 @@
                 class="input-filter"
                 size="small"
                 v-model="filterForm.name"
+                clearable
                 placeholder="请输入访客姓名"
+                @keyup.enter.native="emitFetchData"
               ></el-input>
             </div>
             <div class="word-filter">
@@ -28,7 +31,9 @@
                 class="input-filter"
                 size="small"
                 v-model="filterForm.visitName"
+                clearable
                 placeholder="请输入受访者姓名"
+                @keyup.enter.native="emitFetchData"
               ></el-input>
             </div>
             <div class="word-filter">
@@ -38,8 +43,14 @@
                 size="small"
                 v-model="filterForm.cardNo"
                 placeholder="请输入联系电话"
+                clearable
+                @keyup.enter.native="emitFetchData"
+                @keyup.native="filterNumber"
+                @keydown.native="filterNumber"
               ></el-input>
+              <!-- <span>{{phoneNum}}/11</span> -->
             </div>
+
             <div class="word-filter">
               <span class="filter-name filter-rewrite">访客类型:</span>
               <el-select
@@ -163,7 +174,9 @@
                 <span>{{scope.$index+1}}</span>
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start" @command="commandClick">
-                    <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
+                    <el-tooltip class="item" effect="dark" content="点击操作" placement="top">
+                      <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
+                    </el-tooltip>
                     <el-dropdown-menu slot="dropdown">
                       <el-dropdown-item
                         :command="returnCommand('delete', scope.row)"
@@ -246,9 +259,9 @@
           ></el-pagination>
         </div>
 
-        <div :class="rowSpan.row1===4 ? menuControl1 : menuControl2" @click="menuVisible">
+        <div :class="rowSpan.row1===3 ? menuControl1 : menuControl2" @click="menuVisible">
           <p class="close-menu">
-            <i v-if="rowSpan.row1===4" class="iconfont icon-left icon-class"></i>
+            <i v-if="rowSpan.row1===3" class="iconfont icon-left icon-class"></i>
             <i v-else class="iconfont icon-zuo icon-class"></i>
           </p>
         </div>
@@ -296,8 +309,8 @@ export default class VistorRegister extends Vue {
   private pitchOn: string = "y"; //选中A
   private unchecked: string = "n"; //未选中
   private rowSpan: any = {
-    row1: 4,
-    row2: 20
+    row1: 3,
+    row2: 21
   };
   private menuControl1: String = "menu-control";
   private menuControl2: String = "menu-visible";
@@ -432,8 +445,8 @@ export default class VistorRegister extends Vue {
       };
     } else {
       this.rowSpan = {
-        row1: 4,
-        row2: 20
+        row1: 3,
+        row2: 21
       };
     }
   }
@@ -448,6 +461,10 @@ export default class VistorRegister extends Vue {
   }
 }
 
+.serial-num {
+  position: relative;
+}
+
 .menu-control {
   position: absolute;
   top: 32vh;
@@ -457,7 +474,7 @@ export default class VistorRegister extends Vue {
 .menu-visible {
   position: absolute;
   top: 32vh;
-  left: -15px;
+  left: -8px;
 }
 
 .close-menu {
