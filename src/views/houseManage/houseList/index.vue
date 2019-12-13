@@ -331,6 +331,9 @@ export default class CardManage extends Vue {
     storeyNum: [
             { required: true, message: '请选择当前房屋楼层数', trigger: 'blur' },
             { min: 1, max: 6, message: '长度在 1 到 6 个字符', trigger: 'blur' }
+          ],
+          cardNo: [
+            { required: true, message: '请选择当前房屋的组别', trigger: 'change' }
           ]
   }
   TreeData: Array<Object> = [] // 树形结构数据

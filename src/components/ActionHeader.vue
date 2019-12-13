@@ -132,9 +132,9 @@ export default class ActionManage extends Vue {
     default: () => {
       return {};
     }
-  })
+  }) filterForm: object; // 筛选条件
   @Prop({ default: '' }) linkUrl: string
-  filterForm: object; // 筛选条件
+
   private visible: boolean = false; // 数据显示条数dialog状态
   private size: string = "10"; // 默认每页显示10条
   private levelList: Object = {}; // 当前路由的子路由
@@ -196,10 +196,11 @@ export default class ActionManage extends Vue {
     );
     this.visible = false;
 
-    for (const key in this.filterForm) {
-      this.filterForm[key] = null;
-    }
+    // for (const key in this.filterForm) {
+    //   this.filterForm[key] = this.filterForm[key] ? this.filterForm[key] : null;
+    // }
     this["phoneNum"] = 0;
+    console.log(this.initFormHeader["params"],this.filterForm, this.page)
     return this.initFormHeader;
   }
   /**

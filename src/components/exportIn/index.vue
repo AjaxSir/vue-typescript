@@ -18,16 +18,19 @@
     <el-upload
                 class="upload-demo color"
                 style="display:inline-block;margin-right:5px"
-                :show-file-list='false'
+                :show-file-list='true'
                 :on-error='errorUpload'
                 :on-success='successUpload'
+                :multiple='false'
                 :action="uploadUrl"
+                :on-change='changeFile'
                 ref='upload'
                 :auto-upload='false'
                 >
                <i class="el-icon-plus"></i>
                 添加文件
-              </el-upload><span>目前仅支持*.xlsx</span>
+              </el-upload><h4>目前仅支持*.xlsx</h4>
+              <!-- <h4>已选文件:{{fileName}}</h4> -->
     <span slot="footer" class="dialog-footer">
       <el-button @click="handleClose">取 消</el-button>
       <el-button type="primary" @click="confirmUpload">确 定</el-button>
@@ -45,12 +48,19 @@ export default class ExportIn extends Vue{
   errorUpload() {
     this.$message.error('导入失败')
   }
+  fileName: string = '' // 文件名字
   @Emit('successUpload')
-  successUpload() {
+  successUpload(file) {
     this.$message.success('导入成功')
+    this.$refs.upload['clearFiles']()
     this.handleClose()
     return true
   }
+
+  changeFile(file) {
+    this.fileName = file.name
+  }
+
   @Emit('closeVisible')
   handleClose() {
     return false
