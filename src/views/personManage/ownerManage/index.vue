@@ -339,7 +339,7 @@
       </span>
       <!-- 增加房屋时修改房屋 -->
     </el-dialog>
-    <el-dialog :close-on-click-modal='false' width="600px" title="修改房屋" :visible.sync="updateHouseVisible">
+    <el-dialog :close-on-click-modal='false' width="400px" title="修改房屋" :visible.sync="updateHouseVisible">
       <el-form :model="updateHouseForm" label-width="80px">
         <el-form-item label="用户类型" >
           <el-select v-model="updateHouseForm.type" placeholder="请选择">
