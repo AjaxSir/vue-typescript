@@ -95,19 +95,20 @@
     >
       <el-form :rules='rules' ref="Forms" :model="Form" label-width="80px">
         <el-form-item prop='name' label="账号名">
-          <el-input style='position:fixed;bottom:-999999px' type='password' ></el-input>
+          <el-input clearable style='position:fixed;bottom:-999999px' type='password' ></el-input>
           <el-input
           style="width:300px"
           auto-complete="off"
           maxlength="10"
           type='text'
+           clearable
           placeholder="请输入账号名"
           @input="constraintLength(Form.name, '10')"
           v-model="Form.name"></el-input>
         </el-form-item>
         <el-form-item prop='password' v-if='!Form.id' label="密码">
-          <el-input style='position:fixed;bottom:-999999px' type='password'></el-input>
-          <el-input style="width:300px"
+          <el-input clearable style='position:fixed;bottom:-999999px' type='password'></el-input>
+          <el-input clearable style="width:300px"
           auto-complete="off"
           maxlength="10"
           placeholder="请输入密码"
@@ -143,10 +144,10 @@
           <span>{{ resetForms.name }}</span>
         </el-form-item>
         <el-form-item label="新密码" prop="newPassword">
-          <el-input maxlength="10" style="width:300px" type='password' placeholder="请输入修改后的密码" v-model="resetForms.newPassword "></el-input>
+          <el-input maxlength="10" clearable style="width:300px" type='password' placeholder="请输入修改后的密码" v-model="resetForms.newPassword "></el-input>
         </el-form-item>
         <el-form-item label="确认密码" prop='reNewPassword'>
-          <el-input maxlength="10" style="width:300px" type='password' placeholder="请再次确认密码" v-model="resetForms.reNewPassword "></el-input>
+          <el-input maxlength="10" clearable style="width:300px" type='password' placeholder="请再次确认密码" v-model="resetForms.reNewPassword "></el-input>
         </el-form-item>
 
       </el-form>

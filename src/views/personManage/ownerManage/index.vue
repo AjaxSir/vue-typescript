@@ -283,7 +283,7 @@
 
 
             <el-form-item label="姓名:"  prop='name'>
-              <el-input  v-model="Form.name" placeholder='输入姓名'></el-input>
+              <el-input clearable v-model="Form.name" placeholder='输入姓名'></el-input>
             </el-form-item>
             <el-form-item label="性别:" prop='sex'>
               <el-switch
@@ -321,10 +321,11 @@
               <el-input v-model="Form.cardName"  placeholder='输入卡名'></el-input>
             </el-form-item> -->
             <el-form-item label="身份证号:"  label-width="85px"  prop='cardNo'>
-              <el-input  maxlength="18"   v-model="Form.cardNo" placeholder='输入身份证号'></el-input>
+              <el-input  maxlength="18"  clearable  v-model="Form.cardNo" placeholder='输入身份证号'></el-input>
             </el-form-item>
             <el-form-item label="房屋:" style='clear:both'  prop='houseName'>
               <el-autocomplete
+               clearable
                 v-model="Form.houseName"
                 style='width:275px'
                 :fetch-suggestions="querySearch"

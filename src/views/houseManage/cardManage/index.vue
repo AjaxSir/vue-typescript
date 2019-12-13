@@ -185,11 +185,12 @@
     <el-dialog :close-on-click-modal='false' title="创建门禁卡" :visible.sync="dialogCreate" width="450px" :before-close="handleClose">
       <el-form :model="Form" :rules="rules" ref='Forms' label-width="110px">
         <el-form-item label="卡号:"  prop='cardNo'>
-          <el-input style="width:250px" v-model="Form.cardNo" placeholder='输入卡号'></el-input>
+          <el-input clearable style="width:250px" v-model="Form.cardNo" placeholder='输入卡号'></el-input>
         </el-form-item>
          <el-form-item label="需关联的房屋:"  prop='houseName'>
           <el-autocomplete
            style="width:250px"
+           clearable
             popper-class="my-autocomplete"
             v-model="Form.houseName"
             :fetch-suggestions="querySearch"

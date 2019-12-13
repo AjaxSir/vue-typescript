@@ -104,7 +104,7 @@
     >
       <el-form ref="Forms" :rules='rules' :model="Form" label-width="80px">
         <el-form-item label="角色名" prop='name'>
-          <el-input placeholder="输入角色名字" maxlength="10" @input="constraintLength(Form.name,'10')" v-model="Form.name"></el-input>
+          <el-input  clearable placeholder="输入角色名字" maxlength="10" @input="constraintLength(Form.name,'10')" v-model="Form.name"></el-input>
         </el-form-item>
         <el-form-item label="备注" maxlength="200"  placeholder="输入角色备注说明(最多200字)" prop='note'>
           <el-input maxlength="200" placeholder="请输入角色备注信息" @input="constraintLength(Form.note,'200')" type="textarea" v-model="Form.note"></el-input>
