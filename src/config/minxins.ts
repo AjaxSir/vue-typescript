@@ -230,6 +230,7 @@ export default class GlobalMimins extends Vue {
             type: 'info',
             message: '已取消删除'
           });
+          this.deleteForm['data'] = []
         });
         break
       case 'whiteList':

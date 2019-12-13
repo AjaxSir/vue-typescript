@@ -223,7 +223,23 @@
           <el-input v-model="Form.name" placeholder='输入物业人员姓名'></el-input>
         </el-form-item>
         <el-form-item  class="float"  label="电话:"  prop='phone'>
-          <el-input v-model="Form.phone" maxlength='11' @input='constraintLength(Form.phone, "11")' placeholder='输入物业人员电话'></el-input>
+          <el-input
+                class="phone-position"
+                v-model="Form.phone"
+                placeholder="输入物业人员电话"
+                :maxlength="11"
+                clearable
+                @keyup.native="UpNumber"
+                @keydown.native="UpNumber"
+                @change="clearableBtn"
+                @input="hint"
+                @focus="hintFocus"
+                @blur="hintBlur"
+                @mouseover.native="hint(Form.phone)"
+                @mouseout.native="hint(Form.phone)"
+              ></el-input>
+              <span v-show="hintPhone" class="ei-input-hint">{{phoneNum}}/11</span>
+          <!-- <el-input v-model="Form.phone" maxlength='11' @input='constraintLength(Form.phone, "11")' placeholder='输入物业人员电话'></el-input> -->
         </el-form-item>
         <el-form-item  class="float"  label="性别:"  prop='sex'>
           <el-switch

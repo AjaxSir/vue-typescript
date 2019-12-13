@@ -186,6 +186,7 @@
       class="dialog-rewrite"
       :title="'编号: '+ detailDialog.serialNumber"
       :visible.sync="dialogFormVisible"
+      width="800px"
     >
       <el-tabs type="card" v-model="activeName">
         <el-tab-pane label="详细信息" name="详细信息">
