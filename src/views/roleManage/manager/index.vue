@@ -94,7 +94,7 @@
       :before-close="handleClose"
     >
       <el-form :rules='rules' ref="Forms" :model="Form" label-width="80px">
-        <el-form-item v-if='!Form.id' prop='name' label="账号名">
+        <el-form-item prop='name' label="账号名">
           <el-input style='position:fixed;bottom:-999999px' type='password' ></el-input>
           <el-input
           style="width:300px"
