@@ -36,7 +36,7 @@ a:hover {
 }
 
 .app-container {
-  padding: 0px 00px 0px 0px;
+  padding: 0px 0px 0px 10px;
   background-color: #F8F8F8;
 }
 
@@ -151,7 +151,11 @@ img {
 }
 
 .el-submenu .el-menu-item {
-  border-bottom: 1px solid #ebeef5;
+  // border-bottom: 1px solid #ebeef5;
+  height: 40px;
+  line-height: 40px;
+  padding: 0 45px;
+  min-width: 100%;
 }
 
 .el-menu-item.is-active {
@@ -208,13 +212,6 @@ img {
   }
 }
 
-.el-submenu .el-menu-item {
-  height: 50px;
-  line-height: 50px;
-  padding: 0 45px;
-  min-width: 150px;
-}
-
 .el-upload-list--picture-card .el-upload-list__item,
 .el-upload-list--picture-card .el-upload-list__item-thumbnail {
   width: 100px !important;
@@ -254,31 +251,33 @@ img {
 //   width: 232px !important;
 // }
 
-.el-textarea__inner{
-  color: #606266;font-size: 14px;
+.el-textarea__inner {
+  color: #606266;
+  font-size: 14px;
   font-family: '微软雅黑';
 }
-.el-submenu .el-menu-item{
-  height: 40px;
-  line-height: 40px;;
-}
+
 /*修改滚动条样式*/
-div::-webkit-scrollbar{
-  width:6px;
-  height:10px;
+div::-webkit-scrollbar {
+  width: 6px;
+  height: 10px;
   /**/
 }
-div::-webkit-scrollbar-track{
+
+div::-webkit-scrollbar-track {
   background: rgb(239, 239, 239);
-  border-radius:2px;
+  border-radius: 2px;
 }
-div::-webkit-scrollbar-thumb{
+
+div::-webkit-scrollbar-thumb {
   background: #bfbfbf;
-  border-radius:10px;
+  border-radius: 10px;
 }
-div::-webkit-scrollbar-thumb:hover{
+
+div::-webkit-scrollbar-thumb:hover {
   background: #333;
 }
-div::-webkit-scrollbar-corner{
+
+div::-webkit-scrollbar-corner {
   background: #179a16;
 }
