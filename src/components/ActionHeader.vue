@@ -133,6 +133,7 @@ export default class ActionManage extends Vue {
       return {};
     }
   })
+  @Prop({ default: '' }) linkUrl: string
   filterForm: object; // 筛选条件
   private visible: boolean = false; // 数据显示条数dialog状态
   private size: string = "10"; // 默认每页显示10条
@@ -242,9 +243,11 @@ export default class ActionManage extends Vue {
         const filterUrl = qs.stringify(this.initFormHeader["params"]);
         this["exportFunc"](this.exportName, this.exportUrl + "/?" + filterUrl);
         break;
+      case 'link':
+        this.$router.push({path: this.linkUrl})
       // case 'exportTemplate':
       //    this["exportFunc"]('用户导入模板.xls', '/v1/admin/uploadFile/exportModel');
-      //    break
+         break;
     }
   }
 }
