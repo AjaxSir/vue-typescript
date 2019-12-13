@@ -447,7 +447,7 @@ export default class CardManage extends Vue {
 
   menuVisible() {
     /**@description 控制楼栋 */
-    if (this.rowSpan.row1 === 4) {
+    if (this.rowSpan.row1 === 3) {
       this.rowSpan = {
         row1: 0,
         row2: 24
@@ -494,7 +494,7 @@ export default class CardManage extends Vue {
 .menu-visible {
   position: absolute;
   top: 32vh;
-  left: -8px;
+  left: -11px;
 }
 
 .close-menu {

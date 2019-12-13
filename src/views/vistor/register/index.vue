@@ -27,24 +27,26 @@
       </el-col>
       <el-col :span="rowSpan.row2" class="table-col">
         <div class="rightContent">
-          <div class="imgInfo">
-            <div class="singleImg">
-              <h4>证件信息</h4>
-              <img v-if="vistorForm.photo" class="headImg" :src="vistorForm.photo" alt />
-              <img v-else class="headImg" :src="defaultHead" />
-            </div>
-          </div>
-          <div class="imgInfo">
-            <div class="singleImg">
-              <h4>来访者照片</h4>
-              <img v-if="vistorForm.photo" class="headImg" :src="vistorForm.photo" alt />
-              <img v-else class="headImg" :src="defaultHead" />
-            </div>
-          </div>
-          <div class="write">
-            <el-button size="small" @click="manualInput">{{inputStatus ? '刷卡注册' : '手动输入'}}</el-button>
-          </div>
           <div class="imgInfo" style="margin-left:80px;width:700px;height:auto;display:block">
+            <el-row :gutter="10" type="flex" class="write-relative">
+              <el-col :span="12">
+                <div class="singleImg">
+                  <h4>证件信息</h4>
+                  <img v-if="vistorForm.photo" class="headImg" :src="vistorForm.photo" alt />
+                  <img v-else class="headImg" :src="defaultHead" />
+                </div>
+              </el-col>
+              <el-col :span="12">
+                <div class="singleImg">
+                  <h4>来访者照片</h4>
+                  <img v-if="vistorForm.photo" class="headImg" :src="vistorForm.photo" alt />
+                  <img v-else class="headImg" :src="defaultHead" />
+                </div>
+              </el-col>
+              <div class="write">
+                <el-button size="small" @click="manualInput">{{inputStatus ? '刷卡注册' : '手动输入'}}</el-button>
+              </div>
+            </el-row>
             <el-form
               style="overflow:hidden"
               ref="dataForm"
@@ -393,12 +395,12 @@
               @click="handleLink"
             >查看登记记录</el-button>
           </div>
-        </div>
-        <div :class="rowSpan.row1===4 ? menuControl1 : menuControl2" @click="menuVisible">
-          <p class="close-menu">
-            <i v-if="rowSpan.row1===4" class="iconfont icon-left icon-class"></i>
-            <i v-else class="iconfont icon-zuo icon-class"></i>
-          </p>
+          <div :class="rowSpan.row1===3 ? menuControl1 : menuControl2" @click="menuVisible">
+            <p class="close-menu">
+              <i v-if="rowSpan.row1===3" class="iconfont icon-left icon-class"></i>
+              <i v-else class="iconfont icon-zuo icon-class"></i>
+            </p>
+          </div>
         </div>
       </el-col>
     </el-row>
@@ -439,8 +441,8 @@ export default class VistorRegister extends Vue {
   private loading: Boolean = false;
 
   private rowSpan: any = {
-    row1: 4,
-    row2: 20
+    row1: 3,
+    row2: 21
   };
   private menuControl1: String = "menu-control";
   private menuControl2: String = "menu-visible";
@@ -575,15 +577,15 @@ export default class VistorRegister extends Vue {
 
   menuVisible() {
     /**@description 控制楼栋 */
-    if (this.rowSpan.row1 === 4) {
+    if (this.rowSpan.row1 === 3) {
       this.rowSpan = {
         row1: 0,
         row2: 24
       };
     } else {
       this.rowSpan = {
-        row1: 4,
-        row2: 20
+        row1: 3,
+        row2: 21
       };
     }
   }
@@ -850,16 +852,23 @@ export default class VistorRegister extends Vue {
   }
 }
 
+.rightContent {
+  flex: 1;
+  box-shadow: 0px 6px 5px 0px lightgray;
+  position: relative;
+  padding-bottom: 10px;
+}
+
 .menu-control {
   position: absolute;
   top: 32vh;
-  left: -5px;
+  left: -10px;
 }
 
 .menu-visible {
   position: absolute;
   top: 32vh;
-  left: -8px;
+  left: -11px;
 }
 
 .close-menu {
@@ -881,26 +890,30 @@ export default class VistorRegister extends Vue {
 }
 .imgInfo {
   width: 360px;
-  height: 200px;
+  // height: 200px;
   display: inline-block;
   // margin-left: 30px;
   // flex-direction: column;
   // justify-content: center;
   .singleImg {
-    width: 200px;
-    height: 200px;
-    margin: 0 auto;
+    text-align: center;
+    // width: 200px;
+    // height: 200px;
+    // margin: 0 auto;
   }
 }
 .headImg {
-  width: 180px;
-  height: 180px;
+  width: 100px;
+  height: 100px;
+}
+.write-relative {
+  position: relative;
 }
 .write {
-  width: 720px;
-  height: 30px;
-  text-align: center;
-  // line-height: 30px;
+  position: absolute;
+  bottom: 0px;
+  left: 50%;
+  margin-left: -40px;
 }
 .vistorItemForm {
   // width: 300px !important;
@@ -942,8 +955,8 @@ export default class VistorRegister extends Vue {
 
 .basic-info {
   border: 1px solid #c0c4cc;
-  margin: 20px 5px;
-  padding: 20px;
+  margin: 10px 5px;
+  padding: 9px 20px;
   position: relative;
 }
 

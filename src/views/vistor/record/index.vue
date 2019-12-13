@@ -257,13 +257,13 @@
             :page-size="page.limit"
             :total="page.total"
           ></el-pagination>
-        </div>
 
-        <div :class="rowSpan.row1===3 ? menuControl1 : menuControl2" @click="menuVisible">
-          <p class="close-menu">
-            <i v-if="rowSpan.row1===3" class="iconfont icon-left icon-class"></i>
-            <i v-else class="iconfont icon-zuo icon-class"></i>
-          </p>
+          <div :class="rowSpan.row1===3 ? menuControl1 : menuControl2" @click="menuVisible">
+            <p class="close-menu">
+              <i v-if="rowSpan.row1===3" class="iconfont icon-left icon-class"></i>
+              <i v-else class="iconfont icon-zuo icon-class"></i>
+            </p>
+          </div>
         </div>
       </el-col>
     </el-row>
@@ -438,7 +438,7 @@ export default class VistorRegister extends Vue {
 
   menuVisible() {
     /**@description 控制楼栋 */
-    if (this.rowSpan.row1 === 4) {
+    if (this.rowSpan.row1 === 3) {
       this.rowSpan = {
         row1: 0,
         row2: 24
@@ -460,21 +460,27 @@ export default class VistorRegister extends Vue {
     flex: 1;
   }
 }
+.leftContent {
+  flex: none;
+  width: 200px;
+}
 
-.serial-num {
+.rightContent {
+  flex: 1;
+  box-shadow: 0px 6px 5px 0px lightgray;
   position: relative;
 }
 
 .menu-control {
   position: absolute;
   top: 32vh;
-  left: -5px;
+  left: -10px;
 }
 
 .menu-visible {
   position: absolute;
   top: 32vh;
-  left: -8px;
+  left: -11px;
 }
 
 .close-menu {

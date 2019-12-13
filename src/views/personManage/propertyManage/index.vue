@@ -554,7 +554,7 @@ export default class PropertyManage extends Vue {
 .menu-visible {
   position: absolute;
   top: 32vh;
-  left: -8px;
+  left: -11px;
 }
 .singleInfo{
   width: 33%;
