@@ -196,9 +196,9 @@ export default class ActionManage extends Vue {
     );
     this.visible = false;
 
-    // for (const key in this.filterForm) {
-    //   this.filterForm[key] = this.filterForm[key] ? this.filterForm[key] : null;
-    // }
+    for (const key in this.filterForm) {
+      this.filterForm[key] = this.filterForm[key] ? this.filterForm[key] : null;
+    }
     this["phoneNum"] = 0;
     console.log(this.initFormHeader["params"],this.filterForm, this.page)
     return this.initFormHeader;
