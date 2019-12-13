@@ -62,6 +62,23 @@
               ></el-input>
               <!-- <span>{{phoneNum}}/11</span> -->
             </div>
+
+            <div class="word-filter">
+              <span class="filter-name filter-rewrite">车辆状态:</span>
+              <el-select
+                class="select-class"
+                size="small"
+                v-model="filterForm.status"
+                placeholder="请选择车辆类型"
+              >
+                <el-option
+                  v-for="item in carTypeList"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </el-select>
+            </div>
           </div>
         </action-header>
       </el-col>
@@ -563,7 +580,12 @@ const DataTree = () => import("@/components/DataTree.vue");
   }
 })
 export default class CarList extends Vue {
-  filterForm: object = { carNo: null, ownerPhone: null, ownerName: null }; //根据关键字查询
+  filterForm: object = {
+    carNo: null,
+    ownerPhone: null,
+    ownerName: null,
+    status: null
+  }; //根据关键字查询
   private rowSpan: any = {
     row1: 4,
     row2: 20
@@ -631,6 +653,22 @@ export default class CarList extends Vue {
   private notifyInstance: any; //防止notify重复多次出现提示
   private noteRewrite: String = ""; //保存未改变的note
   updateArray: Array<string> = ["carNote"];
+
+  carTypeList: Array<Object> = [
+    //车辆类型筛选
+    {
+      label: "全部",
+      value: null
+    },
+    {
+      label: "正常",
+      value: "1"
+    },
+    {
+      label: "禁用",
+      value: "2"
+    }
+  ];
 
   initForm: object = {
     //获取车辆列表url

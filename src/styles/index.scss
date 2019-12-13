@@ -293,3 +293,11 @@ div::-webkit-scrollbar-thumb:hover {
 div::-webkit-scrollbar-corner {
   background: #179a16;
 }
+
+.el-time-panel {
+  left: -34px !important;
+}
+
+.el-range-editor--small .el-range-separator {
+  width: 20px;
+}
