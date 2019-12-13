@@ -31,6 +31,7 @@ export default class GlobalMimins extends Vue {
   public phoneNum: any = 0
   public regPos = /^\d+(\.\d+)?$/
   public upNum = /[^\d]/g
+  public hintPhone: any = false
   updateArray: Array<string> = [] /// 行内需要修改的状态
   initForm: object = {
     url: '',
@@ -347,12 +348,21 @@ export default class GlobalMimins extends Vue {
 
   clearableBtn(v) {
     //清除
-    if (v) {
-      this.phoneNum = v.length
-    } else {
-      this.phoneNum = 0
-    }
+    this.phoneNum = v ? v.length : 0
   }
+
+  hint(v: any) {
+    this.hintPhone = v ? true : false
+  }
+
+  hintFocus(e: any) {
+    this.hintPhone = e.target.value ? true : false
+  }
+
+  hintBlur() {
+    this.hintPhone = false
+  }
+
 
   //年龄
   ageNumber(e: any) {

@@ -104,7 +104,7 @@
 import { Component, Prop, Vue, Mixins } from "vue-property-decorator";
 import { Getter, Action, Mutation } from "vuex-class";
 import mixin from "@/config/minxins";
-import { editCommunity, getSceneInfo } from "@/api/screenApi.ts";
+import { editCommunity, getSceneInfo, getScene } from "@/api/screenApi.ts";
 
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 const DataTree = () => import("@/components/DataTree.vue");
@@ -161,7 +161,7 @@ export default class InformIssue extends Vue {
   }
 
   async getSceneData() {
-    const { data } = await getSceneInfo();
+    const { data } = await getScene();
     for (const key in this.communityForm) {
       this.communityForm[key] = data.data[key];
     }
