@@ -240,11 +240,23 @@ img {
   width: 91%;
 }
 
+// .ei-input-hint {
+//   line-height: 40px;
+//   color: #8494a7;
+//   text-align: center;
+//   width: 9%;
+// }
+
+.phone-position {
+  position: relative;
+}
+
 .ei-input-hint {
-  line-height: 40px;
-  color: #8494a7;
-  text-align: center;
-  width: 9%;
+  color: #C0C4CC !important;
+  position: absolute;
+  top: 0;
+  right: 26px;
+  // right: 0;
 }
 
 // .select-rewrite .el-input--small .el-input__inner {

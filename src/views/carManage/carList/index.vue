@@ -217,37 +217,42 @@
         label-width="80px"
         style="margin-right:40px;"
       >
-        <div style="display: flex;">
-          <el-form-item
-            class="ei-input-rewrite"
-            prop="ownerPhone"
-            label="电话"
-            :show-message="showMessage"
-            :error="errorMessage.ownerPhone"
+        <!-- <div style="display: flex;"> -->
+        <el-form-item
+          prop="ownerPhone"
+          label="电话"
+          :show-message="showMessage"
+          :error="errorMessage.ownerPhone"
+        >
+          <!-- :disabled="nameDisabled" -->
+          <!--  -->
+          <el-autocomplete
+            style="width:100%; position: relative;"
+            v-model="createForm[0].ownerPhone"
+            placeholder="请输入车主电话"
+            popper-class="my-autocomplete"
+            :fetch-suggestions="querySearch"
+            @select="handleSelectWatchlist"
+            :maxlength="11"
+            clearable
+            @keyup.native="phoneNumber"
+            @keydown.native="phoneNumber"
+            @change="clearableBtn"
+            @input="hint"
+            @focus="hintFocus"
+            @blur="hintBlur"
+            @mouseover.native="hint(createForm[0].ownerPhone)"
+            @mouseout.native="hint(createForm[0].ownerPhone)"
           >
-            <!-- :disabled="nameDisabled" -->
-            <!--  -->
-            <el-autocomplete
-              style="width:100%"
-              v-model="createForm[0].ownerPhone"
-              placeholder="请输入车主电话"
-              popper-class="my-autocomplete"
-              :fetch-suggestions="querySearch"
-              @select="handleSelectWatchlist"
-              :maxlength="11"
-              clearable
-              @keyup.native="phoneNumber"
-              @keydown.native="phoneNumber"
-              @change="clearableBtn"
-            >
-              <template slot-scope="{ item }">
-                <div class="name">{{ item.value }}</div>
-                <span class="addr">姓名:{{ item.name ? item.name : '未知'}}</span>
-              </template>
-            </el-autocomplete>
-          </el-form-item>
-          <p class="ei-input-hint">{{phoneNum}}/11</p>
-        </div>
+            <template slot-scope="{ item }">
+              <div class="name">{{ item.value }}</div>
+              <span class="addr">姓名:{{ item.name ? item.name : '未知'}}</span>
+            </template>
+          </el-autocomplete>
+          <span v-show="hintPhone" class="ei-input-hint">{{phoneNum}}/11</span>
+        </el-form-item>
+        <!-- <p class="ei-input-hint">{{phoneNum}}/11</p> -->
+        <!-- </div> -->
 
         <el-form-item label="姓名">
           <el-input :disabled="true" v-model="createForm[0].ownerUserName" placeholder="请输入姓名"></el-input>
