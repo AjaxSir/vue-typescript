@@ -31,7 +31,7 @@ export default class AppMain extends Vue{
       dom.style.width = '64px'
     } else {
       const dom = document.getElementById('navMenu') as HTMLElement
-      dom.style.width = '177px'
+      dom.style.width = '160px'
     }
   }
   @Watch('$route')
