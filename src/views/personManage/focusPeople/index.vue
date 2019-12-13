@@ -727,17 +727,17 @@ export default class FocusPeople extends Vue {
       { required: true, message: "请输入关注人员姓名", trigger: "blur" }
     ],
     emergencyPhone: [
-      { required: true, message: "请输入紧急联系人", trigger: "blur" }
+      { required: true, message: "请输入紧急联系人电话", trigger: "blur" }
     ],
     editEmergencyPhone: [
-      { required: false, message: "请输入紧急联系人", trigger: "blur" }
+      { required: false, message: "请输入紧急联系人电话", trigger: "blur" }
     ],
     // age: [{ required: false }, { type: "number", message: "年龄必须为数值" }],
     earlyGroupId: [
       { required: true, message: "请选择预警组别", trigger: "blur" }
     ],
     earlyPeriod: [
-      { required: true, message: "请选择预警周期", trigger: "blur" }
+      { required: true, message: "请输入预警周期", trigger: "blur" }
     ],
     typeId: [{ required: true, message: "请选择人员类别", trigger: "blur" }]
   };

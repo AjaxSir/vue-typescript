@@ -31,7 +31,7 @@ export default class AppMain extends Vue{
       dom.style.width = '64px'
     } else {
       const dom = document.getElementById('navMenu') as HTMLElement
-      dom.style.width = '177px'
+      dom.style.width = '160px'
     }
   }
   @Watch('$route')
@@ -58,7 +58,7 @@ export default class AppMain extends Vue{
   height: calc(100vh - 151px);
   overflow: auto;
   flex: none;
-  width: 177px;
+  // width: 177px;
   // box-shadow: 2px 0px 10px 2px lightgray;
 }
 .routerView{
