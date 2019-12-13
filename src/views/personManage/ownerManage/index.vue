@@ -278,12 +278,12 @@
       </span>
     </el-dialog>
 
-    <el-dialog :close-on-click-modal='false' title="创建用户" :visible.sync="dialogCreate" width="450px" :before-close="handleClose">
-          <el-form :model="Form" :rules="rules" ref='Forms' label-width="85px">
+    <el-dialog :close-on-click-modal='false' title="创建用户" :visible.sync="dialogCreate" width="440px" :before-close="handleClose">
+          <el-form :model="Form" :rules="rules" style="margin-right:40px" ref='Forms' label-width="85px">
 
 
             <el-form-item label="姓名:"  prop='name'>
-              <el-input  style="width: 280px" v-model="Form.name" placeholder='输入姓名'></el-input>
+              <el-input  v-model="Form.name" placeholder='输入姓名'></el-input>
             </el-form-item>
             <el-form-item label="性别:" prop='sex'>
               <el-switch
@@ -298,19 +298,35 @@
               </el-switch>
             </el-form-item>
             <el-form-item  label="电话:"  prop='phone'>
-              <el-input style="width: 280px" v-model.number="Form.phone" @input='constraintLength(Form.phone, "11")' placeholder='输入电话'></el-input>
+              <el-input
+                class="phone-position"
+                v-model="Form.phone"
+                placeholder="请输入电话"
+                :maxlength="11"
+                clearable
+
+                @keyup.native="UpNumber"
+                @keydown.native="UpNumber"
+                @change="clearableBtn"
+                @input="hint"
+                @focus="hintFocus"
+                @blur="hintBlur"
+                @mouseover.native="hint(Form.phone)"
+                @mouseout.native="hint(Form.phone)"
+              ></el-input>
+              <span v-show="hintPhone" class="ei-input-hint">{{phoneNum}}/11</span>
+              <!-- <el-input style="width: 280px" v-model.number="Form.phone" @input='constraintLength(Form.phone, "11")' placeholder='输入电话'></el-input> -->
             </el-form-item>
             <!-- <el-form-item class="floatForm" label="身份证号:"  prop='cardName'>
               <el-input v-model="Form.cardName"  placeholder='输入卡名'></el-input>
             </el-form-item> -->
             <el-form-item label="身份证号:"  label-width="85px"  prop='cardNo'>
-              <el-input style="width: 280px" maxlength="18"   v-model="Form.cardNo" placeholder='输入身份证号'></el-input>
+              <el-input  maxlength="18"   v-model="Form.cardNo" placeholder='输入身份证号'></el-input>
             </el-form-item>
             <el-form-item label="房屋:" style='clear:both'  prop='houseName'>
               <el-autocomplete
-                 style="width: 280px"
                 v-model="Form.houseName"
-
+                style='width:275px'
                 :fetch-suggestions="querySearch"
                 placeholder="房屋搜索查找需要关联的房屋"
                 @select="handleSelect"
@@ -330,7 +346,7 @@
               <span v-else>通过上面房屋搜索查找需要关联的房屋</span>
             </el-form-item>
             <el-form-item label="备注:"  prop='note'>
-              <el-input style="width: 280px" type='textarea' v-model="Form.note" placeholder='输入备注'></el-input>
+              <el-input  type='textarea' v-model="Form.note" placeholder='输入备注'></el-input>
             </el-form-item>
           </el-form>
       <span slot="footer" class="dialog-footer">

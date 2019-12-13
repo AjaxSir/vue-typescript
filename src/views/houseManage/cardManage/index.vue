@@ -182,7 +182,7 @@
       </span>
     </el-dialog>
 
-    <el-dialog :close-on-click-modal='false' title="创建门禁卡" :visible.sync="dialogCreate" width="500px" :before-close="handleClose">
+    <el-dialog :close-on-click-modal='false' title="创建门禁卡" :visible.sync="dialogCreate" width="450px" :before-close="handleClose">
       <el-form :model="Form" :rules="rules" ref='Forms' label-width="110px">
         <el-form-item label="卡号:"  prop='cardNo'>
           <el-input style="width:250px" v-model="Form.cardNo" placeholder='输入卡号'></el-input>
