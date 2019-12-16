@@ -54,6 +54,7 @@
                   />
                 </span>
                 <el-upload
+                  class="avatar-uploader"
                   multiple
                   :data="communityForm"
                   action
@@ -61,7 +62,8 @@
                   list-type="picture-card"
                   accept="image/jpeg, image/jpg, image/png"
                   name="picList"
-                  :limit="3"
+                  :show-file-list="false"
+                  :limit="7"
                   :auto-upload="false"
                   :headers="header"
                   :before-upload="beforeAvatarUpload"
@@ -72,11 +74,13 @@
                   :on-remove="removefile"
                   :on-error="errorUpdatePerson"
                 >
-                  <i class="el-icon-plus"></i>
+                  <!-- <i class="el-icon-plus"></i> -->
+                  <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+                  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                 </el-upload>
-                <el-dialog :visible.sync="dialogVisible" size="tiny">
+                <!-- <el-dialog :visible.sync="dialogVisible" size="tiny">
                   <img width="100px" :src="imageUrl" alt />
-                </el-dialog>
+                </el-dialog>-->
               </div>
             </el-form-item>
 
@@ -169,7 +173,7 @@ export default class InformIssue extends Vue {
   }
 
   beyondFile(files, fileList) {
-    this.$message({ message: "只能上传3张", type: "error" });
+    this.$message({ message: "只能上传7张", type: "error" });
   }
 
   changefile(file, fileList) {

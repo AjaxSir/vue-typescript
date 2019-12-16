@@ -22,7 +22,7 @@ export function getName() {
 }
 
 export function setName(name) {
-  return setCookie(NameKey, name)
+  return setCookie(NameKey, name,{ expires: 365 })
 }
 
 export function removeName() {
@@ -34,7 +34,7 @@ export function getCode(){
 }
 
 export function setCode(name) {
-  return setCookie(CodeKey, name)
+  return setCookie(CodeKey, name,{ expires: 365 })
 }
 
 export function removeCode() {

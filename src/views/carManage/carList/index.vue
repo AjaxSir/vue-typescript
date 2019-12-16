@@ -119,10 +119,6 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="ownerName" label="车主" :show-overflow-tooltip="true"></el-table-column>
-
-            <el-table-column prop="ownerPhone" label="电话" :show-overflow-tooltip="true"></el-table-column>
-
             <el-table-column prop="carNo" label="车牌号">
               <template slot-scope="scope">
                 <el-button
@@ -133,28 +129,9 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="carType" label="车型" :show-overflow-tooltip="true"></el-table-column>
+            <el-table-column prop="ownerName" label="车主" :show-overflow-tooltip="true"></el-table-column>
 
-            <el-table-column prop="modal" label="品牌" :show-overflow-tooltip="true"></el-table-column>
-
-            <el-table-column
-              prop="lastInTime"
-              label="最近一次访问"
-              :show-overflow-tooltip="true"
-              min-width="110px"
-            ></el-table-column>
-
-            <el-table-column prop="lastInPhoto" label="最近抓拍图片" min-width="110px">
-              <template slot-scope="scope">
-                <img
-                  class="capture-img"
-                  @mouseout="imgVisible=false"
-                  @mouseover="imgVisible=true,bigImg=scope.row.lastInPhoto"
-                  :src="scope.row.lastInPhoto"
-                  alt
-                />
-              </template>
-            </el-table-column>
+            <el-table-column prop="ownerPhone" label="电话" :show-overflow-tooltip="true"></el-table-column>
 
             <el-table-column prop="status" label="状态">
               <template slot-scope="scope">
@@ -178,6 +155,29 @@
                 </el-dropdown>
               </template>
             </el-table-column>
+
+            <el-table-column
+              prop="lastInTime"
+              label="最近一次访问"
+              :show-overflow-tooltip="true"
+              min-width="110px"
+            ></el-table-column>
+
+            <el-table-column prop="lastInPhoto" label="最近抓拍图片" min-width="110px">
+              <template slot-scope="scope">
+                <img
+                  class="capture-img"
+                  @mouseout="imgVisible=false"
+                  @mouseover="imgVisible=true,bigImg=scope.row.lastInPhoto"
+                  :src="scope.row.lastInPhoto"
+                  alt
+                />
+              </template>
+            </el-table-column>
+
+             <el-table-column prop="modal" label="品牌" :show-overflow-tooltip="true"></el-table-column>
+
+            <el-table-column prop="carType" label="车型" :show-overflow-tooltip="true"></el-table-column>
 
             <el-table-column prop="note" align="center" label="备注" :show-overflow-tooltip="true">
               <template slot-scope="{row}">
