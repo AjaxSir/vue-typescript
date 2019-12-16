@@ -923,37 +923,37 @@ export default class FocusPeople extends Vue {
 
   createFocusPeople() {
     /**@description 新增关注人员 */
-    this.verification(this.createForm["emergencyPhone"], "emergencyPhone");
+    // this.verification(this.createForm["emergencyPhone"], "emergencyPhone");
     // if (this.createForm["age"] === "") {
     //   this.createForm["age"] = null;
     // }
-    if (
-      this.errorMessage["emergencyPhone"] === "" &&
-      this.createForm["emergencyPhone"].length === 11
-    ) {
-      if (this.createForm["scenceUser"].length > 0) {
-        this.$refs["dataForm"]["validate"](valid => {
-          if (valid) {
-            var form = {
-              ...this.createForm,
-              scenceUserId: this.createForm["scenceUser"][0],
-              name: this.createForm["scenceUser"][1]
-            };
-            delete form["scenceUser"];
-            form["earlyPeriod"] = Number(form["earlyPeriod"]);
-            addFocusPeople(form).then(res => {
-              this.handleClose();
-              this["fetchData"](this.initForm);
-              this["notify"]("success", "成功", "添加关注人员成功");
-            });
-          }
+    // if (
+    //   this.errorMessage["emergencyPhone"] === "" &&
+    //   this.createForm["emergencyPhone"].length === 11
+    // ) {
+    //   if (this.createForm["scenceUser"].length > 0) {
+    this.$refs["dataForm"]["validate"](valid => {
+      if (valid) {
+        var form = {
+          ...this.createForm,
+          scenceUserId: this.createForm["scenceUser"][0],
+          name: this.createForm["scenceUser"][1]
+        };
+        delete form["scenceUser"];
+        form["earlyPeriod"] = Number(form["earlyPeriod"]);
+        addFocusPeople(form).then(res => {
+          this.handleClose();
+          this["fetchData"](this.initForm);
+          this["notify"]("success", "成功", "添加关注人员成功");
         });
-      } else {
-        this.errorMessage["scenceUser"] = "姓名不能为空";
       }
-    } else {
-      this["message"]("请输入正确的电话号码");
-    }
+    });
+    //   } else {
+    //     this.errorMessage["scenceUser"] = "姓名不能为空";
+    //   }
+    // } else {
+    //   this["message"]("请输入正确的电话号码");
+    // }
   }
 
   editTarget(item) {
@@ -1056,7 +1056,7 @@ export default class FocusPeople extends Vue {
       // age: "",
       earlyGroupId: "",
       emergencyPhone: "",
-      earlyPeriod: 0,
+      earlyPeriod: null,
       typeId: "",
       note: ""
     };
