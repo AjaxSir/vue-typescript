@@ -15,7 +15,7 @@
           size="small"
           icon="el-icon-plus"
           @click="handleHouse"
-        >创建</el-button>
+        >添加</el-button>
         <el-button
           v-else-if="btnStatus === 2"
           class="createBtn"

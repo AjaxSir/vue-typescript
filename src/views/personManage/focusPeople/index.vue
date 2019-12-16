@@ -160,7 +160,7 @@
               <template slot-scope="scope">
                 <el-tag
                   size="small"
-                  style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
+                  style="border-radius: 50px;padding: 0 10px;"
                   :type="scope.row.isNormal ? 'success' : 'danger'"
                 >{{ scope.row.isNormal? "正常" : "异常" }}</el-tag>
               </template>
