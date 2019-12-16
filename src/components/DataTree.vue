@@ -25,17 +25,20 @@
       node-key="id"
       :props='dataFormate'
       accordion
+      :highlight-current='true'
       :default-expand-all='false'
       :expand-on-click-node="false"
       @node-click="handleNodeClick"
     >
       <span
-        class="custom-tree-node"
         slot-scope="{ node }"
         @mouseenter="MouseNnter(node.id)"
         @mouseleave="MouseLeave(node.id)"
+        :class='[ "custom-tree-node"]'
       >
-        <span>{{ node.label }} <i v-show='selectId === node.data.id' class="el-icon-check"></i> </span>
+        <span>{{ node.label }}
+          <!-- <i v-show='selectId === node.data.id' class="el-icon-check"></i> -->
+           </span>
         <div>
           <el-dropdown @command='commandTreeClick' placement="bottom-start">
             <i v-show="node.id===showMenu" class="iconfont icon-menu"></i>
@@ -61,11 +64,11 @@
       <el-tabs  v-if='nodeAction !== "updateGroup"' v-model="activeName" type="card">
       <el-tab-pane label="批量添加" name="first">
         <el-form  ref='batchForm' :rules='batchRules' :model="batchForm" label-width="80px">
-          <el-form-item prop='min' label="编号:">
+          <!-- <el-form-item prop='min' label="编号:">
             <el-input  clearable style="width:120px" placeholder="开始编号" v-model="batchForm.min"></el-input>
               至
             <el-input clearable placeholder="结束编号"  style="width:120px" v-model="batchForm.max"></el-input>
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item label="序号单位:" prop='serialNumberUnit' label-width="85px">
             <el-select style="width:130px" v-model="batchForm.serialNumberUnit" placeholder="请选择">
               <el-option
@@ -106,10 +109,10 @@
       </el-tab-pane>
       <el-tab-pane label="手动添加" name="second">
         <el-form ref='HouseForm' :rules='HouseRules' :model="HouseForm">
-        <el-form-item label="序号:" prop='serialNumber' label-width="85px">
+        <!-- <el-form-item label="序号:" prop='serialNumber' label-width="85px">
           <el-input clearable @input='autoName'  placeholder="填写分组的序号" style="width:240px" v-model="HouseForm.serialNumber" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="序号单位:" prop='serialNumberUnit' label-width="85px">
+        </el-form-item> -->
+        <el-form-item label="单位:" prop='serialNumberUnit' label-width="85px">
           <el-select @change='autoName' style="width:110px" v-model="HouseForm.serialNumberUnit" placeholder="请选择">
             <el-option
               v-for="item in Tags"
@@ -152,10 +155,10 @@
       </el-tab-pane>
       </el-tabs>
       <el-form v-else ref='HouseForms' :rules='HouseRules' :model="HouseForm">
-        <el-form-item label="序号:" prop='serialNumber' label-width="85px">
+        <!-- <el-form-item label="序号:" prop='serialNumber' label-width="85px">
           <el-input clearable @input='autoName'  placeholder="填写分组的序号" style="width:240px" v-model="HouseForm.serialNumber" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="序号单位:" prop='serialNumberUnit' label-width="85px">
+        </el-form-item> -->
+        <el-form-item label="单位:" prop='serialNumberUnit' label-width="85px">
           <el-select @change='autoName' style="width:110px" v-model="HouseForm.serialNumberUnit" placeholder="请选择">
             <el-option
               v-for="item in Tags"
@@ -209,10 +212,10 @@
           <el-input clearable style="width:280px" v-model="UnitForm.name" autocomplete="off"></el-input>
           <!-- <el-input style='width:50px' v-model="UnitForm.max" autocomplete="off"></el-input> -->
         </el-form-item>
-        <el-form-item v-if='!this.UnitForm.id' label="序号:" prop='serialNumber' label-width="85px">
-          <el-input clearable style="width:280px" v-model="UnitForm.serialNumber" autocomplete="off"></el-input>
+        <!-- <el-form-item v-if='!this.UnitForm.id' label="序号:" prop='serialNumber' label-width="85px">
+          <el-input clearable style="width:280px" v-model="UnitForm.serialNumber" autocomplete="off"></el-input> -->
           <!-- <el-input style='width:50px' v-model="UnitForm.max" autocomplete="off"></el-input> -->
-        </el-form-item>
+        <!-- </el-form-item> -->
         <el-form-item v-if='!this.UnitForm.id' label="序号单位:" prop='serialNumberUnit' label-width="85px">
           <el-select style="width:140px" v-model="UnitForm.serialNumberUnit" placeholder="请选择">
             <el-option
@@ -358,6 +361,7 @@
     <el-dialog
     :close-on-click-modal='false' width="800px" title="设备列表" :visible.sync="bindDeviceListVisible">
       <el-table :data="DeviceList"
+      ref='deviceList'
       @selection-change="handleSelectionChange">
         <el-table-column type='selection' width="50"></el-table-column>
         <el-table-column type='index' label="序号" align='center' width="50"></el-table-column>
@@ -519,10 +523,26 @@ export default class DataTree extends Vue {
   }
   // 获取设备列表
   fetchDeviceList(page: number) {
-    getDeviceList({ page, limit: 10 }).then(res => {
+    let bindIndex: Array<number> = []
+    getDeviceList({ page, limit: 10 }).then((res) => {
+      res.data.data.records.forEach((ele, index: number) => {
+        this.bindDeviceList.forEach(item => {
+          if (ele['id'] === item['deviceId']) {
+            bindIndex.push(index)
+          }
+        })
+      })
       this.DeviceList = res.data.data.records
       this.devicePage['total'] = res.data.data.total
+      this.$nextTick(() => {
+        if (this.$refs['deviceList']) {
+          bindIndex.forEach(i => {
+            this.$refs['deviceList']['toggleRowSelection'](this.DeviceList[i])
+          })
+        }
+      })
     })
+
   }
   // 自动补充别名
   autoName() {
@@ -628,6 +648,7 @@ export default class DataTree extends Vue {
     this.$refs['buildings']["validate"](valid => {
       if (valid) {
         if (!this.UnitForm['id']) {
+          console.log('confirm', this.UnitForm)
           addBuilding(this.UnitForm).then(res => {
             if(res.data.code === 200) {
               this.$message.success('新增成功')
@@ -653,7 +674,6 @@ export default class DataTree extends Vue {
     getUnitList(type).then(res => {
       if (type === 'build') {
         this.UnitTags = res.data.data
-        console.log(res.data.data)
         this.UnitForm['serialNumberUnit'] = this.UnitTags[0]['name']
       } else {
         this.Tags = res.data.data
@@ -832,11 +852,11 @@ export default class DataTree extends Vue {
         });
         break
       case 'addBuilding' :
+
+        this.closeDialog()
         this.UnitForm['buildingGroupId'] = treeData.data.id
         this.UnitForm['id'] = ''
-        this.closeDialog()
         this.HouseUnitVisible = true
-
         break
       case 'updateGroup':
         this.activeName = 'second'
@@ -931,6 +951,10 @@ export default class DataTree extends Vue {
 </style>
 
 <style lang="scss" scoped>
+.active{
+  background-color: #409EFF;
+  color: white
+}
 .content {
   width: 100%;
   height: 70vh;

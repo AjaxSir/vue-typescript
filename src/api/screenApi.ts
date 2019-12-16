@@ -32,3 +32,38 @@ export function getPassListChart(params: object) {
     params
   })
 }
+
+// 车辆通行记录
+export function getCarPassListChart(params: object) {
+  return _axios({
+    url: '/admin/car-pass/report',
+    method: 'get',
+    params
+  })
+}
+
+// 获取访客车辆通行统计
+export function getVistorCarList(params: object) {
+  return _axios({
+    url: '/admin/car-pass/report',
+    method: 'get',
+    params
+  })
+}
+
+// /admin/count-report/orderVisitor 访客排序  /admin/count-report/orderBeVisited被访人排序
+export function vistorSort(params: object) {
+  return _axios({
+    url: '/admin/count-report/orderVisitor',
+    method: 'get',
+    params
+  })
+}
+
+export function vistoredSort(params:object) {
+  return _axios({
+    url: '/admin/count-report/orderBeVisited',
+    method: 'get',
+    params
+  })
+}

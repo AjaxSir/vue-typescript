@@ -98,6 +98,14 @@ export function getPassAddress(name:string) {
     }
   })
 }
+// 修改住户的远程开门 车辆 访客权限
+export function updateRoleHouse(data: object) {
+  return _axios({
+    url: '/admin/usrHouseLink',
+    method: 'put',
+    data
+  })
+}
 
 /********* 物业人员 *********** */
 // 新增物业人员

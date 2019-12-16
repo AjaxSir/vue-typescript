@@ -17,14 +17,14 @@
           </el-dropdown-menu>
           <div slot="houseNum">
             <div class="word-filter">
-              <span class="filter-name">房屋编号:</span>
+              <span class="filter-name">关键字:</span>
               <el-input clearable  
               @keyup.enter.native="emitFetchData"
-              style="width:215px" class="input-filter" v-model="filterForm.keys" placeholder='输入房屋编号筛选' size="small"></el-input>
+              style="width:215px" class="input-filter" v-model="filterForm.keys" placeholder='输入关键字筛选' size="small"></el-input>
             </div>
             <div class="word-filter">
-              <span class="filter-name">状态:</span>
-              <el-select class="input-filter" size="small" v-model="filterForm.status" placeholder="请选择">
+              <span class="filter-name">房屋状态:</span>
+              <el-select class="input-filter" size="small" v-model="filterForm.status" placeholder="请选择房屋状态筛选">
                 <el-option label="所有" value=""></el-option>
                 <el-option label="业主居住" value="1"></el-option>
                 <el-option label="出租中" value="2"></el-option>
@@ -101,21 +101,6 @@
             <el-table-column width="120" align='center' prop="type" label="状态">
               <template slot-scope="{row}">
                 <span>{{ row.status | status }}</span>
-                <!-- <el-dropdown @command="changeStatus"
-                trigger="click">
-                  <span class="el-dropdown-link">
-                    <el-tag
-                    size="small"
-                    style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
-                    >{{ row.status | status }}
-                    </el-tag>
-                  </span>
-                  <el-dropdown-menu  slot="dropdown">
-                    <el-dropdown-item :command='ComponentCommand("1", row)'>业主居住</el-dropdown-item>
-                    <el-dropdown-item :command='ComponentCommand("2", row)'>出租中</el-dropdown-item>
-                    <el-dropdown-item :command='ComponentCommand("3", row)'>闲置</el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown> -->
               </template>
             </el-table-column>
 
@@ -190,38 +175,44 @@
     >
       <el-tabs type="card" v-model="activeName">
         <el-tab-pane label="详细信息" name="详细信息">
-          <el-row style='margin-top:10px'>
-            <el-col :span='6'>所在楼层:{{ detailDialog.storeyNum }}</el-col>
-            <el-col :span='6'>所在单元:{{ detailDialog.buildingName }}</el-col>
-            <el-col :span='6'>房屋编号:{{ detailDialog.houseName }}</el-col>
-            <el-col :span='6'>注册时间:{{ detailDialog.createTime }}</el-col>
+          <el-row style='margin-top:10px;padding:10px 20px 0px 20px'>
+            <el-col :span='6'>所在楼层: &nbsp;{{ detailDialog.storeyNum }} 层</el-col>
+            <el-col :span='6'>所在单元: &nbsp;{{ detailDialog.buildingName }}</el-col>
+            <el-col :span='6'>房屋编号: &nbsp;{{ detailDialog.houseName }}</el-col>
+            <el-col :span='6'>注册时间: &nbsp;{{ detailDialog.createTime && detailDialog.createTime.substr(0, 10) }}</el-col>
           </el-row>
-          <el-row style='margin-top:10px'>
-            <el-col :span='6'>注册人数:{{ detailDialog.personCnt }}</el-col>
-            <el-col :span='6'>房屋状态:{{ detailDialog.status | status }}</el-col>
-            <!-- <el-col :span='6'>业主电话:{{ detailDialog.phone || '--' }}</el-col> -->
+          <el-row style='margin-top:10px;padding:0px 20px'>
+            <el-col :span='6'>注册人数: &nbsp;{{ detailDialog.personCnt }}人</el-col>
+            <el-col :span='6'>房屋状态: &nbsp;{{ detailDialog.status | status }}</el-col>
+            <el-col :span='6'>业主电话: &nbsp;{{ detailDialog.phone || '--' }}</el-col>
           </el-row>
-          <div style='margin-top:10px;'>
+          <div style='margin-top:10px;padding:0px 20px'>
             备注：<el-input style='' type='textarea' v-model='detailDialog.note'></el-input>
           </div>
 
         </el-tab-pane>
         <el-tab-pane label="在住人员" name="在住人员">
           <el-table :data="dtailTable" style="width: 100%">
-            <el-table-column align='center' prop="userName" label="姓名"></el-table-column>
-            <el-table-column align='center' prop="userPhone" label="电话"></el-table-column>
-            <el-table-column align='center' prop="type" label="类型">
+            <el-table-column align='center' width="50" :show-overflow-tooltip='true' type='index' label="序号"></el-table-column>
+            <el-table-column align='center' :show-overflow-tooltip='true' prop="userName" label="姓名"></el-table-column>
+            <el-table-column align='center' :show-overflow-tooltip='true' prop="userPhone" label="电话"></el-table-column>
+            <el-table-column align='center'  width="80" prop="type" label="人员类型">
               <template slot-scope="{row}">
                 <span>{{ row.type | type }}</span>
               </template>
             </el-table-column>
-            <el-table-column align='center' prop="status" label="状态">
+            <el-table-column  width="80" align='center' prop="status" label="状态">
               <template slot-scope="{row}">
                 <span>{{ row.status | peopleStatus }}</span>
               </template>
             </el-table-column>
-            <el-table-column align='center' prop="createTime" label="注册时间"></el-table-column>
-            <el-table-column align='center' prop="enableInviteCar" label="邀请车辆">
+            <el-table-column align='center' :show-overflow-tooltip='true' prop="createTime" label="注册时间"></el-table-column>
+            <el-table-column align='center' prop="note" label="备注">
+              <template slot-scope="{row}">
+                <span>{{ row.note ? row.note : '暂无' }}</span>
+              </template>
+            </el-table-column>
+            <!-- <el-table-column align='center' prop="enableInviteCar" label="邀请车辆">
               <template slot-scope="{row}">
                 <span>{{ row.enableInviteCar === '1' ? '允许' : '禁止' }}</span>
               </template>
@@ -235,7 +226,7 @@
               <template slot-scope="{row}">
                 <span>{{ row.enableRemoteOpen === '1' ? '允许' : '禁止' }}</span>
               </template>
-            </el-table-column>
+            </el-table-column> -->
           </el-table>
         </el-tab-pane>
       </el-tabs>

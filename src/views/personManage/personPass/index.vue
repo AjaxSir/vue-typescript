@@ -58,7 +58,7 @@
                   format='yyyy - MM - dd HH:mm:ss'
                   value-format="yyyy-MM-dd HH:mm:ss"
                   start-placeholder="开始日期"
-                  :clearable='false'
+                  :clearable='true'
                   :picker-options="pickerOptions"
                   end-placeholder="结束日期">
                 </el-date-picker>
@@ -111,6 +111,8 @@
               <template slot-scope="{row}">
                 <span>{{ row.passMethod | passMethod }}</span>
               </template>
+            </el-table-column>
+            <el-table-column  :show-overflow-tooltip='true' width="120" align='center' prop="inOut" label="出入类型">
             </el-table-column>
             <el-table-column  :show-overflow-tooltip='true' width="120" align='center' prop="devId" label="设备编号">
               <template slot-scope="scope">
@@ -246,9 +248,13 @@ export default class PersonPass extends Vue {
   }
   // 时间变化
     timeRangeChange(val) {
-      this.filterForm['startPassTime'] = val[0]
-      this.filterForm['endPassTime'] =  val[1]
-      console.log(this.filterForm)
+      if (val && val.length) {
+        this.filterForm['startPassTime'] = val[0]
+        this.filterForm['endPassTime'] =  val[1]
+      } else {
+        this.filterForm['startPassTime'] = ''
+        this.filterForm['endPassTime'] =  ''
+      }
     }
     setTime() {
       const today = new Date().getTime()

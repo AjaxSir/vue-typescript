@@ -106,25 +106,48 @@
                 />
               </template>
             </el-table-column>
-            <!-- <el-table-column prop="note" align="center" label="用户备注">
-              <template slot-scope="{row}">
-                <span class="rowUpdate" v-if='!row.noteStatus' @click='row.noteStatus = !row.noteStatus'>{{ row.note }}</span>
-                <el-input type='textarea'
-                 @keyup.enter.native="confirmUpdateNote(row)"
-                 @blur="noteBlur(row)"
-                 v-model="noteString"
-                 v-else
-                 placeholder="输入备注"></el-input>
-              </template>
-            </el-table-column> -->
             <el-table-column :show-overflow-tooltip='true' width="100" prop="car" align="center" label="访客车辆">
-              <template slot-scope="{row}">
+              <!-- <template slot-scope="{row}">
                 <span>{{ row.house[0] && row.house[0].enableInviteCar === '1' ? '允许' : '禁止' }}</span>
+              </template> -->
+              <template slot-scope="{row}">
+                <el-dropdown @command="changeStatus"
+                trigger="click">
+                  <span class="el-dropdown-link">
+                    <el-tag
+                    size="small"
+                    :type="row.house[0] && row.house[0].enableInviteCar === '1' ? 'primary' : 'warning'"
+                    style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
+                    >{{ row.house[0] && row.house[0].enableInviteCar === '1' ? '允许' : '禁止' }}
+                    </el-tag>
+                  </span>
+                  <el-dropdown-menu  slot="dropdown">
+                    <el-dropdown-item :command='ComponentCommand("1", "car", row)'>允许</el-dropdown-item>
+                    <el-dropdown-item :command='ComponentCommand("0", "car", row)'>禁止</el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
               </template>
             </el-table-column>
             <el-table-column :show-overflow-tooltip='true' prop="car" width="100" align="center" label="邀请访客">
-               <template slot-scope="{row}">
+               <!-- <template slot-scope="{row}">
                 <span>{{ row.house[0] && row.house[0].enableInviteVisitor === '1' ? '允许' : '禁止' }}</span>
+              </template> -->
+              <template slot-scope="{row}">
+                <el-dropdown @command="changeStatus"
+                trigger="click">
+                  <span class="el-dropdown-link">
+                    <el-tag
+                    size="small"
+                    :type="row.house[0] && row.house[0].enableInviteVisitor === '1' ? 'primary' : 'warning'"
+                    style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
+                    >{{ row.house[0] && row.house[0].enableInviteVisitor === '1' ? '允许' : '禁止' }}
+                    </el-tag>
+                  </span>
+                  <el-dropdown-menu  slot="dropdown">
+                    <el-dropdown-item :command='ComponentCommand("1", "vistor", row)'>允许</el-dropdown-item>
+                    <el-dropdown-item :command='ComponentCommand("0", "vistor", row)'>禁止</el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
               </template>
             </el-table-column>
             <el-table-column prop="house_info" :show-overflow-tooltip='true' align="center" label="房屋编号">
@@ -133,8 +156,25 @@
               </template>
             </el-table-column>
             <el-table-column :show-overflow-tooltip='true'  width="100" prop="far_door" align="center" label="远程开门">
-              <template slot-scope="{row}">
+              <!-- <template slot-scope="{row}">
                 <span>{{ row.house[0] && row.house[0].enableRemoteOpen === '1' ? '允许' : '禁止' }}</span>
+              </template> -->
+              <template slot-scope="{row}">
+                <el-dropdown @command="changeStatus"
+                trigger="click">
+                  <span class="el-dropdown-link">
+                    <el-tag
+                    size="small"
+                    :type="row.house[0] && row.house[0].enableRemoteOpen === '1' ? 'primary' : 'warning'"
+                    style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
+                    >{{ row.house[0] && row.house[0].enableRemoteOpen === '1' ? '允许' : '禁止' }}
+                    </el-tag>
+                  </span>
+                  <el-dropdown-menu  slot="dropdown">
+                    <el-dropdown-item :command='ComponentCommand("1", "remoteDoor", row)'>允许</el-dropdown-item>
+                    <el-dropdown-item :command='ComponentCommand("0", "remoteDoor", row)'>禁止</el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
               </template>
             </el-table-column>
             <el-table-column :show-overflow-tooltip='true'  width="100" prop="far_door" align="center" label="用户类型">
@@ -286,16 +326,11 @@
               <el-input clearable v-model="Form.name" placeholder='输入姓名'></el-input>
             </el-form-item>
             <el-form-item label="性别:" prop='sex'>
-              <el-switch
-
-                v-model="Form.sex"
-                 active-value="1"
-                 active-color="#13ce66"
-                inactive-color="#ff4949"
-                inactive-value="0"
-                active-text="男"
-                inactive-text="女">
-              </el-switch>
+              <el-select style="position: relative;left: -6px;width:275px" class="input-filter" size="small" v-model="Form.sex" placeholder="请选择">
+                <el-option label="请选择" value=""></el-option>
+                <el-option label="男" value="1"></el-option>
+                <el-option label="女" value="0"></el-option>
+              </el-select>
             </el-form-item>
             <el-form-item  label="电话:"  prop='phone'>
               <el-input
@@ -320,8 +355,16 @@
             <!-- <el-form-item class="floatForm" label="身份证号:"  prop='cardName'>
               <el-input v-model="Form.cardName"  placeholder='输入卡名'></el-input>
             </el-form-item> -->
-            <el-form-item label="身份证号:"  label-width="85px"  prop='cardNo'>
-              <el-input  maxlength="18"  clearable  v-model="Form.cardNo" placeholder='输入身份证号'></el-input>
+            <el-form-item label="证件类型:"  label-width="85px"  prop='cardName'>
+              <el-select style="position: relative;left: -6px;width:275px" class="input-filter" size="small" v-model="Form.cardName" placeholder="请选择证件类型">
+                <el-option label="身份证" value="身份证"></el-option>
+                <el-option label="护照" value="护照"></el-option>
+                <el-option label="港澳居民来往内地通行证" value="港澳居民来往内地通行证"></el-option>
+                <el-option label="其它" value="其它"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item :label="Form.cardName === '港澳居民来往内地通行证' ? '通行证' : Form.cardName"  label-width="85px"  prop='cardNo'>
+              <el-input  :maxlength="Form.cardName === '身份证' ? '18' : '100'"  clearable  v-model="Form.cardNo" :placeholder='"输入" + Form.cardName + "证件号"'></el-input>
             </el-form-item>
             <el-form-item label="房屋:" style='clear:both'  prop='houseName'>
               <el-autocomplete
@@ -438,7 +481,8 @@ import { Component, Prop, Vue, Mixins } from "vue-property-decorator";
 import { Getter, Action, Mutation } from "vuex-class";
 import { addPeople,
   updateUserPhone,
-  updateUserNote } from '@/api/peopleApi.ts'
+  updateUserNote,
+  updateRoleHouse } from '@/api/peopleApi.ts'
 import _axios from '@/plugins/axios.js'
 import mixin from "@/config/minxins";
 import { searchSuggestHouse } from '@/api/houseApi.ts'
@@ -492,9 +536,9 @@ export default class OwnerManage extends Vue {
   personImg: string = require("@/assets/defaultPerson.png") // 人员头像
   Form: any = {
     name: '',
-    cardName: '身份证号',
+    cardName: '身份证',
     cardNo: '',
-    sex: '1',
+    sex: '',
     phone: '',
     house: [],
     note: '',
@@ -522,6 +566,12 @@ export default class OwnerManage extends Vue {
     name: [
             { required: true, message: '请输入姓名', trigger: 'blur' }
           ],
+    sex: [
+            { required: true, message: '请选择性别', trigger: 'change' }
+          ],
+    cardName: [
+      { required: true, message: '请选择证件', trigger: 'change' }
+    ],
     phone: [
             { required: true, validator: (rule, value, callback) => {
                 if (!this['is_Phone'](value)) {
@@ -586,6 +636,37 @@ export default class OwnerManage extends Vue {
     this.$nextTick(() => {
       const input = this.$refs[row.id] as HTMLElement
       input.focus()
+    })
+  }
+    ComponentCommand(Status: string, type:string, row: object) {
+    return {
+      ...row,
+      type,
+      Status
+    }
+  }
+  // 修改远程开门，邀请访客，邀请车辆
+  changeStatus(Obj: Object) {
+    console.log(Obj)
+    let data:object = {
+      id: Obj['house'][0]['id']
+    }
+    switch (Obj['type']) {
+      case 'car':
+        data['enableInviteCar'] = Obj['Status']
+        break
+      case 'vistor':
+        data['enableInviteVisitor'] = Obj['Status']
+        break
+      case 'remoteDoor':
+        data['enableRemoteOpen'] = Obj['Status']
+        break
+    }
+    updateRoleHouse(data).then(res => {
+      if (res.data.code === 200) {
+        this.$message.success('设置成功')
+        this.fetchData(this.initForm)
+      }
     })
   }
 // 确定添加用户

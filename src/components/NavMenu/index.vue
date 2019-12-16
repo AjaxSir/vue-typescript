@@ -65,7 +65,7 @@
       <span slot="title">访客登记</span>
     </el-menu-item>
 
-    <el-menu-item
+    <!-- <el-menu-item
       @click="tostatementManage"
       :class="[locRoute.indexOf('statementManage') !== -1 ? 'activeLink': '']"
       index="74"
@@ -75,7 +75,7 @@
         :style="[locRoute.indexOf('statementManage') !== -1 ? styleObject: '']"
       ></i>
       <span slot="title">报表管理</span>
-    </el-menu-item>
+    </el-menu-item> -->
 
     <el-menu-item @click="toBigScreen" index="0">
       <!-- <router-link to='/screen/statistics'> -->
@@ -112,9 +112,11 @@ export default class NavMenu extends Vue {
     const route = [].concat(this.$router["options"].routes); // [ ...route ] = this.$router['options'].routes
     route.splice(0, 2) &&
       route.splice(4, 1) &&
-      route.splice(3, 1) &&
-      route.splice(4, 3);
-
+      route.splice(3, 1)
+       &&
+      route.splice(4, 1)
+      &&
+      route.splice(5, 1);
     return route;
   }
   @Watch("$route", { immediate: true })

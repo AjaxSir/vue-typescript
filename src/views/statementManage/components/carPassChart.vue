@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-card class="box-card">
       <div slot="header" class="clearfix">
-        <span>人员通行统计</span>
+        <span>车辆通行统计</span>
       </div>
       <div class="text item">
         <el-row>
@@ -14,7 +14,7 @@
             </el-select>
           </el-col>
           <el-col :span='4'>
-             人员类型:
+             车辆类型:
             <el-select style="width: 100px" v-model="sortForm.userType" placeholder="请选择">
               <el-option label="全部" value=""></el-option>
               <el-option label="住户" value="house"></el-option>
@@ -59,7 +59,22 @@
             </LineChart>
             <span v-else>当前筛选条件无数据</span>
           </el-tab-pane>
-          <el-tab-pane label="表格展示" name="second">配置管理</el-tab-pane>
+          <el-tab-pane label="表格展示" name="second">
+            <el-table
+          :data="data"
+          style="width: 100%">
+          <el-table-column
+            prop="date"
+            align="center"
+            label="时间">
+          </el-table-column>
+          <el-table-column
+            prop="name"
+            align="center"
+            label="次数">
+          </el-table-column>
+        </el-table>
+          </el-tab-pane>
         </el-tabs>
       </div>
     </el-card>
@@ -68,7 +83,7 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { getCarPassListChart } from '@/api/screenApi.ts'
+import { getPassListChart } from '@/api/screenApi.ts'
 import LineChart  from '@/components/chart/line.vue'
 import { formatTimeObj } from '@/utils'
 @Component({
@@ -76,7 +91,7 @@ import { formatTimeObj } from '@/utils'
     LineChart
   }
 })
-  export default class PersonpassChart extends Vue{
+  export default class CarpassChart extends Vue{
     sortForm: object = {
       particleSize: 'day',
       userType: '',
@@ -104,7 +119,7 @@ import { formatTimeObj } from '@/utils'
     fetchListData() {
       this.lineX = []
       this.lineY = []
-      getCarPassListChart(this.sortForm).then(res => {
+      getPassListChart(this.sortForm).then(res => {
         if (res.data.code === 200) {
           this.data = res.data.data
           res.data.data.forEach(ele => {

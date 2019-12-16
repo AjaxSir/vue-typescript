@@ -4,6 +4,8 @@
       <el-col :span="24">
         <action-header
         :filterStatus='false'
+        :initFormHeader='initForm'
+        @fetchData='fetchData'
         :moreStatus='false'
         :dialogCreate.sync="dialogCreate" :total="page.total">
         </action-header>
