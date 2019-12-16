@@ -52,7 +52,7 @@
 
             <el-table-column prop="createdTime" label="时间" align="center"></el-table-column>
 
-            <el-table-column prop="pic" label="头像" align="center">
+            <el-table-column prop="pic" label="抓拍图片" align="center">
               <template slot-scope="{row}">
                 <div>
                   <img

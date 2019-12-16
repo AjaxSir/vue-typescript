@@ -481,9 +481,13 @@ export default class CardManage extends Vue {
   }
 
   dateRangeChange() {
+    console.log(123, this.dateRange);
     if (this.dateRange) {
       this.filterForm["startTime"] = this.dateRange[0];
       this.filterForm["endTime"] = this.dateRange[1];
+    } else {
+      this.filterForm["startTime"] = null;
+      this.filterForm["endTime"] = null;
     }
   }
 
