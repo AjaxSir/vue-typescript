@@ -109,6 +109,23 @@
                 @change="dateRangeChange"
               ></el-date-picker>
             </div>
+
+            <div class="word-filter">
+              <span class="filter-name filter-rewrite">车辆状态:</span>
+              <el-select
+                class="select-class"
+                size="small"
+                v-model="filterForm.status"
+                placeholder="请选择车辆类型"
+              >
+                <el-option
+                  v-for="item in carTypeList"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </el-select>
+            </div>
           </div>
         </action-header>
       </el-col>
@@ -408,7 +425,8 @@ export default class CardManage extends Vue {
     startCreateTime: null, //创建开始时间
     endCreateTime: null, //创建结束时间
     startInvalidDate: null, //开始过期时间
-    endInvalidDate: null // 结束过期时间
+    endInvalidDate: null, // 结束过期时间
+    status: null //车辆状态
   }; //根据关键字查询
   initForm: object = {
     //获取访客车辆列表url
@@ -437,6 +455,21 @@ export default class CardManage extends Vue {
   private carInviterDetail: Object = {}; //邀请人的房屋信息
   private passTarget: Boolean = true; //目标车辆通行记录的loadding
   private passList: Array<Object> = []; // 车辆名单目标通行记录
+  carTypeList: Array<Object> = [
+    //车辆类型筛选
+    {
+      label: "全部",
+      value: null
+    },
+    {
+      label: "未到访",
+      value: "1"
+    },
+    {
+      label: "已到访",
+      value: "2"
+    }
+  ];
 
   pickerOptions: Object = {};
   dateRange: Array<Object> = [];
