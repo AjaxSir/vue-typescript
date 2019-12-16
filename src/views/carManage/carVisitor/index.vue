@@ -163,7 +163,15 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="visitName" label="邀请人" :show-overflow-tooltip="true"></el-table-column>
+            <el-table-column prop="visitName" label="邀请人" :show-overflow-tooltip="true">
+              <template slot-scope="scope">
+                <el-button
+                  @click="showCarDetails(scope.row,'second')"
+                  type="text"
+                  class="serial-num"
+                >{{scope.row.visitName}}</el-button>
+              </template>
+            </el-table-column>
 
             <el-table-column prop="carNo" align="center" label="车牌号" :show-overflow-tooltip="true">
               <template slot-scope="scope">
@@ -192,7 +200,6 @@
                   size="small"
                   style="border-radius: 50px;padding: 0 10px;"
                   :type="scope.row.status==='1' ? 'success' : 'warning'"
-                  @click="editType(scope.row)"
                 >{{ scope.row.status && scope.row.status =='1' ? "未到访" : "已到访" }}</el-tag>
               </template>
             </el-table-column>
@@ -533,9 +540,13 @@ export default class CardManage extends Vue {
     });
   }
 
-  showCarDetails(row) {
+  showCarDetails(row, inviter) {
     this.detailDialogVisible = true;
     this.CarDialogForm = Object.assign({}, row);
+    if (inviter) {
+      this.activeName = inviter;
+      this.fetchUser();
+    }
   }
 
   async handleClick(tab) {
