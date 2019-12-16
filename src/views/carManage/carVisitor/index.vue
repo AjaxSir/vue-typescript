@@ -81,43 +81,32 @@
             <div class="word-filter">
               <span class="filter-name filter-rewrite">有效时间:</span>
               <el-date-picker
+                :picker-options="pickerOptions"
+                v-model="dateRange"
+                type="datetimerange"
                 size="small"
-                style="width:165px"
-                :picker-options="pickOptionStart"
-                v-model="filterForm.startInvalidDate"
-                type="datetime"
                 value-format="yyyy-MM-dd HH:mm:ss"
-                placeholder="选择日期"
-              ></el-date-picker>&nbsp;&nbsp;-&nbsp;&nbsp;
-              <el-date-picker
-                size="small"
-                style="width:165px"
-                :picker-options="pickOptionEnd"
-                v-model="filterForm.endInvalidDate"
-                type="datetime"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                placeholder="选择日期"
+                format="yyyy - MM - dd HH:mm:ss"
+                range-separator="-"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                @change="dateRangeChange"
               ></el-date-picker>
             </div>
+
             <div class="word-filter">
               <span class="filter-name filter-rewrite">创建时间:</span>
               <el-date-picker
+                :picker-options="pickerOptions"
+                v-model="createDateRange"
+                type="datetimerange"
                 size="small"
-                style="width:165px"
-                :picker-options="pickOptionStart"
-                v-model="filterForm.startCreateTime"
-                type="datetime"
                 value-format="yyyy-MM-dd HH:mm:ss"
-                placeholder="选择日期"
-              ></el-date-picker>&nbsp;&nbsp;-&nbsp;&nbsp;
-              <el-date-picker
-                size="small"
-                style="width:165px"
-                :picker-options="pickOptionEnd"
-                v-model="filterForm.endCreateTime"
-                type="datetime"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                placeholder="选择日期"
+                format="yyyy - MM - dd HH:mm:ss"
+                range-separator="-"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                @change="dateRangeChange"
               ></el-date-picker>
             </div>
           </div>
@@ -449,30 +438,35 @@ export default class CardManage extends Vue {
   private passTarget: Boolean = true; //目标车辆通行记录的loadding
   private passList: Array<Object> = []; // 车辆名单目标通行记录
 
-  pickOptionStart: object = {}; //按照时间段查询的开始时间
-  pickOptionEnd: object = {}; //按照时间段查询的结束时间
+  pickerOptions: Object = {};
+  dateRange: Array<Object> = [];
+  createDateRange: Array<Object> = [];
+
   mounted() {
     const _this = this;
-    // this.pickOptionStart = {
-    //   disabledDate(time) {
-    //     if (_this.filterForm["endCreateTime"] !== "") {
-    //       return (
-    //         time.getTime() > Date.now() ||
-    //         time.getTime() > _this.filterForm["endCreateTime"]
-    //       );
-    //     } else {
-    //       return time.getTime() > Date.now();
-    //     }
-    //   }
-    // };
-    // this.pickOptionEnd = {
-    //   disabledDate(time) {
-    //     return (
-    //       time.getTime() < _this.filterForm["startCreateTime"] ||
-    //       time.getTime() > Date.now()
-    //     );
-    //   }
-    // };
+    this.pickerOptions = {
+      // 处理可选的时间范围
+      disabledDate(time) {
+        return time.getTime() > Date.now();
+      }
+    };
+  }
+
+  dateRangeChange() {
+    if (this.dateRange) {
+      this.filterForm["startInvalidDate"] = this.dateRange[0];
+      this.filterForm["endInvalidDate"] = this.dateRange[1];
+    } else {
+      this.filterForm["startInvalidDate"] = null;
+      this.filterForm["endInvalidDate"] = null;
+    }
+    if (this.createDateRange) {
+      this.filterForm["startCreateTime"] = this.createDateRange[0];
+      this.filterForm["endCreateTime"] = this.createDateRange[1];
+    } else {
+      this.filterForm["startCreateTime"] = null;
+      this.filterForm["endCreateTime"] = null;
+    }
   }
 
   created() {
