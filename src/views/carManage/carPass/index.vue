@@ -27,24 +27,19 @@
             <div class="word-filter">
               <span class="filter-name filter-rewrite">时&nbsp;间&nbsp;段&nbsp;:</span>
               <el-date-picker
+                :picker-options="pickerOptions"
+                v-model="dateRange"
+                type="datetimerange"
                 size="small"
-                style="width:165px"
-                :picker-options="pickOptionStart"
-                v-model="filterForm.startTime"
-                type="datetime"
                 value-format="yyyy-MM-dd HH:mm:ss"
-                placeholder="选择日期"
-              ></el-date-picker>&nbsp;&nbsp;-&nbsp;&nbsp;
-              <el-date-picker
-                size="small"
-                style="width:165px"
-                v-model="filterForm.endTime"
-                :picker-options="pickOptionEnd"
-                type="datetime"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                placeholder="选择日期"
+                format="yyyy - MM - dd HH:mm:ss"
+                range-separator="-"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                @change="dateRangeChange"
               ></el-date-picker>
             </div>
+
             <div class="word-filter">
               <span class="filter-name">车&nbsp;牌&nbsp;号&nbsp;:</span>
               <el-input
@@ -166,7 +161,7 @@
               <template slot-scope="scope">
                 <el-tag
                   size="small"
-                  style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
+                  style="border-radius: 50px;padding: 0 10px;"
                   :type="scope.row.isVisitCar? 'success' : 'danger'"
                   @click="editType(scope.row)"
                 >{{ scope.row.isVisitCar? "访客" : "常驻" }}</el-tag>
@@ -180,7 +175,7 @@
               <template slot-scope="scope">
                 <el-tag
                   size="small"
-                  style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
+                  style="border-radius: 50px;padding: 0 10px; "
                   :type="scope.row.inOut==='进'? 'success' : 'danger'"
                   @click="editType(scope.row)"
                 >{{ scope.row.inOut==="进" ? '进入' : '出行' }}</el-tag>
@@ -431,6 +426,7 @@ export default class CardManage extends Vue {
     method: "delete",
     data: []
   };
+
   private imgVisible: Boolean = false; // 控制放大图片的visible
   private bigImg: String = ""; // 保存放大图片的地址
   private activeName: string = "first"; ////目标车辆详细信息 tab Title
@@ -472,30 +468,27 @@ export default class CardManage extends Vue {
       value: "出"
     }
   ];
-  pickOptionStart: object = {}; //按照时间段查询的开始时间
-  pickOptionEnd: object = {}; //按照时间段查询的结束时间
+  pickerOptions: Object = {};
+  dateRange: Array<Object> = [];
   mounted() {
     const _this = this;
-    // this.pickOptionStart = {
-    //   disabledDate(time) {
-    //     if (_this.filterForm["endTime"] !== "") {
-    //       return (
-    //         time.getTime() > Date.now() ||
-    //         time.getTime() > _this.filterForm["endTime"]
-    //       );
-    //     } else {
-    //       return time.getTime() > Date.now();
-    //     }
-    //   }
-    // };
-    // this.pickOptionEnd = {
-    //   disabledDate(time) {
-    //     return (
-    //       time.getTime() < _this.filterForm["startTime"] ||
-    //       time.getTime() > Date.now()
-    //     );
-    //   }
-    // };
+    this.pickerOptions = {
+      // 处理可选的时间范围
+      disabledDate(time) {
+        return time.getTime() > Date.now();
+      }
+    };
+  }
+
+  dateRangeChange() {
+    console.log(123, this.dateRange);
+    if (this.dateRange) {
+      this.filterForm["startTime"] = this.dateRange[0];
+      this.filterForm["endTime"] = this.dateRange[1];
+    } else {
+      this.filterForm["startTime"] = null;
+      this.filterForm["endTime"] = null;
+    }
   }
 
   // 获取需要操作的数据列表

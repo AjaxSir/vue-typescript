@@ -62,6 +62,23 @@
               ></el-input>
               <!-- <span>{{phoneNum}}/11</span> -->
             </div>
+
+            <div class="word-filter">
+              <span class="filter-name filter-rewrite">车辆状态:</span>
+              <el-select
+                class="select-class"
+                size="small"
+                v-model="filterForm.status"
+                placeholder="请选择车辆类型"
+              >
+                <el-option
+                  v-for="item in carTypeList"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </el-select>
+            </div>
           </div>
         </action-header>
       </el-col>
@@ -102,10 +119,6 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="ownerName" label="车主" :show-overflow-tooltip="true"></el-table-column>
-
-            <el-table-column prop="ownerPhone" label="电话" :show-overflow-tooltip="true"></el-table-column>
-
             <el-table-column prop="carNo" label="车牌号">
               <template slot-scope="scope">
                 <el-button
@@ -116,28 +129,9 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="carType" label="车型" :show-overflow-tooltip="true"></el-table-column>
+            <el-table-column prop="ownerName" label="车主" :show-overflow-tooltip="true"></el-table-column>
 
-            <el-table-column prop="modal" label="品牌" :show-overflow-tooltip="true"></el-table-column>
-
-            <el-table-column
-              prop="lastInTime"
-              label="最近一次访问"
-              :show-overflow-tooltip="true"
-              min-width="110px"
-            ></el-table-column>
-
-            <el-table-column prop="lastInPhoto" label="最近抓拍图片" min-width="110px">
-              <template slot-scope="scope">
-                <img
-                  class="capture-img"
-                  @mouseout="imgVisible=false"
-                  @mouseover="imgVisible=true,bigImg=scope.row.lastInPhoto"
-                  :src="scope.row.lastInPhoto"
-                  alt
-                />
-              </template>
-            </el-table-column>
+            <el-table-column prop="ownerPhone" label="电话" :show-overflow-tooltip="true"></el-table-column>
 
             <el-table-column prop="status" label="状态">
               <template slot-scope="scope">
@@ -161,6 +155,29 @@
                 </el-dropdown>
               </template>
             </el-table-column>
+
+            <el-table-column
+              prop="lastInTime"
+              label="最近一次访问"
+              :show-overflow-tooltip="true"
+              min-width="110px"
+            ></el-table-column>
+
+            <el-table-column prop="lastInPhoto" label="最近抓拍图片" min-width="110px">
+              <template slot-scope="scope">
+                <img
+                  class="capture-img"
+                  @mouseout="imgVisible=false"
+                  @mouseover="imgVisible=true,bigImg=scope.row.lastInPhoto"
+                  :src="scope.row.lastInPhoto"
+                  alt
+                />
+              </template>
+            </el-table-column>
+
+             <el-table-column prop="modal" label="品牌" :show-overflow-tooltip="true"></el-table-column>
+
+            <el-table-column prop="carType" label="车型" :show-overflow-tooltip="true"></el-table-column>
 
             <el-table-column prop="note" align="center" label="备注" :show-overflow-tooltip="true">
               <template slot-scope="{row}">
@@ -217,42 +234,34 @@
         label-width="80px"
         style="margin-right:40px;"
       >
-        <!-- <div style="display: flex;"> -->
         <el-form-item
           prop="ownerPhone"
           label="电话"
           :show-message="showMessage"
           :error="errorMessage.ownerPhone"
         >
-          <!-- :disabled="nameDisabled" -->
-          <!--  -->
-          <el-autocomplete
+          <el-select
             style="width:100%; position: relative;"
             v-model="createForm[0].ownerPhone"
-            placeholder="请输入车主电话"
-            popper-class="my-autocomplete"
-            :fetch-suggestions="querySearch"
-            @select="handleSelectWatchlist"
-            :maxlength="11"
-            clearable
-            @keyup.native="phoneNumber"
-            @keydown.native="phoneNumber"
-            @change="clearableBtn"
-            @input="hint"
-            @focus="hintFocus"
-            @blur="hintBlur"
-            @mouseover.native="hint(createForm[0].ownerPhone)"
-            @mouseout.native="hint(createForm[0].ownerPhone)"
+            filterable
+            remote
+            :remote-method="remoteMethod"
+            :loading="loading"
+            @change="handleSelectWatchlist"
           >
-            <template slot-scope="{ item }">
-              <div class="name">{{ item.value }}</div>
-              <span class="addr">姓名:{{ item.name ? item.name : '未知'}}</span>
-            </template>
-          </el-autocomplete>
-          <span v-show="hintPhone" class="ei-input-hint">{{phoneNum}}/11</span>
+            <el-option
+              v-for="item in phoneList"
+              :key="item.scenceUserId"
+              :label="item.value"
+              :value="item"
+            >
+              <span style="float: left">{{ item.value }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span>
+            </el-option>
+          </el-select>
+          <!-- <span class="ei-input-hint">{{phoneNum}}/11</span> -->
+          <!-- <p>{{createForm[0].ownerUserName}}</p> -->
         </el-form-item>
-        <!-- <p class="ei-input-hint">{{phoneNum}}/11</p> -->
-        <!-- </div> -->
 
         <el-form-item label="姓名">
           <el-input :disabled="true" v-model="createForm[0].ownerUserName" placeholder="请输入姓名"></el-input>
@@ -264,13 +273,7 @@
           :show-message="showMessage"
           :error="errorMessage.carNo"
         >
-          <el-input
-            v-model="createForm[0].carNo"
-            placeholder="车牌号7位限长"
-            :maxlength="7"
-            clearable
-            @input="constraintLength(createForm[0].carNo,'7')"
-          ></el-input>
+          <el-input v-model="createForm[0].carNo" placeholder="请输入车牌号" clearable></el-input>
         </el-form-item>
 
         <el-form-item
@@ -563,7 +566,12 @@ const DataTree = () => import("@/components/DataTree.vue");
   }
 })
 export default class CarList extends Vue {
-  filterForm: object = { carNo: null, ownerPhone: null, ownerName: null }; //根据关键字查询
+  filterForm: object = {
+    carNo: null,
+    ownerPhone: null,
+    ownerName: null,
+    status: null
+  }; //根据关键字查询
   private rowSpan: any = {
     row1: 4,
     row2: 20
@@ -594,8 +602,8 @@ export default class CarList extends Vue {
     ownerPhone: [
       { required: true, message: "请输入车主电话", trigger: "blur" }
     ],
-    carNo: [{ required: true, message: "请输入车牌号", trigger: "blur" }],
-    modal: [{ required: true, message: "请输入车辆品牌", trigger: "blur" }]
+    carNo: [{ required: true, message: "请输入车牌号", trigger: "blur" }]
+    // modal: [{ required: true, message: "请输入车辆品牌", trigger: "blur" }]
   };
   private showMessage: Boolean = true; //是否显示表单错误信息
   private errorMessage: Object = {
@@ -631,6 +639,24 @@ export default class CarList extends Vue {
   private notifyInstance: any; //防止notify重复多次出现提示
   private noteRewrite: String = ""; //保存未改变的note
   updateArray: Array<string> = ["carNote"];
+  private loading: Boolean = false;
+  private phoneList: Array<Object> = []; //人员
+
+  carTypeList: Array<Object> = [
+    //车辆类型筛选
+    {
+      label: "全部",
+      value: null
+    },
+    {
+      label: "正常",
+      value: "1"
+    },
+    {
+      label: "禁用",
+      value: "2"
+    }
+  ];
 
   initForm: object = {
     //获取车辆列表url
@@ -681,6 +707,20 @@ export default class CarList extends Vue {
       this.errorMessage["ownerPhone"] = "";
     }
   }
+  async remoteMethod(query) {
+    /**@description 根据姓名模糊查询人员 */
+    console.log(query);
+    if (query !== "") {
+      this.loading = true;
+      setTimeout(() => {
+        if (query.length >= 1) {
+          this.fetchWatchList(query);
+        }
+      }, 200);
+    } else {
+      this.phoneList = [];
+    }
+  }
 
   async querySearch(queryString, cb) {
     /**@description 新增时对车主电话进行迷糊查询 */
@@ -694,7 +734,7 @@ export default class CarList extends Vue {
       this.nameDisabled = false;
     }
     if (queryString.length >= 7) {
-      await this.fetchWatchList(queryString);
+      // await this.fetchWatchList(queryString);
     }
     // 调用 callback 返回建议列表的数据
     cb(this.restaurants);
@@ -708,7 +748,8 @@ export default class CarList extends Vue {
   async fetchWatchList(name) {
     /**@description 获取 */
     const { data } = await queryCarPhone(name);
-    this.restaurants = data.data.map(item => {
+    this.loading = false;
+    this.phoneList = data.data.map(item => {
       return {
         value: item.phone,
         name: item.name,
@@ -720,6 +761,7 @@ export default class CarList extends Vue {
   handleSelectWatchlist(item) {
     this.errorMessage["ownerPhone"] = "";
     this.createForm[0]["ownerPhone"] = item.value;
+    this.createForm[0]["scenceUserId"] = item.scenceUserId;
     if (item.name) {
       this.createForm[0]["ownerUserName"] = item.name;
       this.nameDisabled = true;
@@ -737,37 +779,36 @@ export default class CarList extends Vue {
 
   createCar() {
     /**@description 新增车辆处理 */
-    this.verification(this.createForm[0]["ownerPhone"]);
-    if (
-      this.errorMessage["ownerPhone"] === "" &&
-      this.createForm[0]["ownerPhone"].length === 11
-    ) {
-      if (this.restaurants.length > 0) {
-        this.$refs["dataForm"]["validate"](valid => {
-          if (valid) {
-            var form = [
-              {
-                ...this.createForm[0],
-                scenceUserId: this.restaurants[0]["scenceUserId"]
-              }
-            ];
-            addCar(form).then(res => {
-              this.handleClose();
-              this["fetchData"](this.initForm);
-              this.nameDisabled = false;
-              this["notify"]("success", "成功", "添加车辆名单成功");
-            });
+    // this.verification(this.createForm[0]["ownerPhone"]);
+    // if (
+    //   this.errorMessage["ownerPhone"] === "" &&
+    //   this.createForm[0]["ownerPhone"].length === 11
+    // ) {
+    //   if (this.restaurants.length > 0) {
+    this.$refs["dataForm"]["validate"](valid => {
+      if (valid) {
+        var form = [
+          {
+            ...this.createForm[0]
           }
+        ];
+        addCar(form).then(res => {
+          this.handleClose();
+          this["fetchData"](this.initForm);
+          this.nameDisabled = false;
+          this["notify"]("success", "成功", "添加车辆名单成功");
         });
-      } else {
-        this.errorMessage["ownerPhone"] = "电话号码不存在";
       }
-    } else if (
-      this.createForm[0]["ownerPhone"].length !== 0 &&
-      this.createForm[0]["ownerPhone"].length < 11
-    ) {
-      this.errorMessage["ownerPhone"] = "电话号码为11位,请检查是否输入正确";
-    }
+    });
+    //   } else {
+    //     this.errorMessage["ownerPhone"] = "电话号码不存在";
+    //   }
+    // } else if (
+    //   this.createForm[0]["ownerPhone"].length !== 0 &&
+    //   this.createForm[0]["ownerPhone"].length < 11
+    // ) {
+    //   this.errorMessage["ownerPhone"] = "电话号码为11位,请检查是否输入正确";
+    // }
   }
 
   editType(item) {

@@ -297,3 +297,10 @@ div::-webkit-scrollbar-corner {
   background-color: #409EFF;
   color: white;
 }
+.el-time-panel {
+  left: -34px !important;
+}
+
+.el-range-editor--small .el-range-separator {
+  width: 20px;
+}

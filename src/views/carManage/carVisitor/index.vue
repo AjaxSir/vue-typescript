@@ -81,44 +81,50 @@
             <div class="word-filter">
               <span class="filter-name filter-rewrite">有效时间:</span>
               <el-date-picker
+                :picker-options="pickerOptions"
+                v-model="dateRange"
+                type="datetimerange"
                 size="small"
-                style="width:165px"
-                :picker-options="pickOptionStart"
-                v-model="filterForm.startInvalidDate"
-                type="datetime"
                 value-format="yyyy-MM-dd HH:mm:ss"
-                placeholder="选择日期"
-              ></el-date-picker>&nbsp;&nbsp;-&nbsp;&nbsp;
-              <el-date-picker
-                size="small"
-                style="width:165px"
-                :picker-options="pickOptionEnd"
-                v-model="filterForm.endInvalidDate"
-                type="datetime"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                placeholder="选择日期"
+                format="yyyy - MM - dd HH:mm:ss"
+                range-separator="-"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                @change="dateRangeChange"
               ></el-date-picker>
             </div>
+
             <div class="word-filter">
               <span class="filter-name filter-rewrite">创建时间:</span>
               <el-date-picker
+                :picker-options="pickerOptions"
+                v-model="createDateRange"
+                type="datetimerange"
                 size="small"
-                style="width:165px"
-                :picker-options="pickOptionStart"
-                v-model="filterForm.startCreateTime"
-                type="datetime"
                 value-format="yyyy-MM-dd HH:mm:ss"
-                placeholder="选择日期"
-              ></el-date-picker>&nbsp;&nbsp;-&nbsp;&nbsp;
-              <el-date-picker
-                size="small"
-                style="width:165px"
-                :picker-options="pickOptionEnd"
-                v-model="filterForm.endCreateTime"
-                type="datetime"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                placeholder="选择日期"
+                format="yyyy - MM - dd HH:mm:ss"
+                range-separator="-"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                @change="dateRangeChange"
               ></el-date-picker>
+            </div>
+
+            <div class="word-filter">
+              <span class="filter-name filter-rewrite">车辆状态:</span>
+              <el-select
+                class="select-class"
+                size="small"
+                v-model="filterForm.status"
+                placeholder="请选择车辆类型"
+              >
+                <el-option
+                  v-for="item in carTypeList"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </el-select>
             </div>
           </div>
         </action-header>
@@ -157,7 +163,15 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="visitName" label="邀请人" :show-overflow-tooltip="true"></el-table-column>
+            <el-table-column prop="visitName" label="邀请人" :show-overflow-tooltip="true">
+              <template slot-scope="scope">
+                <el-button
+                  @click="showCarDetails(scope.row,'second')"
+                  type="text"
+                  class="serial-num"
+                >{{scope.row.visitName}}</el-button>
+              </template>
+            </el-table-column>
 
             <el-table-column prop="carNo" align="center" label="车牌号" :show-overflow-tooltip="true">
               <template slot-scope="scope">
@@ -184,9 +198,8 @@
               <template slot-scope="scope">
                 <el-tag
                   size="small"
-                  style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
+                  style="border-radius: 50px;padding: 0 10px;"
                   :type="scope.row.status==='1' ? 'success' : 'warning'"
-                  @click="editType(scope.row)"
                 >{{ scope.row.status && scope.row.status =='1' ? "未到访" : "已到访" }}</el-tag>
               </template>
             </el-table-column>
@@ -419,7 +432,8 @@ export default class CardManage extends Vue {
     startCreateTime: null, //创建开始时间
     endCreateTime: null, //创建结束时间
     startInvalidDate: null, //开始过期时间
-    endInvalidDate: null // 结束过期时间
+    endInvalidDate: null, // 结束过期时间
+    status: null //车辆状态
   }; //根据关键字查询
   initForm: object = {
     //获取访客车辆列表url
@@ -448,31 +462,51 @@ export default class CardManage extends Vue {
   private carInviterDetail: Object = {}; //邀请人的房屋信息
   private passTarget: Boolean = true; //目标车辆通行记录的loadding
   private passList: Array<Object> = []; // 车辆名单目标通行记录
+  carTypeList: Array<Object> = [
+    //车辆类型筛选
+    {
+      label: "全部",
+      value: null
+    },
+    {
+      label: "未到访",
+      value: "1"
+    },
+    {
+      label: "已到访",
+      value: "2"
+    }
+  ];
 
-  pickOptionStart: object = {}; //按照时间段查询的开始时间
-  pickOptionEnd: object = {}; //按照时间段查询的结束时间
+  pickerOptions: Object = {};
+  dateRange: Array<Object> = [];
+  createDateRange: Array<Object> = [];
+
   mounted() {
     const _this = this;
-    // this.pickOptionStart = {
-    //   disabledDate(time) {
-    //     if (_this.filterForm["endCreateTime"] !== "") {
-    //       return (
-    //         time.getTime() > Date.now() ||
-    //         time.getTime() > _this.filterForm["endCreateTime"]
-    //       );
-    //     } else {
-    //       return time.getTime() > Date.now();
-    //     }
-    //   }
-    // };
-    // this.pickOptionEnd = {
-    //   disabledDate(time) {
-    //     return (
-    //       time.getTime() < _this.filterForm["startCreateTime"] ||
-    //       time.getTime() > Date.now()
-    //     );
-    //   }
-    // };
+    this.pickerOptions = {
+      // 处理可选的时间范围
+      disabledDate(time) {
+        return time.getTime() > Date.now();
+      }
+    };
+  }
+
+  dateRangeChange() {
+    if (this.dateRange) {
+      this.filterForm["startInvalidDate"] = this.dateRange[0];
+      this.filterForm["endInvalidDate"] = this.dateRange[1];
+    } else {
+      this.filterForm["startInvalidDate"] = null;
+      this.filterForm["endInvalidDate"] = null;
+    }
+    if (this.createDateRange) {
+      this.filterForm["startCreateTime"] = this.createDateRange[0];
+      this.filterForm["endCreateTime"] = this.createDateRange[1];
+    } else {
+      this.filterForm["startCreateTime"] = null;
+      this.filterForm["endCreateTime"] = null;
+    }
   }
 
   created() {
@@ -506,9 +540,13 @@ export default class CardManage extends Vue {
     });
   }
 
-  showCarDetails(row) {
+  showCarDetails(row, inviter) {
     this.detailDialogVisible = true;
     this.CarDialogForm = Object.assign({}, row);
+    if (inviter) {
+      this.activeName = inviter;
+      this.fetchUser();
+    }
   }
 
   async handleClick(tab) {
