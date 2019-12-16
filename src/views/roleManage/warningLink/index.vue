@@ -438,53 +438,52 @@ export default class WarningLink extends Vue {
     this.getGroupList();
   }
 
-  verification(queryString, key) {
-    /**@description 验证*/
-    var regPos = /^\d+(\.\d+)?$/; //非负浮点数
+  // verification(queryString, key) {
+  //   /**@description 验证*/
+  //   var regPos = /^\d+(\.\d+)?$/; //非负浮点数
 
-    if (queryString === "" && key === "phone") {
-      this.errorMessage[key] = "电话不能为空";
-    } else if (queryString === "" && key === "editPhone") {
-      this.editForm["phone"] = null;
-    } else if (!regPos.test(queryString)) {
-      this.errorMessage[key] = "电话必须是数值";
-    } else if (queryString.length > 11) {
-      this.errorMessage[key] = "电话号码最多11位";
-    } else if (queryString.length < 11) {
-      this.errorMessage[key] = "电话号码为11位";
-    } else {
-      this.errorMessage[key] = "";
-    }
-  }
+  //   if (queryString === "" && key === "phone") {
+  //     this.errorMessage[key] = "电话不能为空";
+  //   } else if (queryString === "" && key === "editPhone") {
+  //     this.editForm["phone"] = null;
+  //   } else if (!regPos.test(queryString)) {
+  //     this.errorMessage[key] = "电话必须是数值";
+  //   } else if (queryString.length > 11) {
+  //     this.errorMessage[key] = "电话号码最多11位";
+  //   } else if (queryString.length < 11) {
+  //     this.errorMessage[key] = "电话号码为11位";
+  //   } else {
+  //     this.errorMessage[key] = "";
+  //   }
+  // }
 
   createwarning() {
     /**@description 新增预警联系人 */
-    this.verification(this.createForm["phone"], "phone");
-    if (
-      this.errorMessage["phone"] === "" &&
-      this.createForm["phone"].length === 11
-    ) {
-      this.$refs["dataForm"]["validate"](valid => {
-        if (valid) {
-          var form = {
-            ...this.createForm
-          };
-          addWarning(form)
-            .then(res => {
-              this.createClose();
-              this["fetchData"](this.initForm);
-              this["notify"]("success", "成功", "添加预警联系人成功");
-            })
-            .catch(err => {
-              if (err.response.data.data[0].key === "phone") {
-                this.errorMessage["phone"] = err.response.data.data[0].value;
-              }
-            });
-        }
-      });
-    } else {
-      this["message"]("请输入正确的电话号码");
-    }
+    // this.verification(this.createForm["phone"], "phone");
+    // if (
+    //   this.errorMessage["phone"] === "" &&
+    //   this.createForm["phone"].length === 11
+    // ) {
+    this.$refs["dataForm"]["validate"](valid => {
+      if (valid) {
+        var form = {
+          ...this.createForm
+        };
+        addWarning(form).then(res => {
+          this.createClose();
+          this["fetchData"](this.initForm);
+          this["notify"]("success", "成功", "添加预警联系人成功");
+        });
+        // .catch(err => {
+        //   if (err.response.data.data[0].key === "phone") {
+        //     this.errorMessage["phone"] = err.response.data.data[0].value;
+        //   }
+        // });
+      }
+    });
+    // } else {
+    //   this["message"]("请输入正确的电话号码");
+    // }
   }
 
   async getGroupList() {
