@@ -103,6 +103,7 @@
                   :ref='scope.row.id'
                   v-model="scope.row.validDate"
                   type="date"
+                  format='yyyy - MM - dd'
                   @blur='blurDate(scope.row)'
                   @change='validDateChange($event, scope.row.id)'
                   placeholder="选择日期">
@@ -306,12 +307,14 @@ export default class CardManage extends Vue {
   }
   /// 修改门禁卡过期时间
   validDateChange(date: string, id: string) {
-    date = formatTimeObj(date)
-    cardvalidDateChange({date, id}).then((res: any) => {
+    const date1 = formatTimeObj(date)
+    cardvalidDateChange({date1, id}).then((res: any) => {
       if(res.data.code === 200) {
         this.$message.success('修改过期时间成功')
         this.fetchData(this.initForm)
       }
+    }).catch((err) => {
+        this.fetchData(this.initForm)
     })
   }
    // 修改门禁卡状态

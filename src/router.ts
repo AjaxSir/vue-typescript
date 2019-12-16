@@ -91,7 +91,7 @@ export const constantRouterMap = [{
     path: 'owner',
     component: _import_('personManage/ownerManage/index'),
     meta: {
-      title: '住户人员管理',
+      title: '住户管理',
       icon: 'icon-yonghu',
       bg_color: '#83c9a6'
     }
@@ -119,7 +119,7 @@ export const constantRouterMap = [{
     path: 'management',
     component: _import_('personManage/personPass/index'),
     meta: {
-      title: '人员通行管理',
+      title: '通行记录',
       icon: 'icon-renyuantongji1',
       bg_color: '#723f42'
     }
@@ -377,11 +377,42 @@ export const constantRouterMap = [{
     path: 'personPassChart',
     component: _import_('statementManage/components/personPassChart'),
     meta: {
-      title: '人员通信统计',
+      title: '人员通行统计',
       bg_color: '#bf5d76',
       icon: 'icon-icon-p_mrpbaobiao'
     }
-  }]
+  },
+  {
+    name: 'carPassChart',
+    path: 'carPassChart',
+    component: _import_('statementManage/components/carPassChart'),
+    meta: {
+      title: '车辆通行统计',
+      bg_color: '#bf5d76',
+      icon: 'icon-icon-p_mrpbaobiao'
+    }
+  },
+    {
+      name: 'visitorCarChart',
+      path: 'visitorCarChart',
+      component: _import_('statementManage/components/vistorCarChart'),
+      meta: {
+        title: '访客车辆通行统计',
+        bg_color: '#bf5d76',
+        icon: 'icon-icon-p_mrpbaobiao'
+      }
+    },
+    {
+      name: 'visitorChart',
+      path: 'visitorChart',
+      component: _import_('statementManage/components/vistorChart'),
+      meta: {
+        title: '访客通行统计',
+        bg_color: '#bf5d76',
+        icon: 'icon-icon-p_mrpbaobiao'
+      }
+    }
+]
 },
 {
   path: '/screen',

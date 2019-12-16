@@ -217,10 +217,13 @@
       </span>
     </el-dialog>
 
-    <el-dialog :close-on-click-modal='false' title="新建物业人员" :visible.sync="dialogCreate" width="600px" :before-close="handleClose">
+    <el-dialog :close-on-click-modal='false' title="新建物业人员" :visible.sync="dialogCreate" width="580px" :before-close="handleClose">
       <el-form :model="Form" :rules="FormRules" ref='Forms' label-width="80px">
         <el-form-item class="float"  label="姓名:"  prop='name'>
           <el-input  clearable v-model="Form.name" placeholder='输入物业人员姓名'></el-input>
+        </el-form-item>
+        <el-form-item   class="float" label="年龄:"  prop='age'>
+          <el-input  clearable v-model="Form.age"  maxlength="3" @input='constraintLength(Form.age, "3")' placeholder='输入物业人员年龄'></el-input>
         </el-form-item>
         <el-form-item  class="float"  label="电话:"  prop='phone'>
           <el-input
@@ -239,29 +242,26 @@
                 @mouseout.native="hint(Form.phone)"
               ></el-input>
               <span v-show="hintPhone" class="ei-input-hint">{{phoneNum}}/11</span>
-          <!-- <el-input v-model="Form.phone" maxlength='11' @input='constraintLength(Form.phone, "11")' placeholder='输入物业人员电话'></el-input> -->
         </el-form-item>
         <el-form-item  class="float"  label="性别:"  prop='sex'>
-          <el-switch
-            v-model="Form.sex"
-             active-text="男"
-            inactive-text="女"
-            active-color="#13ce66"
-            inactive-color="#ff4949"
-            active-value="1"
-            inactive-value="0">
-          </el-switch>
+
+          <el-select style="position: relative;left: -6px;width:170px" class="input-filter" size="small" v-model="Form.sex" placeholder="请选择">
+                <el-option label="请选择" value=""></el-option>
+                <el-option label="男" value="1"></el-option>
+                <el-option label="女" value="0"></el-option>
+              </el-select>
         </el-form-item>
-        <el-form-item   class="float" label="年龄:"  prop='age'>
-          <el-input  clearable v-model="Form.age"  maxlength="3" @input='constraintLength(Form.age, "3")' placeholder='输入物业人员年龄'></el-input>
-        </el-form-item>
-        <el-form-item   class="float"
-        label="身份证号:"
-        label-width="90px" prop='cardNo'>
-          <el-input  clearable maxlength="18"  v-model="Form.cardNo" placeholder='输入身份证号'></el-input>
-        </el-form-item>
-        <el-form-item label="权限组:" class="float"  prop='authId'>
-          <el-select style='width:180px' v-model="Form.authId" placeholder="请选择">
+
+        <el-form-item class="float" label="证件类型:"  label-width="85px"  prop='cardName'>
+              <el-select style="position: relative;left: -6px;width:165px" class="input-filter" size="small" v-model="Form.cardName" placeholder="请选择证件类型">
+                <el-option label="身份证" value="身份证"></el-option>
+                <el-option label="护照" value="护照"></el-option>
+                <el-option label="港澳居民来往内地通行证" value="港澳居民来往内地通行证"></el-option>
+                <el-option label="其它" value="其它"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="权限组:" class="float"  label-width="85px" prop='authId'>
+          <el-select style='width:170px' v-model="Form.authId" placeholder="请选择">
             <el-option
               v-for="item in TreeData"
               :key="item.id"
@@ -270,8 +270,12 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="备注:"  prop='note'>
-          <el-input style="width:444px" type='textarea'  maxlength="11" @input="constraintLength(Form.note,'200')" v-model="Form.note" placeholder='输入备注'></el-input>
+        <el-form-item   style="clear:both" :label="Form.cardName === '港澳居民来往内地通行证' ? '通行证' : Form.cardName + ':'"  label-width="85px"  prop='cardNo'>
+              <el-input style="width:420px" :maxlength="Form.cardName === '身份证' ? '18' : '100'"  clearable  v-model="Form.cardNo" :placeholder='"输入" + Form.cardName + "证件号"'></el-input>
+            </el-form-item>
+
+        <el-form-item label="备注:" style="clear:both"   prop='note'>
+          <el-input style="width:424px" type='textarea'  maxlength="11" @input="constraintLength(Form.note,'200')" v-model="Form.note" placeholder='输入备注'></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -315,10 +319,10 @@ export default class PropertyManage extends Vue {
     phone: '',
     age: '',
     note: '',
-    sex: '1',
+    sex: '',
     authId: '',
     cardNo: '',
-    cardName: ''
+    cardName: '身份证'
   }
   initForm: object = {
     url: '/admin/usrUser/PropertyManager/list',
@@ -346,6 +350,12 @@ export default class PropertyManage extends Vue {
     name: [
             { required: true, message: '请输入物业人员名称', trigger: 'blur' }
           ],
+          sex: [
+            { required: true, message: '请选择性别', trigger: 'change' }
+          ],
+    cardName: [
+      { required: true, message: '请选择证件', trigger: 'change' }
+    ],
     phone: [
             { required: true, trigger: 'blur', validator: (rule, value, callback) => {
                 if (value.length !== 11 || !(/^1[3|4|5|8][0-9]\d{4,8}$/).test(value)) {
@@ -538,7 +548,7 @@ export default class PropertyManage extends Vue {
   position: relative;
 }
 .float{
-  width: 260px;
+  width: 250px;
   float: left;;
   position: relative;
   z-index: 99;

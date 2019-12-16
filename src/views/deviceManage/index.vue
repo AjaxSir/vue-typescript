@@ -218,6 +218,7 @@
         </el-form-item>
       </el-form>
       <el-table
+      height="400px"
         :data="deviceBindingData"
         style="width: 100%">
         <el-table-column
