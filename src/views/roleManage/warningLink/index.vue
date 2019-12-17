@@ -556,9 +556,15 @@ export default class WarningLink extends Vue {
     for (const key in this.errorMessage) {
       this.errorMessage[key] = "";
     }
+    const form = { ...this.editForm };
+    for (const key in form) {
+      if (form[key] === "") {
+        delete form[key];
+      }
+    }
     this.$refs["updateForm"]["validate"](valid => {
       if (valid) {
-        editWarning(this.editForm).then(() => {
+        editWarning(form).then(() => {
           this.editClose();
           this["notify"]("success", "成功", "修改预警联系人成功");
           this["fetchData"](this.initForm);
