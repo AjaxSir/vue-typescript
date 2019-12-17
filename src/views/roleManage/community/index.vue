@@ -47,7 +47,10 @@
                 <!-- v-if="showPic" -->
                 <span class="shade-position" v-for="(item,index) in picList" :key="index">
                   <img class="show-img" :src="item" alt />
-                  <p class="show-img shade" @click="changeImg(item,index)">
+                  <p
+                    class="show-img shade"
+                    @click="changeImg(item,index)"
+                  >
                     <i class="el-icon-delete"></i>
                   </p>
                 </span>

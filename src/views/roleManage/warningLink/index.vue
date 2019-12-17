@@ -54,6 +54,26 @@
       <el-table-column prop="phone" align="center" label="电话" :show-overflow-tooltip="true"></el-table-column>
       <el-table-column prop="email" align="center" label="邮箱" :show-overflow-tooltip="true"></el-table-column>
       <el-table-column prop="groupName" align="center" label="分组" :show-overflow-tooltip="true"></el-table-column>
+      <el-table-column prop="note" align="center" label="备注" :show-overflow-tooltip="true">
+        <template slot-scope="{row}">
+          <p
+            class="rowUpdate"
+            v-show="!row.noteStatus || editForm.id !== row.id"
+            @click="editNote(row)"
+          >{{ row.note ? row.note :'--'}}</p>
+          <el-input
+            :ref="row.id"
+            v-show="row.noteStatus&&editForm.id === row.id"
+            size="small"
+            clearable
+            :maxlength="200"
+            v-model="editForm.note"
+            placeholder="输入备注"
+            @keyup.enter.native="noteBlur(row,'2')"
+            @input="constraintLength(editForm.note,'200')"
+          ></el-input>
+        </template>
+      </el-table-column>
     </el-table>
 
     <el-pagination
@@ -401,6 +421,8 @@ export default class WarningLink extends Vue {
     phone: "", //电话
     id: "" //目标联系人id
   };
+  updateArray: Array<string> = ["noteStatus"];
+  private noteRewrite: String = ""; //保存未改变的note
 
   private rules: Object = {
     // 表单验证
@@ -517,6 +539,35 @@ export default class WarningLink extends Vue {
       if (res.data.code === 200) {
         this.getGroupList();
       }
+    });
+  }
+
+  editNote(row) {
+    /**@description 点击备注*/
+    this.noteRewrite = row.note;
+    this.editForm["note"] = row.note;
+    this.editForm["id"] = row.id;
+    row.noteStatus = !row.noteStatus;
+    this.$nextTick(() => {
+      const input = this.$refs[row.id] as HTMLElement;
+      input.focus();
+    });
+  }
+
+  // 修改备注离开输入框
+  noteBlur(row) {
+    row.noteStatus = false;
+    if (this.noteRewrite !== this.editForm["note"]) {
+      this.confirmUpdateNote(row);
+    }
+  }
+
+  confirmUpdateNote(item) {
+    /**@description 修改备注 */
+    const form = { note: this.editForm["note"], id: item.id };
+    editWarning(form).then(() => {
+      this["notify"]("success", "成功", "修改预警人员备注成功");
+      this["fetchData"](this.initForm);
     });
   }
 
