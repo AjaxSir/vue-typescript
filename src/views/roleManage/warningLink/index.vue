@@ -559,7 +559,7 @@ export default class WarningLink extends Vue {
     const form = { ...this.editForm };
     for (const key in form) {
       if (form[key] === "") {
-        form[key] = null;
+        delete form[key];
       }
     }
     this.$refs["updateForm"]["validate"](valid => {

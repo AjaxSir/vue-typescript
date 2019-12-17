@@ -940,7 +940,7 @@ export default class FocusPeople extends Vue {
           name: this.createForm["scenceUser"][1]
         };
         delete form["scenceUser"];
-        form["earlyPeriod"] = Number(form["earlyPeriod"]);
+        // form["earlyPeriod"] = Number(form["earlyPeriod"]);
         addFocusPeople(form).then(res => {
           this.handleClose();
           this["fetchData"](this.initForm);
@@ -989,27 +989,27 @@ export default class FocusPeople extends Vue {
 
   updateFocusPeople() {
     /**@description 修改预警联系人 */
-    this.verification(this.editForm["emergencyPhone"], "editEmergencyPhone");
-    if (
-      this.errorMessage["editEmergencyPhone"] === "" ||
-      this.editForm["emergencyPhone"] === null ||
-      this.editForm["emergencyPhone"].length === 11
-    ) {
-      this.$refs["updateForm"]["validate"](valid => {
-        if (valid) {
-          var form = { ...this.editForm };
-          form["earlyPeriod"] = Number(form["earlyPeriod"]);
-          delete form["name"];
-          editFocusPeople(form).then(() => {
-            this.editClose();
-            this["notify"]("success", "成功", "修改关注人员成功");
-            this["fetchData"](this.initForm);
-          });
-        }
-      });
-    } else {
-      this["message"]("请输入正确的电话号码");
-    }
+    // this.verification(this.editForm["emergencyPhone"], "editEmergencyPhone");
+    // if (
+    //   this.errorMessage["editEmergencyPhone"] === "" ||
+    //   this.editForm["emergencyPhone"] === null ||
+    //   this.editForm["emergencyPhone"].length === 11
+    // ) {
+    this.$refs["updateForm"]["validate"](valid => {
+      if (valid) {
+        var form = { ...this.editForm };
+        form["earlyPeriod"] = Number(form["earlyPeriod"]);
+        delete form["name"];
+        editFocusPeople(form).then(() => {
+          this.editClose();
+          this["notify"]("success", "成功", "修改关注人员成功");
+          this["fetchData"](this.initForm);
+        });
+      }
+    });
+    //   } else {
+    //     this["message"]("请输入正确的电话号码");
+    //   }
   }
 
   editNote(row) {
