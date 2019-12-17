@@ -77,7 +77,7 @@
 
             <el-table-column align="center" prop="type" label="状态">
               <template slot-scope="scope">
-                <span>{{ scope.row.type === '1' ? "连线中" : "离线中" }}</span>
+                <span :style="{ color : scope.row.type === '1' ? '#67c23a' : '#f56c6c' }">{{scope.row.type === '1' ? "连线中" : "离线中"}}</span>
               </template>
             </el-table-column>
 
@@ -109,7 +109,7 @@
               <span>{{detailDialogForm.type | devType}}</span>
             </el-form-item>
             <el-form-item class="marginForm" label="状态:">
-              <span>{{detailDialogForm.type === '1' ? "连线中" : "离线中"}}</span>
+              <span :style="{ color : detailDialogForm.type === '1' ? '#67c23a' : '#f56c6c' }">{{detailDialogForm.type === '1' ? "连线中" : "离线中"}}</span>
             </el-form-item>
             <el-form-item class="marginForm" label="绑定时间:">
               <span>{{detailDialogForm.bindTime || '--'}}</span>

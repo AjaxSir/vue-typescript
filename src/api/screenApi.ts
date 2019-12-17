@@ -53,7 +53,7 @@ export function getCarPassListChart(params: object) {
 // 获取访客车辆通行统计
 export function getVistorCarList(params: object) {
   return _axios({
-    url: '/admin/car-pass/report',
+    url: '/admin/car-pass/orderVisitCar',
     method: 'get',
     params
   })

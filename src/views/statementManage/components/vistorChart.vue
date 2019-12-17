@@ -24,58 +24,82 @@
             </el-date-picker>
             <el-button type='primary' @click='dataChange'>开始统计</el-button>
             </span>
-        <el-tabs v-model="activeName">
+        <el-tabs v-model="activeName" @tab-click='clickTabs'>
           <el-tab-pane label="访客排序" name="first">
             <el-table
               :data="data"
+               border
               style="width: 100%">
-              <el-table-column
-                prop="date"
-                align="center"
-                label="证件号">
-              </el-table-column>
               <el-table-column
                 prop="name"
                 align="center"
+                width="200"
+                label="姓名">
+              </el-table-column>
+              <el-table-column
+                prop="cardName"
+                align="center"
+                width="200"
                 label="证件名称">
               </el-table-column>
               <el-table-column
-                prop="date"
+                prop="cardNo"
                 align="center"
-                label="姓名">
+                :show-overflow-tooltip='true'
+                label="证件号">
               </el-table-column>
+
+
               <el-table-column
-                prop="date"
+                prop="count"
+                width="100"
                 align="center"
                 label="次数">
               </el-table-column>
             </el-table>
+            <el-pagination
+            :current-page="sortForm.page"
+        @current-change='fetchListData'
+        style="margin-top:10px;" background layout="prev, pager, next" :total="sortForm.total"></el-pagination>
           </el-tab-pane>
           <el-tab-pane label="被访人排序" name="second">
             <el-table
+            border
               :data="data"
               style="width: 100%">
               <el-table-column
-                prop="date"
+                prop="name"
+                width="200"
                 align="center"
                 label="姓名">
+              </el-table-column>
+              <el-table-column
+                prop="phone"
+                align="center"
+                width="200"
+                label="电话">
               </el-table-column>
               <el-table-column
                 prop="name"
                 align="center"
+                :show-overflow-tooltip='true'
                 label="房屋编号">
+                <template slot-scope="{row}">
+                  <span>{{ row.houseNames[0] }}</span>
+                </template>
               </el-table-column>
+
               <el-table-column
-                prop="date"
+                prop="count"
                 align="center"
-                label="电话">
-              </el-table-column>
-              <el-table-column
-                prop="date"
-                align="center"
+                width="100"
                 label="次数">
               </el-table-column>
             </el-table>
+            <el-pagination
+            :current-page="sortForm.page"
+        @current-change='fetchvistoredData'
+        style="margin-top:10px;" background layout="prev, pager, next" :total="sortForm.total"></el-pagination>
           </el-tab-pane>
         </el-tabs>
 
@@ -94,12 +118,15 @@ import { formatTimeObj } from '@/utils'
     sortForm: object = {
       userType: 'visitor',
       startTime: '',
-      endTime: ''
+      endTime: '',
+      page: 1,
+      limit: 10,
+      total: 1
     }
     visible: boolean = false // 自定义选项
     timeRange: Array<string> = []
     activeName: string = 'first'
-    data: Array<Object> =  []
+    data: Array<object> =  []
     pickerOptions: object = {
         disabledDate(time) {
         return time.getTime() > Date.now() - 8.64e7;
@@ -111,28 +138,66 @@ import { formatTimeObj } from '@/utils'
       this.sortForm['startTime'] = formatTimeObj(sevenDay, 'detail')
       this.sortForm['endTime'] =  formatTimeObj(today, 'detail')
       this['timeRange'] = [ formatTimeObj(sevenDay, 'detail'), formatTimeObj(today, 'detail') ]
+      if (this.activeName === 'first') {
+        this.fetchListData(1)
+      } else {
+        this.fetchvistoredData(1)
+      }
     }
-    fetchListData() {
-      // getVistorCarList(this.sortForm).then(res => {
-      //   if (res.data.code === 200) {
-      //     this.data = res.data.data
-      //   } else {
-      //     this.$message.error('获取数据失败')
-      //   }
-      // })
+    // 访客列表
+    fetchListData(page) {
+      this.sortForm['page'] = page
+      vistorSort(this.sortForm).then(res => {
+        if (res.data.code === 200) {
+          this.data = res.data.data.records
+          this.sortForm['total'] = res.data.data.total
+        } else {
+          this.$message.error('获取数据失败')
+        }
+      })
+    }
+    // 被访者列表
+    fetchvistoredData(page) {
+      this.sortForm['page'] = page
+      vistoredSort(this.sortForm).then(res => {
+        if (res.data.code === 200) {
+          this.data = res.data.data.records
+          this.sortForm['total'] = res.data.data.total
+        } else {
+          this.$message.error('获取数据失败')
+        }
+      })
     }
     // 点击确定筛选
     dataChange() {
-      this.fetchListData()
+      if (this.activeName === 'first') {
+        this.fetchListData(1)
+      } else {
+        this.fetchvistoredData(1)
+      }
+    }
+    // 切换tabs页
+    clickTabs(Component: object) {
+      this.sortForm['page'] = 1
+      if (Component['name'] === 'first') {
+        this.fetchListData(1)
+      } else {
+        this.fetchvistoredData(1)
+      }
     }
     // 时间变化
     timeChange(val) {
       this.sortForm['startTime'] = val[0]
       this.sortForm['endTime'] =  val[1]
+      // if(this.activeName === 'first') {
+      //   this.fetchListData(1)
+      // } else {
+      //   this.fetchvistoredData(1)
+      // }
     }
     created(){
       this.setTime(7)
-      this.fetchListData()
+      this.fetchListData(1)
     }
   }
 </script>
