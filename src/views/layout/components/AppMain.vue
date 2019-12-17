@@ -38,10 +38,11 @@ export default class AppMain extends Vue{
   routeChange() {
     const whiteList = ['dashboard', 'statistics']
     const dom = document.getElementById('routerView1') as HTMLElement
+    console.log(whiteList, this.$route.name)
     if (whiteList.includes(this.$route.name as string)) {
       dom.style.width = '100%'
     } else {
-      dom.style.width = 'calc(100% - 188px)'
+      dom.style.width = 'calc(100% - 170px)'
     }
   }
 }
@@ -64,7 +65,7 @@ export default class AppMain extends Vue{
 .routerView{
   // flex: 1;
   // margin-left: 15px;
-  width: calc(100% - 188px);
+  width: calc(100% - 170px);
   // padding-right: 20px;
   box-sizing: border-box;
 }

@@ -91,13 +91,13 @@
 
             <el-table-column prop="buildingName" :show-overflow-tooltip='true' width="120" align='center' label="所属单元"></el-table-column>
 
-            <el-table-column align='center' prop='serialNumber' width="200px" sortable='custom' :show-overflow-tooltip='true' label="房屋编号">
+            <el-table-column align='center' prop='serialNumber' width="200px" :show-overflow-tooltip='true' label="房屋编号">
               <template slot-scope="scope">
                 <el-button @click='showHouseDetails(scope.row)' type='text'>{{ scope.row.serialNumber }}</el-button>
               </template>
             </el-table-column>
 
-            <el-table-column prop="personCnt" width="120" align='center' sortable='custom' label="注册人数"></el-table-column>
+            <el-table-column prop="personCnt" width="120" align='center' label="注册人数"></el-table-column>
             <el-table-column width="120" align='center' prop="type" label="状态">
               <template slot-scope="{row}">
                 <span>{{ row.status | status }}</span>
@@ -132,7 +132,7 @@
     <!-- 新建房屋 -->
     <el-dialog :close-on-click-modal='false' title="创建房屋" :visible.sync="dialogCreate" width="440px" :before-close="handleClose">
       <el-form :model="Form" :rules="rules" ref='Forms' label-width="110px">
-        <el-form-item label="所属组别:"  prop='cardNo'>
+        <el-form-item label="所属组别:"  prop='buildingId'>
           <el-cascader
             v-model="Form.buildingIdArr"
             :options="TreeData"
@@ -317,6 +317,9 @@ export default class CardManage extends Vue {
     serialNumber: [
             { required: true, message: '请输入房屋的编号', trigger: 'blur' }
           ],
+     buildingId: [
+            { required: true, message: '请选择房屋所属组别', trigger: 'change' }
+          ],
     status: [
             { required: true, message: '请选择当前房屋状态', trigger: 'change' }
           ],
@@ -433,7 +436,7 @@ export default class CardManage extends Vue {
   }
 
   handleChange(arr) {
-    console.log(arr)
+    this.Form['buildingId'] = [...this.Form['buildingIdArr']].pop()
   }
   queryIdetity(row) {
     this.detailDialog = row;

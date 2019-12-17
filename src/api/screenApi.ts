@@ -67,3 +67,26 @@ export function vistoredSort(params:object) {
     params
   })
 }
+
+// 首页车辆通行记录
+
+export function carPassList() {
+  return _axios({
+    url: '/admin/car-pass/homeOrderVisitCar',
+    method: 'get',
+    params: {
+      limit: 5
+    }
+  })
+}
+
+// 首页人员通行记录
+export function peoplePassList() {
+  return _axios({
+    url: '/admin/people-pass/homeList',
+    method: 'get',
+    params: {
+      limit: 5
+    }
+  })
+}

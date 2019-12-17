@@ -53,7 +53,7 @@
       <span slot="title">通知管理</span>
     </el-menu-item>
 
-    <el-menu-item
+    <!-- <el-menu-item
       @click="toVistorRegister"
       :class="[locRoute.indexOf('vistor') !== -1 ? 'activeLink': '']"
       index="10"
@@ -63,7 +63,7 @@
         :style="[locRoute.indexOf('vistor') !== -1 ? styleObject: '']"
       ></i>
       <span slot="title">访客登记</span>
-    </el-menu-item>
+    </el-menu-item> -->
 
     <!-- <el-menu-item
       @click="tostatementManage"
@@ -115,8 +115,7 @@ export default class NavMenu extends Vue {
       route.splice(3, 1)
        &&
       route.splice(4, 1)
-      &&
-      route.splice(5, 1);
+
     return route;
   }
   @Watch("$route", { immediate: true })

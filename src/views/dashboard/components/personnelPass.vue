@@ -12,28 +12,71 @@
       <div>
         <ul>
           <li>类型</li>
-          <li>房屋</li>
+          <li>姓名</li>
           <li>电话</li>
+          <li>开门方式</li>
           <li>照片</li>
           <li>时间</li>
         </ul>
-        <div v-show='tableData.length' id='content' style="height: 250px;overflow:hidden">
+        <div  @mouseenter="enterList" @mouseleave="leaveList" v-show='tableData.length' id='content' style="height: 250px;overflow:hidden">
           <div id='listOne'>
             <ul v-for='(item, index) in tableData' :key='index'>
-              <li>{{ item.type }}</li>
-              <li>{{ item.house }}</li>
-              <li>{{ item.phone }}</li>
-              <li><img style="margin-top:10px" :src="item.img" alt=""></li>
-              <li>{{ item.date }}</li>
+              <li><el-tag
+                  size="small"
+                  style="border-radius: 50px;padding: 0 10px;"
+                  :type="!item.isVisitCar? 'success' : 'danger'"
+                >{{ item.isVisitCar? "访客" : "住户" }}</el-tag></li>
+              <li>
+                <el-tooltip class="item" effect="dark" :content="item.userName" placement="top">
+                    <span>{{ item.userName || '--' }}</span>
+                  </el-tooltip>
+                </li>
+              <li>
+                <el-tooltip class="item" effect="dark" :content="item.phone" placement="top">
+                    <span>{{ item.phone || '--' }}</span>
+                  </el-tooltip>
+                  </li>
+              <li>
+                <el-tooltip class="item" effect="dark" :content="item.passMethod | passMethod" placement="top">
+                    <span>{{ item.passMethod | passMethod }}</span>
+                  </el-tooltip>
+                </li>
+              <li><img style="margin-top:10px" :src="item.photos" alt=""></li>
+              <li>
+                <el-tooltip class="item" effect="dark" :content="item.passTime" placement="top">
+                    <span>{{ item.passTime }}</span>
+                  </el-tooltip>
+               </li>
             </ul>
           </div>
            <div id='listTwo'>
-            <ul v-for='(item, index) in tableData' :key='index'>
-              <li>{{ item.type }}</li>
-              <li>{{ item.house }}</li>
-              <li>{{ item.phone }}</li>
-              <li><img style="margin-top:10px" :src="item.img" alt=""></li>
-              <li>{{ item.date }}</li>
+           <ul v-for='(item, index) in tableData' :key='index'>
+              <li><el-tag
+                  size="small"
+                  style="border-radius: 50px;padding: 0 10px;"
+                  :type="!item.isVisitCar? 'success' : 'danger'"
+                >{{ item.isVisitCar? "访客" : "住户" }}</el-tag></li>
+              <li>
+                <el-tooltip class="item" effect="dark" :content="item.userName" placement="top">
+                    <span>{{ item.userName || '--' }}</span>
+                  </el-tooltip>
+                </li>
+              <li>
+                <el-tooltip class="item" effect="dark" :content="item.phone" placement="top">
+                    <span>{{ item.phone || '--' }}</span>
+                  </el-tooltip>
+                  </li>
+              <li>
+                <el-tooltip class="item" effect="dark" :content="item.passMethod | passMethod" placement="top">
+                    <span>{{ item.passMethod | passMethod }}</span>
+                  </el-tooltip>
+                </li>
+              <li><img style="margin-top:10px" :src="item.photos" alt=""></li>
+              <li>
+                <el-tooltip class="item" effect="dark" :content="item.passTime" placement="top">
+                    <span>{{ item.passTime }}</span>
+                  </el-tooltip>
+               </li>
             </ul>
           </div>
         </div>
@@ -49,9 +92,24 @@
 
 <script lang='ts'>
 import { Component, Vue } from "vue-property-decorator";
-import { peoplePassList } from '@/api/peopleApi.ts'
+import { peoplePassList } from '@/api/screenApi.ts'
 @Component({
   components: {
+
+  },
+  filters: {
+    passMethod(val: string) {
+      const data = {
+        "1": '人脸开门',
+        "2": '二维码开门',
+        "3": '蓝牙开门',
+        "4": '远程开门',
+        "5": '密码开门',
+        "6": '刷卡开门'
+      }
+      return data[val]
+    }
+
   }
 })
 export default class openDoor extends Vue {
@@ -60,7 +118,7 @@ export default class openDoor extends Vue {
 
   created() {
 
-    // this.fetchData();
+    this.fetchList();
   }
   beforeDestroy() {
     clearInterval(this.timer)
@@ -68,22 +126,37 @@ export default class openDoor extends Vue {
   mounted() {
     this.roll(50)
   }
+  enterList() {
+    clearInterval(this.timer)
+  }
+  leaveList() {
+    this.roll(50)
+  }
+
   roll(time) {
-    if (this.timer) return
+    console.log(this.timer)
+    // if (this.timer) return
     const content = document.getElementById('content') as HTMLElement
     const listOne = document.getElementById('listOne') as HTMLElement
-    content.scrollTop = 0
-    this.timer = setInterval(() => {
-      if (content.scrollTop >= listOne.scrollHeight) {
-        content.scrollTop = 0
-      } else {
-        content.scrollTop ++
-      }
-    }, time)
+    if (this.timer) {
+      content.scrollTop = content.scrollTop
+    } else {
+      content.scrollTop =  0
+    }
+      this.timer = setInterval(() => {
+        if (content.scrollTop >= listOne.scrollHeight) {
+          content.scrollTop = 0
+        } else {
+          content.scrollTop ++
+        }
+      }, time)
+    // }
+
   }
   fetchList() {
     peoplePassList().then(res => {
-      this.tableData = res.data.data.records
+      console.log(res)
+      this.tableData = res.data.data
     })
   }
 }
@@ -106,8 +179,14 @@ ul li{
   height: 50px;
   line-height: 50px;
   text-align: center;
+  overflow: hidden;
+text-overflow:ellipsis;
+white-space: nowrap;
   &:first-child {
     width:10%;
+  }
+  &:nth-child(2), &:nth-last-child(2){
+    width: 10%;
   }
   &:last-child {
     width:30%;
