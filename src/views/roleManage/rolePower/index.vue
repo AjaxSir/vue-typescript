@@ -174,7 +174,9 @@ export default class InformIssue extends Vue {
           ],
   }
   changeStatus(row) {
-    row.Look = row.Update
+    if (!row.Look) {
+      row.Look = row.Update
+    }
     row.lookDisabled = row.Update
   }
   // 打开权限修改框

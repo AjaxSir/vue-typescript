@@ -29,6 +29,7 @@
                  clearable
                 @keyup.enter.native="emitFetchData"
                 v-model="filterForm.bindName"
+                @input='changeLoc'
                 :fetch-suggestions="querySearch"
                 placeholder="请输入通行位置查找"
                 @select="handleSelect"
@@ -278,6 +279,11 @@ export default class PersonPass extends Vue {
         cb(result)
       }
     })
+  }
+  // 改变通行位置时 清空id
+  changeLoc() {
+    console.log(this.filterForm)
+    this.filterForm['bindId'] = ''
   }
   // 选择搜索建议列表某项 并赋值
   handleSelect(val: object) {

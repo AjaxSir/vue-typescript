@@ -480,6 +480,7 @@ export default class DataTree extends Vue {
     parentId: '',
     title: '添加子分组'
   }
+  bindIndex:Array<number> = []
   // 楼栋表单
   UnitForm: object = {
     buildingGroupId: '',
@@ -523,12 +524,12 @@ export default class DataTree extends Vue {
   }
   // 获取设备列表
   fetchDeviceList(page: number) {
-    let bindIndex: Array<number> = []
+    this.bindIndex = []
     getDeviceList({ page, limit: 10 }).then((res) => {
       res.data.data.records.forEach((ele, index: number) => {
         this.bindDeviceList.forEach(item => {
           if (ele['id'] === item['deviceId']) {
-            bindIndex.push(index)
+            this.bindIndex.push(index)
           }
         })
       })
@@ -536,13 +537,12 @@ export default class DataTree extends Vue {
       this.devicePage['total'] = res.data.data.total
       this.$nextTick(() => {
         if (this.$refs['deviceList']) {
-          bindIndex.forEach(i => {
+          this.bindIndex.forEach(i => {
             this.$refs['deviceList']['toggleRowSelection'](this.DeviceList[i])
           })
         }
       })
     })
-
   }
   // 自动补充别名
   // autoName() {
@@ -631,8 +631,9 @@ export default class DataTree extends Vue {
   // 保存到绑定设备 并验证是否已经存在 已存在不加入
   saveBindDevicelist() {
     const strDevice = JSON.stringify(this.bindDeviceList)
-
+    console.log(this.bindDeviceList, '已绑定列表')
     this.unConfirmDeviceList.forEach(ele => {
+      console.log(ele['serialNumber'], '选中的设备编号')
       if(strDevice.indexOf(ele['serialNumber']) === -1) {
         ele['startTime'] = '18:00'
         ele['endTime'] = '21:00'
