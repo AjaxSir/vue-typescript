@@ -7,7 +7,7 @@
 <template>
   <baidu-map
     @click="getPoint"
-    :center="{lng: 116.404, lat: 39.915}"
+    :center="{lng, lat}"
     :zoom="zoom"
     :scroll-wheel-zoom="true"
     class="map"
@@ -74,6 +74,8 @@ export default class BaiDuMap extends Vue {
   @Prop({ default: () => {
     return []
   } }) positionList : Array<object>
+  @Prop({ default: '116.404' }) lng:string
+  @Prop({ default: '39.915' }) lat:string
   location:string = ''
   list: Array<object> = []
   locImg: string = require('@/assets/loc.png')
