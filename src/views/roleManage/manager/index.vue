@@ -53,7 +53,7 @@
 
             <el-table-column prop="roleName" align="center" label="角色"></el-table-column>
 
-            <el-table-column prop="note" label="备注" align="center">
+            <el-table-column :show-overflow-tooltip='true' prop="note" label="备注" align="center">
               <template slot-scope="{row}">
                 <span>{{ row.note || '--' }}</span>
               </template>

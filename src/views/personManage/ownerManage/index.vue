@@ -67,7 +67,7 @@
             <el-table-column type="selection" align="center"></el-table-column>
             <el-table-column type="index" width="60" class="indexNum" align="center" label="编号">
               <template slot-scope="scope">
-                <span>{{ scope.$index + 1 }}</span>
+                <span>{{ scope.row.indexSort + 1 }}</span>
                 <div class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start" @command='commandClick'>
                     <el-tooltip class="item" effect="dark" content="点击操作" placement="top">
@@ -277,9 +277,9 @@
         </el-tab-pane>
         <el-tab-pane label="房屋信息" name="five">
           <el-table :data="houseDtailTable" style="width: 100%">
-            <el-table-column align='center' prop="serialNumber" label="房屋编号"></el-table-column>
-            <el-table-column align='center' prop="createTime" label="创建时间"></el-table-column>
-            <el-table-column align='center' prop="note" label="备注"></el-table-column>
+            <el-table-column align='center' :show-overflow-tooltip='true' prop="serialNumber" label="房屋编号"></el-table-column>
+            <el-table-column align='center' :show-overflow-tooltip='true' prop="createTime" label="创建时间"></el-table-column>
+
             <el-table-column align='center' label="邀请车辆">
               <template slot-scope="{row}">
                 {{ row.enableInviteCar === '1' ? '允许' : '禁止' }}
@@ -295,6 +295,7 @@
                 {{ row.enableRemoteOpen === '1' ? '允许' : '禁止' }}
               </template>
             </el-table-column>
+            <el-table-column align='center' :show-overflow-tooltip='true' prop="note" label="备注"></el-table-column>
           </el-table>
         </el-tab-pane>
         <el-tab-pane label="人脸库信息" name="six">
@@ -771,11 +772,21 @@ export default class OwnerManage extends Vue {
              this['list_data'].push(ele)
           }
         })
-        this['list_data'].forEach(ele => {
+        this['list_data'].forEach((ele, index) => {
           this['updateArray'].forEach((itemStatus: string) => {
             ele[itemStatus] = false
+            if (index === 0) {
+              ele['indexSort'] = 0
+            } else {
+              if (ele['id'] === this['list_data'][index - 1]['id']) {
+                ele['indexSort'] = this['list_data'][index - 1]['indexSort']
+              } else {
+                ele['indexSort'] = this['list_data'][index - 1]['indexSort'] + 1
+              }
+            }
           })
         })
+        console.log(this['list_data'])
         // this['list_data'] = res.data.data.records
         this['showLoading'] = false
         this.spanArray = []

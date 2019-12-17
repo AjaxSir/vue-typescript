@@ -156,7 +156,7 @@
       </el-col>
     </el-row>
     <el-dialog :close-on-click-modal='false' width="650px" :title="Dialog.name" :visible.sync="dialogFormVisible">
-      <el-tabs v-model="activeName">
+      <el-tabs v-model="activeName" type='card'>
         <el-tab-pane label="详细信息" name="first">
           <div class="singleInfo">姓名:&nbsp;&nbsp;{{ Dialog.name }}</div>
           <div class="singleInfo">性别:&nbsp;&nbsp;{{ Dialog.sex === '1' ? '男' : '女' }}</div>
@@ -583,11 +583,14 @@ export default class PropertyManage extends Vue {
   left: -11px;
 }
 .singleInfo{
-  width: 33%;
+  width: 44%;
   height: 40px;;
   padding: 0px 10px;
   text-align: left;
   line-height: 40px;
   float: left;
+  &:nth-child(2), &:nth-child(3), &:nth-child(5), &:nth-child(6){
+    width: 28%;
+  }
 }
 </style>
