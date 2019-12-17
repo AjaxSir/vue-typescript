@@ -5,34 +5,25 @@
         <span>访客车辆统计报告</span>
       </div>
       <div class="text item">
-        <el-row>
-          <el-col :span='4'>
             <el-button type="primary" @click='setTime(7)'>最近一周</el-button>
-          </el-col>
-          <el-col :span='4'>
             <el-button type="primary" @click='setTime(30)'>最近一月</el-button>
-          </el-col>
-          <el-col :span='12'>
             <el-button type="primary" @click='visible = true'>自定义</el-button>
             <span v-show='visible'>
-              通行时间:
             <el-date-picker
-            style="width:360px"
-              v-model="timeRange"
-              type="datetimerange"
-              range-separator="-"
-              @change='timeChange'
-              format='yyyy-MM-dd HH:mm:ss'
-              value-format="yyyy-MM-dd HH:mm:ss"
-              start-placeholder="开始日期"
-              :clearable='false'
-              :picker-options="pickerOptions"
-              end-placeholder="结束日期">
-            </el-date-picker>
+              style="width:360px"
+                v-model="timeRange"
+                type="datetimerange"
+                range-separator="-"
+                @change='timeChange'
+                format='yyyy-MM-dd HH:mm:ss'
+                value-format="yyyy-MM-dd HH:mm:ss"
+                start-placeholder="开始日期"
+                :clearable='false'
+                :picker-options="pickerOptions"
+                end-placeholder="结束日期">
+              </el-date-picker>
             <el-button type='primary' @click='dataChange'>开始统计</el-button>
             </span>
-          </el-col>
-        </el-row>
         <el-table
           :data="data"
           style="width: 100%">
@@ -78,6 +69,7 @@ import { formatTimeObj } from '@/utils'
       this.sortForm['startTime'] = formatTimeObj(sevenDay, 'detail')
       this.sortForm['endTime'] =  formatTimeObj(today, 'detail')
       this['timeRange'] = [ formatTimeObj(sevenDay, 'detail'), formatTimeObj(today, 'detail') ]
+      this.fetchListData()
     }
     fetchListData() {
       getVistorCarList(this.sortForm).then(res => {
@@ -99,7 +91,7 @@ import { formatTimeObj } from '@/utils'
     }
     created(){
       this.setTime(7)
-      this.fetchListData()
+      // this.fetchListData()
     }
   }
 </script>

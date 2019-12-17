@@ -5,17 +5,10 @@
         <span>访客/被访人统计报告</span>
       </div>
       <div class="text item">
-        <el-row>
-          <el-col :span='4'>
             <el-button type="primary" @click='setTime(7)'>最近一周</el-button>
-          </el-col>
-          <el-col :span='4'>
             <el-button type="primary" @click='setTime(30)'>最近一月</el-button>
-          </el-col>
-          <el-col :span='12'>
             <el-button type="primary" @click='visible = true'>自定义</el-button>
             <span v-show='visible'>
-              通行时间:
             <el-date-picker
             style="width:360px"
               v-model="timeRange"
@@ -31,23 +24,61 @@
             </el-date-picker>
             <el-button type='primary' @click='dataChange'>开始统计</el-button>
             </span>
-          </el-col>
-        </el-row>
+        <el-tabs v-model="activeName">
+          <el-tab-pane label="访客排序" name="first">
+            <el-table
+              :data="data"
+              style="width: 100%">
+              <el-table-column
+                prop="date"
+                align="center"
+                label="证件号">
+              </el-table-column>
+              <el-table-column
+                prop="name"
+                align="center"
+                label="证件名称">
+              </el-table-column>
+              <el-table-column
+                prop="date"
+                align="center"
+                label="姓名">
+              </el-table-column>
+              <el-table-column
+                prop="date"
+                align="center"
+                label="次数">
+              </el-table-column>
+            </el-table>
+          </el-tab-pane>
+          <el-tab-pane label="被访人排序" name="second">
+            <el-table
+              :data="data"
+              style="width: 100%">
+              <el-table-column
+                prop="date"
+                align="center"
+                label="姓名">
+              </el-table-column>
+              <el-table-column
+                prop="name"
+                align="center"
+                label="房屋编号">
+              </el-table-column>
+              <el-table-column
+                prop="date"
+                align="center"
+                label="电话">
+              </el-table-column>
+              <el-table-column
+                prop="date"
+                align="center"
+                label="次数">
+              </el-table-column>
+            </el-table>
+          </el-tab-pane>
+        </el-tabs>
 
-        <el-table
-          :data="data"
-          style="width: 100%">
-          <el-table-column
-            prop="date"
-            align="center"
-            label="车牌号">
-          </el-table-column>
-          <el-table-column
-            prop="name"
-            align="center"
-            label="次数">
-          </el-table-column>
-        </el-table>
       </div>
     </el-card>
   </div>
@@ -67,6 +98,7 @@ import { formatTimeObj } from '@/utils'
     }
     visible: boolean = false // 自定义选项
     timeRange: Array<string> = []
+    activeName: string = 'first'
     data: Array<Object> =  []
     pickerOptions: object = {
         disabledDate(time) {
@@ -81,13 +113,13 @@ import { formatTimeObj } from '@/utils'
       this['timeRange'] = [ formatTimeObj(sevenDay, 'detail'), formatTimeObj(today, 'detail') ]
     }
     fetchListData() {
-      getVistorCarList(this.sortForm).then(res => {
-        if (res.data.code === 200) {
-          this.data = res.data.data
-        } else {
-          this.$message.error('获取数据失败')
-        }
-      })
+      // getVistorCarList(this.sortForm).then(res => {
+      //   if (res.data.code === 200) {
+      //     this.data = res.data.data
+      //   } else {
+      //     this.$message.error('获取数据失败')
+      //   }
+      // })
     }
     // 点击确定筛选
     dataChange() {

@@ -42,7 +42,7 @@ export default class InformIssue extends Vue {
           bg_color: '#DF788D',
           icon: 'icon-zhuzhai'
         },
-        path: ''
+        path: '/statementManage/carPassChart'
       },
       {
         meta: {
@@ -50,7 +50,7 @@ export default class InformIssue extends Vue {
           bg_color: '#e17f5a',
           icon: 'icon-zhuzhai'
         },
-        path: ''
+        path: '/statementManage/visitorCarChart'
       }
     ]
   },
@@ -73,7 +73,7 @@ export default class InformIssue extends Vue {
           bg_color: '#976041',
           icon: 'icon-zhuzhai'
         },
-        path: ''
+        path: '/statementManage/visitorChart'
       },
       {
         meta: {
