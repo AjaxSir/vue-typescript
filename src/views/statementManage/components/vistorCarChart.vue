@@ -26,18 +26,23 @@
             </span>
         <el-table
           :data="data"
-          style="width: 100%">
+          border
+          style="width: 100%;margin-top:10px">
           <el-table-column
-            prop="date"
+            prop="carNo"
             align="center"
             label="车牌号">
           </el-table-column>
           <el-table-column
-            prop="name"
+            prop="count"
             align="center"
             label="次数">
           </el-table-column>
         </el-table>
+        <el-pagination
+            :current-page="sortForm.page"
+        @current-change='fetchListData'
+        style="margin-top:10px;" background layout="prev, pager, next" :total="sortForm.total"></el-pagination>
       </div>
     </el-card>
   </div>
@@ -51,9 +56,11 @@ import { formatTimeObj } from '@/utils'
 })
   export default class VisitorCarChart extends Vue{
     sortForm: object = {
-      userType: 'visitor',
+     page:1,
+     limit: 10,
       startTime: '',
-      endTime: ''
+      endTime: '',
+      total:1
     }
     visible: boolean = false // 自定义选项
     timeRange: Array<string> = []
@@ -69,12 +76,14 @@ import { formatTimeObj } from '@/utils'
       this.sortForm['startTime'] = formatTimeObj(sevenDay, 'detail')
       this.sortForm['endTime'] =  formatTimeObj(today, 'detail')
       this['timeRange'] = [ formatTimeObj(sevenDay, 'detail'), formatTimeObj(today, 'detail') ]
-      this.fetchListData()
+      this.fetchListData(1)
     }
-    fetchListData() {
+    fetchListData(page) {
+      this.sortForm['page'] = page
       getVistorCarList(this.sortForm).then(res => {
         if (res.data.code === 200) {
-          this.data = res.data.data
+          this.data = res.data.data.records
+          this.sortForm['total'] = res.data.data.total
         } else {
           this.$message.error('获取数据失败')
         }
@@ -82,7 +91,7 @@ import { formatTimeObj } from '@/utils'
     }
     // 点击确定筛选
     dataChange() {
-      this.fetchListData()
+      this.fetchListData(1)
     }
     // 时间变化
     timeChange(val) {

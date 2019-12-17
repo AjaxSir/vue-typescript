@@ -77,7 +77,7 @@
 
             <el-table-column align="center" prop="type" label="状态">
               <template slot-scope="scope">
-                <span>{{ scope.row.type === '1' ? "连线中" : "离线中" }}</span>
+                <span :style="{ color : scope.row.type === '1' ? '#67c23a' : '#f56c6c' }">{{scope.row.type === '1' ? "连线中" : "离线中"}}</span>
               </template>
             </el-table-column>
 
@@ -109,7 +109,7 @@
               <span>{{detailDialogForm.type | devType}}</span>
             </el-form-item>
             <el-form-item class="marginForm" label="状态:">
-              <span>{{detailDialogForm.type === '1' ? "连线中" : "离线中"}}</span>
+              <span :style="{ color : detailDialogForm.type === '1' ? '#67c23a' : '#f56c6c' }">{{detailDialogForm.type === '1' ? "连线中" : "离线中"}}</span>
             </el-form-item>
             <el-form-item class="marginForm" label="绑定时间:">
               <span>{{detailDialogForm.bindTime || '--'}}</span>
@@ -281,6 +281,7 @@ import { debounce } from '@/utils'
 import axios from 'axios'
 import { searchHouse, getInoutList } from '@/api/houseApi.ts'
 import { getUserPass } from '@/api/peopleApi.ts'
+import { getScene } from '@/api/screenApi.ts'
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 const BaiduMap = () => import('@/components/baiduMap/index.vue')
 @Component({
@@ -328,7 +329,7 @@ export default class DeviceManage extends Vue {
   doorRecordTable: Array<Object> = []; // 设备抓拍的通行记录
   private roleTitle: String = "0";
   private Form: Object = { // 创建设备表单
-    address: '',
+    address: '四川省成都市',
     bindingId:'',
     bindingAddress: '',
     bindingType: '1',
@@ -361,6 +362,15 @@ export default class DeviceManage extends Vue {
   created() {
     this.fetchBuilding()
     this.initForm['params'] = Object.assign(this.initForm['params'], this.page, this.filterForm) // 合并参数
+    this.fetchScene()
+  }
+  // 获取场景信息
+  fetchScene() {
+    getScene().then(res => {
+      this.Form['address'] = res.data.data.address
+      this.Form['latitude'] = res.data.data.latitude
+      this.Form['longitude'] = res.data.data.longitude
+    })
   }
     /** 获取经纬度 */
     getlocLat() {

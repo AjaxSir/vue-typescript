@@ -118,7 +118,8 @@
               </template>
             </el-table-column>
           </el-table>
-          <el-pagination @current-change='pageChange' :page-size="page.limit" style="margin-top:10px;" background layout="prev, pager, next" :total="page.total"></el-pagination>
+          <el-pagination @current-change='pageChange' :page-size="page.limit" style="margin-top:10px;"
+          :current-page.sync="page.page" background layout="prev, pager, next" :total="page.total"></el-pagination>
           <div :class="rowSpan.row1===3 ? menuControl1 : menuControl2" @click="menuVisible">
           <p class="close-menu">
             <i v-if="rowSpan.row1===3" class="iconfont icon-left icon-class"></i>
@@ -176,9 +177,9 @@
       <el-tabs type="card" v-model="activeName">
         <el-tab-pane label="详细信息" name="详细信息">
           <el-row style='margin-top:10px;padding:10px 20px 0px 20px'>
-            <el-col :span='6'>所在楼层: &nbsp;{{ detailDialog.storeyNum }} 层</el-col>
             <el-col :span='6'>所在单元: &nbsp;{{ detailDialog.buildingName }}</el-col>
-            <el-col :span='6'>房屋编号: &nbsp;{{ detailDialog.houseName }}</el-col>
+            <el-col :span='6'>所在楼层: &nbsp;{{ detailDialog.storeyNum }} 层</el-col>
+            <el-col :span='6'>房屋编号: &nbsp;{{ detailDialog.serialNumber }}</el-col>
             <el-col :span='6'>注册时间: &nbsp;{{ detailDialog.createTime && detailDialog.createTime.substr(0, 10) }}</el-col>
           </el-row>
           <el-row style='margin-top:10px;padding:0px 20px'>
