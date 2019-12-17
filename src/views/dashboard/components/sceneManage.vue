@@ -5,11 +5,12 @@
       <span class="scene-titile"> 当前场景: {{ sceneForm.name }}</span>
     </div>
     <div class="scene-content">
-      <el-carousel height="150px">
+      <el-carousel v-if='sceneForm.pics && sceneForm.pics.length' height="150px">
         <el-carousel-item v-for="item in sceneForm.pics" :key="item">
          <img class="scene-image" :src="item" alt />
         </el-carousel-item>
       </el-carousel>
+      <img style='width:100%;height:190px' v-else src="../../../assets/partment.jpg" alt="">
       <p class="scene-num">楼栋数: {{ sceneForm.buildingCount }} </p>
       <!-- <p class="scene-num">区域: {{ sceneForm.buildingCount }}</p> -->
       <p class="scene-num">地址: {{ sceneForm.address }}</p>

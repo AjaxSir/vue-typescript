@@ -11,28 +11,60 @@
       <div>
         <ul>
           <li>类型</li>
-          <li>房屋</li>
+          <li>姓名</li>
           <li>车牌号</li>
           <li>照片</li>
           <li>时间</li>
         </ul>
-        <div v-show='tableData.length' id='content1' style="height: 250px;overflow:hidden">
+        <div @mouseenter="enterList" @mouseleave="leaveList" v-show='tableData.length' id='content1' style="height: 250px;overflow:hidden">
           <div id='listOne1'>
             <ul v-for='(item, index) in tableData' :key='index'>
-              <li>{{ item.type }}</li>
-              <li>{{ item.house }}</li>
-              <li>{{ item.phone }}</li>
-              <li><img style="margin-top:10px" :src="item.img" alt=""></li>
-              <li>{{ item.date }}</li>
+              <li><el-tag
+                  size="small"
+                  style="border-radius: 50px;padding: 0 10px;"
+                  :type="!item.isVisitCar? 'success' : 'danger'"
+                >{{ item.isVisitCar? "访客" : "常驻" }}</el-tag></li>
+              <li>
+                <el-tooltip class="item" effect="dark" :content="item.ownerName" placement="top">
+                    <span>{{ item.ownerName }}</span>
+                  </el-tooltip>
+              </li>
+              <li>
+                <el-tooltip class="item" effect="dark" :content="item.carNo" placement="top">
+                    <span>{{ item.carNo }}</span>
+                  </el-tooltip>
+              </li>
+              <li><img style="margin-top:10px" :src="item.photos" alt=""></li>
+              <li>
+                <el-tooltip class="item" effect="dark" :content="item.passTime" placement="top">
+                    <span>{{ item.passTime }}</span>
+                  </el-tooltip>
+              </li>
             </ul>
           </div>
            <div id='listTwo'>
             <ul v-for='(item, index) in tableData' :key='index'>
-              <li>{{ item.type }}</li>
-              <li>{{ item.house }}</li>
-              <li>{{ item.phone }}</li>
-              <li><img style="margin-top:10px" :src="item.img" alt=""></li>
-              <li>{{ item.date }}</li>
+              <li><el-tag
+                  size="small"
+                  style="border-radius: 50px;padding: 0 10px;"
+                  :type="!item.isVisitCar? 'success' : 'danger'"
+                >{{ item.isVisitCar? "访客" : "常驻" }}</el-tag></li>
+              <li>
+                <el-tooltip class="item" effect="dark" :content="item.ownerName" placement="top">
+                    <span>{{ item.ownerName }}</span>
+                  </el-tooltip>
+              </li>
+              <li>
+                <el-tooltip class="item" effect="dark" :content="item.carNo" placement="top">
+                    <span>{{ item.carNo }}</span>
+                  </el-tooltip>
+              </li>
+              <li><img style="margin-top:10px" :src="item.photos" alt=""></li>
+              <li>
+                <el-tooltip class="item" effect="dark" :content="item.passTime" placement="top">
+                    <span>{{ item.passTime }}</span>
+                  </el-tooltip>
+              </li>
             </ul>
           </div>
         </div>
@@ -44,7 +76,7 @@
 
 <script lang='ts'>
 import { Component, Vue } from "vue-property-decorator";
-import { carPassList } from '@/api/carApi.ts'
+import { carPassList } from '@/api/screenApi.ts'
 @Component({
   components: {
   }
@@ -55,7 +87,7 @@ export default class openDoor extends Vue {
 
   created() {
 
-    // this.fetchData();
+    this.fetchCarList();
   }
   beforeDestroy() {
     clearInterval(this.timer)
@@ -63,11 +95,23 @@ export default class openDoor extends Vue {
   mounted() {
     this.roll(50)
   }
+
+  enterList() {
+    clearInterval(this.timer)
+  }
+  leaveList() {
+    this.roll(50)
+  }
+
   roll(time) {
-    if (this.timer) return
+    // if (this.timer) return
     const content = document.getElementById('content1') as HTMLElement
     const listOne = document.getElementById('listOne1') as HTMLElement
-    content.scrollTop = 0
+     if (this.timer) {
+      content.scrollTop = content.scrollTop
+    } else {
+      content.scrollTop = 0
+    }
     this.timer = setInterval(() => {
       if (content.scrollTop >= listOne.scrollHeight) {
         content.scrollTop = 0
@@ -79,7 +123,7 @@ export default class openDoor extends Vue {
   // 获取车辆同行记录
   fetchCarList() {
     carPassList().then(res => {
-      this.tableData = res.data.data.records
+      this.tableData = res.data.data
     })
   }
 }
@@ -108,6 +152,9 @@ ul li{
   width: 20%;
   height: 50px;
   line-height: 50px;
+  overflow: hidden;
+  text-overflow:ellipsis;
+  white-space: nowrap;
   text-align: center;
   &:first-child {
     width:10%;

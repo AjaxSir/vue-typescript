@@ -77,11 +77,7 @@
 
             <el-table-column align="center" prop="type" label="状态">
               <template slot-scope="scope">
-                <el-tag
-                  size="small"
-                  style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
-                  :type="scope.row.type === '1' ? 'success' : 'danger'"
-                >{{ scope.row.type === '1' ? "连线中" : "离线中" }}</el-tag>
+                <span>{{ scope.row.type === '1' ? "连线中" : "离线中" }}</span>
               </template>
             </el-table-column>
 
@@ -377,7 +373,6 @@ export default class DeviceManage extends Vue {
         },
         method: 'get'
       }).then(res => {
-        console.log(res)
         if (!res.data.status) {
           this.Form['longitude'] = res.data.result.location.lng
           this.Form['latitude'] = res.data.result.location.lat
@@ -442,7 +437,6 @@ export default class DeviceManage extends Vue {
   confirmBind() {
     this.$refs['Forms']["validate"](valid => {
       if(valid) {
-        console.log(this.Form)
         if (this.Form['longitude'] === '' || this.Form['latitude'] === '') {
           return this.$message.error('请输入正确的设备地址')
         } else {
@@ -467,6 +461,7 @@ export default class DeviceManage extends Vue {
   }
   /*** 查看设备详情*/
   showDetails(row) {
+    this.activeName = 'first'
     this.passPage['page'] = 1
     this.detailDialogVisible = true;
     this.deviceId = row.id

@@ -22,18 +22,21 @@
           </el-dropdown-menu>
           <div slot="houseNum">
             <div class="word-filter">
-              <span class="filter-name">房号:</span>
-              <el-input clearable  
+              <span class="filter-name">房屋编号:</span>
+              <el-input clearable
+              placeholder="请输入需要查找的房屋编号"
               @keyup.enter.native="emitFetchData" style="width:215px" class="input-filter" v-model="filterForm.houseNo" size="small"></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">姓&nbsp;&nbsp;&nbsp;名:</span>
               <el-input  clearable  
+              placeholder="请输入需要查找的姓名"
               @keyup.enter.native="emitFetchData" style="width:215px" class="input-filter" v-model="filterForm.name" size="small"></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">手机号:</span>
               <el-input clearable  
+              placeholder="请输入需要查找的手机号"
               @keyup.enter.native="emitFetchData" style="width:215px" class="input-filter" v-model="filterForm.phone" size="small"></el-input>
             </div>
             <div class="word-filter">
@@ -215,35 +218,17 @@
     <el-dialog :close-on-click-modal='false' class="dialog-rewrite" width="1000px" :title="detailDialog.name" :visible.sync="dialogFormVisible">
       <el-tabs type="card" v-model="activeName">
         <el-tab-pane label="详细信息" name="first">
-          <el-row style="margin-top:10px">
-            <el-col :span='3'>
-              <img style='width:100px;height:100px' :src="personImg" alt="">
-            </el-col>
-            <el-col :span='21'>
-              <el-row style="line-height:50px;height:50px">
-                <el-col :span='3'>姓名:{{ detailDialog.name }}</el-col>
-                <el-col :span='2'>性别:{{ detailDialog.sex === '1' ? '男' : '女' }}</el-col>
-                <el-col :span='6'>身份证号:{{ detailDialog.cardNo || '--' }}</el-col>
-                <el-col :span='5'>手机号:{{ detailDialog.phone || '暂无' }}</el-col>
-                <el-col :span='8'>房屋编号:
-                  <el-select style="width: 160px" @change='houseChange' v-model="houseArrIndex" placeholder="请选择">
-                    <el-option
-                      v-for="(item, index) in newData"
-                      :key="index"
-                      :label="item.serialNumber"
-                      :value="index">
-                    </el-option>
-                  </el-select>
+              <el-row style="line-height:50px;height:50px;padding:10px 30px">
+                <el-col :span='8'>姓名: {{ detailDialog.name }}</el-col>
+                <el-col :span='8'>性别: {{ detailDialog.sex === '1' ? '男' : '女' }}</el-col>
+                <el-col :span='8'>手机号: {{ detailDialog.phone }}</el-col>
+                <!-- <el-col :span='12'>注册时间:{{ detailDialog.sex === '1' ? '男' : '女' }}</el-col> -->
+                <el-col :span='8'>证件类型: {{ detailDialog.cardName || '--' }}</el-col>
+                <el-col :span='8'>证件号码: {{ detailDialog.cardNo || '暂无' }}</el-col>
+                <el-col :span='24'>备注:
+                  <el-input style="width:600px" type='textarea'></el-input>
                 </el-col>
               </el-row>
-              <el-row style="line-height:50px;height:50px">
-                <el-col :span='6'>邀请访客:{{ houseDetailsFrom.enableInviteVisitor === '1' ? '允许' : '禁止' }}</el-col>
-                <el-col :span='6'>邀请车辆:{{ houseDetailsFrom.enableInviteCar === '1' ? '允许' : '禁止' }}</el-col>
-                <el-col :span='6'>用户类型:{{ houseDetailsFrom.type | typeFilter }}</el-col>
-                <el-col :span='6'>注册时间:{{ houseDetailsFrom.createTime }}</el-col>
-              </el-row>
-            </el-col>
-          </el-row>
 
 
         </el-tab-pane>
@@ -290,7 +275,7 @@
             </el-table-column>
           </el-table>
         </el-tab-pane>
-        <el-tab-pane label="房屋信息" name="fivw">
+        <el-tab-pane label="房屋信息" name="five">
           <el-table :data="houseDtailTable" style="width: 100%">
             <el-table-column align='center' prop="serialNumber" label="房屋编号"></el-table-column>
             <el-table-column align='center' prop="createTime" label="创建时间"></el-table-column>
@@ -308,6 +293,21 @@
             <el-table-column align='center' label="远程开门">
               <template slot-scope="{row}">
                 {{ row.enableRemoteOpen === '1' ? '允许' : '禁止' }}
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-tab-pane>
+        <el-tab-pane label="人脸库信息" name="six">
+          <el-table :data="houseDtailTable" style="width: 100%">
+            <el-table-column align='center' type='index' label="编号"></el-table-column>
+            <el-table-column align='center' prop="serialNumber" label="设备编号"></el-table-column>
+            <el-table-column align='center' prop="serialNumber" label="设备区分"></el-table-column>
+            <el-table-column align='center' prop="serialNumber" label="通行位置"></el-table-column>
+            <el-table-column align='center' prop="createTime" label="注册时间"></el-table-column>
+            <el-table-column align='center' prop="note" label="备注"></el-table-column>
+            <el-table-column align='center' label="人脸图片">
+              <template slot-scope="{row}">
+                <img :src="row.photos" alt="">
               </template>
             </el-table-column>
           </el-table>
@@ -529,8 +529,6 @@ export default class OwnerManage extends Vue {
   phoneString:string = '' // 需要改成的电话
   noteString: string = '' // 需要改成的备注
   houseIndex: number = 0 // 合并单元格用
-  houseArrIndex: any = 0 // 详情显示对应房屋
-  houseDetailsFrom: object = {} // 多个房屋其中一个详情
   updateHouseVisible: boolean = false // 修改房屋弹框
   data: Array<object> =  [] // 未分单元格人员数据
   personImg: string = require("@/assets/defaultPerson.png") // 人员头像
@@ -614,7 +612,6 @@ export default class OwnerManage extends Vue {
       address: "上海市普陀区金沙江路 1518 弄"
     }
   ];
-  newData: Array<object> = []
   private carDtailTable: Array<Object> =[];
   private houseDtailTable: Array<Object> =[];
   created() {
@@ -852,17 +849,7 @@ export default class OwnerManage extends Vue {
     this.passList['id'] = row.id
     this.dialogFormVisible = true;
     this.detailDialog = Object.assign(this.detailDialog, this['list_data'][index]);
-    this.newData = []
-    this['data'].forEach(ele => {
-      if (ele['id'] === this.detailDialog['id']) {
-        this.newData = ele['house']
-      }
-    })
     this.houseDtailTable = []
-    if (row.house.length) {
-      this.houseDetailsFrom = this.newData[0]
-      this.houseDtailTable = this.newData
-    }
     this.pagePassChange(1)
     // 获取物业人员的车辆信息
     getUserPropertyCar(row.id).then(res => {
@@ -877,10 +864,7 @@ export default class OwnerManage extends Vue {
       this.personImg = require("@/assets/defaultPerson.png")
     }
   }
-  // 切换房屋时
-  houseChange(index: number) {
-    this.houseDetailsFrom = this.newData[index]
-  }
+
   // 获取特定用户的通行记录
   pagePassChange(page: number) {
     this.passList['page'] = page

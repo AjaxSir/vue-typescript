@@ -5,7 +5,7 @@ import axios from "axios";
 import store from '../store/index.ts'
 import { MessageBox, Message } from 'element-ui';
 import { getToken, getName } from '@/utils/auth'
-
+import Cookie from 'js-cookie'
 // Full config:  https://github.com/axios/axios#request-config
 axios.defaults.headers.post["Content-Type"] =
   "application/x-www-form-urlencoded";
@@ -37,16 +37,23 @@ _axios.interceptors.response.use(
       case 200:
           return response
       case 400:
-          Message({
-            type: 'warning',
-            message: response.data.message
-          });
+          if (!Cookie.get('error')) {
+            Cookie.set('error', Date.now(), { expires: new Date(new Date().getTime() + 3 * 1000) }) // 五秒钟内不会重复出现提示框
+            Message({
+              type: 'warning',
+              message: response.data.message
+            });
+          }
           break
       case 500:
-          Message({
-            type: 'warning',
-            message: '服务器出错!'
-          });
+          if (!Cookie.get('error')) {
+            Cookie.set('error', Date.now(), { expires: new Date(new Date().getTime() + 3 * 1000) }) // 五秒钟内不会重复出现提示框
+            Message({
+              type: 'warning',
+              message: '服务器出错!'
+            });
+          }
+
           break
     }
   },
