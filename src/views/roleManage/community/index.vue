@@ -15,7 +15,7 @@
         </action-header>
       </el-col>
     </el-row>-->
-    <el-row :gutter="10">
+    <el-row :gutter="10" class="community-height">
       <el-col :span="24" class="table-col">
         <div class="rightContent">
           <el-form ref="formInfo" :rules="userRules" :model="communityForm" label-width="80px">
@@ -48,7 +48,6 @@
                 <span class="shade-position" v-for="(item,index) in picList" :key="index">
                   <img class="show-img" :src="item" alt />
                   <p
-                    v-if="picList.length !==1"
                     class="show-img shade"
                     @click="changeImg(item,index)"
                   >
@@ -142,7 +141,7 @@ export default class InformIssue extends Vue {
     latitude: "", //纬度
     longitude: "", //经度
     name: "", //名称
-    note: "", //备注
+    note: "" //备注
     // picList: [] //图片
   };
   private selectPic: Object = {};
@@ -268,7 +267,7 @@ export default class InformIssue extends Vue {
 
 <style lang="scss" scoped>
 .app-container {
-  width: 70%;
+  width: 80%;
   margin: 10px auto;
   padding-top: 20px;
 }
