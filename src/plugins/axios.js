@@ -7,11 +7,13 @@ import { MessageBox, Message } from 'element-ui';
 import { getToken, getName } from '@/utils/auth'
 import Cookie from 'js-cookie'
 // Full config:  https://github.com/axios/axios#request-config
+export const serverURL ="/v1"
+
 axios.defaults.headers.post["Content-Type"] =
   "application/x-www-form-urlencoded";
 
 let config = {
-  baseURL: process.env.baseURL || "/v1",
+  baseURL:serverURL,
   timeout: 60 * 1000, // Timeout
   withCredentials: true // Check cross-site Access-Control
 };
