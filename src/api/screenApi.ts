@@ -15,6 +15,14 @@ export function getScene() {
   })
 }
 
+//小区图片上传
+export function deleteImg(id: any) {
+  return _axios({
+    url: `/admin/hs-scence/picture/${id}`,
+    method: 'delete'
+  })
+}
+
 //小区修改
 export function editCommunity(data: any) {
   return _axios({
@@ -60,7 +68,7 @@ export function vistorSort(params: object) {
   })
 }
 
-export function vistoredSort(params:object) {
+export function vistoredSort(params: object) {
   return _axios({
     url: '/admin/count-report/orderBeVisited',
     method: 'get',

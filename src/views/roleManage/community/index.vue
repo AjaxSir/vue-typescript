@@ -44,43 +44,38 @@
 
             <el-form-item label="图片展示" style="margin-top:22px">
               <div class="uplolad-img">
-                <span v-if="showPic">
-                  <img
-                    class="show-img"
-                    v-for="(item,index) in picList"
-                    :key="index"
-                    :src="item"
-                    alt
-                  />
+                <!-- v-if="showPic" -->
+                <span class="shade-position" v-for="(item,index) in picList" :key="index">
+                  <img class="show-img" :src="item" alt />
+                  <p
+                    v-if="picList.length !==1"
+                    class="show-img shade"
+                    @click="changeImg(item,index)"
+                  >
+                    <i class="el-icon-delete"></i>
+                  </p>
                 </span>
                 <el-upload
                   class="avatar-uploader"
-                  multiple
-                  :data="communityForm"
-                  action
+                  :action="upPathPerson"
                   ref="personForm"
-                  list-type="picture-card"
+                  :list-type="picList.length < 7 ? 'picture-card' : ''"
                   accept="image/jpeg, image/jpg, image/png"
-                  name="picList"
+                  name="picture"
+                  :headers="myHeaders"
                   :show-file-list="false"
-                  :limit="7"
-                  :auto-upload="false"
-                  :headers="header"
+                  :auto-upload="true"
                   :before-upload="beforeAvatarUpload"
-                  :file-list="fileList"
                   :on-success="succUpdatePerson"
-                  :on-exceed="beyondFile"
-                  :on-change="changefile"
-                  :on-remove="removefile"
                   :on-error="errorUpdatePerson"
                 >
-                  <!-- <i class="el-icon-plus"></i> -->
-                  <img v-if="imageUrl" :src="imageUrl" class="avatar" />
-                  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                  <i v-if="picList.length < 7" class="el-icon-plus"></i>
+                  <!-- <el-button slot="trigger" size="small" type="primary">选取文件</el-button> -->
                 </el-upload>
                 <!-- <el-dialog :visible.sync="dialogVisible" size="tiny">
                   <img width="100px" :src="imageUrl" alt />
                 </el-dialog>-->
+                <!-- <el-button class="upload-btn" size="small">上&nbsp;&nbsp;传</el-button> -->
               </div>
             </el-form-item>
 
@@ -108,14 +103,21 @@
 import { Component, Prop, Vue, Mixins } from "vue-property-decorator";
 import { Getter, Action, Mutation } from "vuex-class";
 import mixin from "@/config/minxins";
-import { editCommunity, getSceneInfo, getScene } from "@/api/screenApi.ts";
+import {
+  editCommunity,
+  getSceneInfo,
+  getScene,
+  deleteImg
+} from "@/api/screenApi.ts";
+import { serverURL } from "../../../plugins/axios";
+import { baiduDebounce } from "@/utils";
+import _axios from "axios";
+import { getToken } from "@/utils/auth";
 
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 const DataTree = () => import("@/components/DataTree.vue");
 const BaiduMap = () => import("@/components/baiduMap/index.vue");
-import { baiduDebounce } from "@/utils";
-
-import _axios from "axios";
+var _token = getToken(); // 要保证取到
 
 @Component({
   mixins: [mixin],
@@ -131,9 +133,9 @@ export default class InformIssue extends Vue {
   }; //根据关键字查询
   initForm: object = {}; //获取数据的url
 
-  private header: Object = {
-    "Content-Type": "application/json"
-  };
+  // private header: Object = {
+  //   "Content-Type": "multipart/form-data"
+  // };
 
   private communityForm: Object = {
     address: "",
@@ -141,14 +143,16 @@ export default class InformIssue extends Vue {
     longitude: "", //经度
     name: "", //名称
     note: "", //备注
-    picList: [] //图片
+    // picList: [] //图片
   };
   private selectPic: Object = {};
   private userRules: Object = {
     name: [{ required: true, message: "请输入小区名称", trigger: "blur" }],
     address: [{ required: true, message: "请输入具体位置", trigger: "blur" }]
   };
-  private upPathPerson: string = "/v1/admin/hs-scence/info/";
+  private upPathPerson: any = `${serverURL}/admin/hs-scence/picture/`;
+  private myHeaders: object = { token: _token };
+
   private imageUrl: any = "";
   private dialogVisible: Boolean = false;
   private fileList: Array<Object> = [];
@@ -176,30 +180,30 @@ export default class InformIssue extends Vue {
     this.$message({ message: "只能上传7张", type: "error" });
   }
 
-  changefile(file, fileList) {
-    this.showPic = false;
-    const reader = new FileReader();
-    reader.onload = () => {
-      const imgBase64: any = reader.result;
-      this.selectPic[`${file.uid}`] = imgBase64.split(",")[1];
-    };
-    reader.readAsDataURL(file.raw);
-  }
+  // changefile(file, fileList) {
+  //   this.showPic = false;
+  //   const reader = new FileReader();
+  //   reader.onload = () => {
+  //     const imgBase64: any = reader.result;
+  //     this.selectPic[`${file.uid}`] = imgBase64.split(",")[1];
+  //   };
+  //   reader.readAsDataURL(file.raw);
+  // }
 
   removefile(file, fileList) {
     delete this.selectPic[`${file.uid}`];
   }
 
   async onSubmit() {
-    this.communityForm["picList"] = [];
+    // this.communityForm["picList"] = [];
     this.$refs["formInfo"]["validate"](valid => {
       if (valid) {
-        for (const key in this.selectPic) {
-          this.communityForm["picList"].push(this.selectPic[key]);
-        }
+        // for (const key in this.selectPic) {
+        //   this.communityForm["picList"].push(this.selectPic[key]);
+        // }
         editCommunity(this.communityForm).then(res => {
           this["notify"]("success", "成功", "修改小区成功");
-          this.fileList = [];
+          // this.fileList = [];
           this.showPic = true;
           this.getSceneData();
         });
@@ -208,17 +212,26 @@ export default class InformIssue extends Vue {
   }
 
   succUpdatePerson() {
-    this.$message({
-      type: "success",
-      message: "新增成功"
-    });
-    // this.addPersonVisible = false
+    this.getSceneData();
+    this["notify"]("success", "成功", "新增图片成功");
   }
 
   errorUpdatePerson() {
-    this.$message({
-      type: "warning",
-      message: "新增失败"
+    this["notify"]("error", "失败", "新增图片失败");
+  }
+
+  beforeAvatarUpload(file) {
+    const isLt2M = file.size / 1024 / 1024 < 2;
+    if (!isLt2M) {
+      this.$message.error("上传头像图片大小不能超过 2MB!");
+    }
+    return isLt2M;
+  }
+
+  changeImg(v, i) {
+    deleteImg(i).then(() => {
+      this["notify"]("success", "成功", "删除图片成功");
+      this.getSceneData();
     });
   }
 
@@ -249,14 +262,6 @@ export default class InformIssue extends Vue {
         this.communityForm["latitude"] = "";
       }
     });
-  }
-
-  beforeAvatarUpload(file) {
-    const isLt2M = file.size / 1024 / 1024 < 2;
-    if (!isLt2M) {
-      this.$message.error("上传头像图片大小不能超过 2MB!");
-    }
-    return isLt2M;
   }
 }
 </script>
@@ -343,13 +348,39 @@ td {
   height: 80px;
   display: block;
 }
+.shade-position {
+  position: relative;
+}
+.shade-position:hover .shade {
+  display: block;
+}
 .show-img {
   width: 100px;
   height: 100px;
   border-radius: 5px;
   margin-right: 5px;
 }
+.shade {
+  display: none;
+  background-color: rgba(0, 0, 0, 0.6);
+  position: absolute;
+  top: 0px;
+  text-align: center;
+}
+.el-icon-delete {
+  font-size: 20px;
+  color: #ffffff;
+  line-height: 100px;
+}
 .uplolad-img {
   display: flex;
+  position: relative;
+  height: 100px !important;
+}
+.upload-btn {
+  position: absolute;
+  bottom: -38px;
+  left: 0;
+  padding: 9px 38px;
 }
 </style>
