@@ -14,7 +14,7 @@
         >
           <el-dropdown-menu slot="dropdown">
             <!-- <div @click="handleStatistics('统计查询')"> -->
-            <router-link to="/statementManage/info">
+            <router-link to="/statementManage/carPassChart">
               <el-dropdown-item>统计查询</el-dropdown-item>
             </router-link>
 

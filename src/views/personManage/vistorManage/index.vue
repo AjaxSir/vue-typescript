@@ -25,10 +25,10 @@
           :exportName="'访客列表'"
         >
           <el-dropdown-menu slot="dropdown">
-            <router-link to="/statementManage/info">
+            <router-link to="/statementManage/visitorChart">
               <el-dropdown-item>进出次数排序</el-dropdown-item>
             </router-link>
-            <router-link to="/statementManage/info">
+            <router-link to="/statementManage/visitorChart">
               <el-dropdown-item>次数统计</el-dropdown-item>
             </router-link>
           </el-dropdown-menu>
