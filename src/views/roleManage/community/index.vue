@@ -212,11 +212,11 @@ export default class InformIssue extends Vue {
 
   succUpdatePerson() {
     this.getSceneData();
-    this["notify"]("success", "成功", "新增图片成功");
+    this["notify"]("success", "成功", "添加图片成功");
   }
 
   errorUpdatePerson() {
-    this["notify"]("error", "失败", "新增图片失败");
+    this["notify"]("error", "失败", "添加图片失败");
   }
 
   beforeAvatarUpload(file) {

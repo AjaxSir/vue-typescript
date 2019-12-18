@@ -84,7 +84,7 @@
       :page-size="page.limit"
       :total="page.total"
     ></el-pagination>
-    <!-- 新增预警联系人 -->
+    <!-- 添加预警联系人 -->
     <el-dialog
       title="添加"
       :visible.sync="dialogCreate"
@@ -189,12 +189,12 @@
               ref="saveTagInput"
               size="small"
               :maxlength="10"
-              placeholder="请输入新增分组名称"
+              placeholder="请输入添加分组名称"
               clearable
               @input="constraintLength(newTagValue,'10')"
               @blur="handleInputConfirm"
             ></el-input>
-            <el-button v-else class="button-new-tag" size="small" @click="showInput">新增分组</el-button>
+            <el-button v-else class="button-new-tag" size="small" @click="showInput">添加分组</el-button>
           </div>
         </el-form-item>
         <el-form-item
@@ -327,12 +327,12 @@
               ref="saveTagInput"
               size="small"
               :maxlength="10"
-              placeholder="请输入新增分组名称"
+              placeholder="请输入添加分组名称"
               clearable
               @input="constraintLength(newTagValue,'10')"
               @blur="handleInputConfirm"
             ></el-input>
-            <el-button v-else class="button-new-tag" size="small" @click="showInput">新增分组</el-button>
+            <el-button v-else class="button-new-tag" size="small" @click="showInput">添加分组</el-button>
           </div>
         </el-form-item>
         <el-form-item
@@ -364,11 +364,11 @@ import { Component, Prop, Vue, Mixins } from "vue-property-decorator";
 import { Getter, Action, Mutation } from "vuex-class";
 import mixin from "@/config/minxins";
 import {
-  addWarning, //新增预警联系人
+  addWarning, //添加预警联系人
   editWarning, //修改预警联系人
   deleteWarning, //删除预警联系人
   getGroup, //获取预警联系人分组
-  addGroup, //新增预警联系人分组
+  addGroup, //添加预警联系人分组
   deleteGroup //删除预警联系人分组
 } from "@/api/systemApi.ts";
 const ActionHeader = () => import("@/components/ActionHeader.vue");
@@ -399,11 +399,11 @@ export default class WarningLink extends Vue {
 
   showUnitSetting: boolean = false; // 查看已有分组设置状态
   earlyGroup: Array<Object> = []; //获取分组
-  newTag: boolean = false; // 新增分组框状态
-  newTagValue: string = ""; // 新增分组的值
+  newTag: boolean = false; // 添加分组框状态
+  newTagValue: string = ""; // 添加分组的值
 
   private createForm: Object = {
-    //新增表单字段
+    //添加表单字段
     earlyGroupId: "", //分组id
     email: "", //邮箱
     name: "", //姓名
@@ -480,7 +480,7 @@ export default class WarningLink extends Vue {
   // }
 
   createwarning() {
-    /**@description 新增预警联系人 */
+    /**@description 添加预警联系人 */
     // this.verification(this.createForm["phone"], "phone");
     // if (
     //   this.errorMessage["phone"] === "" &&
@@ -516,12 +516,12 @@ export default class WarningLink extends Vue {
   }
 
   showInput() {
-    /**@description 显示新增分组框*/
+    /**@description 显示添加分组框*/
     this.newTag = true;
   }
 
   handleInputConfirm() {
-    /**@description 新增分组 */
+    /**@description 添加分组 */
     this.newTag = false;
     if (this.newTagValue) {
       addGroup({ groupName: this.newTagValue }).then(res => {
@@ -625,7 +625,7 @@ export default class WarningLink extends Vue {
   }
 
   createClose() {
-    this.dialogCreate = false; //新增dialog
+    this.dialogCreate = false; //添加dialog
     for (const key in this.errorMessage) {
       this.errorMessage[key] = "";
     }
@@ -633,7 +633,7 @@ export default class WarningLink extends Vue {
   }
 
   editClose() {
-    /** @description 关闭新增/修改dialog */
+    /** @description 关闭添加/修改dialog */
 
     this.dialogEdit = false; //修改dialog
     for (const key in this.errorMessage) {

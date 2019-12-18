@@ -227,7 +227,7 @@
 import { Component, Prop, Vue, Mixins } from "vue-property-decorator";
 import { Getter, Action, Mutation } from "vuex-class";
 import mixin from "@/config/minxins";
-import { postMessage } from "@/api/noticeApi.ts"; //新增
+import { postMessage } from "@/api/noticeApi.ts"; //添加
 import { queryCarPhone } from "@/api/carApi.ts"; //根据手机号模糊查询用户
 import { searchHouse } from "@/api/houseApi"; //根据房屋模糊查询用户
 
@@ -258,10 +258,10 @@ export default class InformIssue extends Vue {
 
   private dialogFormVisible: Boolean = false;
 
-  private dialogCreate: Boolean = false; // 新增或修改弹出表单
-  private roleTitle: String = "0"; //新增0 || 修改1
+  private dialogCreate: Boolean = false; // 添加或修改弹出表单
+  private roleTitle: String = "0"; //添加0 || 修改1
   private createForm: Object = {
-    //新增/修改表单字段
+    //添加/修改表单字段
     content: "", //发布内容
     objType: "3", //发布对象
     title: "", //发布名称
@@ -318,7 +318,7 @@ export default class InformIssue extends Vue {
   }
 
   issueBtn() {
-    /**@description 新增车辆处理 */
+    /**@description 添加车辆处理 */
     this.$refs["dataForm"]["validate"](valid => {
       if (valid) {
         const form = { ...this.createForm };

@@ -85,9 +85,9 @@
         @current-change='pageChange' style="margin-top:10px;" background layout="prev, pager, next" :total="page.total"></el-pagination>
       </el-col>
     </el-row>
-    <!-- 新增或修改 -->
+    <!-- 添加或修改 -->
     <el-dialog
-      :title="Form.id ? '修改管理员' : '新增管理员'"
+      :title="Form.id ? '修改管理员' : '添加管理员'"
       :visible.sync="dialogCreate"
       width="460px"
       :close-on-click-modal='false'

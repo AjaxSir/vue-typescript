@@ -25,7 +25,7 @@ export default class GlobalMimins extends Vue {
     prop: "", // 需要的根据什么排序
     order: "descending" // ascending 表示升序，descending 表示降序
   }
-  public Form: Object = {} // 新增修改弹框表单信息
+  public Form: Object = {} // 添加修改弹框表单信息
   public TreeData: Array<Object> = []
   public list_data: Array<Object> = [];
   public phoneNum: any = 0
@@ -110,7 +110,7 @@ export default class GlobalMimins extends Vue {
   }
   /**
    *
-   * @param page 关闭新增/修改框
+   * @param page 关闭添加/修改框
    */
   handleClose() {
     for (let key in this.Form) {
@@ -256,7 +256,7 @@ export default class GlobalMimins extends Vue {
   }
 
   /**
-   * 新增成功弹出框
+   * 添加成功弹出框
    * @param action
    */
   notify(type: any, title: any, message: string) {

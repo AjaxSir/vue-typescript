@@ -22,7 +22,7 @@ export function queryCarPhone(phone) {
   })
 }
 
-//单个新增或批量新增接口
+//单个添加或批量添加接口
 export function addCar(data) {
   return _axios({
     url: '/admin/usr-car/batch-add/',

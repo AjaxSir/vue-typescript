@@ -65,13 +65,14 @@
                 <el-button style="padding:0px;" type="text" @click="showDetail(row)">{{row.name }}</el-button>
               </template>
             </el-table-column>
-            <el-table-column prop="age" width="120" align="center" label="年龄"></el-table-column>
+            <el-table-column prop="birthday" :show-overflow-tooltip='true' width="120" align="center" label="出生日期"></el-table-column>
             <el-table-column prop="sex" width="120" align="center" label="性别">
               <template slot-scope="{row}">
                 <span>{{ row.sex === '1' ? '男' : '女' }}</span>
               </template>
             </el-table-column>
-            <!-- <el-table-column prop="cardNo" align="center" label="身份证号"></el-table-column> -->
+            <el-table-column prop="cardName" :show-overflow-tooltip='true' align="center" label="证件类型"></el-table-column>
+            <el-table-column prop="cardNo" :show-overflow-tooltip='true' align="center" label="证件号"></el-table-column>
             <el-table-column prop="phone" align="center" label="联系电话">
               <template slot-scope="{row}">
                 <span class="rowUpdate"
@@ -114,7 +115,7 @@
                     size="small"
                     :type="row.status === '0' ? 'primary' : 'warning'"
                     style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
-                    >{{ row.status === '0' ? '使用' : '禁用' }}
+                    >{{ row.status === '0' ? '正常' : '禁用' }}
                     </el-tag>
                   </span>
                   <el-dropdown-menu  slot="dropdown">
@@ -144,6 +145,7 @@
           </el-table>
           <el-pagination
         @current-change='pageChange'
+        :current-page="page.page"
         :page-size="page.limit"
         style="margin-top:10px;" background layout="prev, pager, next" :total="page.total"></el-pagination>
         <div :class="rowSpan.row1===3 ? menuControl1 : menuControl2" @click="menuVisible">
@@ -160,7 +162,7 @@
         <el-tab-pane label="详细信息" name="first">
           <div class="singleInfo"><span class="right">姓名: </span>&nbsp;&nbsp;{{ Dialog.name }}</div>
           <div class="singleInfo"><span class="right">性别: </span>&nbsp;&nbsp;{{ Dialog.sex === '1' ? '男' : '女' }}</div>
-          <div class="singleInfo"><span class="right">生日: </span>&nbsp;&nbsp;{{ Dialog.birthday || '--' }}</div>
+          <div class="singleInfo"><span class="right">出生日期: </span>&nbsp;&nbsp;{{ Dialog.birthday || '--' }}</div>
           <div class="singleInfo"><span class="right">身份证号: </span>&nbsp;&nbsp;{{ Dialog.cardNo }}</div>
           <div class="singleInfo"><span class="right">年龄: </span>&nbsp;&nbsp;{{ Dialog.age }}</div>
           <div class="singleInfo"><span class="right">手机号: </span>&nbsp;&nbsp;{{ Dialog.phone }}</div>
@@ -218,12 +220,21 @@
     </el-dialog>
 
     <el-dialog :close-on-click-modal='false' title="添加物业人员" :visible.sync="dialogCreate" width="580px" :before-close="handleClose">
-      <el-form :model="Form" :rules="FormRules" ref='Forms' label-width="80px">
+      <el-form :model="Form" :rules="FormRules" ref='Forms' label-width="85px">
         <el-form-item class="float"  label="姓名:"  prop='name'>
           <el-input  clearable v-model="Form.name" placeholder='输入物业人员姓名'></el-input>
         </el-form-item>
-        <el-form-item   class="float" label="年龄:"  prop='age'>
-          <el-input  clearable v-model="Form.age"  maxlength="3" @input='constraintLength(Form.age, "3")' placeholder='输入物业人员年龄'></el-input>
+        <el-form-item   class="float" label="出生日期:"  prop='birthday'>
+          <el-date-picker
+          style='width:168px'
+            v-model="Form.birthday"
+            type="date"
+            format='yyyy - MM - dd'
+            :picker-options="pickerOptions"
+            value-format="yyyy-MM-dd"
+            placeholder="选择日期">
+          </el-date-picker>
+          <!-- <el-input  clearable v-model="Form.age"  maxlength="3" @input='constraintLength(Form.age, "3")' placeholder='输入物业人员年龄'></el-input> -->
         </el-form-item>
         <el-form-item  class="float"  label="电话:"  prop='phone'>
           <el-input
@@ -321,9 +332,15 @@ export default class PropertyManage extends Vue {
     note: '',
     sex: '',
     authId: '',
+    birthday: '',
     cardNo: '',
     cardName: '身份证'
   }
+   pickerOptions: object = {
+        disabledDate(time) {
+        return time.getTime() > Date.now() - 8.64e7;
+      }
+    }
   initForm: object = {
     url: '/admin/usrUser/PropertyManager/list',
     method: 'get'
@@ -355,6 +372,9 @@ export default class PropertyManage extends Vue {
           ],
     cardName: [
       { required: true, message: '请选择证件', trigger: 'change' }
+    ],
+    birthday: [
+      { required: true, message: '请选择出生年月', trigger: 'change' }
     ],
     phone: [
             { required: true, trigger: 'blur', validator: (rule, value, callback) => {
@@ -518,13 +538,13 @@ export default class PropertyManage extends Vue {
       Status
     }
   }
-  // 确定新增物业人员
+  // 确定添加物业人员
   confirmAddPropert() {
     this.$refs['Forms']["validate"](valid => {
       if(valid) {
         addPropert(this.Form).then(res => {
           if(res.data && res.data.code === 200) {
-            this.$message.success('新增成功')
+            this.$message.success('添加成功')
             this['dialogCreate'] = false
             this['fetchData'](this.initForm)
             this['handleClose']()

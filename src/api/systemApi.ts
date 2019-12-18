@@ -57,7 +57,7 @@ export function updateRole(data: object) {
 
 /********* 预警联系人 *********** */
 
-//新增预警联系人
+//添加预警联系人
 export function addWarning(data: Object) {
   return _axios({
     url: '/admin/usr-early-contact/',
@@ -91,7 +91,7 @@ export function getGroup() {
   })
 }
 
-//新增预警联系人分组
+//添加预警联系人分组
 export function addGroup(data: Object) {
   return _axios({
     url: '/admin/usr-early-group/',

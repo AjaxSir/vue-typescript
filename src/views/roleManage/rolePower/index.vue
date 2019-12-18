@@ -96,9 +96,9 @@
         <el-button type="primary" @click="saveRole">保 存</el-button>
       </div>
     </el-dialog>
-    <!-- 新增或修改 -->
+    <!-- 添加或修改 -->
     <el-dialog
-      :title="Form.id ? '修改' : '新增'"
+      :title="Form.id ? '修改' : '添加'"
       :close-on-click-modal='false'
       :visible.sync="dialogCreate"
       width="500px"
@@ -217,7 +217,7 @@ export default class InformIssue extends Vue {
       }
     })
   }
-  // 新增角色
+  // 添加角色
   addRoleConfirm() {
     this.$refs['Forms']['validate']((valid) => {
       if(valid) {
@@ -225,7 +225,7 @@ export default class InformIssue extends Vue {
           addRole(this.Form).then(res => {
             if (res.data.code === 200) {
               this['fetchData'](this.initForm)
-              this.$message.success('新增角色成功')
+              this.$message.success('添加角色成功')
             }
             this['handleClose']()
           })

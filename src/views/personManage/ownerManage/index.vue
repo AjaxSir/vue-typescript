@@ -219,13 +219,13 @@
       <el-tabs type="card" v-model="activeName">
         <el-tab-pane label="详细信息" name="first">
               <el-row style="line-height:50px;height:50px;padding:0px 30px 0px 30px">
-                <el-col :span='8' style="height:40px"><span class="right">姓名: </span>{{ detailDialog.name }}</el-col>
-                <el-col :span='8' style="height:40px"><span class="right">性别: </span>{{ detailDialog.sex === '1' ? '男' : '女' }}</el-col>
-                <el-col :span='8' style="height:40px"><span class="right">手机号: </span>{{ detailDialog.phone }}</el-col>
+                <el-col :span='8' style="height:40px"><span class="right">姓名: </span>&nbsp;&nbsp;{{ detailDialog.name }}</el-col>
+                <el-col :span='8' style="height:40px"><span class="right">性别: </span>&nbsp;&nbsp;{{ detailDialog.sex === '1' ? '男' : '女' }}</el-col>
+                <el-col :span='8' style="height:40px"><span class="right">手机号: </span>&nbsp;&nbsp;{{ detailDialog.phone }}</el-col>
                 <!-- <el-col :span='12'>注册时间:{{ detailDialog.sex === '1' ? '男' : '女' }}</el-col> -->
-                <el-col :span='8' style="height:40px"><span class="right">证件类型: </span>{{ detailDialog.cardName || '--' }}</el-col>
-                <el-col :span='8' style="height:40px"><span class="right">证件号码: </span>{{ detailDialog.cardNo || '暂无' }}</el-col>
-                <el-col :span='24'>备注:
+                <el-col :span='8' style="height:40px"><span class="right">证件类型: </span>&nbsp;&nbsp;{{ detailDialog.cardName || '--' }}</el-col>
+                <el-col :span='8' style="height:40px"><span class="right">证件号码: </span>&nbsp;&nbsp;{{ detailDialog.cardNo || '暂无' }}</el-col>
+                <el-col :span='24'><span class="right">备注: </span>&nbsp;&nbsp;
                   <el-input style="width:600px" type='textarea'></el-input>
                 </el-col>
               </el-row>
@@ -324,7 +324,7 @@
       </span>
     </el-dialog>
 
-    <el-dialog :close-on-click-modal='false' title="创建用户" :visible.sync="dialogCreate" width="440px" :before-close="handleClose">
+    <el-dialog :close-on-click-modal='false' title="添加用户" :visible.sync="dialogCreate" width="440px" :before-close="handleClose">
           <el-form :model="Form" :rules="rules" style="margin-right:40px" ref='Forms' label-width="85px">
 
 

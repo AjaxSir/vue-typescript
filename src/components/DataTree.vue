@@ -41,7 +41,7 @@
            </span>
         <div>
           <el-dropdown @command='commandTreeClick' placement="bottom-start">
-            <i v-show="node.id===showMenu" class="iconfont icon-menu"></i>
+            <i  v-show="node.id===showMenu" class="iconfont icon-menu"></i>
             <el-dropdown-menu v-if='type === "house"' slot="dropdown">
               <el-dropdown-item v-if='node.data.type === "group"' :command='commandObj("addGroup", node)'>添加子分组</el-dropdown-item>
               <el-dropdown-item v-if='node.data.type === "group"' :command='commandObj("addBuilding", node)'>添加单元楼</el-dropdown-item>
@@ -97,7 +97,7 @@
                 :value="item.name">
               </el-option>
             </el-select>
-            <el-button @click='showUnitSetting = !showUnitSetting'>单位设置</el-button>
+            <el-button style="width:125px;" @click='showUnitSetting = !showUnitSetting'>单位设置</el-button>
             <div v-if='showUnitSetting'>
               <el-tag
               style="margin-left:5px"
@@ -118,7 +118,7 @@
                 @blur="handleInputConfirm('group')"
               >
               </el-input>
-              <el-button v-else class="button-new-tag" size="small" @click="showInput">新增单位</el-button>
+              <el-button v-else class="button-new-tag" size="small" @click="showInput">添加单位</el-button>
             </div>
           </el-form-item>
           <el-form-item label="备注:" prop='note' label-width="85px">
@@ -161,11 +161,11 @@
                 @blur="handleInputConfirm('group')"
               >
               </el-input>
-              <el-button v-else class="button-new-tag" size="small" @click="showInput">新增单位</el-button>
+              <el-button v-else class="button-new-tag" size="small" @click="showInput">添加单位</el-button>
             </div>
         </el-form-item> -->
         <el-form-item label="别名:" prop='name' label-width="85px">
-          <el-input clearable style="width:240px" placeholder="填写分组的别名" v-model="HouseForm.name" autocomplete="off"></el-input>
+          <el-input clearable style="width:240px" maxlength="15" placeholder="填写分组的别名" v-model="HouseForm.name" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="备注:" prop='note' label-width="85px">
           <el-input style="width:240px" maxlength="200" placeholder="填写分组的备注信息" type='textarea' v-model="HouseForm.note" autocomplete="off"></el-input>
@@ -208,14 +208,14 @@
                 @blur="handleInputConfirm('group')"
               >
               </el-input>
-              <el-button v-else class="button-new-tag" size="small" @click="showInput">新增单位</el-button>
+              <el-button v-else class="button-new-tag" size="small" @click="showInput">添加单位</el-button>
             </div>
         </el-form-item> -->
         <el-form-item label="别名:" prop='name' label-width="85px">
-          <el-input clearable style="width:240px" placeholder="填写分组的别名" v-model="HouseForm.name" autocomplete="off"></el-input>
+          <el-input clearable style="width:240px" maxlength="15" placeholder="填写分组的别名" v-model="HouseForm.name" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="备注:" prop='note' label-width="85px">
-          <el-input style="width:240px" placeholder="填写分组的备注信息" type='textarea' v-model="HouseForm.note" autocomplete="off"></el-input>
+          <el-input style="width:240px" placeholder="填写分组的备注信息" maxlength="200" type='textarea' v-model="HouseForm.note" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -265,7 +265,7 @@
                 @blur="handleInputConfirm('build')"
               >
               </el-input>
-              <el-button v-else class="button-new-tag" size="small" @click="showInput">新增单位</el-button>
+              <el-button v-else class="button-new-tag" size="small" @click="showInput">添加单位</el-button>
             </div>
         </el-form-item> -->
         <el-form-item label="楼层数:" prop='storeyNum' label-width="85px">
@@ -482,7 +482,8 @@ export default class DataTree extends Vue {
   // 分组校验规则
   HouseRules: Object = {
     name: [
-            { required: true, message: '请输入别名', trigger: 'blur' }
+            { required: true, message: '请输入别名', trigger: 'blur' },
+            { min:1, max: 15, message: '别名长度应在1到15位' }
           ],
     serialNumber: [
             { required: true, message: '请输入序号', trigger: 'blur' }
@@ -498,7 +499,7 @@ export default class DataTree extends Vue {
     storeyNum: [
             { required: true, trigger: 'blur', validator: (rule, value, callback) => {
                 if (!(/^\+?[1-9]\d*$/).test(value)) {
-                  callback(new Error('填写正确的楼栋编号'))
+                  callback(new Error('填写正确的楼层数'))
                 } else {
                   callback()
                 }
@@ -507,7 +508,7 @@ export default class DataTree extends Vue {
     houseNum: [
            { required: true, trigger: 'blur', validator: (rule, value, callback) => {
                 if (!(/^\+?[1-9]\d*$/).test(value)) {
-                  callback(new Error('填写正确的楼栋编号'))
+                  callback(new Error('填写正确的每层户数'))
                 } else {
                   callback()
                 }
@@ -530,7 +531,7 @@ export default class DataTree extends Vue {
             { required: true, message: '请输入结束编号', trigger: 'blur' }
           ],
   }
-  // 新增分组表单
+  // 添加分组表单
   HouseForm: object = {
     serialNumber: '', // 序号
     serialNumberUnit: '',
@@ -570,9 +571,9 @@ export default class DataTree extends Vue {
     // 单位序号设置 数组
   Tags: Array<object> = []
   UnitTags: Array<object> = []
-  // 新增序号单元input框状态
+  // 添加序号单元input框状态
   newTag: boolean = false
-  // 新增单元的值
+  // 添加单元的值
   newTagValue: string = ''
   // 权限dialog状态
   RoleVisible:boolean = false
@@ -611,7 +612,7 @@ export default class DataTree extends Vue {
   // }
   // 关闭弹框
   closeDialog() {
-      // 新增分组表单
+      // 添加分组表单
   this.HouseForm= {
     serialNumber: '', // 序号
     serialNumberUnit: this.Tags[0]['name'],
@@ -628,6 +629,14 @@ export default class DataTree extends Vue {
     serialNumberUnit: this.UnitTags[0]['name'], // 序号单元
     storeyNum: '', // 楼层数
     houseNum: '' // 每层户数
+  }
+  if(this.HouseUnitVisible) {
+    this.$refs['buildings']['resetFields']()
+  }
+  if(this.HouseVisible) {
+    this.$refs['batchForm'] &&  this.$refs['batchForm']['resetFields']()
+    this.$refs['HouseForm'] && this.$refs['HouseForm']['resetFields']()
+    this.$refs['HouseForms'] && this.$refs['HouseForms']['resetFields']()
   }
     this.HouseUnitVisible = false
     this.HouseVisible = false
@@ -654,7 +663,7 @@ export default class DataTree extends Vue {
     this.endTime = '21:00' // 权限修改时间
     row.timeStatus = false
   }
-  // 确定新增权限
+  // 确定添加权限
   RoleAddConfim() {
     this.$refs['roleForm']["validate"](valid => {
       if(valid) {
@@ -665,8 +674,10 @@ export default class DataTree extends Vue {
         if (!this.RoleForm['id']) {
           addRoleGroup(this.RoleForm).then(res => {
             if(res.data.code === 200) {
-              this.$message.success('新增权限组成功')
+              this.$message.success('添加权限组成功')
               this.$emit('fetchRoleGroup')
+              this['page']["page"] = 1;
+              this.$emit('fetchData', this.initFormHeader)
               this.roleHandClose()
             }
           })
@@ -675,6 +686,8 @@ export default class DataTree extends Vue {
             if(res.data.code === 200) {
               this.$message.success('修改权限组成功')
               this.$emit('fetchRoleGroup')
+              this['page']["page"] = 1;
+              this.$emit('fetchData', this.initFormHeader)
               this.roleHandClose()
             }
           })
@@ -682,7 +695,7 @@ export default class DataTree extends Vue {
       }
     })
   }
-  // 新增/修改权限组关闭弹框
+  // 添加/修改权限组关闭弹框
   roleHandClose() {
     this.RoleForm['devAuthoritiesDevice'] = []
     this.bindDeviceList = []
@@ -701,7 +714,7 @@ export default class DataTree extends Vue {
     this.bindDeviceList = this.unConfirmDeviceList
     this.bindDeviceListVisible = false
   }
-  // 确定新增/修改单元楼
+  // 确定添加/修改单元楼
   addUpdateUnitConfim() {
     this.$refs['buildings']["validate"](valid => {
       if (valid) {
@@ -709,7 +722,7 @@ export default class DataTree extends Vue {
           // console.log('confirm', this.UnitForm)
           addBuilding(this.UnitForm).then(res => {
             if(res.data.code === 200) {
-              this.$message.success('新增成功')
+              this.$message.success('添加成功')
               this.HouseUnitVisible = false
               this.$emit('getHouseTreeData')
             }
@@ -717,7 +730,7 @@ export default class DataTree extends Vue {
         } else {
           updateBuilding(this.UnitForm).then(res => {
             if(res.data.code === 200) {
-              this.$message.success('新增成功')
+              this.$message.success('添加成功')
               this.HouseUnitVisible = false
               this.$emit('getHouseTreeData')
             }
@@ -740,7 +753,29 @@ export default class DataTree extends Vue {
       }
     })
   }
-  /** 新增或修改分组信息 */
+  // 查找对应的父级元素 不关闭楼栋分组
+  checkParent(treeData: Array<object>, data: object) {
+    let flag = false
+    console.log(data, 'back data')
+    let dataList: Array<object> = []
+    try {
+      treeData.forEach(ele => {
+        if (ele['id'] === data['parentId'] || ele['id'] === data['buildingGroupId']) {
+          flag = true
+          treeData.push(data)
+          throw 'find parent'
+        } else {
+          dataList = treeData
+        }
+      })
+    } catch (err) {
+      console.log(err)
+    }
+    if (!flag && dataList['sonBuildGroups'] && dataList['sonBuildGroups'].length) {
+      return this.checkParent(dataList, data)
+    }
+  }
+  /** 添加或修改分组信息 */
   async GroupAction() {
     if (this.activeName === 'second') {
       if (this.nodeAction === 'addGroup') {
@@ -749,8 +784,9 @@ export default class DataTree extends Vue {
             this.closeDialog()
             Message({
               type: 'success',
-              message: '新增成功'
+              message: '添加成功'
             })
+            // this.checkParent(this.TreeData, res.data.data)
             this.$emit('getHouseTreeData')
             this.HouseVisible = false
           }
@@ -802,7 +838,7 @@ export default class DataTree extends Vue {
         }
         return Promise.resolve({ success, error })
   }
-  // 关闭新增/修改单元楼
+  // 关闭添加/修改单元楼
   closeBuildingAction() {
     this.$refs['buildings']['resetFields']()
     this.HouseUnitVisible = false
@@ -855,7 +891,7 @@ export default class DataTree extends Vue {
   MouseNnter(val) {
     this.showMenu = val;
   }
-  /*** 新增单元序号 */
+  /*** 添加单元序号 */
   handleInputConfirm(type: string) {
     this.newTag = false
     addUnit(this.newTagValue, type).then(res => {
@@ -865,7 +901,7 @@ export default class DataTree extends Vue {
       }
     })
   }
-  /*** 显示新增序号单元框*/
+  /*** 显示添加序号单元框*/
   showInput() {
     this.newTag = true
   }
@@ -929,6 +965,7 @@ export default class DataTree extends Vue {
         break
       case 'addRoleGroup':
         this.RoleVisible = true
+        this.RoleForm['id'] = ''
         break
       case 'updateRoleGroup':
         getGroupInfoById(treeData.data.id).then(res => {

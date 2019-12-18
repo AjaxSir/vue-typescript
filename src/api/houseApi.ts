@@ -148,7 +148,7 @@ export function searchSuggestHouse(keys: string) {
     }
   })
 }
-// 新增房屋
+// 添加房屋
 export function addHouse(data: object) {
   return _axios({
     url: '/admin/hsHouse',
@@ -178,7 +178,7 @@ export function getInoutList() {
     method: 'get'
   })
 }
-// 新增出入口
+// 添加出入口
 export function creatPassageway(data: object) {
   return _axios({
     url: '/admin/hs-enter-exit',

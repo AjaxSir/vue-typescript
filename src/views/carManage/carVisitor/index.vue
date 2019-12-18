@@ -7,8 +7,8 @@
           initFormHeader: 初始化的地址 方式
           fetchData: 筛选后重新init
           filterForm: 关键字查询条件
-          dialogCreate:新增弹出框
-          btnStatus:2为显示导出按钮 1为显示新增按钮
+          dialogCreate:添加弹出框
+          btnStatus:2为显示导出按钮 1为显示添加按钮
           moreStatus:是否显示 更多菜单 按钮
           exportUrl:导出路径
           exportName:导出文件名
@@ -589,7 +589,7 @@ export default class CardManage extends Vue {
   }
 
   handleClose() {
-    /** @description 关闭新增/修改diolog */
+    /** @description 关闭添加/修改diolog */
     this.detailDialogVisible = false; //车辆详情dialog
     this.activeName = "first";
   }

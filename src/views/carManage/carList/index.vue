@@ -218,7 +218,7 @@
         </div>-->
       </el-col>
     </el-row>
-    <!-- 车辆新增 -->
+    <!-- 车辆添加 -->
     <el-dialog
       title="添加"
       :visible.sync="dialogCreate"
@@ -547,7 +547,7 @@ import { Getter, Action, Mutation } from "vuex-class";
 import mixin from "@/config/minxins";
 import {
   queryCarPhone, //根据手机号模糊查询用户
-  addCar, //新增
+  addCar, //添加
   editCar, //修改
   getTargrtRecord, //获取目标车辆通行记录
   getTargetUser //获取目标车辆车主信息
@@ -582,9 +582,9 @@ export default class CarList extends Vue {
   private dialogFormVisible: Boolean = false;
   private formLabelWidth: String = "120px";
 
-  private dialogCreate: Boolean = false; // 新增弹出表单
+  private dialogCreate: Boolean = false; // 添加弹出表单
   private createForm: Array<Object> = [
-    //新增表单字段
+    //添加表单字段
     {
       ownerPhone: "", //车主电话
       ownerUserName: "", //车主
@@ -723,7 +723,7 @@ export default class CarList extends Vue {
   }
 
   async querySearch(queryString, cb) {
-    /**@description 新增时对车主电话进行迷糊查询 */
+    /**@description 添加时对车主电话进行迷糊查询 */
     this.verification(queryString);
     if (
       queryString === "" ||
@@ -778,7 +778,7 @@ export default class CarList extends Vue {
   }
 
   createCar() {
-    /**@description 新增车辆处理 */
+    /**@description 添加车辆处理 */
     // this.verification(this.createForm[0]["ownerPhone"]);
     // if (
     //   this.errorMessage["ownerPhone"] === "" &&
@@ -877,8 +877,8 @@ export default class CarList extends Vue {
   }
 
   handleClose() {
-    /** @description 关闭新增/修改dialog */
-    this.dialogCreate = false; //车辆新增dialog
+    /** @description 关闭添加/修改dialog */
+    this.dialogCreate = false; //车辆添加dialog
     this.dialogEdit = false; //修改dialog
     this.createForm[0]["carType"] = "";
     this.$refs["dataForm"]["resetFields"]();

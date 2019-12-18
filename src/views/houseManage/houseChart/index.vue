@@ -502,7 +502,7 @@
         </div>
       </el-col>
     </el-row>
-    <!-- 新增dialog -->
+    <!-- 添加dialog -->
     <!-- <el-dialog
       title="提示"
       :visible.sync="dialogCreate"

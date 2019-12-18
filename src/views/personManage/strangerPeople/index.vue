@@ -78,7 +78,7 @@
       </el-col>
     </el-row>
     <el-dialog title="提示" :visible.sync="dialogCreate" width="30%" :before-close="handleClose">
-      <span>这是重点人员新增</span>
+      <span>这是重点人员添加</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogCreate = false">取 消</el-button>
         <el-button type="primary" @click="dialogCreate = false">确 定</el-button>
@@ -112,7 +112,7 @@ export default class CardManage extends Vue {
     url: "/admin/strangerRecord/",
     method: "get"
   };
-  dialogCreate: boolean = false; //新增
+  dialogCreate: boolean = false; //添加
   private cardList: Array<Object> = [
     {
       name: "张三",

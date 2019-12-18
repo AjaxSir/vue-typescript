@@ -117,7 +117,7 @@ export function updateRoleHouse(data: object) {
 }
 
 /********* 物业人员 *********** */
-// 新增物业人员
+// 添加物业人员
 export function addPropert(data: object) {
   return _axios({
     url: '/admin/usrUser/propertyManager',
@@ -235,7 +235,7 @@ export function getType() {
   })
 }
 
-//新增关注人员类别
+//添加关注人员类别
 export function addType(data: Object) {
   return _axios({
     url: '/admin/usr-focus-personnel-type/',
