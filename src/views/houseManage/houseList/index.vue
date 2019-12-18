@@ -325,8 +325,13 @@ export default class CardManage extends Vue {
             { required: true, message: '请选择当前房屋状态', trigger: 'change' }
           ],
     storeyNum: [
-            { required: true, message: '请选择当前房屋楼层数', trigger: 'blur' },
-            { min: 1, max: 6, message: '长度在 1 到 6 个字符', trigger: 'blur' }
+            { required: true, trigger: 'blur', validator: (rule, value, callback) => {
+                if (!(/^\+?[1-9]\d*$/).test(value)) {
+                  callback(new Error('填写正确的楼栋层数'))
+                } else {
+                  callback()
+                }
+              } }
           ],
           cardNo: [
             { required: true, message: '请选择当前房屋的组别', trigger: 'change' }
@@ -416,7 +421,7 @@ export default class CardManage extends Vue {
         this.Form['buildingId'] = [...this.Form['buildingIdArr']].pop()
         addHouse(this.Form).then(res => {
           if(res.data.code === 200) {
-            this.$message.success('新增成功')
+            this.$message.success('添加成功')
             this['dialogCreate'] = false
             this['fetchData'](this.initForm)
             this['handleClose']()

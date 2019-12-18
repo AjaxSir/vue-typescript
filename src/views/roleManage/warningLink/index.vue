@@ -86,7 +86,7 @@
     ></el-pagination>
     <!-- 新增预警联系人 -->
     <el-dialog
-      title="新增"
+      title="添加"
       :visible.sync="dialogCreate"
       width="500px"
       :before-close="createClose"

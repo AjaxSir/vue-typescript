@@ -220,7 +220,7 @@
     </el-row>
     <!-- 车辆新增 -->
     <el-dialog
-      title="新增"
+      title="添加"
       :visible.sync="dialogCreate"
       width="500px"
       :before-close="handleClose"

@@ -4,7 +4,7 @@
 -->
 <template>
   <div class="content tree-rename">
-    <div @click='handleNodeClick({ type: "building", id: "" })' class="treeHeader">
+    <div @click='handleNodeClick({ type: "building", id: "" })' :class="['treeHeader', highlightStatus ? '' : 'highlight']">
       <i class="iconfont icon-shuji"></i>
       所有
       <el-dropdown v-if='type === "house"' class='dropdownAll' @command='commandTreeClick' placement="bottom-start">
@@ -25,7 +25,7 @@
       node-key="id"
       :props='dataFormate'
       accordion
-      :highlight-current='true'
+      :highlight-current='highlightStatus'
       :default-expand-all='false'
       :expand-on-click-node="false"
       @node-click="handleNodeClick"
@@ -65,9 +65,28 @@
       <el-tab-pane label="批量添加" name="first">
         <el-form  ref='batchForm' :rules='batchRules' :model="batchForm" label-width="80px">
           <el-form-item prop='min' label="编号:">
-            <el-input  clearable style="width:120px" placeholder="开始编号" v-model="batchForm.min"></el-input>
+            <el-input
+            clearable
+                @keyup.native="UpNumber"
+                @keydown.native="UpNumber"
+                @change="clearableBtn"
+                @input="hint"
+                @focus="hintFocus"
+                @blur="hintBlur"
+                @mouseover.native="hint(batchForm.min)"
+                @mouseout.native="hint(batchForm.min)"
+              style="width:120px" placeholder="开始编号" v-model="batchForm.min"></el-input>
               至
-            <el-input clearable placeholder="结束编号"  style="width:120px" v-model="batchForm.max"></el-input>
+            <el-input clearable placeholder="结束编号"  style="width:120px"
+            @keyup.native="UpNumber"
+                @keydown.native="UpNumber"
+                @change="clearableBtn"
+                @input="hint"
+                @focus="hintFocus"
+                @blur="hintBlur"
+                @mouseover.native="hint(batchForm.max)"
+                @mouseout.native="hint(batchForm.max)"
+            v-model="batchForm.max"></el-input>
           </el-form-item>
           <el-form-item label="序号单位:" prop='serialNumberUnit' label-width="85px">
             <el-select style="width:130px" v-model="batchForm.serialNumberUnit" placeholder="请选择">
@@ -250,10 +269,29 @@
             </div>
         </el-form-item> -->
         <el-form-item label="楼层数:" prop='storeyNum' label-width="85px">
-          <el-input clearable style="width:280px" v-model="UnitForm.storeyNum" autocomplete="off"></el-input>
+          <el-input
+          clearable
+                @keyup.native="UpNumber"
+                @keydown.native="UpNumber"
+                @change="clearableBtn"
+                @input="hint"
+                @focus="hintFocus"
+                @blur="hintBlur"
+                @mouseover.native="hint(UnitForm.storeyNum)"
+                @mouseout.native="hint(UnitForm.storeyNum)"
+           style="width:280px" v-model="UnitForm.storeyNum" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="每层户数:" prop='houseNum' label-width="85px">
-          <el-input clearable style="width:280px" v-model="UnitForm.houseNum" autocomplete="off"></el-input>
+          <el-input
+          clearable
+                @keyup.native="UpNumber"
+                @keydown.native="UpNumber"
+                @change="clearableBtn"
+                @input="hint"
+                @focus="hintFocus"
+                @blur="hintBlur"
+                @mouseover.native="hint(UnitForm.houseNum)"
+                @mouseout.native="hint(UnitForm.houseNum)" style="width:280px" v-model="UnitForm.houseNum" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -396,7 +434,10 @@ addBuilding, updateBuilding, deleteBuilding } from '@/api/houseApi.ts'
 import { getDeviceList } from '@/api/deviceApi.ts'
 import { addRoleGroup, getGroupInfoById, updateRoleGroup, deleteRoleGroup } from '@/api/peopleApi.ts'
 import { Message } from 'element-ui';
-@Component
+import mixin from "@/config/minxins";
+
+@Component({
+})
 export default class DataTree extends Vue {
   private showMenu: Number = 0;
   @Prop({ default: 'house' }) type: string;
@@ -415,6 +456,7 @@ export default class DataTree extends Vue {
   @Prop({ default:()=> { return {} } }) initFormHeader: object
   @Prop({ default:()=> { return {} } }) page: object
   selectId: any =  ''
+  highlightStatus: boolean = false // 高亮状态
   nodeAction: string = '' // 记录执行的操作
   bindDeviceList: Array<object> = [] // 已选择绑定的设备列表
   bindDeviceListVisible: boolean = false // 设备列表弹框状态
@@ -454,10 +496,22 @@ export default class DataTree extends Vue {
             { required: true, message: '请输入序号', trigger: 'blur' }
           ],
     storeyNum: [
-            { required: true, message: '请输入每层户数', trigger: 'blur' }
+            { required: true, trigger: 'blur', validator: (rule, value, callback) => {
+                if (!(/^\+?[1-9]\d*$/).test(value)) {
+                  callback(new Error('填写正确的楼栋编号'))
+                } else {
+                  callback()
+                }
+              } }
           ],
     houseNum: [
-            { required: true, message: '请输入楼层数', trigger: 'blur' }
+           { required: true, trigger: 'blur', validator: (rule, value, callback) => {
+                if (!(/^\+?[1-9]\d*$/).test(value)) {
+                  callback(new Error('填写正确的楼栋编号'))
+                } else {
+                  callback()
+                }
+              } }
           ],
     serialNumberUnit: [
             { required: true, message: '请选择楼单位', trigger: 'change', type: 'string' }
@@ -465,8 +519,13 @@ export default class DataTree extends Vue {
   }
   batchRules: object = {
     min: [
-            { required: true, message: '请输入开始编号', trigger: 'blur' }
-          ],
+            { required: true, trigger: 'blur', validator: (rule, value, callback) => {
+                if (!(/^\+?[1-9]\d*$/).test(value)) {
+                  callback(new Error('填写正确的楼栋编号'))
+                } else {
+                  callback()
+                }
+              } }],
     max: [
             { required: true, message: '请输入结束编号', trigger: 'blur' }
           ],
@@ -525,16 +584,18 @@ export default class DataTree extends Vue {
   // 获取设备列表
   fetchDeviceList(page: number) {
     this.bindIndex = []
+    // console.log(this.bindDeviceList, '已绑定设备列表')
     getDeviceList({ page, limit: 10 }).then((res) => {
       res.data.data.records.forEach((ele, index: number) => {
         this.bindDeviceList.forEach(item => {
-          if (ele['id'] === item['deviceId']) {
+          if (ele['serialNumber'] === item['deviceSerialNumber']) {
             this.bindIndex.push(index)
           }
         })
       })
       this.DeviceList = res.data.data.records
       this.devicePage['total'] = res.data.data.total
+      // console.log(this.bindIndex, 'index')
       this.$nextTick(() => {
         if (this.$refs['deviceList']) {
           this.bindIndex.forEach(i => {
@@ -631,17 +692,13 @@ export default class DataTree extends Vue {
   // 保存到绑定设备 并验证是否已经存在 已存在不加入
   saveBindDevicelist() {
     const strDevice = JSON.stringify(this.bindDeviceList)
-    console.log(this.bindDeviceList, '已绑定列表')
-    this.unConfirmDeviceList.forEach(ele => {
-      console.log(ele['serialNumber'], '选中的设备编号')
-      if(strDevice.indexOf(ele['serialNumber']) === -1) {
+    this.unConfirmDeviceList.forEach((ele, index) => {
         ele['startTime'] = '18:00'
         ele['endTime'] = '21:00'
-        ele['deviceId'] = ele['id']
+        ele['deviceSerialNumber'] = ele['serialNumber']
         this.$set(ele, 'timeStatus', false)
-        this.bindDeviceList.push(ele)
-      }
     })
+    this.bindDeviceList = this.unConfirmDeviceList
     this.bindDeviceListVisible = false
   }
   // 确定新增/修改单元楼
@@ -649,7 +706,7 @@ export default class DataTree extends Vue {
     this.$refs['buildings']["validate"](valid => {
       if (valid) {
         if (!this.UnitForm['id']) {
-          console.log('confirm', this.UnitForm)
+          // console.log('confirm', this.UnitForm)
           addBuilding(this.UnitForm).then(res => {
             if(res.data.code === 200) {
               this.$message.success('新增成功')
@@ -752,6 +809,7 @@ export default class DataTree extends Vue {
   }
   @Emit("fetchData")
   handleNodeClick(data) {
+    this.highlightStatus = !!data.id
     /**@description 树节点点击事件 */
     if(this.type === "house") {
       if(data.type === 'group') {
@@ -938,6 +996,35 @@ export default class DataTree extends Vue {
       ...node
     }
   }
+
+  ///
+    public phoneNum: any = 0
+  public regPos = /^\d+(\.\d+)?$/
+  public upNum = /[^\d]/g
+  public hintPhone: any = false
+  // phone只可输入数字
+  UpNumber(e: any) {
+    var v = e.target.value
+
+    e.target.value = v.replace(this.upNum, "");
+  }
+
+  clearableBtn(v) {
+    //清除
+    this.phoneNum = v ? v.length : 0
+  }
+
+  hint(v: any) {
+    this.hintPhone = v ? true : false
+  }
+
+  hintFocus(e: any) {
+    this.hintPhone = e.target.value ? true : false
+  }
+
+  hintBlur() {
+    this.hintPhone = false
+  }
 }
 </script>
 
@@ -1013,5 +1100,9 @@ export default class DataTree extends Vue {
   line-height: 40px;
   overflow: hidden;
   padding: 10px 0px;
+}
+.highlight{
+  background-color: #409EFF;
+  color: white;
 }
 </style>

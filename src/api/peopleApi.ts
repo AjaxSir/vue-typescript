@@ -29,16 +29,16 @@ export function getUserPropertyPass(params: object) {
     params
   })
 }
-// 查看用户的人脸库信息
-export function getPersonFace(key: string) {
-  return _axios({
-    url: '/admin/uploadFile',
-    method: 'get',
-    params: {
-      key
-    }
-  })
-}
+// 查看用户的人脸库信息 弃用
+// export function getPersonFace(key: string) {
+//   return _axios({
+//     url: '/admin/uploadFile',
+//     method: 'get',
+//     params: {
+//       key
+//     }
+//   })
+// }
 //****住户相关****** */
 // 添加住户
 export function addPeople(data: Object) {
@@ -74,6 +74,15 @@ export function updateUserNote(id: string, note: string) {
 export function getUserPass(params: object) {
   return _axios({
     url: '/admin/people-pass/',
+    method: 'get',
+    params
+  })
+}
+
+// 获取住户的人脸库信息
+export function getFaceList(params: object) {
+  return _axios({
+    url: '/admin/usr-dev-link',
     method: 'get',
     params
   })

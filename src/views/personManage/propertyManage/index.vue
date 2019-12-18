@@ -158,13 +158,13 @@
     <el-dialog :close-on-click-modal='false' width="650px" :title="Dialog.name" :visible.sync="dialogFormVisible">
       <el-tabs v-model="activeName" type='card'>
         <el-tab-pane label="详细信息" name="first">
-          <div class="singleInfo">姓名:&nbsp;&nbsp;{{ Dialog.name }}</div>
-          <div class="singleInfo">性别:&nbsp;&nbsp;{{ Dialog.sex === '1' ? '男' : '女' }}</div>
-          <div class="singleInfo">生日:&nbsp;&nbsp;{{ Dialog.birthday || '--' }}</div>
-          <div class="singleInfo">身份证号:&nbsp;&nbsp;{{ Dialog.cardNo }}</div>
-          <div class="singleInfo">年龄:&nbsp;&nbsp;{{ Dialog.age }}</div>
-          <div class="singleInfo">手机号:&nbsp;&nbsp;{{ Dialog.phone }}</div>
-          <div class="singleInfo">权限组:&nbsp;&nbsp;{{ Dialog.auth && Dialog.auth.name || '--' }}</div>
+          <div class="singleInfo"><span class="right">姓名: </span>&nbsp;&nbsp;{{ Dialog.name }}</div>
+          <div class="singleInfo"><span class="right">性别: </span>&nbsp;&nbsp;{{ Dialog.sex === '1' ? '男' : '女' }}</div>
+          <div class="singleInfo"><span class="right">生日: </span>&nbsp;&nbsp;{{ Dialog.birthday || '--' }}</div>
+          <div class="singleInfo"><span class="right">身份证号: </span>&nbsp;&nbsp;{{ Dialog.cardNo }}</div>
+          <div class="singleInfo"><span class="right">年龄: </span>&nbsp;&nbsp;{{ Dialog.age }}</div>
+          <div class="singleInfo"><span class="right">手机号: </span>&nbsp;&nbsp;{{ Dialog.phone }}</div>
+          <div class="singleInfo"><span class="right">权限组: </span>&nbsp;&nbsp;{{ Dialog.auth && Dialog.auth.name || '--' }}</div>
         </el-tab-pane>
         <el-tab-pane label="通行记录" name="second">
            <el-table
@@ -217,7 +217,7 @@
       </span>
     </el-dialog>
 
-    <el-dialog :close-on-click-modal='false' title="新建物业人员" :visible.sync="dialogCreate" width="580px" :before-close="handleClose">
+    <el-dialog :close-on-click-modal='false' title="添加物业人员" :visible.sync="dialogCreate" width="580px" :before-close="handleClose">
       <el-form :model="Form" :rules="FormRules" ref='Forms' label-width="80px">
         <el-form-item class="float"  label="姓名:"  prop='name'>
           <el-input  clearable v-model="Form.name" placeholder='输入物业人员姓名'></el-input>
@@ -538,6 +538,12 @@ export default class PropertyManage extends Vue {
 </script>
 
 <style lang="scss" scoped>
+.right{
+  width: 62px;
+  display: inline-block;
+  height: 30px;
+  text-align: right;
+}
 .leftContent {
   flex: none;
   width: 200px;
@@ -583,14 +589,14 @@ export default class PropertyManage extends Vue {
   left: -11px;
 }
 .singleInfo{
-  width: 44%;
+  width: 40%;
   height: 40px;;
   padding: 0px 10px;
   text-align: left;
   line-height: 40px;
   float: left;
   &:nth-child(2), &:nth-child(3), &:nth-child(5), &:nth-child(6){
-    width: 28%;
+    width: 30%;
   }
 }
 </style>

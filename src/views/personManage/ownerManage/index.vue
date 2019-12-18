@@ -218,13 +218,13 @@
     <el-dialog :close-on-click-modal='false' class="dialog-rewrite" width="1000px" :title="detailDialog.name" :visible.sync="dialogFormVisible">
       <el-tabs type="card" v-model="activeName">
         <el-tab-pane label="详细信息" name="first">
-              <el-row style="line-height:50px;height:50px;padding:10px 30px">
-                <el-col :span='8'>姓名: {{ detailDialog.name }}</el-col>
-                <el-col :span='8'>性别: {{ detailDialog.sex === '1' ? '男' : '女' }}</el-col>
-                <el-col :span='8'>手机号: {{ detailDialog.phone }}</el-col>
+              <el-row style="line-height:50px;height:50px;padding:0px 30px 0px 30px">
+                <el-col :span='8' style="height:40px"><span class="right">姓名: </span>{{ detailDialog.name }}</el-col>
+                <el-col :span='8' style="height:40px"><span class="right">性别: </span>{{ detailDialog.sex === '1' ? '男' : '女' }}</el-col>
+                <el-col :span='8' style="height:40px"><span class="right">手机号: </span>{{ detailDialog.phone }}</el-col>
                 <!-- <el-col :span='12'>注册时间:{{ detailDialog.sex === '1' ? '男' : '女' }}</el-col> -->
-                <el-col :span='8'>证件类型: {{ detailDialog.cardName || '--' }}</el-col>
-                <el-col :span='8'>证件号码: {{ detailDialog.cardNo || '暂无' }}</el-col>
+                <el-col :span='8' style="height:40px"><span class="right">证件类型: </span>{{ detailDialog.cardName || '--' }}</el-col>
+                <el-col :span='8' style="height:40px"><span class="right">证件号码: </span>{{ detailDialog.cardNo || '暂无' }}</el-col>
                 <el-col :span='24'>备注:
                   <el-input style="width:600px" type='textarea'></el-input>
                 </el-col>
@@ -299,19 +299,24 @@
           </el-table>
         </el-tab-pane>
         <el-tab-pane label="人脸库信息" name="six">
-          <el-table :data="houseDtailTable" style="width: 100%">
-            <el-table-column align='center' type='index' label="编号"></el-table-column>
-            <el-table-column align='center' prop="serialNumber" label="设备编号"></el-table-column>
-            <el-table-column align='center' prop="serialNumber" label="设备区分"></el-table-column>
-            <el-table-column align='center' prop="serialNumber" label="通行位置"></el-table-column>
-            <el-table-column align='center' prop="createTime" label="注册时间"></el-table-column>
-            <el-table-column align='center' prop="note" label="备注"></el-table-column>
-            <el-table-column align='center' label="人脸图片">
+          <el-table :data="faceList" border style="width: 100%">
+            <el-table-column align='center' width="50" type='index' label="编号"></el-table-column>
+            <el-table-column :show-overflow-tooltip='true' align='center' prop="devSerialNumber" label="设备编号"></el-table-column>
+            <el-table-column :show-overflow-tooltip='true' align='center' prop="devType" label="设备区分"></el-table-column>
+            <el-table-column :show-overflow-tooltip='true' align='center' prop="address" label="通行位置"></el-table-column>
+            <el-table-column :show-overflow-tooltip='true' align='center' prop="createTime" label="注册时间"></el-table-column>
+            <!-- <el-table-column align='center' prop="note" label="备注"></el-table-column> -->
+            <el-table-column width="80" align='center' label="人脸图片">
               <template slot-scope="{row}">
-                <img :src="row.photos" alt="">
+                <img :src="row.face" alt="">
               </template>
             </el-table-column>
           </el-table>
+          <el-pagination
+         @current-change='fetchFaceList'
+         :page-size="facePage.limit"
+         :current-page="facePage.page"
+        style="margin-top:10px;" background layout="prev, pager, next" :total="facePage.total"></el-pagination>
         </el-tab-pane>
       </el-tabs>
       <span slot="footer" class="dialog-footer">
@@ -340,7 +345,6 @@
                 placeholder="请输入电话"
                 :maxlength="11"
                 clearable
-
                 @keyup.native="UpNumber"
                 @keydown.native="UpNumber"
                 @change="clearableBtn"
@@ -487,7 +491,7 @@ import { addPeople,
 import _axios from '@/plugins/axios.js'
 import mixin from "@/config/minxins";
 import { searchSuggestHouse } from '@/api/houseApi.ts'
-import { getUserPropertyPass, getPersonFace } from '@/api/peopleApi.ts'
+import { getUserPropertyPass, getFaceList } from '@/api/peopleApi.ts'
 import { getUserPropertyCar } from '@/api/carApi.ts'
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 const DiaLog = () => import("@/components/dialog.vue");
@@ -532,6 +536,13 @@ export default class OwnerManage extends Vue {
   houseIndex: number = 0 // 合并单元格用
   updateHouseVisible: boolean = false // 修改房屋弹框
   data: Array<object> =  [] // 未分单元格人员数据
+  faceList: Array<object> = [] // 人脸库列表
+  facePage: object = {
+    page: 1,
+    total: 1,
+    limit: 10,
+    userId : ''
+  }
   personImg: string = require("@/assets/defaultPerson.png") // 人员头像
   Form: any = {
     name: '',
@@ -559,6 +570,7 @@ export default class OwnerManage extends Vue {
     method: 'delete',
     data: []
   }
+
   visible: boolean = false // 批量导入状态
   updateArray: Array<string> = ['noteStatus', 'phoneStatus']
   rules: any = {
@@ -866,14 +878,25 @@ export default class OwnerManage extends Vue {
     getUserPropertyCar(row.id).then(res => {
       this.carDtailTable = res.data.data
     })
-    // 获取人脸库信息
-    if(row.face) {
-      getPersonFace(row.face).then(res => {
-        this.personImg = res.data.data
-      })
-    } else {
-      this.personImg = require("@/assets/defaultPerson.png")
-    }
+    // // 获取人脸库信息
+    // if(row.face) {
+    //   getPersonFace(row.face).then(res => {
+    //     this.personImg = res.data.data
+    //   })
+    // } else {
+    //   this.personImg = require("@/assets/defaultPerson.png")
+    // }
+    this.facePage['userId'] = row.id
+    this.fetchFaceList(1)
+  }
+
+  // 获取人脸库列表
+  fetchFaceList(page: number){
+    this.facePage['page'] = page
+    getFaceList(this.facePage).then(res => {
+      this.facePage['total'] = res.data.data.total
+      this.faceList = res.data.data.records
+    })
   }
 
   // 获取特定用户的通行记录
@@ -913,4 +936,10 @@ export default class OwnerManage extends Vue {
     position: relative;
     z-index: 999;
   }
+.right{
+  width: 62px;
+  display: inline-block;
+  height: 30px;
+  text-align: right;
+}
 </style>
