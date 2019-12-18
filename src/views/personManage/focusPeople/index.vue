@@ -200,7 +200,7 @@
     </el-row>
     <!-- 新增关注人员 -->
     <el-dialog
-      title="新增"
+      title="添加"
       :visible.sync="dialogCreate"
       width="500px"
       :before-close="handleClose"
