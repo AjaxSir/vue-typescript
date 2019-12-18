@@ -147,7 +147,7 @@
         <el-button type="primary" @click="detailDialogVisible = false">确 定</el-button>
       </span>
     </el-dialog>
-    <!-- 新增或修改弹出表单 -->
+    <!-- 添加或修改弹出表单 -->
     <el-dialog
     :close-on-click-modal='false'
       :title="roleTitle==='0' ? '添加' : '修改'"

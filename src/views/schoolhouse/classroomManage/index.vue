@@ -99,7 +99,7 @@
       </el-col>
     </el-row>
     <el-dialog title="提示" :visible.sync="dialogCreate" width="30%" :before-close="handleClose">
-      <span>这是教学楼管理新增</span>
+      <span>这是教学楼管理添加</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogCreate = false">取 消</el-button>
         <el-button type="primary" @click="dialogCreate = false">确 定</el-button>

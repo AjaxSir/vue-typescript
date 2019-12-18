@@ -313,3 +313,9 @@ div::-webkit-scrollbar-corner {
 [v-cloak] {
   display: none;
 }
+.autoInput .el-input--suffix .el-input__inner{
+  height: 32px;
+}
+.is-current .icon-menu{
+  color: white;
+}

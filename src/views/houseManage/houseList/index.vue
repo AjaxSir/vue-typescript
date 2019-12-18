@@ -18,7 +18,7 @@
           <div slot="houseNum">
             <div class="word-filter">
               <span class="filter-name">关键字:</span>
-              <el-input clearable  
+              <el-input clearable
               @keyup.enter.native="emitFetchData"
               style="width:215px" class="input-filter" v-model="filterForm.keys" placeholder='输入关键字筛选' size="small"></el-input>
             </div>
@@ -131,7 +131,7 @@
       </el-col>
     </el-row>
     <!-- 新建房屋 -->
-    <el-dialog :close-on-click-modal='false' title="创建房屋" :visible.sync="dialogCreate" width="440px" :before-close="handleClose">
+    <el-dialog :close-on-click-modal='false' title="添加房屋" :visible.sync="dialogCreate" width="440px" :before-close="handleClose">
       <el-form :model="Form" :rules="rules" ref='Forms' label-width="110px">
         <el-form-item label="所属组别:"  prop='buildingId'>
           <el-cascader
@@ -414,7 +414,7 @@ export default class CardManage extends Vue {
       }
     })
   }
-  // 新增房屋
+  // 添加房屋
   addHouseConfirm() {
     this.$refs["Forms"]['validate'](valid => {
       if(valid) {

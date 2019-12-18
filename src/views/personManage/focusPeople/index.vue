@@ -198,7 +198,7 @@
         ></el-pagination>
       </el-col>
     </el-row>
-    <!-- 新增关注人员 -->
+    <!-- 添加关注人员 -->
     <el-dialog
       title="添加"
       :visible.sync="dialogCreate"
@@ -342,11 +342,11 @@
               clearable
               ref="saveTagInput"
               size="small"
-              placeholder="请输入新增分组名称"
+              placeholder="请输入添加分组名称"
               @input="constraintLength(newTagValue,'10')"
               @blur="handleInputConfirm('group')"
             ></el-input>
-            <el-button v-else class="button-new-tag" size="small" @click="showInput('group')">新增分组</el-button>
+            <el-button v-else class="button-new-tag" size="small" @click="showInput('group')">添加分组</el-button>
           </div>
         </el-form-item>
 
@@ -376,12 +376,12 @@
               v-model="newTypeTagValue"
               ref="saveTagInput"
               size="small"
-              placeholder="请输入新增类别名称"
+              placeholder="请输入添加类别名称"
               :maxlength="10"
               @input="constraintLength(newTagValue,'10')"
               @blur="handleInputConfirm('type')"
             ></el-input>
-            <el-button v-else class="button-new-tag" size="small" @click="showInput('type')">新增类别</el-button>
+            <el-button v-else class="button-new-tag" size="small" @click="showInput('type')">添加类别</el-button>
           </div>
         </el-form-item>
 
@@ -540,11 +540,11 @@
               size="small"
               :maxlength="10"
               clearable
-              placeholder="请输入新增分组名称"
+              placeholder="请输入添加分组名称"
               @input="constraintLength(newTagValue,'10')"
               @blur="handleInputConfirm('group')"
             ></el-input>
-            <el-button v-else class="button-new-tag" size="small" @click="showInput('group')">新增分组</el-button>
+            <el-button v-else class="button-new-tag" size="small" @click="showInput('group')">添加分组</el-button>
           </div>
         </el-form-item>
 
@@ -573,13 +573,13 @@
               v-model="newTypeTagValue"
               ref="saveTagInput"
               size="small"
-              placeholder="请输入新增类别名称"
+              placeholder="请输入添加类别名称"
               :maxlength="10"
               clearable
               @input="constraintLength(newTypeTagValue,'10')"
               @blur="handleInputConfirm('type')"
             ></el-input>
-            <el-button v-else class="button-new-tag" size="small" @click="showInput('type')">新增类别</el-button>
+            <el-button v-else class="button-new-tag" size="small" @click="showInput('type')">添加类别</el-button>
           </div>
         </el-form-item>
 
@@ -683,17 +683,17 @@ import { Component, Prop, Vue, Mixins } from "vue-property-decorator";
 import { Getter, Action, Mutation } from "vuex-class";
 import mixin from "@/config/minxins";
 import {
-  addFocusPeople, //新增关注人员
+  addFocusPeople, //添加关注人员
   editFocusPeople, //修改关注人员
   deleteFocusPeople, //删除关注人员
   getType, //获取关注人员类别
-  addType, //新增关注人员类别
+  addType, //添加关注人员类别
   deleteType, //删除关注人员类别
   getUserPass //获取目标通行记录
 } from "@/api/peopleApi.ts";
 import {
   getGroup, //获取关注人员分组
-  addGroup, //新增关注人员分组
+  addGroup, //添加关注人员分组
   deleteGroup //删除关注人员分组
 } from "@/api/systemApi.ts";
 import { getUserName } from "@/api/vistorApi.ts"; //输入人名模糊查询人员
@@ -720,9 +720,9 @@ export default class FocusPeople extends Vue {
     data: []
   };
 
-  dialogCreate: boolean = false; //新增
+  dialogCreate: boolean = false; //添加
   private createForm: Object = {
-    //新增表单字段
+    //添加表单字段
     scenceUser: [], //用户id
     // age: "", //年龄
     earlyGroupId: "", //预警组别
@@ -766,13 +766,13 @@ export default class FocusPeople extends Vue {
 
   showUnitSetting: boolean = false; // 查看已有分组设置状态
   earlyGroup: Array<Object> = []; //获取分组
-  newTag: boolean = false; // 新增分组框状态
-  newTagValue: string = ""; // 新增分组的值
+  newTag: boolean = false; // 添加分组框状态
+  newTagValue: string = ""; // 添加分组的值
 
   showTypeSetting: boolean = false; // 查看已有类别设置状态
   earlyType: Array<Object> = []; //获取类别
-  newTypeTag: boolean = false; // 新增类别框状态
-  newTypeTagValue: string = ""; // 新增类别的值
+  newTypeTag: boolean = false; // 添加类别框状态
+  newTypeTagValue: string = ""; // 添加类别的值
 
   private dialogEdit: Boolean = false; // 修改弹出表单
   private editForm: Object = {
@@ -856,12 +856,12 @@ export default class FocusPeople extends Vue {
   }
 
   showInput(val) {
-    /**@description 显示新增预警组别框*/
+    /**@description 显示添加预警组别框*/
     val === "group" ? (this.newTag = true) : (this.newTypeTag = true);
   }
 
   handleInputConfirm(val) {
-    /**@description 新增预警组别 */
+    /**@description 添加预警组别 */
     if (val === "group") {
       this.newTag = false;
       if (this.newTagValue) {
@@ -922,7 +922,7 @@ export default class FocusPeople extends Vue {
   }
 
   createFocusPeople() {
-    /**@description 新增关注人员 */
+    /**@description 添加关注人员 */
     // this.verification(this.createForm["emergencyPhone"], "emergencyPhone");
     // if (this.createForm["age"] === "") {
     //   this.createForm["age"] = null;
@@ -1049,10 +1049,10 @@ export default class FocusPeople extends Vue {
   }
 
   handleClose() {
-    /** @description 关闭新增/修改dialog */
-    this.dialogCreate = false; //新增dialog
+    /** @description 关闭添加/修改dialog */
+    this.dialogCreate = false; //添加dialog
     this.createForm = {
-      //清空新增表单字段
+      //清空添加表单字段
       // age: "",
       earlyGroupId: "",
       emergencyPhone: "",

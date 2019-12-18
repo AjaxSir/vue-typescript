@@ -22,10 +22,10 @@
               @keyup.enter.native="emitFetchData" placeholder="请输入需查找的姓名" class="input-filter" v-model='filterForm.userName' size="small"></el-input>
             </div>
             <div class="word-filter">
-              <span class="filter-name">通行位置:</span>&nbsp;
+              <span class="filter-name">通行位置:</span>&nbsp;&nbsp;
               <el-autocomplete
-              style="width:250px"
-                class="floatForm"
+              style="width:250px;height:32px"
+                class="autoInput"
                  clearable
                 @keyup.enter.native="emitFetchData"
                 v-model="filterForm.bindName"
@@ -40,7 +40,7 @@
             </el-autocomplete>
             </div>
             <div class="word-filter">
-              <span class="filter-name">设备区分:</span>
+              <span class="filter-name">设备区分:</span>&nbsp;
               <el-select  style="width:250px" class="input-filter" size="small" v-model="filterForm.bindType" placeholder="请选择">
                 <el-option label="全部" value=""></el-option>
                 <el-option label="单元楼" value="1"></el-option>
@@ -51,7 +51,7 @@
              <div class="word-filter">
               <span class="filter-name">通行时间:</span> &nbsp;&nbsp;
               <el-date-picker
-                style="width:300px"
+                style="width:300px;height:32px"
                   v-model="timeRange"
                   type="datetimerange"
                   range-separator="-"
@@ -355,5 +355,8 @@ export default class PersonPass extends Vue {
 .capture-img {
   width: 30px;
   height: 30px;
+}
+.floatForm{
+  height: 32px;;
 }
 </style>

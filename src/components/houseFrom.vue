@@ -132,7 +132,7 @@ export default {
 
   methods: {
     createHouse() {
-      /**@description 新增楼栋处理 */
+      /**@description 添加楼栋处理 */
       // this.house();
       this.$refs["dataForm"].validate(valid => {
         if (valid) {

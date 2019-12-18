@@ -98,7 +98,7 @@
         </div>
       </el-col>
     </el-row>
-    <!-- 新增出入口 -->
+    <!-- 添加出入口 -->
     <el-dialog
       title="添加"
       :visible.sync="dialogCreate"
@@ -223,15 +223,15 @@ const ActionHeader = () => import("@/components/ActionHeader.vue");
 })
 export default class InformIssue extends Vue {
   filterForm: object = { tag: "pagination" }; //根据关键字查询
-  private dialogCreate: Boolean = false; // 新增弹出表单
-  // 新增dialog弹框信息
+  private dialogCreate: Boolean = false; // 添加弹出表单
+  // 添加dialog弹框信息
   private createForm: Object = {
     name: "",
     note: ""
   };
 
   private rules: Object = {
-    //新增验证
+    //添加验证
     name: [{ required: true, message: "请输入出入口名称", trigger: "blur" }]
   };
   private showMessage: Boolean = true; //是否显示表单错误信息
@@ -281,7 +281,7 @@ export default class InformIssue extends Vue {
   }
 
   addPassageway() {
-    /**@description 新增出入口 */
+    /**@description 添加出入口 */
     this.$refs["dataForm"]["validate"](valid => {
       if (valid) {
         var form = { ...this.createForm };
@@ -347,8 +347,8 @@ export default class InformIssue extends Vue {
   }
 
   handleClose() {
-    /** @description 关闭新增/修改dialog */
-    this.dialogCreate = false; //车辆新增dialog
+    /** @description 关闭添加/修改dialog */
+    this.dialogCreate = false; //车辆添加dialog
     this.createForm = {
       name: "",
       note: ""
