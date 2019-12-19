@@ -256,22 +256,13 @@
         </el-form-item>
         <el-form-item  class="float"  label="性别:"  prop='sex'>
 
-          <el-select style="position: relative;left: -6px;width:170px" class="input-filter" size="small" v-model="Form.sex" placeholder="请选择">
+          <el-select style="position: relative;left: -6px;width:170px;height:40px" class="input-filter" size="small" v-model="Form.sex" placeholder="请选择">
                 <el-option label="请选择" value=""></el-option>
                 <el-option label="男" value="1"></el-option>
                 <el-option label="女" value="0"></el-option>
               </el-select>
         </el-form-item>
-
-        <el-form-item class="float" label="证件类型:"  label-width="85px"  prop='cardName'>
-              <el-select style="position: relative;left: -6px;width:165px" class="input-filter" size="small" v-model="Form.cardName" placeholder="请选择证件类型">
-                <el-option label="身份证" value="身份证"></el-option>
-                <el-option label="护照" value="护照"></el-option>
-                <el-option label="港澳居民来往内地通行证" value="港澳居民来往内地通行证"></el-option>
-                <el-option label="其它" value="其它"></el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="权限组:" class="float"  label-width="85px" prop='authId'>
+        <el-form-item label="权限组:" class="float"  label-width="85px" prop='authId'>
           <el-select style='width:170px' v-model="Form.authId" placeholder="请选择">
             <el-option
               v-for="item in TreeData"
@@ -281,6 +272,18 @@
             </el-option>
           </el-select>
         </el-form-item>
+        <el-form-item class="float" label="证件类型:"  label-width="85px"  prop='cardName'>
+              <el-select style="position: relative;left: -6px;width:165px;height:40px" class="input-filter" size="small" v-model="Form.cardName" placeholder="请选择证件类型">
+                <el-option label="身份证" value="身份证"></el-option>
+                <el-option label="护照" value="护照"></el-option>
+                <el-option label="港澳居民来往内地通行证" value="港澳居民来往内地通行证"></el-option>
+                <el-option label="其它" value="其它"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item v-show="Form.cardName === '其它'"  label="证件名:"  prop='cardName'>
+          <el-input style="width:424px" v-model="Form.cardName" placeholder='输入证件名'></el-input>
+        </el-form-item>
+
         <el-form-item   style="clear:both" :label="Form.cardName === '港澳居民来往内地通行证' ? '通行证' : Form.cardName + ':'"  label-width="85px"  prop='cardNo'>
               <el-input style="width:420px" :maxlength="Form.cardName === '身份证' ? '18' : '100'"  clearable  v-model="Form.cardNo" :placeholder='"输入" + Form.cardName + "证件号"'></el-input>
             </el-form-item>
@@ -365,7 +368,7 @@ export default class PropertyManage extends Vue {
   TreeData: Array<object> = [] // 权限组
   FormRules: object = {
     name: [
-            { required: true, message: '请输入物业人员名称', trigger: 'blur' }
+            { required: true, message: '请输入名称', trigger: 'blur' }
           ],
           sex: [
             { required: true, message: '请选择性别', trigger: 'change' }
@@ -379,7 +382,7 @@ export default class PropertyManage extends Vue {
     phone: [
             { required: true, trigger: 'blur', validator: (rule, value, callback) => {
                 if (value.length !== 11 || !(/^1[3|4|5|8][0-9]\d{4,8}$/).test(value)) {
-                  callback(new Error('填写正确的物业人员手机号'))
+                  callback(new Error('填写正确的手机号'))
                 } else {
                   callback()
                 }
@@ -390,8 +393,8 @@ export default class PropertyManage extends Vue {
           ],
     cardNo: [
       { required: true, trigger: 'blur', validator: (rule, value, callback) => {
-                if (value.length !== 18 && value.length !== 15) {
-                  callback(new Error('填写正确的身份证号'))
+                if (value.length !== 18 && value.length !== 15 && this.Form['cardName'] === '身份证') {
+                  callback(new Error('填写正确的证件号号'))
                 } else {
                   callback()
                 }

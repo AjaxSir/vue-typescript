@@ -134,7 +134,6 @@ export default class openDoor extends Vue {
   }
 
   roll(time) {
-    console.log(this.timer)
     // if (this.timer) return
     const content = document.getElementById('content') as HTMLElement
     const listOne = document.getElementById('listOne') as HTMLElement
@@ -155,7 +154,6 @@ export default class openDoor extends Vue {
   }
   fetchList() {
     peoplePassList().then(res => {
-      console.log(res)
       this.tableData = res.data.data
     })
   }

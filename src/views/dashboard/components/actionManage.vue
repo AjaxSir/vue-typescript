@@ -49,13 +49,22 @@
 
 <script lang='ts'>
 import { Component, Vue } from 'vue-property-decorator'
+import { Getter } from 'vuex-class'
+
 @Component
 export default class ActionManage extends Vue {
   dialogVisible: boolean = false
   title: string = ''
   childrenRoute: Array<Object> = []
+  @Getter('router') router:Array<object>
   get routes() {
-      return [].concat(this.$router['options'].routes)
+    // const NewRoute = [].concat(this.$router['options'].routes)
+    this.router.forEach((ele, index) => {
+      if(ele['name'] === 'vistor') {
+        this.router.splice(index, 1)
+      }
+    })
+    return this.router
     }
   handleClose() {
     this.dialogVisible = false
