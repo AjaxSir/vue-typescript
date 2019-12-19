@@ -1,7 +1,7 @@
 import stateType from "./type";
 import state from "./state";
 import { MutationTree } from "vuex";
-import { setToken, setName } from '@/utils/auth'
+import { setToken, setName, setPermission } from '@/utils/auth'
 
 const mutation: MutationTree<stateType> = {
   SET_TOKEN: (state, token: string) => {
@@ -12,6 +12,13 @@ const mutation: MutationTree<stateType> = {
   SET_NAME(state: stateType, name: string) {
     state.name = name
     setName(name)
+  },
+  SET_PERMISSIONLIST(state: stateType, list: Array<object>) {
+    state.permissionList = list
+    setPermission(list.join('---'))
+  },
+  SET_ROUTE(state: stateType, router: Array<object>) {
+    state.router = router
   }
 }
 export default mutation;

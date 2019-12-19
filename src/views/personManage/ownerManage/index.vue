@@ -325,7 +325,7 @@
     </el-dialog>
 
     <el-dialog :close-on-click-modal='false' title="添加用户" :visible.sync="dialogCreate" width="440px" :before-close="handleClose">
-          <el-form :model="Form" :rules="rules" style="margin-right:40px" ref='Forms' label-width="85px">
+          <el-form class="owner" :model="Form" :rules="rules" style="margin-right:40px" ref='Forms' label-width="85px">
 
 
             <el-form-item label="姓名:"  prop='name'>
@@ -367,6 +367,9 @@
                 <el-option label="港澳居民来往内地通行证" value="港澳居民来往内地通行证"></el-option>
                 <el-option label="其它" value="其它"></el-option>
               </el-select>
+            </el-form-item>
+            <el-form-item v-show="Form.cardName === '其它'"  label="证件名:"  prop='cardName'>
+              <el-input style="width:275px" v-model="Form.cardName" placeholder='输入证件名'></el-input>
             </el-form-item>
             <el-form-item :label="Form.cardName === '港澳居民来往内地通行证' ? '通行证' : Form.cardName"  label-width="85px"  prop='cardNo'>
               <el-input  :maxlength="Form.cardName === '身份证' ? '18' : '100'"  clearable  v-model="Form.cardNo" :placeholder='"输入" + Form.cardName + "证件号"'></el-input>
@@ -594,7 +597,7 @@ export default class OwnerManage extends Vue {
           ],
     cardNo: [
             { required: true, trigger: 'blur', validator: (rule, value, callback) => {
-                if (value.length < 15 || value.length > 15 && value.length < 18) {
+                if (value.length < 15 || value.length > 15 && value.length < 18 && this.Form['cardName'] === '身份证') {
                   callback(new Error('填写正确的身份证号'))
                 } else {
                   callback()

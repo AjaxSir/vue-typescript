@@ -9,7 +9,7 @@
         <div>
           <i class="iconfont icon-icon-user"></i>
         </div>
-        <p>admin</p>
+        <p>{{ name }}</p>
         <p class="logout" @click="logout">退出</p>
       </div>
     </div>
@@ -24,10 +24,11 @@
   </div>
 </template>
 
-<script>
+<script lang='ts'>
 import { Component, Vue } from "vue-property-decorator";
-import Breadcrumb from "@/components/Breadcrumb";
 import { clearCookie } from "@/utils/cookie";
+import { Getter } from 'vuex-class'
+import Breadcrumb from "@/components/Breadcrumb/index.vue";
 
 @Component({
   components: {
@@ -35,7 +36,10 @@ import { clearCookie } from "@/utils/cookie";
   }
 })
 export default class Navbar extends Vue {
-  created() {}
+  @Getter('name') name: string
+  created() {
+
+  }
   logout() {
     this.$router.push({ path: "/login" });
     clearCookie();

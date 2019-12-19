@@ -29,7 +29,7 @@
       </el-menu-item-group>
     </el-submenu>
 
-    <el-menu-item
+    <!-- <el-menu-item
       @click="todevice"
       :class="[locRoute.indexOf('device') !== -1 ? 'activeLink': '']"
       index="41"
@@ -51,7 +51,7 @@
         :style="[locRoute.indexOf('inform') !== -1 ? styleObject: '']"
       ></i>
       <span slot="title">通知管理</span>
-    </el-menu-item>
+    </el-menu-item> -->
 
     <!-- <el-menu-item
       @click="toVistorRegister"
@@ -77,12 +77,10 @@
       <span slot="title">报表管理</span>
     </el-menu-item> -->
 
-    <el-menu-item @click="toBigScreen" index="0">
-      <!-- <router-link to='/screen/statistics'> -->
+    <!-- <el-menu-item @click="toBigScreen" index="0">
       <i class="iconfont icon-tongji"></i>
       <span slot="title">大屏统计</span>
-      <!-- </router-link> -->
-    </el-menu-item>
+    </el-menu-item> -->
 
     <el-menu-item class="showHidden" @click="toggleMenu" index="4">
       <i v-if="!isCollapse" class="el-icon-arrow-right"></i>
@@ -95,8 +93,11 @@
 
 <script lang="ts">
 import { Component, Vue, Emit, Watch } from "vue-property-decorator";
+import { Getter } from 'vuex-class'
+
 @Component
 export default class NavMenu extends Vue {
+  @Getter('router') router:Array<object>
   isCollapse: boolean = true;
   @Emit("MenuStatus")
   toggleMenu() {
@@ -116,7 +117,7 @@ export default class NavMenu extends Vue {
        &&
       route.splice(4, 1)
 
-    return route;
+    return this.router;
   }
   @Watch("$route", { immediate: true })
   routeChange(n, o) {

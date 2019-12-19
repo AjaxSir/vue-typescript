@@ -9,3 +9,10 @@ export function login(data: Object) {
   })
 }
 
+// 获取用户权限
+export function getRoleList() {
+  return _axios({
+    url: '/admin/usr-user-role-link',
+    method: 'get'
+  })
+}

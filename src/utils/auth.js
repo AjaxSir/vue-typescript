@@ -3,6 +3,7 @@ import {setCookie, getCookie, removeCookie } from "@/utils/cookie";
 const TokenKey = 'User-Token'
 const NameKey = 'username'
 const CodeKey = 'codetype'
+const Permission = 'PermissionList'
 // const RoleKey = 'role'
 
 export function getToken() {
@@ -39,6 +40,15 @@ export function setCode(name) {
 
 export function removeCode() {
   return removeCookie(CodeKey)
+}
+
+export function setPermission(list) {
+  console.log(list)
+  return setCookie(Permission, list)
+}
+
+export function getPermission() {
+  return getCookie(Permission)
 }
 
 // export function setRole(role) {

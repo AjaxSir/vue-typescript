@@ -165,7 +165,7 @@
             </div>
         </el-form-item> -->
         <el-form-item label="别名:" prop='name' label-width="85px">
-          <el-input clearable style="width:240px" maxlength="15" placeholder="填写分组的别名" v-model="HouseForm.name" autocomplete="off"></el-input>
+          <el-input clearable style="width:240px" maxlength="10" placeholder="填写分组的别名" v-model="HouseForm.name" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="备注:" prop='note' label-width="85px">
           <el-input style="width:240px" maxlength="200" placeholder="填写分组的备注信息" type='textarea' v-model="HouseForm.note" autocomplete="off"></el-input>
@@ -304,7 +304,7 @@
     <el-dialog :before-close="roleHandClose" :close-on-click-modal='false' width="800px" :title="RoleForm.id ? '修改权限组' : '新建权限组'" :visible.sync="RoleVisible">
       <el-form :rules="RoleRules" style="overflow:hidden" ref='roleForm' :model="RoleForm">
         <el-form-item prop='name' label="权限名称:" label-width="85px">
-          <el-input clearable v-model="RoleForm.name" autocomplete="off"></el-input>
+          <el-input clearable maxlength="10" v-model="RoleForm.name" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item prop='enableInviteCar' style="float:left;width:350px" label="邀请车辆:" label-width="85px">
           <el-switch
@@ -563,7 +563,8 @@ export default class DataTree extends Vue {
   }
   RoleRules: object = {
     name: [
-            { required: true, message: '请输入权限组名称', trigger: 'blur' }
+            { required: true, message: '请输入权限组名称', trigger: 'blur' },
+            { mix: 1, max: 10, message: '名称在1到10之前', trigger: 'blur' }
           ]
   }
   // 查看已有单元设置状态
@@ -708,6 +709,7 @@ export default class DataTree extends Vue {
     this.unConfirmDeviceList.forEach((ele, index) => {
         ele['startTime'] = '18:00'
         ele['endTime'] = '21:00'
+        ele['deviceId'] = ele['id']
         ele['deviceSerialNumber'] = ele['serialNumber']
         this.$set(ele, 'timeStatus', false)
     })
@@ -1140,6 +1142,9 @@ export default class DataTree extends Vue {
 }
 .highlight{
   background-color: #409EFF;
+  color: white;
+}
+.highlight .icon-menu{
   color: white;
 }
 </style>
