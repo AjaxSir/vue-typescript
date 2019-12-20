@@ -381,7 +381,7 @@ export const asyncRoute = [
         path: 'visitorCarChart',
         component: _import_('statementManage/components/vistorCarChart'),
         meta: {
-          title: '访客车辆通行统计',
+          title: '访客车辆统计',
           bg_color: '#bf5d76',
           icon: 'icon-icon-p_mrpbaobiao'
         }

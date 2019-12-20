@@ -1,5 +1,6 @@
 // import axiosConfig from './axios';
 import { Vue, Component } from "vue-property-decorator";
+import { Getter } from 'vuex-class'
 import { MessageBox, Message } from 'element-ui';
 import _axios from '@/plugins/axios.js'
 import Cookie from 'js-cookie'
@@ -18,6 +19,8 @@ export default class GlobalMimins extends Vue {
     page: 1,
     limit: 10,
   }
+  @Getter('permissionList') permissionList: Array<string>
+  globalUpdateStatus:boolean = true // 是否具有修改权限
   public dialogCreate: any = false
   public notifyInstance: any; //防止notify重复多次出现提示
   public showLoading: any = true
@@ -45,6 +48,7 @@ export default class GlobalMimins extends Vue {
 
   mounted() {
     this.fetchData(this.initForm)
+    this.globalUpdateStatus = this.permissionList.includes(this.$route.name + 'Update')
   }
   is_Phone(str: string) {
     return (/^1[3|4|5|8][0-9]\d{4,8}$/).test(str)

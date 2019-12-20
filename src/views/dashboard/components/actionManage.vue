@@ -79,7 +79,7 @@ export default class ActionManage extends Vue {
   }
   // 大屏统计 报表管理 访客登记 不需弹框
   noDialog(routeName) {
-    const noDialogList = ['screen', 'statementManage', 'vistor', 'inform', 'device']
+    const noDialogList = ['screen', 'vistor', 'inform', 'device']
     return noDialogList.includes(routeName)
   }
 };
