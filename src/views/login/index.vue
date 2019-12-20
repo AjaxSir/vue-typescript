@@ -24,6 +24,7 @@
           v-model="loginForm.scenceCode"
           auto-complete="on"
           placeholder="小区名称"
+          @keyup.enter.native="handleLogin"
         />
       </el-form-item>
       <el-form-item prop="account">
@@ -36,6 +37,7 @@
           v-model="loginForm.account"
           auto-complete="on"
           placeholder="username"
+          @keyup.enter.native="handleLogin"
         />
       </el-form-item>
       <el-form-item prop="password">
@@ -57,6 +59,7 @@
           style="width:100%;"
           :loading="loading"
           @click.native.prevent="handleLogin"
+          @keyup.enter.native="handleLogin"
         >登录</el-button>
       </el-form-item>
       <div class="login-info">{{ loginInfo }}</div>
