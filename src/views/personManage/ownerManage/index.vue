@@ -360,19 +360,19 @@
             <!-- <el-form-item class="floatForm" label="身份证号:"  prop='cardName'>
               <el-input v-model="Form.cardName"  placeholder='输入卡名'></el-input>
             </el-form-item> -->
-            <el-form-item label="证件类型:"  label-width="85px"  prop='cardName'>
-              <el-select style="position: relative;left: -6px;width:275px" class="input-filter" size="small" v-model="Form.cardName" placeholder="请选择证件类型">
+            <el-form-item label="证件类型:"  label-width="85px"  prop='otherCardName'>
+              <el-select style="position: relative;left: -6px;width:275px" class="input-filter" size="small" v-model="Form.otherCardName" placeholder="请选择证件类型">
                 <el-option label="身份证" value="身份证"></el-option>
                 <el-option label="护照" value="护照"></el-option>
                 <el-option label="港澳居民来往内地通行证" value="港澳居民来往内地通行证"></el-option>
                 <el-option label="其它" value="其它"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item v-show="Form.cardName === '其它'"  label="证件名:"  prop='cardName'>
-              <el-input style="width:275px" v-model="Form.cardName" placeholder='输入证件名'></el-input>
+            <el-form-item v-show="Form.otherCardName === '其它'"  label="证件名:"  prop='cardName'>
+              <el-input style="width:275px" v-model="Form.cardName" placeholder='输入证件名称'></el-input>
             </el-form-item>
-            <el-form-item :label="Form.cardName === '港澳居民来往内地通行证' ? '通行证' : Form.cardName"  label-width="85px"  prop='cardNo'>
-              <el-input  :maxlength="Form.cardName === '身份证' ? '18' : '100'"  clearable  v-model="Form.cardNo" :placeholder='"输入" + Form.cardName + "证件号"'></el-input>
+            <el-form-item label="证件号码:"  label-width="85px"  prop='cardNo'>
+              <el-input  :maxlength="Form.cardName === '身份证' ? '18' : '100'"  clearable  v-model="Form.cardNo" :placeholder='"输入证件号"'></el-input>
             </el-form-item>
             <el-form-item label="房屋:" style='clear:both'  prop='houseName'>
               <el-autocomplete
@@ -549,13 +549,14 @@ export default class OwnerManage extends Vue {
   personImg: string = require("@/assets/defaultPerson.png") // 人员头像
   Form: any = {
     name: '',
-    cardName: '身份证',
+    cardName: '',
     cardNo: '',
     sex: '',
     phone: '',
     house: [],
     note: '',
-    houseName: ''
+    houseName: '',
+    otherCardName: '身份证'
   }
   updateHouseForm: object = {} // 增加用户时修改房屋的属性
   initForm: object = {
@@ -584,7 +585,7 @@ export default class OwnerManage extends Vue {
             { required: true, message: '请选择性别', trigger: 'change' }
           ],
     cardName: [
-      { required: true, message: '请选择证件', trigger: 'change' }
+      { required: true, message: '请填入证件名', trigger: 'change' }
     ],
     phone: [
             { required: true, validator: (rule, value, callback) => {
@@ -597,8 +598,8 @@ export default class OwnerManage extends Vue {
           ],
     cardNo: [
             { required: true, trigger: 'blur', validator: (rule, value, callback) => {
-                if (value.length < 15 || value.length > 15 && value.length < 18 && this.Form['cardName'] === '身份证') {
-                  callback(new Error('填写正确的身份证号'))
+                if ((value.length !== 15 || value.length !== 18) && this.Form['cardName'] === '身份证') {
+                  callback(new Error('填写正确的证件号'))
                 } else {
                   callback()
                 }
@@ -621,13 +622,7 @@ export default class OwnerManage extends Vue {
     limit: 10,
     page: 1
   }
-  private dtailTable: Array<Object> = [
-    {
-      date: "2016-05-02",
-      name: "王小虎",
-      address: "上海市普陀区金沙江路 1518 弄"
-    }
-  ];
+  private dtailTable: Array<Object> = [];
   private carDtailTable: Array<Object> =[];
   private houseDtailTable: Array<Object> =[];
   created() {
@@ -684,6 +679,10 @@ export default class OwnerManage extends Vue {
   }
 // 确定添加用户
   addUserConfirm() {
+    if (this.Form.otherCardName !== '其它') {
+      this.Form.cardName = this.Form.otherCardName
+    }
+
     this.$refs['Forms']['validate']((valid) => {
       if(valid) {
         if (!this.Form['house'].length) {
