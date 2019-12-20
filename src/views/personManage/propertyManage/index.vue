@@ -263,7 +263,7 @@
               </el-select>
         </el-form-item>
         <el-form-item label="权限组:" class="float"  label-width="85px" prop='authId'>
-          <el-select style='width:170px' v-model="Form.authId" placeholder="请选择">
+          <el-select style='width:165px' v-model="Form.authId" placeholder="请选择">
             <el-option
               v-for="item in TreeData"
               :key="item.id"
@@ -273,7 +273,7 @@
           </el-select>
         </el-form-item>
         <el-form-item class="float" label="证件类型:"  label-width="85px"  prop='otherCardName'>
-              <el-select style="position: relative;left: -6px;width:165px;height:40px" class="input-filter" size="small" v-model="Form.otherCardName" placeholder="请选择证件类型">
+              <el-select style="position: relative;left: -6px;width:170px;height:40px" class="input-filter" size="small" v-model="Form.otherCardName" placeholder="请选择证件类型">
                 <el-option label="身份证" value="身份证"></el-option>
                 <el-option label="护照" value="护照"></el-option>
                 <el-option label="港澳居民来往内地通行证" value="港澳居民来往内地通行证"></el-option>
@@ -394,7 +394,7 @@ export default class PropertyManage extends Vue {
           ],
     cardNo: [
       { required: true, trigger: 'blur', validator: (rule, value, callback) => {
-                if (value.length !== 18 && value.length !== 15 && this.Form['otherCardName'] === '身份证') {
+                if (!(value.length === 15 || value.length === 18) && this.Form['otherCardName'] === '身份证') {
                   callback(new Error('填写正确的证件号号'))
                 } else {
                   callback()
