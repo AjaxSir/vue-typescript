@@ -7,13 +7,13 @@
     <div @click='handleNodeClick({ type: "building", id: "" })' :class="['treeHeader', highlightStatus ? '' : 'highlight']">
       <i class="iconfont icon-shuji"></i>
       所有
-      <el-dropdown v-if='type === "house"' class='dropdownAll' @command='commandTreeClick' placement="bottom-start">
+      <el-dropdown v-if='type === "house" && UpdateStatus' class='dropdownAll' @command='commandTreeClick' placement="bottom-start">
         <i class="iconfont icon-menu"></i>
         <el-dropdown-menu  slot="dropdown">
           <el-dropdown-item :command='commandObj("addGroup", {})'>添加子分组</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
-      <el-dropdown v-else class='dropdownAll' @command='commandTreeClick' placement="bottom-start">
+      <el-dropdown v-else-if='type === "role" && UpdateStatus' class='dropdownAll' @command='commandTreeClick' placement="bottom-start">
         <i class="iconfont icon-menu"></i>
         <el-dropdown-menu  slot="dropdown">
           <el-dropdown-item :command='commandObj("addRoleGroup", {})'>创建权限组</el-dropdown-item>
@@ -40,7 +40,7 @@
           <!-- <i v-show='selectId === node.data.id' class="el-icon-check"></i> -->
            </span>
         <div>
-          <el-dropdown @command='commandTreeClick' placement="bottom-start">
+          <el-dropdown v-if='UpdateStatus' @command='commandTreeClick' placement="bottom-start">
             <i  v-show="node.id===showMenu" class="iconfont icon-menu"></i>
             <el-dropdown-menu v-if='type === "house"' slot="dropdown">
               <el-dropdown-item v-if='node.data.type === "group"' :command='commandObj("addGroup", node)'>添加子分组</el-dropdown-item>
@@ -109,6 +109,7 @@
                 {{tag.name}}
               </el-tag>
               <el-input
+              maxlength="8"
                 class="input-new-tag"
                 v-if="newTag"
                 v-model="newTagValue"
@@ -434,12 +435,13 @@ addBuilding, updateBuilding, deleteBuilding } from '@/api/houseApi.ts'
 import { getDeviceList } from '@/api/deviceApi.ts'
 import { addRoleGroup, getGroupInfoById, updateRoleGroup, deleteRoleGroup } from '@/api/peopleApi.ts'
 import { Message } from 'element-ui';
-import mixin from "@/config/minxins";
 
 @Component({
 })
 export default class DataTree extends Vue {
   private showMenu: Number = 0;
+  UpdateStatus: boolean = true // 是否具有修改权限
+  @Getter('permissionList') permissionList: Array<string>
   @Prop({ default: 'house' }) type: string;
   @Prop({default: () => {
     return [] // 必须是函数式返回
@@ -578,6 +580,9 @@ export default class DataTree extends Vue {
   newTagValue: string = ''
   // 权限dialog状态
   RoleVisible:boolean = false
+  mounted(){
+    this.UpdateStatus = this.permissionList.includes(this.$route.name + 'Update')
+  }
   created() {
     this.fetchDeviceList(1)
     this.fetchUnitList()

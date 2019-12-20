@@ -6,8 +6,14 @@ import { getRoleList } from '@/api/user.ts'
 function selectRoute(route: Array<object>, role: Array<string>) {
   const Route = [...route]
   const newRoute:Array<object> = Route.filter(ele => {
-    console.log(role.includes(ele['name'] + 'Look'), role, ele['name'] + 'Look')
-    return role.includes(ele['name'] + 'Look')
+    // console.log(role.includes(ele['name'] + 'Look'), role, ele['name'] + 'Look')
+    ele['children'].forEach((item: object, index: number) => {
+      if (!role.includes(item['name'] + 'Look')) {
+        ele['children'].splice(index, 1)
+      }
+    })
+    // return role.includes(ele['name'] + 'Look')
+    return ele['children'].length
   })
   console.log(newRoute, '对比权限的路由')
   return newRoute

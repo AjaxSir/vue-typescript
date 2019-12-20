@@ -9,7 +9,7 @@
     <el-col :span="12">
       <div class="leftAction">
         <el-button
-          v-if="btnStatus === 1"
+          v-if="btnStatus === 1 && addUpdateStatus"
           class="createBtn"
           type="primary"
           size="small"
@@ -107,6 +107,7 @@ import {
   Emit
 } from "vue-property-decorator";
 import mixin from "@/config/minxins";
+import { Getter } from 'vuex-class'
 import qs from "qs";
 
 @Component({
@@ -128,6 +129,8 @@ export default class ActionManage extends Vue {
     }
   })
   initFormHeader: object; // 初始化的地址 方式
+  addUpdateStatus: boolean = true // 是否具有修改权限
+  @Getter('permissionList') permissionList: Array<string>
   @Prop({
     default: () => {
       return {};
@@ -170,6 +173,7 @@ export default class ActionManage extends Vue {
   }
 
   mounted() {
+    this.addUpdateStatus = this.permissionList.includes(this.$route.name + 'Update')
     this.fetchData();
   }
   handleHouse() {
