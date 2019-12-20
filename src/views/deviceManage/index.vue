@@ -150,9 +150,9 @@
     <!-- 添加或修改弹出表单 -->
     <el-dialog
     :close-on-click-modal='false'
-      :title="roleTitle==='0' ? '添加' : '修改'"
+      :title="roleTitle==='0' ? '添加设备' : '修改设备'"
       :visible.sync="dialogCreate"
-      width="640px"
+      width="540px"
       :before-close="handleClose"
     >
       <el-form

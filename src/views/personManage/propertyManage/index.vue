@@ -272,19 +272,19 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item class="float" label="证件类型:"  label-width="85px"  prop='cardName'>
-              <el-select style="position: relative;left: -6px;width:165px;height:40px" class="input-filter" size="small" v-model="Form.cardName" placeholder="请选择证件类型">
+        <el-form-item class="float" label="证件类型:"  label-width="85px"  prop='otherCardName'>
+              <el-select style="position: relative;left: -6px;width:165px;height:40px" class="input-filter" size="small" v-model="Form.otherCardName" placeholder="请选择证件类型">
                 <el-option label="身份证" value="身份证"></el-option>
                 <el-option label="护照" value="护照"></el-option>
                 <el-option label="港澳居民来往内地通行证" value="港澳居民来往内地通行证"></el-option>
                 <el-option label="其它" value="其它"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item v-show="Form.cardName === '其它'"  label="证件名:"  prop='cardName'>
-          <el-input style="width:424px" v-model="Form.cardName" placeholder='输入证件名'></el-input>
+            <el-form-item v-show="Form.otherCardName === '其它'"  label="证件名称:"  prop='cardName'>
+          <el-input style="width:424px" v-model="Form.cardName" placeholder='输入证件名称'></el-input>
         </el-form-item>
 
-        <el-form-item   style="clear:both" :label="Form.cardName === '港澳居民来往内地通行证' ? '通行证' : Form.cardName + ':'"  label-width="85px"  prop='cardNo'>
+        <el-form-item   style="clear:both" label="证件号:"  label-width="85px"  prop='cardNo'>
               <el-input style="width:420px" :maxlength="Form.cardName === '身份证' ? '18' : '100'"  clearable  v-model="Form.cardNo" :placeholder='"输入" + Form.cardName + "证件号"'></el-input>
             </el-form-item>
 
@@ -337,7 +337,8 @@ export default class PropertyManage extends Vue {
     authId: '',
     birthday: '',
     cardNo: '',
-    cardName: '身份证'
+    cardName: '',
+    otherCardName: '身份证'
   }
    pickerOptions: object = {
         disabledDate(time) {
@@ -543,6 +544,9 @@ export default class PropertyManage extends Vue {
   }
   // 确定添加物业人员
   confirmAddPropert() {
+     if (this.Form['otherCardName'] !== '其它') {
+      this.Form['cardName'] = this.Form['otherCardName']
+    }
     this.$refs['Forms']["validate"](valid => {
       if(valid) {
         addPropert(this.Form).then(res => {

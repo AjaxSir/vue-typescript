@@ -636,6 +636,16 @@ export default class DataTree extends Vue {
     storeyNum: '', // 楼层数
     houseNum: '' // 每层户数
   }
+  this.batchForm = {
+    serialNumber: '', // 序号
+    serialNumberUnit: '',
+    name: '',
+    note: '',
+    min: '',
+    max: '',
+    parentId: '',
+    title: '添加子分组'
+  }
   if(this.HouseUnitVisible) {
     this.$refs['buildings']['resetFields']()
   }
