@@ -394,7 +394,7 @@ export default class PropertyManage extends Vue {
           ],
     cardNo: [
       { required: true, trigger: 'blur', validator: (rule, value, callback) => {
-                if (value.length !== 18 && value.length !== 15 && this.Form['cardName'] === '身份证') {
+                if (value.length !== 18 && value.length !== 15 && this.Form['otherCardName'] === '身份证') {
                   callback(new Error('填写正确的证件号号'))
                 } else {
                   callback()

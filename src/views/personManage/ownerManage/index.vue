@@ -372,7 +372,7 @@
               <el-input style="width:275px" v-model="Form.cardName" placeholder='输入证件名称'></el-input>
             </el-form-item>
             <el-form-item label="证件号码:"  label-width="85px"  prop='cardNo'>
-              <el-input  :maxlength="Form.cardName === '身份证' ? '18' : '100'"  clearable  v-model="Form.cardNo" :placeholder='"输入证件号"'></el-input>
+              <el-input  :maxlength="Form.cardName === '身份证' ? '18' : '20'"  clearable  v-model="Form.cardNo" :placeholder='"输入证件号"'></el-input>
             </el-form-item>
             <el-form-item label="房屋:" style='clear:both'  prop='houseName'>
               <el-autocomplete
@@ -598,7 +598,7 @@ export default class OwnerManage extends Vue {
           ],
     cardNo: [
             { required: true, trigger: 'blur', validator: (rule, value, callback) => {
-                if ((value.length !== 15 || value.length !== 18) && this.Form['cardName'] === '身份证') {
+                if ((value.length !== 15 || value.length !== 18) && this.Form['otherCardName'] === '身份证') {
                   callback(new Error('填写正确的证件号'))
                 } else {
                   callback()
