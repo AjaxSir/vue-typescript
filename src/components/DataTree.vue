@@ -75,7 +75,7 @@
                 @blur="hintBlur"
                 @mouseover.native="hint(batchForm.min)"
                 @mouseout.native="hint(batchForm.min)"
-              style="width:120px" placeholder="开始编号" v-model="batchForm.min"></el-input>
+              style="width:115px;margin-left:5px" placeholder="开始编号" v-model="batchForm.min"></el-input>
               至
             <el-input clearable placeholder="结束编号"  style="width:120px"
             @keyup.native="UpNumber"
