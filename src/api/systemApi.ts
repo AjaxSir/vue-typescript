@@ -107,5 +107,24 @@ export function deleteGroup(id: any) {
     method: 'delete'
   })
 }
+/********* 系统参数 *********** */
+
+//添加车位分组
+export function addArgumentsStall(data: Object) {
+  return _axios({
+    url: '/admin/car-space-type',
+    method: 'post',
+    data
+  })
+}
+
+//修改车位分组
+export function editArgumentsStall(data: Object) {
+  return _axios({
+    url: `/admin/car-space-type/${data['id']}/`,
+    method: 'patch',
+    data
+  })
+}
 
 
