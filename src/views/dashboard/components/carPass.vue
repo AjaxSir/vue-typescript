@@ -4,7 +4,7 @@
       <div class="scene-header">
         <i class="iconfont icon-daohang_taofeicheliangtongji-"></i>
         <span class="scene-titile">车辆通行</span>
-        <router-link :to="{name: 'carPass'}">
+        <router-link v-if='permissionList.includes("carPassLook")' :to="{name: 'carPass'}">
           <el-button style='float:right;padding:5px 0px 0px 0px'  type="text"  >查看更多</el-button>
         </router-link>
       </div>
@@ -77,11 +77,15 @@
 <script lang='ts'>
 import { Component, Vue } from "vue-property-decorator";
 import { carPassList } from '@/api/screenApi.ts'
+import { Getter } from 'vuex-class'
+
 @Component({
   components: {
   }
 })
 export default class openDoor extends Vue {
+    @Getter('permissionList') permissionList: Array<string>
+
   timer: any = null
   tableData: Array<object> = []
 

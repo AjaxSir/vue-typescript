@@ -22,10 +22,10 @@
           </el-dropdown-menu>
           <div slot="houseNum">
             <div class="word-filter">
-              <span class="filter-name">房屋编号:</span>
+              <span class="filter-name">关键字:</span>
               <el-input clearable
-              placeholder="请输入需要查找的房屋编号"
-              @keyup.enter.native="emitFetchData" style="width:215px" class="input-filter" v-model="filterForm.houseNo" size="small"></el-input>
+              placeholder="请输入需要查找的关键字"
+              @keyup.enter.native="emitFetchData" style="width:215px" class="input-filter" v-model="filterForm.key" size="small"></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">姓&nbsp;&nbsp;&nbsp;名:</span>
@@ -84,7 +84,7 @@
             </el-table-column>
             <el-table-column :show-overflow-tooltip='true' align="center" width="100" class="serial-num" label="姓名">
               <template slot-scope="scope">
-                <el-button style="padding:0px;" type="text" @click="showDetail(scope.row, scope.$index)">{{scope.row.name }}</el-button>
+                <el-button style="padding:0px;" type="text" @click="showDetail(scope.row, scope.$index, scope.row.indexSort)">{{scope.row.name }}</el-button>
               </template>
             </el-table-column>
             <el-table-column :show-overflow-tooltip='true' width="120" prop="phone" align="center" label="电话">
@@ -295,7 +295,11 @@
                 {{ row.enableRemoteOpen === '1' ? '允许' : '禁止' }}
               </template>
             </el-table-column>
-            <el-table-column align='center' :show-overflow-tooltip='true' prop="note" label="备注"></el-table-column>
+            <el-table-column align='center' :show-overflow-tooltip='true' prop="note" label="备注">
+              <template slot-scope="{row}">
+                <span>{{row.note || '--'}}</span>
+              </template>
+            </el-table-column>
           </el-table>
         </el-tab-pane>
         <el-tab-pane label="人脸库信息" name="six">
@@ -326,8 +330,6 @@
 
     <el-dialog :close-on-click-modal='false' title="添加用户" :visible.sync="dialogCreate" width="440px" :before-close="handleClose">
           <el-form class="owner" :model="Form" :rules="rules" style="margin-right:40px" ref='Forms' label-width="85px">
-
-
             <el-form-item label="姓名:"  prop='name'>
               <el-input clearable v-model="Form.name" placeholder='输入姓名'></el-input>
             </el-form-item>
@@ -402,7 +404,7 @@
             </el-form-item>
           </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogCreate = false">取 消</el-button>
+        <el-button @click="handleClose">取 消</el-button>
         <el-button type="primary" @click="addUserConfirm">确 定</el-button>
       </span>
       <!-- 增加房屋时修改房屋 -->
@@ -566,7 +568,7 @@ export default class OwnerManage extends Vue {
   filterForm: object = {
     name: '',
     phone: '',
-    houseNo: '',
+    key: '',
     type: ''
   }
   deleteForm: object = {
@@ -869,12 +871,13 @@ export default class OwnerManage extends Vue {
       }
   }
   /*** row 列表数据 查看详情*/
-  showDetail(row, index) {
+  showDetail(row, index, indexSort) {
     this.activeName = 'first'
     this.passList['id'] = row.id
     this.dialogFormVisible = true;
     this.detailDialog = Object.assign(this.detailDialog, this['list_data'][index]);
-    this.houseDtailTable = []
+    this.houseDtailTable = this.data[indexSort]['house']
+    // 获取人员通行记录
     this.pagePassChange(1)
     // 获取物业人员的车辆信息
     getUserPropertyCar(row.id).then(res => {
@@ -889,6 +892,7 @@ export default class OwnerManage extends Vue {
     //   this.personImg = require("@/assets/defaultPerson.png")
     // }
     this.facePage['userId'] = row.id
+    // 获取人脸库信息
     this.fetchFaceList(1)
   }
 

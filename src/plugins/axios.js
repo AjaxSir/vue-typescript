@@ -4,7 +4,7 @@ import Vue from "vue";
 import axios from "axios";
 import store from '../store/index.ts'
 import { MessageBox, Message } from 'element-ui';
-import { getToken, getName } from '@/utils/auth'
+import { getToken, removeToken } from '@/utils/auth'
 import Cookie from 'js-cookie'
 // Full config:  https://github.com/axios/axios#request-config
 export const serverURL ="/v1"
@@ -72,7 +72,7 @@ _axios.interceptors.response.use(
         center: true,
         type: 'warning'
       }).then(() => {
-        clearCookie()
+        removeToken()
         location.reload()
       })
     }else{
