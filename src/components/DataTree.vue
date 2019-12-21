@@ -229,7 +229,7 @@
     <el-dialog :before-close="closeDialog" :close-on-click-modal='false' width="460px"  class='formDialog' :title="UnitForm.id ? '修改单元楼' : '添加单元楼'" :visible.sync="HouseUnitVisible">
       <el-form  ref='buildings' :rules="unitRules" :model="UnitForm">
          <el-form-item label="名称:" prop='name' label-width="85px">
-          <el-input clearable style="width:280px" v-model="UnitForm.name" autocomplete="off"></el-input>
+          <el-input placeholder="填写单元名称" clearable style="width:280px" v-model="UnitForm.name" autocomplete="off"></el-input>
           <!-- <el-input style='width:50px' v-model="UnitForm.max" autocomplete="off"></el-input> -->
         </el-form-item>
         <!-- <el-form-item v-if='!this.UnitForm.id' label="序号:" prop='serialNumber' label-width="85px">
@@ -278,6 +278,7 @@
                 @input="hint"
                 @focus="hintFocus"
                 @blur="hintBlur"
+                placeholder="填写楼层数"
                 @mouseover.native="hint(UnitForm.storeyNum)"
                 @mouseout.native="hint(UnitForm.storeyNum)"
            style="width:280px" v-model="UnitForm.storeyNum" autocomplete="off"></el-input>
@@ -285,6 +286,7 @@
         <el-form-item label="每层户数:" prop='houseNum' label-width="85px">
           <el-input
           clearable
+          placeholder="填写每层户数"
                 @keyup.native="UpNumber"
                 @keydown.native="UpNumber"
                 @change="clearableBtn"
@@ -305,7 +307,7 @@
     <el-dialog :before-close="roleHandClose" :close-on-click-modal='false' width="800px" :title="RoleForm.id ? '修改权限组' : '新建权限组'" :visible.sync="RoleVisible">
       <el-form :rules="RoleRules" style="overflow:hidden" ref='roleForm' :model="RoleForm">
         <el-form-item prop='name' label="权限名称:" label-width="85px">
-          <el-input clearable maxlength="10" v-model="RoleForm.name" autocomplete="off"></el-input>
+          <el-input placeholder="填写权限名称" clearable maxlength="10" v-model="RoleForm.name" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item prop='enableInviteCar' style="float:left;width:350px" label="邀请车辆:" label-width="85px">
           <el-switch

@@ -23,12 +23,12 @@
             @cell-mouse-enter="enterRowChange"
             @cell-mouse-leave="leaveRowChange"
           >
-            <el-table-column type="selection" width="50"></el-table-column>
+            <el-table-column v-if='globalUpdateStatus' type="selection" width="50"></el-table-column>
 
             <el-table-column type="index" align='center' class="indexNum" label="序号" width="50">
               <template slot-scope="scope">
                 <span>{{scope.$index + 1}}</span>
-                <div class="fun-btn">
+                <div v-if='globalUpdateStatus' class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start" @command="commandClick">
                     <el-tooltip class="item" effect="dark" content="点击操作" placement="top">
                       <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
@@ -94,7 +94,7 @@
       :before-close="handleClose"
     >
       <el-form :rules='rules' ref="Forms" :model="Form" label-width="80px">
-        <el-form-item prop='name' label="账号名">
+        <el-form-item prop='name' label="账号">
           <el-input clearable style='position:fixed;bottom:-999999px' type='password' ></el-input>
           <el-input
           style="width:300px"
@@ -102,7 +102,7 @@
           maxlength="10"
           type='text'
            clearable
-          placeholder="请输入账号名"
+          placeholder="请输入账号"
           @input="constraintLength(Form.name, '10')"
           v-model="Form.name"></el-input>
         </el-form-item>
@@ -192,7 +192,7 @@ export default class InformIssue extends Vue {
     name: null,
     roleId: null,
     note: null,
-    password: null,
+    password: '',
     roleName: ''
   };
   rules: object = {
@@ -208,17 +208,44 @@ export default class InformIssue extends Vue {
           ],
     password: [
             { required: true, message: '请输入管理员的密码', trigger: 'blur' },
-            { min: 6, max: 10, message: '长度在 6 到 10 个字符', trigger: 'blur' }
-          ]
+            { min: 6, max: 10, message: '长度在 8 到 16 个字符', trigger: 'blur' },
+            {
+             trigger: 'blur', validator: (rule, value, callback) => {
+                if (this.passwordDiff(value) !== 2) {
+                  callback(new Error('必须包含数字及英文'))
+                } else {
+                  callback()
+                }
+            }
+          }
+        ]
   }
   resetRules: object = {
     newPassword: [
             { required: true, message: '请输入管理员的密码', trigger: 'blur' },
-            { min: 6, max: 10, message: '长度在 6 到 10 个字符', trigger: 'blur' }
+            { min: 6, max: 10, message: '长度在 8 到 16 个字符', trigger: 'blur' },
+            {
+             trigger: 'blur', validator: (rule, value, callback) => {
+                if (this.passwordDiff(value) !== 2) {
+                  callback(new Error('必须包含数字及英文'))
+                } else {
+                  callback()
+                }
+            }
+          }
           ],
     reNewPassword: [
             { required: true, message: '请确认管理员的密码', trigger: 'blur' },
-            { min: 6, max: 10, message: '长度在 6 到 10 个字符', trigger: 'blur' }
+            { min: 6, max: 10, message: '长度在 8 到 16 个字符', trigger: 'blur' },
+            {
+             trigger: 'blur', validator: (rule, value, callback) => {
+                if (this.passwordDiff(value) !== 2) {
+                  callback(new Error('必须包含数字及英文'))
+                } else {
+                  callback()
+                }
+            }
+          }
           ]
   }
   initForm: object = {
@@ -237,6 +264,17 @@ export default class InformIssue extends Vue {
   created() {
     this.initForm['params'] = Object.assign(this.initForm['params'], this.page, this.filterForm) // 合并参数
     this.fetchRoleList()
+  }
+  // 密码复杂度
+  passwordDiff(str: string) {
+    let diffcult: number = 0
+    if((/[0-9]/).test(str)) {
+      diffcult++
+    }
+    if((/[a-z]/i).test(str)) {
+      diffcult++
+    }
+    return diffcult
   }
   // 确定添加/修改管理员
   addManagerConfirm() {

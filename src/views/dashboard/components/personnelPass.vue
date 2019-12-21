@@ -5,7 +5,7 @@
         <!-- <svg-icon icon-class="v_zanbi" class-name="scene-house" /> -->
         <i class="iconfont icon-renyuantongji1"></i>
         <span class="scene-titile">人员通行</span>
-        <router-link :to="{name: 'management'}">
+        <router-link v-if='permissionList.includes("managementLook")' :to="{name: 'management'}">
           <el-button style='float:right;padding:5px 0px 0px 0px'  type="text"  >查看更多</el-button>
         </router-link>
       </div>
@@ -93,6 +93,7 @@
 <script lang='ts'>
 import { Component, Vue } from "vue-property-decorator";
 import { peoplePassList } from '@/api/screenApi.ts'
+import { Getter } from 'vuex-class'
 @Component({
   components: {
 
@@ -113,6 +114,7 @@ import { peoplePassList } from '@/api/screenApi.ts'
   }
 })
 export default class openDoor extends Vue {
+  @Getter('permissionList') permissionList: Array<string>
   timer: any = null
       tableData: Array<object> = []
 
