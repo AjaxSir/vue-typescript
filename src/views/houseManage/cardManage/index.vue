@@ -54,12 +54,12 @@
             @selection-change="handleSelectionChange"
             @cell-mouse-leave="leaveRowChange"
           >
-            <el-table-column type="selection" width="50"></el-table-column>
+            <el-table-column v-if='globalUpdateStatus' type="selection" width="50"></el-table-column>
 
             <el-table-column align="center" class="indexNum" type="index" label="序号" width="50">
               <template slot-scope="scope">
                 <span>{{ scope.$index + 1 }}</span>
-                <div class="fun-btn">
+                <div v-if='globalUpdateStatus' class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start" @command='commandClick'>
                     <el-tooltip class="item" effect="dark" content="点击操作" placement="top">
                       <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>

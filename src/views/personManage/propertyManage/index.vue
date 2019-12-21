@@ -42,11 +42,11 @@
           @cell-mouse-enter="enterRowChange"
           @cell-mouse-leave="leaveRowChange"
           border>
-            <el-table-column type="selection" align="center"></el-table-column>
+            <el-table-column v-if='globalUpdateStatus' type="selection" align="center"></el-table-column>
             <el-table-column type="index" width="60" align="center" class="indexNum" label="编号">
               <template slot-scope="scope">
                 <span>{{ scope.$index + 1 }}</span>
-                <div class="fun-btn">
+                <div v-if='globalUpdateStatus' class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start" @command='commandClick'>
                     <el-tooltip class="item" effect="dark" content="点击操作" placement="top">
                       <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
