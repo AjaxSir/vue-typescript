@@ -7,27 +7,27 @@ Vue.use(Router);
 
 export const constantRouterMap = [
   {
-  path: '/login',
-  name: 'login',
-  component: _import_('login/index'),
-  hidden: true
-},
-{
-  path: "",
-  redirect: 'dashboard',
-  hidden: true,
-  component: Layout,
-  alwaysShow: false,
-  children: [{
-    path: 'dashboard',
-    component: _import_('dashboard/index'),
-    name: 'dashboard',
-    meta: {
-      title: '首页',
-      icon: 'monitor'
-    }
-  }]
-}
+    path: '/login',
+    name: 'login',
+    component: _import_('login/index'),
+    hidden: true
+  },
+  {
+    path: "",
+    redirect: 'dashboard',
+    hidden: true,
+    component: Layout,
+    alwaysShow: false,
+    children: [{
+      path: 'dashboard',
+      component: _import_('dashboard/index'),
+      name: 'dashboard',
+      meta: {
+        title: '首页',
+        icon: 'monitor'
+      }
+    }]
+  }
 ]
 
 export const asyncRoute = [
@@ -160,6 +160,15 @@ export const asyncRoute = [
       bg_color: '#e4a26e',
     },
     children: [{
+      name: 'stall',
+      path: 'stall',
+      component: _import_('carManage/stallManage/index'),
+      meta: {
+        title: '车位管理',
+        icon: 'icon-cheliangpaiban',
+        bg_color: '#68e0c6'
+      }
+    }, {
       name: 'carManage',
       path: 'carManage',
       component: _import_('carManage/carList/index'),
@@ -300,6 +309,15 @@ export const asyncRoute = [
         bg_color: '#b63a9b',
         icon: 'icon-xiaoqu'
       }
+    }, {
+      name: 'argumentsStall',
+      path: 'argumentsStall',
+      component: _import_('roleManage/argumentsStall/index'),
+      meta: {
+        title: '系统参数',
+        bg_color: '#b63a9b',
+        icon: 'icon-xiaoqu'
+      }
     }]
   },
   {
@@ -376,27 +394,27 @@ export const asyncRoute = [
         icon: 'icon-icon-p_mrpbaobiao'
       }
     },
-      {
-        name: 'visitorCarChart',
-        path: 'visitorCarChart',
-        component: _import_('statementManage/components/vistorCarChart'),
-        meta: {
-          title: '访客车辆统计',
-          bg_color: '#bf5d76',
-          icon: 'icon-icon-p_mrpbaobiao'
-        }
-      },
-      {
-        name: 'visitorChart',
-        path: 'visitorChart',
-        component: _import_('statementManage/components/vistorChart'),
-        meta: {
-          title: '访客通行统计',
-          bg_color: '#bf5d76',
-          icon: 'icon-icon-p_mrpbaobiao'
-        }
+    {
+      name: 'visitorCarChart',
+      path: 'visitorCarChart',
+      component: _import_('statementManage/components/vistorCarChart'),
+      meta: {
+        title: '访客车辆统计',
+        bg_color: '#bf5d76',
+        icon: 'icon-icon-p_mrpbaobiao'
       }
-  ]
+    },
+    {
+      name: 'visitorChart',
+      path: 'visitorChart',
+      component: _import_('statementManage/components/vistorChart'),
+      meta: {
+        title: '访客通行统计',
+        bg_color: '#bf5d76',
+        icon: 'icon-icon-p_mrpbaobiao'
+      }
+    }
+    ]
   },
   {
     path: '/screen',
@@ -422,135 +440,135 @@ export const asyncRoute = [
       }
     ]
   },
-    //---------------------------
-    // {
-    //   path: '/pass',
-    //   name: 'pass',
-    //   component: Layout,
-    //   redirect: '/pass/management',
-    //   alwaysShow: true,
-    //   meta: {
-    //     title: '通行管理',
-    //     icon: 'icon-tongxing',
-    //     bg_color: '#55b949',
-    //   },
-    //   children: [{
-    //     name: 'management',
-    //     path: 'management',
-    //     component: _import_('personPass/index'),
-    //     meta: {
-    //       title: '人员通行管理',
-    //       icon: 'monitor'
-    //     }
-    //   }]
-    // },
-    // {
-    //   path: '/studentTeacherFile',
-    //   name: 'studentTeacherFile',
-    //   component: Layout,
-    //   redirect: '/studentTeacherFile/data',
-    //   alwaysShow: true,
-    //   meta: {
-    //     title: '师生档案',
-    //     icon: 'icon-dangan',
-    //     bg_color: '#009bba',
-    //   },
-    //   children: [{
-    //     name: 'data',
-    //     path: 'data',
-    //     component: _import_('studentTeacherFile/index'),
-    //     meta: {
-    //       title: '师生档案管理',
-    //       icon: 'monitor'
-    //     }
-    //   }]
-    // },
-    // {
-    //   path: '/importantPeople',
-    //   name: 'importantPeople',
-    //   component: Layout,
-    //   redirect: '/importantPeople/info',
-    //   alwaysShow: true,
-    //   meta: {
-    //     title: '重点人员',
-    //     icon: 'icon-zhongdian',
-    //     bg_color: '#798384',
-    //   },
-    //   children: [{
-    //     name: 'info',
-    //     path: 'info',
-    //     component: _import_('importantPeople/index'),
-    //     meta: {
-    //       title: '重点人员',
-    //       icon: 'monitor'
-    //     }
-    //   }]
-    // },
-    // {
-    //   path: '/subscription',
-    //   name: 'subscription',
-    //   component: Layout,
-    //   redirect: '/subscription/subscriber',
-    //   alwaysShow: true,
-    //   meta: {
-    //     title: '订阅报警服务',
-    //     icon: 'icon-baojing',
-    //     bg_color: '#bf5d76',
-    //   },
-    //   children: [{
-    //     name: 'subscriber',
-    //     path: 'subscriber',
-    //     component: _import_('subscriberManage/index'),
-    //     meta: {
-    //       title: '订阅人管理',
-    //       icon: 'monitor'
-    //     }
-    //   }]
-    // }, {
-    //   path: '/schoolhouse',
-    //   name: 'schoolhouse',
-    //   component: Layout,
-    //   redirect: '/schoolhouse/library',
-    //   alwaysShow: true,
-    //   meta: {
-    //     title: '校舍管理',
-    //     icon: 'icon-xuexiaoqingkuang',
-    //     bg_color: '#e17f5a',
-    //   },
-    //   children: [{
-    //     name: 'library',
-    //     path: 'library',
-    //     component: _import_('schoolhouse/libraryManage/index'),
-    //     meta: {
-    //       title: '图书馆管理',
-    //       icon: 'monitor'
-    //     }
-    //   }, {
-    //     name: 'classroom',
-    //     path: 'classroom',
-    //     component: _import_('schoolhouse/classroomManage/index'),
-    //     meta: {
-    //       title: '教学楼管理',
-    //       icon: 'monitor'
-    //     }
-    //   }, {
-    //     name: 'office',
-    //     path: 'office',
-    //     component: _import_('schoolhouse/officeManage/index'),
-    //     meta: {
-    //       title: '办公室管理',
-    //       icon: 'monitor'
-    //     }
-    //   }, {
-    //     name: 'canteen',
-    //     path: 'canteen',
-    //     component: _import_('schoolhouse/canteenManage/index'),
-    //     meta: {
-    //       title: '食堂管理',
-    //       icon: 'monitor'
-    //     }
-    //   }]
-    // },
+  //---------------------------
+  // {
+  //   path: '/pass',
+  //   name: 'pass',
+  //   component: Layout,
+  //   redirect: '/pass/management',
+  //   alwaysShow: true,
+  //   meta: {
+  //     title: '通行管理',
+  //     icon: 'icon-tongxing',
+  //     bg_color: '#55b949',
+  //   },
+  //   children: [{
+  //     name: 'management',
+  //     path: 'management',
+  //     component: _import_('personPass/index'),
+  //     meta: {
+  //       title: '人员通行管理',
+  //       icon: 'monitor'
+  //     }
+  //   }]
+  // },
+  // {
+  //   path: '/studentTeacherFile',
+  //   name: 'studentTeacherFile',
+  //   component: Layout,
+  //   redirect: '/studentTeacherFile/data',
+  //   alwaysShow: true,
+  //   meta: {
+  //     title: '师生档案',
+  //     icon: 'icon-dangan',
+  //     bg_color: '#009bba',
+  //   },
+  //   children: [{
+  //     name: 'data',
+  //     path: 'data',
+  //     component: _import_('studentTeacherFile/index'),
+  //     meta: {
+  //       title: '师生档案管理',
+  //       icon: 'monitor'
+  //     }
+  //   }]
+  // },
+  // {
+  //   path: '/importantPeople',
+  //   name: 'importantPeople',
+  //   component: Layout,
+  //   redirect: '/importantPeople/info',
+  //   alwaysShow: true,
+  //   meta: {
+  //     title: '重点人员',
+  //     icon: 'icon-zhongdian',
+  //     bg_color: '#798384',
+  //   },
+  //   children: [{
+  //     name: 'info',
+  //     path: 'info',
+  //     component: _import_('importantPeople/index'),
+  //     meta: {
+  //       title: '重点人员',
+  //       icon: 'monitor'
+  //     }
+  //   }]
+  // },
+  // {
+  //   path: '/subscription',
+  //   name: 'subscription',
+  //   component: Layout,
+  //   redirect: '/subscription/subscriber',
+  //   alwaysShow: true,
+  //   meta: {
+  //     title: '订阅报警服务',
+  //     icon: 'icon-baojing',
+  //     bg_color: '#bf5d76',
+  //   },
+  //   children: [{
+  //     name: 'subscriber',
+  //     path: 'subscriber',
+  //     component: _import_('subscriberManage/index'),
+  //     meta: {
+  //       title: '订阅人管理',
+  //       icon: 'monitor'
+  //     }
+  //   }]
+  // }, {
+  //   path: '/schoolhouse',
+  //   name: 'schoolhouse',
+  //   component: Layout,
+  //   redirect: '/schoolhouse/library',
+  //   alwaysShow: true,
+  //   meta: {
+  //     title: '校舍管理',
+  //     icon: 'icon-xuexiaoqingkuang',
+  //     bg_color: '#e17f5a',
+  //   },
+  //   children: [{
+  //     name: 'library',
+  //     path: 'library',
+  //     component: _import_('schoolhouse/libraryManage/index'),
+  //     meta: {
+  //       title: '图书馆管理',
+  //       icon: 'monitor'
+  //     }
+  //   }, {
+  //     name: 'classroom',
+  //     path: 'classroom',
+  //     component: _import_('schoolhouse/classroomManage/index'),
+  //     meta: {
+  //       title: '教学楼管理',
+  //       icon: 'monitor'
+  //     }
+  //   }, {
+  //     name: 'office',
+  //     path: 'office',
+  //     component: _import_('schoolhouse/officeManage/index'),
+  //     meta: {
+  //       title: '办公室管理',
+  //       icon: 'monitor'
+  //     }
+  //   }, {
+  //     name: 'canteen',
+  //     path: 'canteen',
+  //     component: _import_('schoolhouse/canteenManage/index'),
+  //     meta: {
+  //       title: '食堂管理',
+  //       icon: 'monitor'
+  //     }
+  //   }]
+  // },
 ]
 
 export default new Router({
@@ -560,4 +578,3 @@ export default new Router({
   //   y: 0
   // }),
 })
-

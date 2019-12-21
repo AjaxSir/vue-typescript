@@ -459,7 +459,7 @@
                   <span>{{carUserDetail.name}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="性别:">
-                  <span>{{carUserDetail.sex}}</span>
+                  <span>{{carUserDetail.sex==='0' ? '女' : '男'}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="年龄:">
                   <span>{{carUserDetail.age}}</span>
