@@ -20,7 +20,7 @@ export default class GlobalMimins extends Vue {
     limit: 10,
   }
   @Getter('permissionList') permissionList: Array<string>
-  globalUpdateStatus:boolean = true // 是否具有修改权限
+  globalUpdateStatus: boolean = true // 是否具有修改权限
   public dialogCreate: any = false
   public notifyInstance: any; //防止notify重复多次出现提示
   public showLoading: any = true
@@ -383,6 +383,15 @@ export default class GlobalMimins extends Vue {
     var v = e.target.value
     if (v !== "" && !this.regPos.test(v)) {
       this.message('预警周期必须是数值')
+    }
+    e.target.value = v.replace(this.upNum, "");
+  }
+
+  //停车数量
+  carNumber(e: any) {
+    var v = e.target.value
+    if (v !== "" && !this.regPos.test(v)) {
+      this.message('最大同时停车数量必须是数值')
     }
     e.target.value = v.replace(this.upNum, "");
   }
