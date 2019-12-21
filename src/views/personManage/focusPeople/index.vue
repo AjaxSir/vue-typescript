@@ -113,7 +113,7 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="age" align="center" label="年龄" :show-overflow-tooltip="true"></el-table-column>
+            <!-- <el-table-column prop="age" align="center" label="年龄" :show-overflow-tooltip="true"></el-table-column> -->
 
             <el-table-column
               prop="typeName"
@@ -402,7 +402,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogCreate = false">取 消</el-button>
+        <el-button @click="handleClose">取 消</el-button>
         <el-button type="primary" @click="createFocusPeople">确 定</el-button>
       </div>
     </el-dialog>

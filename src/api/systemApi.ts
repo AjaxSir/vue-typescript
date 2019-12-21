@@ -107,8 +107,8 @@ export function deleteGroup(id: any) {
     method: 'delete'
   })
 }
-/********* 系统参数 *********** */
 
+/********* 系统参数 *********** */
 //添加车位分组
 export function addArgumentsStall(data: Object) {
   return _axios({
