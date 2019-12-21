@@ -861,7 +861,7 @@ export default class OwnerManage extends Vue {
     }
     Obj.houseId = val['id']
     Obj.buildingName = val['name']
-    this.Form.house.push(Obj)
+    this.Form.house.unshift(Obj)
     // console.log(Obj)
   }
   // 房屋搜索建议
