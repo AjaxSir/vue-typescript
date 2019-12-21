@@ -17,10 +17,28 @@
           </el-dropdown-menu>
           <div slot="houseNum">
             <div class="word-filter">
-              <span class="filter-name">关键字:</span>
+              <span class="filter-name">姓名:</span>
               <el-input clearable
               @keyup.enter.native="emitFetchData"
-              style="width:215px" class="input-filter" v-model="filterForm.keys" placeholder='输入关键字筛选' size="small"></el-input>
+              style="width:215px" class="input-filter" v-model="filterForm.userName" placeholder='输入用户姓名' size="small"></el-input>
+            </div>
+            <div class="word-filter">
+              <span class="filter-name">电话:</span>
+              <el-input clearable
+              @keyup.enter.native="emitFetchData"
+              style="width:215px" class="input-filter" v-model="filterForm.phone" placeholder='输入用户电话' size="small"></el-input>
+            </div>
+            <div class="word-filter">
+              <span class="filter-name">证件号码:</span>
+              <el-input clearable
+              @keyup.enter.native="emitFetchData"
+              style="width:215px" class="input-filter" v-model="filterForm.cardNo" placeholder='输入用户证件号' size="small"></el-input>
+            </div>
+            <div class="word-filter">
+              <span class="filter-name">房屋编号:</span>
+              <el-input clearable
+              @keyup.enter.native="emitFetchData"
+              style="width:215px" class="input-filter" v-model="filterForm.keys" placeholder='输入房屋编号' size="small"></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">房屋状态:</span>
@@ -299,7 +317,10 @@ export default class CardManage extends Vue {
   filterForm: object = {
     keys: '',
     status: '',
-    buildingId: ''
+    buildingId: '',
+    userName: '',
+    cardNo: '',
+    phone: ''
   }
   deleteForm: object = {
     url: '/admin/hsHouse',

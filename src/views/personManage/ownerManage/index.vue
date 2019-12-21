@@ -109,26 +109,29 @@
                 />
               </template>
             </el-table-column>
-            <el-table-column :show-overflow-tooltip='true' width="100" prop="car" align="center" label="访客车辆">
-              <!-- <template slot-scope="{row}">
-                <span>{{ row.house[0] && row.house[0].enableInviteCar === '1' ? '允许' : '禁止' }}</span>
-              </template> -->
+            <el-table-column prop="house_info" :show-overflow-tooltip='true' align="center" label="所属楼栋">
               <template slot-scope="{row}">
-                <el-dropdown @command="changeStatus"
-                trigger="click">
-                  <span class="el-dropdown-link">
-                    <el-tag
-                    size="small"
-                    :type="row.house[0] && row.house[0].enableInviteCar === '1' ? 'primary' : 'warning'"
-                    style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
-                    >{{ row.house[0] && row.house[0].enableInviteCar === '1' ? '允许' : '禁止' }}
-                    </el-tag>
-                  </span>
-                  <el-dropdown-menu  slot="dropdown">
-                    <el-dropdown-item :command='ComponentCommand("1", "car", row)'>允许</el-dropdown-item>
-                    <el-dropdown-item :command='ComponentCommand("0", "car", row)'>禁止</el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown>
+                <span>{{ row.house[0] && row.house[0].groupName || '--' }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="house_info" :show-overflow-tooltip='true' align="center" label="所属单元">
+              <template slot-scope="{row}">
+                <span>{{ row.house[0] && row.house[0].buildingName || '--' }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="house_info" :show-overflow-tooltip='true' align="center" label="房屋编号">
+              <template slot-scope="{row}">
+                <span>{{ row.house[0] && row.house[0].serialNumber || '--' }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column :show-overflow-tooltip='true'  width="100" prop="status" align="center" label="状态">
+              <template slot-scope="{row}">
+                <span>{{  row.house[0] && row.house[0].status | statusFilter}}</span>
+              </template>
+            </el-table-column>
+            <el-table-column :show-overflow-tooltip='true'  width="100" prop="far_door" align="center" label="用户类型">
+              <template slot-scope="{row}">
+                <span>{{ row.house[0] && row.house[0].type | typeFilter }}</span>
               </template>
             </el-table-column>
             <el-table-column :show-overflow-tooltip='true' prop="car" width="100" align="center" label="邀请访客">
@@ -153,9 +156,26 @@
                 </el-dropdown>
               </template>
             </el-table-column>
-            <el-table-column prop="house_info" :show-overflow-tooltip='true' align="center" label="房屋编号">
+            <el-table-column :show-overflow-tooltip='true' width="100" prop="car" align="center" label="访客车辆">
+              <!-- <template slot-scope="{row}">
+                <span>{{ row.house[0] && row.house[0].enableInviteCar === '1' ? '允许' : '禁止' }}</span>
+              </template> -->
               <template slot-scope="{row}">
-                <span>{{ row.house[0] && row.house[0].buildingName || '--' }}</span>
+                <el-dropdown @command="changeStatus"
+                trigger="click">
+                  <span class="el-dropdown-link">
+                    <el-tag
+                    size="small"
+                    :type="row.house[0] && row.house[0].enableInviteCar === '1' ? 'primary' : 'warning'"
+                    style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
+                    >{{ row.house[0] && row.house[0].enableInviteCar === '1' ? '允许' : '禁止' }}
+                    </el-tag>
+                  </span>
+                  <el-dropdown-menu  slot="dropdown">
+                    <el-dropdown-item :command='ComponentCommand("1", "car", row)'>允许</el-dropdown-item>
+                    <el-dropdown-item :command='ComponentCommand("0", "car", row)'>禁止</el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
               </template>
             </el-table-column>
             <el-table-column :show-overflow-tooltip='true'  width="100" prop="far_door" align="center" label="远程开门">
@@ -180,24 +200,9 @@
                 </el-dropdown>
               </template>
             </el-table-column>
-            <el-table-column :show-overflow-tooltip='true'  width="100" prop="far_door" align="center" label="用户类型">
-              <template slot-scope="{row}">
-                <span>{{ row.house[0] && row.house[0].type | typeFilter }}</span>
-              </template>
-            </el-table-column>
             <el-table-column :show-overflow-tooltip='true' prop="expire_time" align="center" label="过期时间">
               <template slot-scope="{row}">
                 <span>{{ row.house[0] && row.house[0].overTime }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column :show-overflow-tooltip='true'  width="100" prop="status" align="center" label="状态">
-              <template slot-scope="{row}">
-                <span>{{  row.house[0] && row.house[0].status | statusFilter}}</span>
-              </template>
-            </el-table-column>
-            <el-table-column prop="detail" :show-overflow-tooltip='true' align="center" label="房屋备注">
-              <template slot-scope="{row}">
-                <span>{{ row.house[0] && row.house[0].note || '--' }}</span>
               </template>
             </el-table-column>
             <el-table-column prop="create_time" :show-overflow-tooltip='true' align="center" label="创建时间">
@@ -205,6 +210,19 @@
                 <span>{{  row.house[0] && row.house[0].createTime }}</span>
               </template>
             </el-table-column>
+            <el-table-column prop="detail" :show-overflow-tooltip='true' align="center" label="房屋备注">
+              <template slot-scope="{row}">
+                <span>{{ row.house[0] && row.house[0].note || '--' }}</span>
+              </template>
+            </el-table-column>
+
+
+
+
+
+
+
+
           </el-table>
         </div>
 
@@ -843,7 +861,7 @@ export default class OwnerManage extends Vue {
     }
     Obj.houseId = val['id']
     Obj.buildingName = val['name']
-    this.Form.house.push(Obj)
+    this.Form.house.unshift(Obj)
     // console.log(Obj)
   }
   // 房屋搜索建议
