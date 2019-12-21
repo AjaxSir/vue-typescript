@@ -195,22 +195,26 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="name" align="center" label="姓名" :show-overflow-tooltip="true">
+            <el-table-column prop="name" align="center" label="访客姓名" :show-overflow-tooltip="true">
               <template slot-scope="{ row }">
                 <el-button type="text" @click="showDetail(row)">{{ row.name }}</el-button>
               </template>
             </el-table-column>
-            <el-table-column prop="phone" align="center" label="电话" :show-overflow-tooltip="true"></el-table-column>
-            <el-table-column
-              prop="visitName"
-              align="center"
-              label="受访人"
-              :show-overflow-tooltip="true"
-            >
-              <!-- <template slot-scope="{ row }">
-                <el-button type="text" @click="showDetail(row)">{{ row.visitName }}</el-button>
-              </template>-->
+
+            <el-table-column prop="status" align="center" label="状态" :show-overflow-tooltip="true">
+              <template slot-scope="scope">
+                <span>{{statusFilter(scope.row.status)}}</span>
+              </template>
             </el-table-column>
+
+            <el-table-column prop="phone" align="center" label="访客电话" :show-overflow-tooltip="true"></el-table-column>
+
+            <el-table-column
+              prop="cardNo"
+              align="center"
+              label="证件号码"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
 
             <el-table-column
               prop="visitType"
@@ -223,51 +227,57 @@
                 <span>{{scope.row.visitType ==='1' ?'APP' : scope.row.visitType ==='2' ?'访客机' : '--'}}</span>
               </template>
             </el-table-column>
+
             <el-table-column
-              prop="cardNo"
+              prop="visitName"
               align="center"
-              label="证件号码"
+              label="受访人"
               :show-overflow-tooltip="true"
-            ></el-table-column>
-            <el-table-column
-              prop="visitTime"
-              align="center"
-              label="访问时间"
-              :show-overflow-tooltip="true"
-            ></el-table-column>
+            >
+              <template slot-scope="{ row }">
+                <el-button type="text" @click="showDetail(row,'second')">{{ row.visitName }}</el-button>
+              </template>
+            </el-table-column>
+
             <el-table-column
               prop="buildingName"
               align="center"
               label="所属楼栋"
               :show-overflow-tooltip="true"
             ></el-table-column>
+
             <el-table-column
               prop="houseName"
               align="center"
               label="房屋编号"
               :show-overflow-tooltip="true"
             ></el-table-column>
-            <el-table-column prop="status" align="center" label="状态" :show-overflow-tooltip="true">
-              <template slot-scope="scope">
-                <span>{{statusFilter(scope.row.status)}}</span>
-              </template>
-            </el-table-column>
+
             <el-table-column
               prop="numPeople"
               align="center"
               label="同行人数"
               :show-overflow-tooltip="true"
             ></el-table-column>
+
             <el-table-column
-              prop="createTime"
+              prop="visitTime"
               align="center"
-              label="创建时间"
+              label="访问时间"
               :show-overflow-tooltip="true"
             ></el-table-column>
+
             <el-table-column
               prop="invalidDate"
               align="center"
               label="有效时间"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
+
+            <el-table-column
+              prop="createTime"
+              align="center"
+              label="创建时间"
               :show-overflow-tooltip="true"
             ></el-table-column>
           </el-table>
@@ -318,7 +328,7 @@
                 <el-form-item style="margin-bottom:0" label="有效时间:">
                   <span>{{visitorDialogForm.invalidDate ? visitorDialogForm.invalidDate :'--'}}</span>
                 </el-form-item>
-                <el-form-item style="margin-bottom:0" label="备注:">
+                <el-form-item style="margin-bottom:0" label="备注信息:">
                   <span>{{visitorDialogForm.note ? visitorDialogForm.note :'--'}}</span>
                 </el-form-item>
               </el-col>
@@ -333,7 +343,7 @@
                   <span>{{interUserDetail.name}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="性别:">
-                  <span>{{interUserDetail.sex}}</span>
+                  <span>{{interUserDetail.sex==='0'?'女':'男'}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="年龄:">
                   <span>{{interUserDetail.age}}</span>
@@ -352,6 +362,10 @@
                 </el-form-item>
               </el-col>
               <el-col :span="12">
+                <el-form-item style="margin-bottom:0" label="人员类型:">
+                  <span>{{typeFilter(houseInviterDetail.type)}}</span>
+                </el-form-item>
+
                 <el-form-item style="margin-bottom:0" label="居住楼栋:">
                   <span>{{houseInviterDetail.houseDetail ? houseInviterDetail.houseDetail.houseName : '--'}}</span>
                 </el-form-item>
@@ -366,10 +380,6 @@
 
                 <el-form-item style="margin-bottom:0" label="房屋号:">
                   <span>{{houseInviterDetail.houseDetail ? houseInviterDetail.houseDetail.serialNumber: '--'}}</span>
-                </el-form-item>
-
-                <el-form-item style="margin-bottom:0" label="人员类型:">
-                  <span>{{typeFilter(houseInviterDetail.type)}}</span>
                 </el-form-item>
 
                 <el-form-item style="margin-bottom:0" label="注册时间:">
@@ -634,6 +644,18 @@ export default class VistoryManage extends Vue {
     this["fetchData"](this.initForm);
   }
 
+  /**
+   * row 列表数据
+   */
+  showDetail(row, inviter) {
+    this.detailDialogVisible = true;
+    this.visitorDialogForm = Object.assign({}, row);
+    if (inviter) {
+      this.activeName = inviter;
+      this.fetchUser();
+    }
+  }
+
   async handleClick(tab) {
     /**@description 查看车辆管理名单目标详情 */
     if (tab.name === "second") {
@@ -673,14 +695,6 @@ export default class VistoryManage extends Vue {
      */
     this.listQuery["page"] = val;
     this.fetchPass();
-  }
-  /**
-   * row 列表数据
-   */
-  showDetail(row) {
-    this.detailDialogVisible = true;
-    this.visitorDialogForm = Object.assign({}, row);
-    console.log(row);
   }
 
   handleClose() {
