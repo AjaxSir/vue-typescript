@@ -7,7 +7,7 @@
       <div class="text item">
             <el-button type="primary" @click='setTime(7)'>最近一周</el-button>
             <el-button type="primary" @click='setTime(30)'>最近一月</el-button>
-            <el-button type="primary" @click='visible = true'>自定义</el-button>
+            <el-button type="primary" @click='visible = true, timeRange = ["", ""], sortForm.startTime="",sortForm.endTime=""'>自定义</el-button>
             <span v-show='visible'>
             <el-date-picker
               style="width:360px"
