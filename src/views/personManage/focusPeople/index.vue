@@ -844,14 +844,14 @@ export default class FocusPeople extends Vue {
   async getGroupList() {
     /**@description 获取预警组别信息 */
     const { data } = await getGroup();
-    this.createForm["earlyGroupId"] = data.data[0].id;
+    // this.createForm["earlyGroupId"] = data.data[0].id;
     this.earlyGroup = data.data;
   }
 
   async getTypeList() {
     /**@description 获取类别信息 */
     const { data } = await getType();
-    this.createForm["typeId"] = data.data[0].id;
+    // this.createForm["typeId"] = data.data[0].id;
     this.earlyType = data.data;
   }
 
