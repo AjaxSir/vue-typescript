@@ -204,7 +204,7 @@ export default class InformIssue extends Vue {
             { required: true, message: '请选择管理员的角色', trigger: 'blur' }
           ],
     roleName: [
-            { required: true, message: '请选择管理员的角色', trigger: 'blur' }
+            { required: true, message: '请选择管理员的角色', trigger: 'change' },
           ],
     password: [
             { required: true, message: '请输入管理员的密码', trigger: 'blur' },
@@ -345,6 +345,17 @@ export default class InformIssue extends Vue {
   fetchRoleList() {
     getRoleList(null).then(res => {
       this.roleList = res.data.data
+      this.rules['roleName'].push(
+        {
+             trigger: 'change', validator: (rule, value, callback) => {
+                if (!this.roleList.length) {
+                  callback(new Error('请在角色权限里面添加角色'))
+                } else {
+                  callback()
+                }
+            }
+          }
+      )
     })
   }
 }

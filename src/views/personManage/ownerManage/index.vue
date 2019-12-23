@@ -238,10 +238,10 @@
             </el-table-column>
           </el-table>
         </div>
-
         <el-pagination
          @current-change='pageChange'
          :page-size="page.limit"
+         :current-page="page.page"
         style="margin-top:10px;" background layout="prev, pager, next" :total="page.total"></el-pagination>
       </el-col>
     </el-row>
@@ -362,7 +362,7 @@
     <el-dialog :close-on-click-modal='false' title="添加用户" :visible.sync="dialogCreate" width="440px" :before-close="handleClose">
           <el-form class="owner" :model="Form" :rules="rules" style="margin-right:40px" ref='Forms' label-width="85px">
             <el-form-item label="姓名:"  prop='name'>
-              <el-input clearable v-model="Form.name" placeholder='输入姓名'></el-input>
+              <el-input clearable maxlength="10" v-model="Form.name" placeholder='输入姓名'></el-input>
             </el-form-item>
             <el-form-item label="性别:" prop='sex'>
               <el-select style="position: relative;left: -6px;width:275px" class="input-filter" size="small" v-model="Form.sex" placeholder="请选择">
@@ -387,7 +387,7 @@
                 @mouseover.native="hint(Form.phone)"
                 @mouseout.native="hint(Form.phone)"
               ></el-input>
-              <span v-show="hintPhone" class="ei-input-hint">{{phoneNum}}/11</span>
+              <!-- <span v-show="hintPhone" class="ei-input-hint">{{phoneNum}}/11</span> -->
             </el-form-item>
             <el-form-item label="证件类型:"  label-width="85px"  prop='otherCardName'>
               <el-select style="position: relative;left: -6px;width:275px" class="input-filter" size="small" v-model="Form.otherCardName" placeholder="请选择证件类型">
@@ -800,6 +800,7 @@ export default class OwnerManage extends Vue {
     _axios(option).then((res: any) => {
       if (res.data && res.data.data) {
         this.page['total'] = res.data.data.total
+        this.page['limit'] = res.data.data.size
         this.data = res.data.data.records
         res.data.data.records.forEach((ele: object) => {
            let singleObj = {}

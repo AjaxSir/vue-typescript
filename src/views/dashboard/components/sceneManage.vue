@@ -29,9 +29,11 @@
 <script lang='ts'>
 import { Component, Prop, Vue, Mixins } from "vue-property-decorator";
 import { getSceneInfo } from '@/api/screenApi.ts'
-@Component({})
+@Component
 export default class SceneManage extends Vue{
-  sceneForm: object = {}
+  sceneForm: object = {
+    pics: [1]
+  }
   created(){
     getSceneInfo().then(res => {
       this.sceneForm = Object.assign({}, res.data.data)

@@ -186,9 +186,9 @@
           <el-input clearable style="width:310px" placeholder="点击右方设备绑定选择对应设备" v-model="Form.bindingAddress"></el-input>
           <el-button type='text' @click='deviceBindBtn'>设备绑定</el-button>
         </el-form-item>
-         <el-form-item class="phone-input" label="具体位置: " prop="subAddress">
+         <!-- <el-form-item class="phone-input" label="具体位置: " prop="subAddress">
           <el-input clearable style="width:310px" placeholder="例如:楼上/楼下" v-model="Form.subAddress"></el-input>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item class="phone-input" label="设备备注: " prop="note">
           <el-input clearable type='textarea' placeholder="请输入设备备注" style="width:310px" v-model="Form.note"></el-input>
         </el-form-item>
@@ -353,10 +353,10 @@ export default class DeviceManage extends Vue {
           ],
       bindingAddress: [
             { required: true, message: '请选择设备绑定位置', trigger: 'blur' }
-          ],
-      subAddress: [
-            { required: true, message: '请选择设备具体绑定位置(楼上/楼下)', trigger: 'blur' }
           ]
+      // subAddress: [
+      //       { required: true, message: '请选择设备具体绑定位置(楼上/楼下)', trigger: 'blur' }
+      //     ]
     }
   deviceId: string = ''
   created() {
