@@ -39,9 +39,6 @@
                 <div @click="editTarget(scope.row)">
                   <el-dropdown-item command="update">修改</el-dropdown-item>
                 </div>
-                <!-- <div @click="deleteBtn(scope.row)">
-                  <el-dropdown-item command="dele">删除</el-dropdown-item>
-                </div>-->
                 <el-dropdown-item
                   :command="returnCommand('delete', scope.row)"
                 >{{ deleteForm.data.length ? '批量删除' : '删除' }}</el-dropdown-item>
@@ -51,8 +48,47 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="name" align="center" label="车位类型" :show-overflow-tooltip="true"></el-table-column>
-      <el-table-column prop="maxCar" align="center" label="最大同时停车数量" :show-overflow-tooltip="true"></el-table-column>
+      <el-table-column prop="name" align="center" label="车位类型" :show-overflow-tooltip="true">
+        <template slot-scope="{row}">
+          <p
+            class="rowUpdate"
+            v-show="!row.nameStatus || editForm.id !== row.id"
+            @click="editName(row)"
+          >{{ row.name ? row.name :'--'}}</p>
+          <el-input
+            :ref="row.id"
+            v-show="row.nameStatus&&editForm.id === row.id"
+            size="small"
+            clearable
+            :maxlength="200"
+            v-model="editForm.name"
+            placeholder="输入车位类型"
+            @keyup.enter.native="nameBlur(row,'2')"
+            @input="constraintLength(editForm.name,'10')"
+          ></el-input>
+        </template>
+      </el-table-column>
+      <el-table-column prop="maxCar" align="center" label="最大同时停车数量" :show-overflow-tooltip="true">
+        <template slot-scope="{row}">
+          <p
+            class="rowUpdate"
+            v-show="!row.maxCarStatus || editForm.id !== row.id"
+            @click="editMaxCar(row)"
+          >{{ row.maxCar ? row.maxCar :'--'}}</p>
+          <el-input
+            :ref="row.id"
+            v-show="row.maxCarStatus&&editForm.id === row.id"
+            size="small"
+            clearable
+            :maxlength="200"
+            v-model="editForm.maxCar"
+            placeholder="输入最大同时停车数量"
+            @keydown.native="carNumber"
+            @keyup.enter.native="maxCarBlur(row)"
+            @input="constraintLength(editForm.maxCar,'10')"
+          ></el-input>
+        </template>
+      </el-table-column>
 
       <!-- <el-table-column prop="note" align="center" label="备注" :show-overflow-tooltip="true">
         <template slot-scope="{row}">
@@ -230,7 +266,7 @@ import { Getter, Action, Mutation } from "vuex-class";
 import mixin from "@/config/minxins";
 import {
   addArgumentsStall, //添加系统参数配置车位类型
-  editArgumentsStall, //修改系统参数配置车位类型
+  editArgumentsStall //修改系统参数配置车位类型
 } from "@/api/systemApi.ts";
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 
@@ -258,11 +294,6 @@ export default class WarningLink extends Vue {
 
   dialogCreate: boolean = false;
 
-  showUnitSetting: boolean = false; // 查看已有分组设置状态
-
-  newTag: boolean = false; // 添加分组框状态
-  newTagValue: string = ""; // 添加分组的值
-
   private createForm: Object = {
     //添加表单字段
     name: "", //姓名
@@ -278,8 +309,9 @@ export default class WarningLink extends Vue {
     id: "" //目标联系人id
     // note: "", //备注
   };
-  updateArray: Array<string> = ["noteStatus"];
-  private noteRewrite: String = ""; //保存未改变的note
+  updateArray: Array<string> = ["noteStatus", "nameStatus", "maxCarStatus"];
+  private nameRewrite: String = ""; //保存未改变的name
+  private maxCarRewrite: String = ""; //保存未改变的 maxCar
 
   private rules: Object = {
     // 表单验证
@@ -303,32 +335,8 @@ export default class WarningLink extends Vue {
     ); // 合并参数
   }
 
-  // verification(queryString, key) {
-  //   /**@description 验证*/
-  //   var regPos = /^\d+(\.\d+)?$/; //非负浮点数
-
-  //   if (queryString === "" && key === "phone") {
-  //     this.errorMessage[key] = "电话不能为空";
-  //   } else if (queryString === "" && key === "editPhone") {
-  //     this.editForm["phone"] = null;
-  //   } else if (!regPos.test(queryString)) {
-  //     this.errorMessage[key] = "电话必须是数值";
-  //   } else if (queryString.length > 11) {
-  //     this.errorMessage[key] = "电话号码最多11位";
-  //   } else if (queryString.length < 11) {
-  //     this.errorMessage[key] = "电话号码为11位";
-  //   } else {
-  //     this.errorMessage[key] = "";
-  //   }
-  // }
-
   createwarning() {
-    /**@description 添加预警联系人 */
-    // this.verification(this.createForm["phone"], "phone");
-    // if (
-    //   this.errorMessage["phone"] === "" &&
-    //   this.createForm["phone"].length === 11
-    // ) {
+    /**@description 添加*/
     this.$refs["dataForm"]["validate"](valid => {
       if (valid) {
         var form = {
@@ -339,85 +347,98 @@ export default class WarningLink extends Vue {
           this["fetchData"](this.initForm);
           this["notify"]("success", "成功", "添加车位类型成功");
         });
-        // .catch(err => {
-        //   if (err.response.data.data[0].key === "phone") {
-        //     this.errorMessage["phone"] = err.response.data.data[0].value;
-        //   }
-        // });
       }
     });
-    // } else {
-    //   this["message"]("请输入正确的电话号码");
-    // }
   }
 
-  showInput() {
-    /**@description 显示添加分组框*/
-    this.newTag = true;
-  }
-
-  editNote(row) {
+  editName(row) {
     /**@description 点击备注*/
-    this.noteRewrite = row.note;
-    this.editForm["note"] = row.note;
+    this.nameRewrite = row.name;
+    this.editForm["name"] = row.name;
     this.editForm["id"] = row.id;
-    row.noteStatus = !row.noteStatus;
+    row.nameStatus = !row.nameStatus;
     this.$nextTick(() => {
       const input = this.$refs[row.id] as HTMLElement;
       input.focus();
     });
   }
 
-  // // 修改备注离开输入框
-  // noteBlur(row) {
-  //   row.noteStatus = false;
-  //   if (this.noteRewrite !== this.editForm["note"]) {
-  //     this.confirmUpdateNote(row);
+  // 修改备注离开输入框
+  nameBlur(row) {
+    row.noteStatus = false;
+    if (this.nameRewrite !== this.editForm["name"]) {
+      this.confirmUpdateName(row);
+    }
+  }
+
+  confirmUpdateName(item) {
+    /**@description 修改备注 */
+    const form = { name: this.editForm["name"], id: item.id };
+    if (form["name"] === "") {
+      delete form["name"];
+    }
+    editArgumentsStall(form).then(() => {
+      this["notify"]("success", "成功", "修改车位类型成功");
+      this["fetchData"](this.initForm);
+    });
+  }
+
+  editMaxCar(row) {
+    /**@description 点击备注*/
+    this.maxCarRewrite = row.maxCar;
+    this.editForm["maxCar"] = row.maxCar;
+    this.editForm["id"] = row.id;
+    row.maxCarStatus = !row.maxCarStatus;
+    this.$nextTick(() => {
+      const input = this.$refs[row.id] as HTMLElement;
+      input.focus();
+    });
+  }
+
+  // 修改备注离开输入框
+  // maxCar(row) {
+  //   var v = row.maxCar;
+  //   if (v !== "" && !this["regPos"].test(v)) {
+  //     this["message"]("最大同时停车数量必须是数值");
   //   }
+  //   // row.name = v.replace(this["upNum"], "");
   // }
 
-  // confirmUpdateNote(item) {
-  //   /**@description 修改备注 */
-  //   const form = { note: this.editForm["note"], id: item.id };
-  //   editArgumentsStall(form).then(() => {
-  //     this["notify"]("success", "成功", "修改车位类型成功");
-  //     this["fetchData"](this.initForm);
-  //   });
-  // }
+  maxCarBlur(row) {
+    row.maxCarStatus = false;
+    if (this.maxCarRewrite !== this.editForm["maxCar"]) {
+      this.confirmUpdateMaxCar(row);
+    }
+  }
+
+  confirmUpdateMaxCar(item) {
+    /**@description 修改备注 */
+    const form = { maxCar: this.editForm["maxCar"], id: item.id };
+    if (form["maxCar"] === "") {
+      delete form["maxCar"];
+    }
+    editArgumentsStall(form).then(() => {
+      this["notify"]("success", "成功", "修改最大同时停车数量成功");
+      this["fetchData"](this.initForm);
+    });
+  }
 
   editTarget(item) {
     /**@description 修改操作 */
     for (const key in this.editForm) {
       this.editForm[key] = item[key];
     }
-    if (+item["phone"]) {
-      this.editForm["phone"] = +item["phone"];
-    } else if (item["phone"] === "") {
-      this.editForm["phone"] = null;
-    }
-    if (item["email"] === "") {
-      this.editForm["email"] = null;
-    }
-    this.editForm["phone"] = +item.phone;
-    this.editForm["earlyGroupId"] = item.groupId;
     this.dialogEdit = true;
-
-    if (item.phone) {
-      this["phoneNum"] = item.phone.length;
-    }
   }
 
   constraint(value, type) {
-    if (type === "phone" && value.toString().length > 11) {
-      this.$message("电话不能超过11个字符");
-    }
     if (value === "") {
       this.editForm[type] = null;
     }
   }
 
   updatewarning() {
-    /**@description 修改预警联系人 */
+    /**@description 修改 */
     for (const key in this.errorMessage) {
       this.errorMessage[key] = "";
     }
@@ -448,40 +469,11 @@ export default class WarningLink extends Vue {
 
   editClose() {
     /** @description 关闭添加/修改dialog */
-
     this.dialogEdit = false; //修改dialog
     for (const key in this.errorMessage) {
       this.errorMessage[key] = "";
     }
     this.$refs["updateForm"]["resetFields"]();
-  }
-
-  // deleteBtn(item) {
-  //   /**@description 单个删除状态 */
-  //   this.$confirm("此操作将永久删除此预警联系人信息, 是否继续?", "提示", {
-  //     confirmButtonText: "确定",
-  //     cancelButtonText: "取消",
-  //     type: "warning"
-  //   })
-  //     .then(() => {
-  //       deleteWarning(item.id).then(() => {
-  //         this["notify"]("success", "成功", "删除预警联系人成功");
-  //         this["fetchData"](this.initForm);
-  //       });
-  //     })
-  //     .catch(err => {
-  //       this.$message({
-  //         type: "info",
-  //         message: "已取消删除"
-  //       });
-  //     });
-  // }
-
-  isDisabled(row, index) {
-    /**@discription 禁用多选 */
-    if (row.auditResult == 3) {
-      return 0;
-    }
   }
 }
 </script>

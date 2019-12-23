@@ -145,7 +145,7 @@ export const asyncRoute = [
       meta: {
         title: '关注人员',
         icon: 'icon-wodeguanzhu',
-        bg_color: '#b63a9b'
+        bg_color: '#e3686a'
       }
     }]
   }, {
@@ -165,8 +165,8 @@ export const asyncRoute = [
       component: _import_('carManage/stallManage/index'),
       meta: {
         title: '车位管理',
-        icon: 'icon-cheliangpaiban',
-        bg_color: '#68e0c6'
+        icon: 'icon-icon_cheweiguanli',
+        bg_color: '#798384'
       }
     }, {
       name: 'carManage',
@@ -175,7 +175,7 @@ export const asyncRoute = [
       meta: {
         title: '车辆管理',
         icon: 'icon-cheliangpaiban',
-        bg_color: '#68e0c6'
+        bg_color: '#e0805a'
       }
     }, {
       name: 'carPass',
@@ -184,7 +184,7 @@ export const asyncRoute = [
       meta: {
         title: '通行记录',
         icon: 'icon-cheliangdangan',
-        bg_color: '#57d87e'
+        bg_color: '#7f7dae'
       }
     }, {
       name: 'carport',
@@ -193,7 +193,7 @@ export const asyncRoute = [
       meta: {
         title: '访客车辆',
         icon: 'icon-renxiangcheliangshouquan',
-        bg_color: '#60c92f'
+        bg_color: '#bf5d76'
       }
     },
       //  {
@@ -296,7 +296,7 @@ export const asyncRoute = [
       component: _import_('roleManage/community/index'),
       meta: {
         title: '小区',
-        bg_color: '#b63a9b',
+        bg_color: '#009bba',
         icon: 'icon-xiaoqu'
       }
     },
@@ -306,8 +306,8 @@ export const asyncRoute = [
       component: _import_('roleManage/warningLink/index'),
       meta: {
         title: '预警联系人',
-        bg_color: '#b63a9b',
-        icon: 'icon-xiaoqu'
+        bg_color: '#e6504f',
+        icon: 'icon-yujinglianxiren'
       }
     }, {
       name: 'argumentsStall',
@@ -315,8 +315,8 @@ export const asyncRoute = [
       component: _import_('roleManage/argumentsStall/index'),
       meta: {
         title: '系统参数',
-        bg_color: '#b63a9b',
-        icon: 'icon-xiaoqu'
+        bg_color: '#56b849',
+        icon: 'icon-canshu'
       }
     }]
   },
