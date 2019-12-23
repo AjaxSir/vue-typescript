@@ -1,34 +1,6 @@
 /**
  * Created by jiachenpan on 16/11/18.
  */
-import axios from 'axios'
-import es6Promise from 'es6-promise'
-
-
-// HH: 扩展 axios，让 axios 支持 jsonp
-axios.jsonp = (url, index) => {
-    if (!url) {
-        console.error('Axios.JSONP 至少需要一个url参数!')
-        return;
-    }
-    let callbackName = 'jsonCallBack' + index;
-    return new Promise((resolve, reject) => {
-        let JSONP = document.createElement("script");
-        JSONP.type = "text/javascript";
-        JSONP.src = `${url}&jsonpCall=${callbackName}`;
-        document.getElementsByTagName("head")[0].appendChild(JSONP);
-        window[callbackName] = (res) => {
-          console.log(res, '返回')
-            resolve(res)
-        }
-        setTimeout(() => {
-            document.getElementsByTagName("head")[0].removeChild(JSONP)
-        }, 500)
-    })
-}
-
-
-export const jsonp = (url, index) => axios.jsonp(url, index)
 export function parseTime(time, cFormat) {
   if (arguments.length === 0) {
     return null;
