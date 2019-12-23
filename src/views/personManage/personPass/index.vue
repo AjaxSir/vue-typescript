@@ -51,10 +51,11 @@
              <div class="word-filter">
               <span class="filter-name">通行时间:</span> &nbsp;&nbsp;
               <el-date-picker
-                style="width:300px;height:32px"
+                style="width:300px;"
                   v-model="timeRange"
                   type="datetimerange"
                   range-separator="-"
+                  size="small"
                   @change='timeRangeChange'
                   format='yyyy - MM - dd HH:mm:ss'
                   value-format="yyyy-MM-dd HH:mm:ss"
@@ -140,7 +141,7 @@
                 <span>{{ row.isVisitor ? '是' : '否' }}</span>
               </template>
             </el-table-column>
-             <el-table-column width="60" align='center' prop="img" label="人脸">
+             <el-table-column width="60" align='center' prop="img" label="抓拍人脸">
               <template slot-scope="scope">
                 <img
                   class="capture-img"

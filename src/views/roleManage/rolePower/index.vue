@@ -141,9 +141,9 @@ export default class InformIssue extends Vue {
     this.roleData = []
     const outRouter = [''] // 不需要显示的路由
     this.router.forEach((ele: any, index:number) => {
-      if (ele.name === 'statementManage') {
-        this.router.splice(index, 1)
-      }
+      // if (ele.name === 'statementManage') {
+      //   this.router.splice(index, 1)
+      // }
       ele.children.forEach(item => {
         this.$set(item, 'Update', false)
         this.$set(item, 'Look', false)
