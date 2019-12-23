@@ -21,12 +21,12 @@
             <el-dropdown-item>统计信息</el-dropdown-item>
           </el-dropdown-menu>
           <div slot="houseNum">
-            <div class="word-filter">
+            <!-- <div class="word-filter">
               <span class="filter-name">关键字:</span>
               <el-input clearable
               placeholder="请输入需要查找的关键字"
               @keyup.enter.native="emitFetchData" style="width:215px" class="input-filter" v-model="filterForm.key" size="small"></el-input>
-            </div>
+            </div> -->
             <div class="word-filter">
               <span class="filter-name">姓&nbsp;&nbsp;&nbsp;名:</span>
               <el-input  clearable  
@@ -40,6 +40,18 @@
               @keyup.enter.native="emitFetchData" style="width:215px" class="input-filter" v-model="filterForm.phone" size="small"></el-input>
             </div>
             <div class="word-filter">
+              <span class="filter-name">证件号码:</span>
+              <el-input  clearable  
+              placeholder="请输入需要查找的姓名"
+              @keyup.enter.native="emitFetchData" style="width:215px" class="input-filter" v-model="filterForm.cardNo" size="small"></el-input>
+            </div>
+            <div class="word-filter">
+              <span class="filter-name">房屋编号:</span>
+              <el-input clearable  
+              placeholder="请输入需要查找的手机号"
+              @keyup.enter.native="emitFetchData" style="width:215px" class="input-filter" v-model="filterForm.key" size="small"></el-input>
+            </div>
+            <div class="word-filter">
               <span class="filter-name">用户类型:</span>
               <el-select class="input-filter" size="small" v-model="filterForm.type" placeholder="请选择">
                 <el-option label="全部" value=""></el-option>
@@ -48,6 +60,15 @@
                 <el-option label="成员" value="3"></el-option>
               </el-select>
             </div>
+            <!-- <div class="word-filter">
+              <span class="filter-name">房屋状态:</span>
+              <el-select class="input-filter" size="small" v-model="filterForm.type" placeholder="请选择">
+                <el-option label="全部" value=""></el-option>
+                <el-option label="在住" value="0"></el-option>
+                <el-option label="不在住" value="-1"></el-option>
+                <el-option label="过期" value="-2"></el-option>
+              </el-select>
+            </div> -->
 
           </div>
         </ActionHeader>
@@ -215,14 +236,6 @@
                 <span>{{ row.house[0] && row.house[0].note || '--' }}</span>
               </template>
             </el-table-column>
-
-
-
-
-
-
-
-
           </el-table>
         </div>
 
@@ -244,7 +257,7 @@
                 <el-col :span='8' style="height:40px"><span class="right">证件类型: </span>&nbsp;&nbsp;{{ detailDialog.cardName || '--' }}</el-col>
                 <el-col :span='8' style="height:40px"><span class="right">证件号码: </span>&nbsp;&nbsp;{{ detailDialog.cardNo || '暂无' }}</el-col>
                 <el-col :span='24'><span class="right">备注: </span>&nbsp;&nbsp;
-                  <el-input style="width:600px" type='textarea'></el-input>
+                  <el-input v-model="detailDialog.note" style="width:600px" type='textarea'></el-input>
                 </el-col>
               </el-row>
 
@@ -375,11 +388,7 @@
                 @mouseout.native="hint(Form.phone)"
               ></el-input>
               <span v-show="hintPhone" class="ei-input-hint">{{phoneNum}}/11</span>
-              <!-- <el-input style="width: 280px" v-model.number="Form.phone" @input='constraintLength(Form.phone, "11")' placeholder='输入电话'></el-input> -->
             </el-form-item>
-            <!-- <el-form-item class="floatForm" label="身份证号:"  prop='cardName'>
-              <el-input v-model="Form.cardName"  placeholder='输入卡名'></el-input>
-            </el-form-item> -->
             <el-form-item label="证件类型:"  label-width="85px"  prop='otherCardName'>
               <el-select style="position: relative;left: -6px;width:275px" class="input-filter" size="small" v-model="Form.otherCardName" placeholder="请选择证件类型">
                 <el-option label="身份证" value="身份证"></el-option>
@@ -587,7 +596,8 @@ export default class OwnerManage extends Vue {
     name: '',
     phone: '',
     key: '',
-    type: ''
+    type: '',
+    cardNo: ''
   }
   deleteForm: object = {
     url: '/admin/usrUser',
@@ -862,7 +872,6 @@ export default class OwnerManage extends Vue {
     Obj.houseId = val['id']
     Obj.buildingName = val['name']
     this.Form.house.unshift(Obj)
-    // console.log(Obj)
   }
   // 房屋搜索建议
   querySearch(string: string, cb) {
@@ -871,7 +880,13 @@ export default class OwnerManage extends Vue {
       if (res.data.data) {
         result = res.data.data
         result.splice(10)
-        cb(result)
+        let arr:Array<object> = []
+        result.forEach((item, index) => {
+            if (JSON.stringify(this.Form.house).indexOf(item['id']) === -1) {
+              arr.push(item)
+            }
+          })
+        cb(arr)
       }
     })
   }
@@ -901,14 +916,6 @@ export default class OwnerManage extends Vue {
     getUserPropertyCar(row.id).then(res => {
       this.carDtailTable = res.data.data
     })
-    // // 获取人脸库信息
-    // if(row.face) {
-    //   getPersonFace(row.face).then(res => {
-    //     this.personImg = res.data.data
-    //   })
-    // } else {
-    //   this.personImg = require("@/assets/defaultPerson.png")
-    // }
     this.facePage['userId'] = row.id
     // 获取人脸库信息
     this.fetchFaceList(1)

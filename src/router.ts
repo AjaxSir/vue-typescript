@@ -380,8 +380,8 @@ export const asyncRoute = [
       component: _import_('statementManage/components/personPassChart'),
       meta: {
         title: '人员通行统计',
-        bg_color: '#bf5d76',
-        icon: 'icon-icon-p_mrpbaobiao'
+        bg_color: '#bf4325',
+        icon: 'icon-renyuanbiandongfenxi'
       }
     },
     {
@@ -390,8 +390,8 @@ export const asyncRoute = [
       component: _import_('statementManage/components/carPassChart'),
       meta: {
         title: '车辆通行统计',
-        bg_color: '#bf5d76',
-        icon: 'icon-icon-p_mrpbaobiao'
+        bg_color: '#bf5ae3',
+        icon: 'icon-cheliangshenqing'
       }
     },
     {
@@ -400,8 +400,8 @@ export const asyncRoute = [
       component: _import_('statementManage/components/vistorCarChart'),
       meta: {
         title: '访客车辆统计',
-        bg_color: '#bf5d76',
-        icon: 'icon-icon-p_mrpbaobiao'
+        bg_color: '#657cae',
+        icon: 'icon-cheliangdangan'
       }
     },
     {
@@ -410,8 +410,8 @@ export const asyncRoute = [
       component: _import_('statementManage/components/vistorChart'),
       meta: {
         title: '访客通行统计',
-        bg_color: '#bf5d76',
-        icon: 'icon-icon-p_mrpbaobiao'
+        bg_color: '#b67ec1',
+        icon: 'icon-fangkeshuxing'
       }
     }
     ]

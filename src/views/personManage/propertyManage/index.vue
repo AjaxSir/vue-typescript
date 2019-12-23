@@ -285,7 +285,7 @@
         </el-form-item>
 
         <el-form-item   style="clear:both" label="证件号:"  label-width="85px"  prop='cardNo'>
-              <el-input style="width:420px" :maxlength="Form.cardName === '身份证' ? '18' : '100'"  clearable  v-model="Form.cardNo" :placeholder='"输入" + Form.cardName + "证件号"'></el-input>
+              <el-input style="width:420px" :maxlength="Form.cardName === '身份证' ? '18' : '20'"  clearable  v-model="Form.cardNo" :placeholder='"输入证件号"'></el-input>
             </el-form-item>
 
         <el-form-item label="备注:" style="clear:both"   prop='note'>
