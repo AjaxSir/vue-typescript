@@ -12,6 +12,11 @@
         :filterForm='filterForm'
         :total="page.total">
           <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item>
+              <div @click='showExportIn'>
+                导入
+              </div>
+            </el-dropdown-item>
             <el-dropdown-item command='export'>
               导出
               </el-dropdown-item>
@@ -219,6 +224,13 @@
         <el-button type="primary" @click="createdCardConfirm">确 定</el-button>
       </span>
     </el-dialog>
+    <ExportIn
+    uploadUrl='/v1/admin/hsDoorCard/import'
+    downTemplateUrl='/v1/admin/hsDoorCard/model'
+    @closeVisible='closeVisible'
+    TmplateName='门禁卡导出模板.xlsx'
+    @successUpload='fetchData(initForm)'
+    :visible.sync='visible' />
   </div>
 </template>
 
@@ -233,11 +245,13 @@ import { changeCardStstus,
  theCardPassList } from '@/api/houseApi.ts'
 import { formatTimeObj } from '@/utils'
 const ActionHeader = () => import("@/components/ActionHeader.vue");
+const ExportIn = () => import("@/components/exportIn/index.vue");
 
 @Component({
   mixins: [mixin],
   components: {
-    ActionHeader
+    ActionHeader,
+    ExportIn
   }
 })
 export default class CardManage extends Vue {
@@ -281,6 +295,7 @@ export default class CardManage extends Vue {
     method: 'delete',
     data: []
   }
+  visible: boolean = false // 导入框状态
   updateArray: Array<string> = ['cardStatus', 'validDateStatus']
   private activeName: String = "详细信息";
   private dtailTable: Array<Object> =[];
@@ -319,11 +334,16 @@ export default class CardManage extends Vue {
         this.fetchData(this.initForm)
     })
   }
+  closeVisible(flag: boolean) {
+    this.visible = flag
+  }
+  showExportIn() {
+    this.visible = true
+  }
    // 修改门禁卡状态
   cardStatusChange(Obj: object) {
     const id = Obj['id']
     const status = Obj['status']
-    console.log(id, status)
     this.$confirm(`此操作将改变当前门禁卡为${status === '0' ? '正常' : '禁用'}状态, 是否继续?`, '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',

@@ -1,4 +1,5 @@
 <template>
+<div>
   <el-dialog
   title="批量导入"
   :visible.sync="visible"
@@ -8,9 +9,9 @@
     <h4>1) 下载导入模板</h4>
     <h4>2) 所有允许导入的字段参考模板</h4>
     <h4>3) 所有数据必须按模板要求填写，否则系统将无法正常导入数据</h4>
-    <h4>4) 目前仅支持xls、xlsx格式的文件导入</h4>
+    <h4>4) 目前仅支持xlsx格式的文件导入</h4>
     <h4>5) 由于兼容性的问题，如果WPS文件导入失败，建议更换为office后再次导入</h4>
-    <div @click='exportFunc("用户导入模板.xls", downTemplateUrl)' class='margin'>
+    <div @click='exportFunc(TmplateName, downTemplateUrl)' class='margin'>
       <i class="el-icon-download color"></i> <span class="color" style='padding:0px'>下载导入模板</span>
     </div>
 
@@ -36,6 +37,17 @@
       <el-button type="primary" @click="confirmUpload">确 定</el-button>
     </span>
   </el-dialog>
+  <el-dialog title="失败详情" width="1000px" :visible.sync="dialogTableVisible">
+      <el-table height="300px" border :data="errData">
+        <el-table-column :show-overflow-tooltip='true' align="center" property="buildingName" label="单元名称" width="150"></el-table-column>
+        <el-table-column :show-overflow-tooltip='true' align="center" property="groupName" label="所属楼栋" width="120"></el-table-column>
+        <el-table-column :show-overflow-tooltip='true' align="center" width="120" property="validDate" label="有效时间"></el-table-column>
+        <el-table-column :show-overflow-tooltip='true' align="center" width="120" property="houseNo" label="房屋编号"></el-table-column>
+        <el-table-column :show-overflow-tooltip='true' align="center" width="160" property="cardNo" label="卡号"></el-table-column>
+        <el-table-column :show-overflow-tooltip='true' align="center" property="caseFail" label="失败原因"></el-table-column>
+      </el-table>
+    </el-dialog>
+</div>
 </template>
 
 <script lang="ts">
@@ -45,10 +57,15 @@ export default class ExportIn extends Vue{
   @Prop({ default: '' }) downTemplateUrl : string
   @Prop({ default: '' }) uploadUrl: string
   @Prop({ default: false }) visible: boolean
-  errorUpload() {
+  @Prop({ default: '用户导入模板.xlsx' }) TmplateName: string
+  errorUpload(err, file, list) {
+    this.errData = JSON.parse(err.message)
+    this.dialogTableVisible = true
     this.$message.error('导入失败')
   }
+  errData: Array<object> = [] // 失败路径
   fileName: string = '' // 文件名字
+  dialogTableVisible: boolean = false // 导出失败状态
   @Emit('successUpload')
   successUpload(file) {
     this.$message.success('导入成功')

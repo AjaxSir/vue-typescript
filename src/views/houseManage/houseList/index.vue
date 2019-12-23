@@ -341,6 +341,7 @@ export default class CardManage extends Vue {
           ],
      buildingId: [
             { required: true, message: '请选择房屋所属组别', trigger: 'change' }
+
           ],
     status: [
             { required: true, message: '请选择当前房屋状态', trigger: 'change' }
@@ -415,6 +416,15 @@ export default class CardManage extends Vue {
   getHouseTreeData() {
     getHouseTreeData().then((res: Object) => {
       this.TreeData = res['data']['data']
+      this.rules['buildingId'].push(
+        { required: true, trigger: 'change', validator: (rule, value, callback) => {
+                if (!this.Form['buildingIdArr'].length) {
+                  callback(new Error('请先创建分组和单元楼'))
+                } else {
+                  callback()
+                }
+              } }
+      )
     })
   }
   // 修改备注离开输入框

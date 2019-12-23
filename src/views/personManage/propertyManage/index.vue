@@ -222,7 +222,7 @@
     <el-dialog :close-on-click-modal='false' title="添加物业人员" :visible.sync="dialogCreate" width="580px" :before-close="handleClose">
       <el-form :model="Form" :rules="FormRules" ref='Forms' label-width="85px">
         <el-form-item class="float"  label="姓名:"  prop='name'>
-          <el-input  clearable v-model="Form.name" placeholder='输入物业人员姓名'></el-input>
+          <el-input  clearable v-model="Form.name" maxlength="10" placeholder='输入物业人员姓名'></el-input>
         </el-form-item>
         <el-form-item   class="float" label="出生日期:"  prop='birthday'>
           <el-date-picker
@@ -236,10 +236,11 @@
           </el-date-picker>
           <!-- <el-input  clearable v-model="Form.age"  maxlength="3" @input='constraintLength(Form.age, "3")' placeholder='输入物业人员年龄'></el-input> -->
         </el-form-item>
-        <el-form-item  class="float"  label="电话:"  prop='phone'>
+        <el-form-item  class="float" style="height:40px;" label="电话:"  prop='phone'>
           <el-input
                 class="phone-position"
                 v-model="Form.phone"
+                style="height: 40px"
                 placeholder="输入物业人员电话"
                 :maxlength="11"
                 clearable
@@ -252,7 +253,7 @@
                 @mouseover.native="hint(Form.phone)"
                 @mouseout.native="hint(Form.phone)"
               ></el-input>
-              <span v-show="hintPhone" class="ei-input-hint">{{phoneNum}}/11</span>
+              <!-- <span v-show="hintPhone" class="ei-input-hint">{{phoneNum}}/11</span> -->
         </el-form-item>
         <el-form-item  class="float"  label="性别:"  prop='sex'>
 
@@ -263,7 +264,7 @@
               </el-select>
         </el-form-item>
         <el-form-item label="权限组:" class="float"  label-width="85px" prop='authId'>
-          <el-select style='width:165px' v-model="Form.authId" placeholder="请选择">
+          <el-select style='width:165px; height:40px' v-model="Form.authId" placeholder="请选择">
             <el-option
               v-for="item in TreeData"
               :key="item.id"
@@ -273,7 +274,7 @@
           </el-select>
         </el-form-item>
         <el-form-item class="float" label="证件类型:"  label-width="85px"  prop='otherCardName'>
-              <el-select style="position: relative;left: -6px;width:170px;height:40px" class="input-filter" size="small" v-model="Form.otherCardName" placeholder="请选择证件类型">
+              <el-select style="position: relative;left: -6px;width:165px" class="input-filter" size="small" v-model="Form.otherCardName" placeholder="请选择证件类型">
                 <el-option label="身份证" value="身份证"></el-option>
                 <el-option label="护照" value="护照"></el-option>
                 <el-option label="港澳居民来往内地通行证" value="港澳居民来往内地通行证"></el-option>
@@ -390,7 +391,8 @@ export default class PropertyManage extends Vue {
               } }
           ],
     authId: [
-            { required: true, message: '请选择对应的权限组', trigger: 'change' }
+            { required: true, message: '请选择对应的权限组', trigger: 'change' },
+
           ],
     cardNo: [
       { required: true, trigger: 'blur', validator: (rule, value, callback) => {
@@ -521,6 +523,15 @@ export default class PropertyManage extends Vue {
   fetchRoleGroup() {
     getRoleGroup(null).then(res => {
       this.TreeData = res.data.data
+      this.FormRules['authId'].push(
+        { required: true, trigger: 'change', validator: (rule, value, callback) => {
+                if (!this.TreeData.length) {
+                  callback(new Error('请先添加权限组'))
+                } else {
+                  callback()
+                }
+              } }
+      )
     })
   }
   created() {
