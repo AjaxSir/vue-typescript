@@ -35,7 +35,7 @@
 
     <el-col :span="12" justify="end">
       <div class="rightAction">
-        <el-dropdown v-if="houseStatus" trigger="click">
+        <!-- <el-dropdown v-if="houseStatus" trigger="click">
           <span class="el-dropdown-link">
             <i style="font-size:16px;" class="iconfont icon-appstore-o"></i>
           </span>
@@ -44,7 +44,7 @@
               <router-link to="/house/chart">楼控视图</router-link>
             </el-dropdown-item>
           </el-dropdown-menu>
-        </el-dropdown>
+        </el-dropdown> -->
 
         <div v-if="filterStatus" class="content">
           <span @click="visibleFilter = !visibleFilter,visible = false">

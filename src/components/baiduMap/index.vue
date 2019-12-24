@@ -91,8 +91,7 @@ export default class BaiDuMap extends Vue {
       this.autoVisible = true
       // if (this.backStatus) {
         let addRess = {
-          lng: "",
-          lat: "",
+          location: '',
           province: "",
           city: "",
           district: "",
@@ -105,22 +104,23 @@ export default class BaiDuMap extends Vue {
           position: { lng: e.point.lng, lat: e.point.lat }
         })
         addRess = Object.assign(addRess, e.point)
-        axios({
-        url: `/map-api/v2/`,
-        params: {
-          address: addRess['address'],
-          ak: 'vCZU88Guz4BmAODWTm8k9BP0WlwId1V0',
-          location: `${addRess.lat},${addRess.lng}`,
-          output: 'json'
-        },
-        method: 'get'
-      }).then(res => {
-        if (!res.data.status) {
-          addRess['province'] = res.data.result.addressComponent.province
-          addRess['city'] = res.data.result.addressComponent.city
-          addRess['street'] = res.data.result.addressComponent.street
-          addRess['streetNumber'] = res.data.result.addressComponent.street_number
-          addRess['district'] = res.data.result.addressComponent.district
+        // &coordtype=wgs84ll&callback=renderReverse
+        addRess['output'] = 'json'
+        addRess['pois'] = '0'
+        addRess['coordtype'] = 'wgs84ll'
+        addRess['callback'] = 'renderReverse'
+        addRess['ak'] = 'vCZU88Guz4BmAODWTm8k9BP0WlwId1V00'
+        addRess['location'] = e.point.lat + ',' + e.point.lng
+        this['$jsonp']('http://api.map.baidu.com/geocoder/v2/' , {
+            ...addRess,
+              ak: 'vCZU88Guz4BmAODWTm8k9BP0WlwId1V0'
+        }).then((res)=>{
+        　if (res.status === 0) {
+          addRess['province'] = res.result.addressComponent.province
+          addRess['city'] = res.result.addressComponent.city
+          addRess['street'] = res.result.addressComponent.street
+          addRess['streetNumber'] = res.result.addressComponent.street_number
+          addRess['district'] = res.result.addressComponent.district
            this.$emit('pointClick', addRess)
         } else {
           this.$message({
@@ -128,8 +128,31 @@ export default class BaiDuMap extends Vue {
             type: 'error'
           })
         }
-      })
-      // }
+})
+      //   axios({
+      //   url: `/map-api/v2/`,
+      //   params: {
+      //     address: addRess['address'],
+      //     ak: 'vCZU88Guz4BmAODWTm8k9BP0WlwId1V0',
+      //     location: `${addRess.lat},${addRess.lng}`,
+      //     output: 'json'
+      //   },
+      //   method: 'get'
+      // }).then(res => {
+      //   if (!res.data.status) {
+      //     addRess['province'] = res.data.result.addressComponent.province
+      //     addRess['city'] = res.data.result.addressComponent.city
+      //     addRess['street'] = res.data.result.addressComponent.street
+      //     addRess['streetNumber'] = res.data.result.addressComponent.street_number
+      //     addRess['district'] = res.data.result.addressComponent.district
+      //      this.$emit('pointClick', addRess)
+      //   } else {
+      //     this.$message({
+      //       message: '没有找到对应的位置信息',
+      //       type: 'error'
+      //     })
+      //   }
+      // })
     }
   }
 </script>

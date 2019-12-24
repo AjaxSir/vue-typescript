@@ -398,7 +398,7 @@
               </el-select>
             </el-form-item>
             <el-form-item v-show="Form.otherCardName === '其它'"  label="证件名:"  prop='cardName'>
-              <el-input style="width:275px" v-model="Form.cardName" placeholder='输入证件名称'></el-input>
+              <el-input maxlength="10" style="width:275px" v-model="Form.cardName" placeholder='输入证件名称'></el-input>
             </el-form-item>
             <el-form-item label="证件号码:"  label-width="85px"  prop='cardNo'>
               <el-input  :maxlength="Form.cardName === '身份证' ? '18' : '20'"  clearable  v-model="Form.cardNo" :placeholder='"输入证件号"'></el-input>
@@ -723,6 +723,7 @@ export default class OwnerManage extends Vue {
           if(res.data.code === 200) {
             this.$message.success('添加成功')
             this['dialogCreate'] = false
+            this['handleClose']()
             this.fetchData(this.initForm)
           }
         })

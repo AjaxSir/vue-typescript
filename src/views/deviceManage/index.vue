@@ -374,18 +374,18 @@ export default class DeviceManage extends Vue {
   }
     /** 获取经纬度 */
     getlocLat() {
-      axios({
-        url: `/map-api/v2/`,
-        params: {
-          address: this.Form['address'],
-          ak: 'vCZU88Guz4BmAODWTm8k9BP0WlwId1V0',
-          output: 'json'
-        },
-        method: 'get'
-      }).then(res => {
-        if (!res.data.status) {
-          this.Form['longitude'] = res.data.result.location.lng
-          this.Form['latitude'] = res.data.result.location.lat
+      this['$jsonp']('http://api.map.baidu.com/geocoder/v2/' , {
+              address: this.Form['address'],
+              output: 'json',
+              pois: '0',
+              coordtype: 'wgs84ll',
+              callback :'renderReverse',
+              ak: 'vCZU88Guz4BmAODWTm8k9BP0WlwId1V0'
+        }).then(res => {
+        if (res.status === 0) {
+          this.Form['longitude'] = res.result.location.lng
+          this.Form['latitude'] = res.result.location.lat
+          console.log(this.Form)
         } else {
           this.$message({
             message: '没有找到对应的位置信息',
@@ -395,6 +395,27 @@ export default class DeviceManage extends Vue {
           this.Form['latitude'] = ''
         }
       })
+      // axios({
+      //   url: `/map-api/v2/`,
+      //   params: {
+      //     address: ,
+      //     ak: 'vCZU88Guz4BmAODWTm8k9BP0WlwId1V0',
+      //     output: 'json'
+      //   },
+      //   method: 'get'
+      // }).then(res => {
+      //   if (!res.data.status) {
+      //     this.Form['longitude'] = res.data.result.location.lng
+      //     this.Form['latitude'] = res.data.result.location.lat
+      //   } else {
+      //     this.$message({
+      //       message: '没有找到对应的位置信息',
+      //       type: 'error'
+      //     })
+      //     this.Form['longitude'] = ''
+      //     this.Form['latitude'] = ''
+      //   }
+      // })
     }
   // 点击地图选取地址
   pointClick(Object: object) {
