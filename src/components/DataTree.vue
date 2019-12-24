@@ -588,7 +588,7 @@ export default class DataTree extends Vue {
   created() {
     this.fetchDeviceList(1)
     this.fetchUnitList()
-    this.fetchUnitList('build')
+    // this.fetchUnitList('build')
   }
   // 获取设备列表
   fetchDeviceList(page: number) {
@@ -623,7 +623,7 @@ export default class DataTree extends Vue {
       // 添加分组表单
   this.HouseForm= {
     serialNumber: '', // 序号
-    serialNumberUnit: this.Tags[0]['name'],
+    serialNumberUnit: this.Tags.length && this.Tags[0]['name'],
     name: '',
     note: '',
     parentId: '',
@@ -634,7 +634,6 @@ export default class DataTree extends Vue {
     buildingGroupId: '',
     name: '', // 名称
     serialNumber: '', // 编号
-    serialNumberUnit: this.UnitTags[0]['name'], // 序号单元
     storeyNum: '', // 楼层数
     houseNum: '' // 每层户数
   }
@@ -764,7 +763,6 @@ export default class DataTree extends Vue {
     getUnitList(type).then(res => {
       if (type === 'build') {
         this.UnitTags = res.data.data
-        this.UnitForm['serialNumberUnit'] = this.UnitTags[0]['name']
       } else {
         this.Tags = res.data.data
         this.HouseForm['serialNumberUnit'] = this.Tags[0]['name']
@@ -935,7 +933,8 @@ export default class DataTree extends Vue {
     switch (treeData.action) {
       case 'addGroup' :
         this.closeDialog()
-
+        this.HouseForm['serialNumberUnit'] = this.Tags[0]['name']
+        this.batchForm['serialNumberUnit'] = this.Tags[0]['name']
         this.HouseForm['title'] = '添加子分组'
         this.HouseForm['parentId'] = treeData.data ? treeData.data.id : ''
         this.batchForm['parentId'] = treeData.data ? treeData.data.id : ''

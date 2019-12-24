@@ -274,7 +274,7 @@
           </el-select>
         </el-form-item>
         <el-form-item class="float" label="证件类型:"  label-width="85px"  prop='otherCardName'>
-              <el-select style="position: relative;left: -6px;width:165px" class="input-filter" size="small" v-model="Form.otherCardName" placeholder="请选择证件类型">
+              <el-select @change="Form.cardNo = ''" style="position: relative;left: -6px;width:165px" class="input-filter" size="small" v-model="Form.otherCardName" placeholder="请选择证件类型">
                 <el-option label="身份证" value="身份证"></el-option>
                 <el-option label="护照" value="护照"></el-option>
                 <el-option label="港澳居民来往内地通行证" value="港澳居民来往内地通行证"></el-option>
@@ -282,7 +282,7 @@
               </el-select>
             </el-form-item>
             <el-form-item v-show="Form.otherCardName === '其它'"  label="证件名称:"  prop='cardName'>
-          <el-input maxlength="10" style="width:424px" v-model="Form.cardName" placeholder='输入证件名称'></el-input>
+          <el-input maxlength="10" style="width:424px" v-model="Form.cardName" clearable placeholder='输入证件名称'></el-input>
         </el-form-item>
 
         <el-form-item   style="clear:both" label="证件号:"  label-width="85px"  prop='cardNo'>

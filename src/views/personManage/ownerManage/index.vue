@@ -390,15 +390,15 @@
               <!-- <span v-show="hintPhone" class="ei-input-hint">{{phoneNum}}/11</span> -->
             </el-form-item>
             <el-form-item label="证件类型:"  label-width="85px"  prop='otherCardName'>
-              <el-select style="position: relative;left: -6px;width:275px" class="input-filter" size="small" v-model="Form.otherCardName" placeholder="请选择证件类型">
+              <el-select @change='Form.cardNo = ""' style="position: relative;left: -6px;width:275px" class="input-filter" size="small" v-model="Form.otherCardName" placeholder="请选择证件类型">
                 <el-option label="身份证" value="身份证"></el-option>
                 <el-option label="护照" value="护照"></el-option>
                 <el-option label="港澳居民来往内地通行证" value="港澳居民来往内地通行证"></el-option>
                 <el-option label="其它" value="其它"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item v-show="Form.otherCardName === '其它'"  label="证件名:"  prop='cardName'>
-              <el-input maxlength="10" style="width:275px" v-model="Form.cardName" placeholder='输入证件名称'></el-input>
+            <el-form-item v-show="Form.otherCardName === '其它'"  label="证件名称:"  prop='cardName'>
+              <el-input maxlength="10" style="width:275px" v-model="Form.cardName" clearable placeholder='输入证件名称'></el-input>
             </el-form-item>
             <el-form-item label="证件号码:"  label-width="85px"  prop='cardNo'>
               <el-input  :maxlength="Form.cardName === '身份证' ? '18' : '20'"  clearable  v-model="Form.cardNo" :placeholder='"输入证件号"'></el-input>
