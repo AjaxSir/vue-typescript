@@ -240,24 +240,41 @@ export default class InformIssue extends Vue {
   }
 
   getlocLat() {
-    _axios({
-      url: `/map-api/v2/`,
-      params: {
-        address: this.communityForm["address"],
-        ak: "vCZU88Guz4BmAODWTm8k9BP0WlwId1V0",
-        output: "json"
-      },
-      method: "get"
-    }).then(res => {
-      if (!res.data.status) {
-        this.communityForm["longitude"] = res.data.result.location.lng;
-        this.communityForm["latitude"] = res.data.result.location.lat;
+    this['$jsonp']('http://api.map.baidu.com/geocoder/v2/' , {
+              address: this.communityForm['address'],
+              output: 'json',
+              pois: '0',
+              coordtype: 'wgs84ll',
+              callback :'renderReverse',
+              ak: 'vCZU88Guz4BmAODWTm8k9BP0WlwId1V0'
+        }).then(res => {
+      if (res.status === 0) {
+        this.communityForm["longitude"] = res.result.location.lng;
+        this.communityForm["latitude"] = res.result.location.lat;
       } else {
         this["notify"]("warning", "警告", "没有找到对应的位置信息");
         this.communityForm["longitude"] = "";
         this.communityForm["latitude"] = "";
       }
     });
+    // _axios({
+    //   url: `/map-api/v2/`,
+    //   params: {
+    //     address: this.communityForm["address"],
+    //     ak: "vCZU88Guz4BmAODWTm8k9BP0WlwId1V0",
+    //     output: "json"
+    //   },
+    //   method: "get"
+    // }).then(res => {
+    //   if (!res.data.status) {
+    //     this.communityForm["longitude"] = res.data.result.location.lng;
+    //     this.communityForm["latitude"] = res.data.result.location.lat;
+    //   } else {
+    //     this["notify"]("warning", "警告", "没有找到对应的位置信息");
+    //     this.communityForm["longitude"] = "";
+    //     this.communityForm["latitude"] = "";
+    //   }
+    // });
   }
 }
 </script>

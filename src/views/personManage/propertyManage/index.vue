@@ -282,7 +282,7 @@
               </el-select>
             </el-form-item>
             <el-form-item v-show="Form.otherCardName === '其它'"  label="证件名称:"  prop='cardName'>
-          <el-input style="width:424px" v-model="Form.cardName" placeholder='输入证件名称'></el-input>
+          <el-input maxlength="10" style="width:424px" v-model="Form.cardName" placeholder='输入证件名称'></el-input>
         </el-form-item>
 
         <el-form-item   style="clear:both" label="证件号:"  label-width="85px"  prop='cardNo'>

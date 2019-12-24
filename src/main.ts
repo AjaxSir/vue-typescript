@@ -14,15 +14,14 @@ import '@/permission' // permission control
 
 import './plugins/element.js'
 import BaiduMap from 'vue-baidu-map'
-
+import vueJsonp from 'vue-jsonp'
 import echarts from 'echarts'
 
 Vue.prototype.$echarts = echarts
-
+Vue.use(vueJsonp)
 Vue.use(BaiduMap, {
   ak: 'vCZU88Guz4BmAODWTm8k9BP0WlwId1V0'
 })
-
 import '@/styles/index.scss' // global css
 
 
