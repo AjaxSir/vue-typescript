@@ -723,6 +723,7 @@ export default class OwnerManage extends Vue {
           if(res.data.code === 200) {
             this.$message.success('添加成功')
             this['dialogCreate'] = false
+            this.Form['house'] = []
             this['handleClose']()
             this.fetchData(this.initForm)
           }
