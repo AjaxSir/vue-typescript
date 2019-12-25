@@ -164,15 +164,18 @@
           :error="errorMessage.earlyGroupId"
         >
           <!-- <el-input v-model="createForm.earlyGroupId" autocomplete="off"></el-input> -->
-          <el-select style="width:100%" v-model="createForm.earlyGroupId" placeholder="请选择">
-            <el-option
-              v-for="tag in earlyGroup"
-              :key="tag.id"
-              :label="tag.groupName"
-              :value="tag.id"
-            ></el-option>
-          </el-select>
-          <!-- <el-button @click="showUnitSetting = !showUnitSetting">添加分组</el-button>
+          <div style="display: flex;flex-wrap: nowrap;justify-content: space-between;">
+            <el-select v-model="createForm.earlyGroupId" placeholder="请选择">
+              <el-option
+                v-for="tag in earlyGroup"
+                :key="tag.id"
+                :label="tag.groupName"
+                :value="tag.id"
+              ></el-option>
+            </el-select>
+            <el-button style="margin-left:5px;" @click="showUnitSetting = !showUnitSetting">添加分组</el-button>
+          </div>
+
           <div v-if="showUnitSetting">
             <el-tag
               style="margin-left:5px"
@@ -195,7 +198,7 @@
               @blur="handleInputConfirm"
             ></el-input>
             <el-button v-else class="button-new-tag" size="small" @click="showInput">添加分组</el-button>
-          </div>-->
+          </div>
         </el-form-item>
         <el-form-item
           label="备注:"
@@ -302,15 +305,18 @@
           :show-message="showMessage"
           :error="errorMessage.earlyGroupId"
         >
-          <el-select v-model="editForm.earlyGroupId" placeholder="请选择">
-            <el-option
-              v-for="tag in earlyGroup"
-              :key="tag.id"
-              :label="tag.groupName"
-              :value="tag.id"
-            ></el-option>
-          </el-select>
-          <el-button @click="showUnitSetting = !showUnitSetting">添加分组</el-button>
+          <div style="display: flex;flex-wrap: nowrap;justify-content: space-between;">
+            <el-select v-model="editForm.earlyGroupId" placeholder="请选择">
+              <el-option
+                v-for="tag in earlyGroup"
+                :key="tag.id"
+                :label="tag.groupName"
+                :value="tag.id"
+              ></el-option>
+            </el-select>
+            <el-button style="margin-left:5px" @click="showUnitSetting = !showUnitSetting">添加分组</el-button>
+          </div>
+
           <div v-if="showUnitSetting">
             <el-tag
               style="margin-left:5px"
