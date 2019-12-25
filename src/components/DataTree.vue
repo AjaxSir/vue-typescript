@@ -111,13 +111,14 @@
                 {{tag.name}}
               </el-tag>
               <el-input
-              maxlength="8"
+              maxlength="10"
+              @input="constraintLength(newTagValue)"
                 class="input-new-tag"
                 v-if="newTag"
                 v-model="newTagValue"
                 ref="saveTagInput"
                 size="small"
-                  @keyup.enter.native="handleInputConfirm('group')"
+                @keyup.enter.native="handleInputConfirm('group')"
                 @blur="handleInputConfirm('group')"
               >
               </el-input>
@@ -856,6 +857,11 @@ export default class DataTree extends Vue {
 
         }
         return Promise.resolve({ success, error })
+  }
+  constraintLength(value:string) {
+    if (value.length === 10) {
+          return this.$message.warning('此项不能超过10个字符')
+        }
   }
   // 关闭添加/修改单元楼
   closeBuildingAction() {
