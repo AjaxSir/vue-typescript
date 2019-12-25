@@ -258,7 +258,6 @@ export default class InformIssue extends Vue {
 
   private dialogFormVisible: Boolean = false;
 
-  private dialogCreate: Boolean = false; // 添加或修改弹出表单
   private roleTitle: String = "0"; //添加0 || 修改1
   private createForm: Object = {
     //添加/修改表单字段
@@ -393,7 +392,7 @@ export default class InformIssue extends Vue {
   }
 
   handleClose() {
-    this.dialogCreate = false;
+    this['dialogCreate'] = false
     this.$refs["dataForm"]["resetFields"]();
   }
 

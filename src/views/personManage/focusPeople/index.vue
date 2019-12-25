@@ -176,7 +176,7 @@
                 <el-input
                   :ref="row.id"
                   v-show="row.noteStatus&&editForm.id === row.id"
-                  size="small"
+                  size="mini"
                   clearable
                   :maxlength="200"
                   v-model="editForm.note"
@@ -316,7 +316,7 @@
           :show-message="showMessage"
           :error="errorMessage.earlyGroupId"
         >
-          <el-select v-model="createForm.earlyGroupId" placeholder="请选择预警组别">
+          <el-select style="width:100%" v-model="createForm.earlyGroupId" placeholder="请选择预警组别">
             <el-option
               v-for="tag in earlyGroup"
               :key="tag.id"
@@ -324,8 +324,8 @@
               :value="tag.id"
             ></el-option>
           </el-select>
-          <el-button @click="showTypeSetting = !showTypeSetting">添加分组</el-button>
-          <div v-if="showTypeSetting">
+          <!-- <el-button @click="showTypeSetting = !showTypeSetting">添加分组</el-button> -->
+          <!-- <div v-if="showTypeSetting">
             <el-tag
               style="margin-left:5px"
               :key="index"
@@ -347,7 +347,7 @@
               @blur="handleInputConfirm('group')"
             ></el-input>
             <el-button v-else class="button-new-tag" size="small" @click="showInput('group')">添加分组</el-button>
-          </div>
+          </div>-->
         </el-form-item>
 
         <el-form-item
@@ -356,11 +356,11 @@
           :show-message="showMessage"
           :error="errorMessage.typeId"
         >
-          <el-select v-model="createForm.typeId" placeholder="请选择人员类别">
+          <el-select style="width:100%" v-model="createForm.typeId" placeholder="请选择人员类别">
             <el-option v-for="tag in earlyType" :key="tag.id" :label="tag.typeName" :value="tag.id"></el-option>
           </el-select>
-          <el-button @click="showUnitSetting = !showUnitSetting">添加类别</el-button>
-          <div v-if="showUnitSetting">
+          <!-- <el-button @click="showUnitSetting = !showUnitSetting">添加类别</!-->
+          <!-- <div v-if="showUnitSetting">
             <el-tag
               style="margin-left:5px"
               :key="index"
@@ -382,7 +382,7 @@
               @blur="handleInputConfirm('type')"
             ></el-input>
             <el-button v-else class="button-new-tag" size="small" @click="showInput('type')">添加类别</el-button>
-          </div>
+          </div>-->
         </el-form-item>
 
         <el-form-item
@@ -514,7 +514,7 @@
           :show-message="showMessage"
           :error="errorMessage.earlyGroupId"
         >
-          <el-select v-model="editForm.earlyGroupId" placeholder="请选择预警组别">
+          <el-select style="width:100%" v-model="editForm.earlyGroupId" placeholder="请选择预警组别">
             <el-option
               v-for="tag in earlyGroup"
               :key="tag.id"
@@ -522,7 +522,7 @@
               :value="tag.id"
             ></el-option>
           </el-select>
-          <el-button @click="showTypeSetting = !showTypeSetting">添加分组</el-button>
+          <!-- <el-button @click="showTypeSetting = !showTypeSetting">添加分组</el-button>
           <div v-if="showTypeSetting">
             <el-tag
               style="margin-left:5px"
@@ -545,7 +545,7 @@
               @blur="handleInputConfirm('group')"
             ></el-input>
             <el-button v-else class="button-new-tag" size="small" @click="showInput('group')">添加分组</el-button>
-          </div>
+          </div>-->
         </el-form-item>
 
         <el-form-item
@@ -554,10 +554,10 @@
           :show-message="showMessage"
           :error="errorMessage.typeId"
         >
-          <el-select v-model="editForm.typeId" placeholder="请选择">
+          <el-select style="width:100%" v-model="editForm.typeId" placeholder="请选择">
             <el-option v-for="tag in earlyType" :key="tag.id" :label="tag.typeName" :value="tag.id"></el-option>
           </el-select>
-          <el-button @click="showUnitSetting = !showUnitSetting">添加类别</el-button>
+          <!-- <el-button @click="showUnitSetting = !showUnitSetting">添加类别</el-button>
           <div v-if="showUnitSetting">
             <el-tag
               style="margin-left:5px"
@@ -580,7 +580,7 @@
               @blur="handleInputConfirm('type')"
             ></el-input>
             <el-button v-else class="button-new-tag" size="small" @click="showInput('type')">添加类别</el-button>
-          </div>
+          </div>-->
         </el-form-item>
 
         <el-form-item
@@ -697,7 +697,7 @@ import {
   deleteGroup //删除关注人员分组
 } from "@/api/systemApi.ts";
 import { getUserName } from "@/api/vistorApi.ts"; //输入人名模糊查询人员
-import { getTargetUser } from "@/api/carApi.ts"; //获取目标关注人员信息
+import { getOwnerUser } from "@/api/carApi.ts"; //获取目标关注人员信息
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 @Component({
   mixins: [mixin],
@@ -720,7 +720,6 @@ export default class FocusPeople extends Vue {
     data: []
   };
 
-  dialogCreate: boolean = false; //添加
   private createForm: Object = {
     //添加表单字段
     scenceUser: [], //用户id
@@ -1050,7 +1049,7 @@ export default class FocusPeople extends Vue {
 
   handleClose() {
     /** @description 关闭添加/修改dialog */
-    this.dialogCreate = false; //添加dialog
+    this["dialogCreate"] = false;
     this.createForm = {
       //清空添加表单字段
       // age: "",
@@ -1113,7 +1112,7 @@ export default class FocusPeople extends Vue {
   async fetchUser() {
     /**@description 查看车辆管理名单用户详情 */
     try {
-      const { data } = await getTargetUser(this.CarDialogForm["scenceUserId"]);
+      const { data } = await getOwnerUser(this.CarDialogForm["scenceUserId"]);
       this.userDetail = data.data.user;
     } catch (err) {
       console.log(err.response);

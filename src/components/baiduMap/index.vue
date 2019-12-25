@@ -26,8 +26,9 @@
       v-show="markerStatus"
       v-for="(item, index) in positionList"
       :position="item.position"
-      :key="index"
+      :key="'point-'+index"
       :dragging="false"
+      :icon="{url: require('../../assets/loc.png'), size: {width: 30, height: 30}}"
       @click="infoWindowOpen(index)"
     >
       <bm-info-window
@@ -61,30 +62,33 @@
 </template>
 
 <script lang='ts'>
-declare function require(string) :string
+declare function require(string): string;
 import { Component, Prop, Vue, Mixins, Emit } from "vue-property-decorator";
-import axios from 'axios'
+import axios from "axios";
 @Component({})
 export default class BaiDuMap extends Vue {
-  @Prop({ default: '' }) keyword : string
-  @Prop({ default: true }) searchStatus : string
-  @Prop({ default: false }) markerStatus : string
-  @Prop({ default: 10 }) zoom : number
-  @Prop({ default: false }) backStatus : boolean
-  @Prop({ default: () => {
-    return []
-  } }) positionList : Array<object>
-  @Prop({ default: '116.404' }) lng:string
-  @Prop({ default: '39.915' }) lat:string
-  location:string = ''
-  list: Array<object> = []
-  locImg: string = require('@/assets/loc.png')
-  autoVisible:boolean = true
+  @Prop({ default: "" }) keyword: string;
+  @Prop({ default: true }) searchStatus: string;
+  @Prop({ default: false }) markerStatus: string;
+  @Prop({ default: 10 }) zoom: number;
+  @Prop({ default: false }) backStatus: boolean;
+  @Prop({
+    default: () => {
+      return [];
+    }
+  })
+  positionList: Array<object>;
+  @Prop({ default: "116.404" }) lng: string;
+  @Prop({ default: "39.915" }) lat: string;
+  location: string = "";
+  list: Array<object> = [];
+  locImg: string = require("@/assets/loc.png");
+  autoVisible: boolean = true;
   infoWindowOpen(index) {
-    this.positionList[index]['show'] = true
+    this.positionList[index]["show"] = true;
   }
   infoWindowClose(index) {
-    this.positionList[index]['show'] = false
+    this.positionList[index]["show"] = false;
   }
     getPoint(e) { // 点击地图获取一些信息，
       const _this = this
@@ -154,7 +158,54 @@ export default class BaiDuMap extends Vue {
       //   }
       // })
     }
+  getPoint(e) {
+    // 点击地图获取一些信息，
+    const _this = this;
+    this.autoVisible = true;
+    // if (this.backStatus) {
+    let addRess = {
+      lng: "",
+      lat: "",
+      province: "",
+      city: "",
+      district: "",
+      street: "",
+      streetNumber: ""
+    };
+    this.list = [];
+    this.list.push({
+      show: false,
+      position: { lng: e.point.lng, lat: e.point.lat }
+    });
+    addRess = Object.assign(addRess, e.point);
+    axios({
+      url: `/map-api/v2/`,
+      params: {
+        address: addRess["address"],
+        ak: "vCZU88Guz4BmAODWTm8k9BP0WlwId1V0",
+        location: `${addRess.lat},${addRess.lng}`,
+        output: "json"
+      },
+      method: "get"
+    }).then(res => {
+      if (!res.data.status) {
+        addRess["province"] = res.data.result.addressComponent.province;
+        addRess["city"] = res.data.result.addressComponent.city;
+        addRess["street"] = res.data.result.addressComponent.street;
+        addRess["streetNumber"] =
+          res.data.result.addressComponent.street_number;
+        addRess["district"] = res.data.result.addressComponent.district;
+        this.$emit("pointClick", addRess);
+      } else {
+        this.$message({
+          message: "没有找到对应的位置信息",
+          type: "error"
+        });
+      }
+    });
+    // }
   }
+}
 </script>
 <style lang="scss" scoped>
 .map {

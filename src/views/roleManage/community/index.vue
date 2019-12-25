@@ -40,6 +40,9 @@
               :markerStatus="false"
               @pointClick="getPoint"
               :keyword="communityForm.address"
+              :positionList="positionList"
+              :lng="communityForm.longitude"
+              :lat="communityForm.latitude"
             ></BaiduMap>
 
             <el-form-item label="图片展示" style="margin-top:22px">
@@ -141,6 +144,9 @@ export default class InformIssue extends Vue {
     note: "" //备注
     // picList: [] //图片
   };
+  private positionList: Array<Object> = [
+    { position: { lng: "", lat: "" }, title: "", address: "" }
+  ];
   private selectPic: Object = {};
   private userRules: Object = {
     name: [{ required: true, message: "请输入小区名称", trigger: "blur" }],
@@ -166,6 +172,11 @@ export default class InformIssue extends Vue {
 
   async getSceneData() {
     const { data } = await getScene();
+
+    this.positionList[0]["position"]["lng"] = data.data.longitude;
+    this.positionList[0]["position"]["lat"] = data.data.latitude;
+    this.positionList[0]["title"] = data.data.name;
+    this.positionList[0]["address"] = data.data.address;
     for (const key in this.communityForm) {
       this.communityForm[key] = data.data[key];
     }

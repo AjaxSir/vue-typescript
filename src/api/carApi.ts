@@ -11,6 +11,7 @@ export function carPassList() {
     }
   })
 }
+
 //车辆用户查询
 export function queryCarPhone(phone) {
   return _axios({
@@ -49,19 +50,6 @@ export function getTargrtRecord(params) {
   })
 }
 
-
-//获取目标车辆用户详细信息 || 获取目标访客车辆邀请人的详细信息
-export function getTargetUser(id) {
-  return _axios({
-    url: '/admin/scence-user/',
-    method: 'get',
-    params: {
-      id
-    }
-  })
-}
-
-
 // 通过id获取用户/物业的车辆信息
 export function getUserPropertyCar(id: string) {
   return _axios({
@@ -83,6 +71,7 @@ export function getvisitUser(id: string) {
   })
 }
 
+//获取目标车辆用户详细信息 || 获取目标访客车辆邀请人的详细信息
 export function getOwnerUser(id: string) {
   return _axios({
     url: '/admin/scence-user',
@@ -113,11 +102,29 @@ export function getHouseTreeData() {
   })
 }
 
-// 左侧树形结构添加分组
-export function addHouseGroup(data: Object) {
+// 左侧树形结构添加分组 批量添加
+export function addHouseGroups(data: Object) {
   return _axios({
     url: '/admin/car-space-group/batch-create',
     method: 'post',
+    data
+  })
+}
+
+// 左侧树形结构添加分组 手动添加
+export function addHouseGroup(data: Object) {
+  return _axios({
+    url: '/admin/car-space-group',
+    method: 'post',
+    data
+  })
+}
+
+// 左侧树形结构修改分组
+export function updateHouseGroup(data: Object) {
+  return _axios({
+    url: `/admin/car-space-group/${data['id']}/`,
+    method: 'patch',
     data
   })
 }
@@ -127,5 +134,59 @@ export function deleteHouseGroup(id: string) {
   return _axios({
     url: `/admin/car-space-group/${id}/`,
     method: 'delete',
+  })
+}
+
+/*******车位管理*********/
+// 获取车位列表
+export function getStall() {
+  return _axios({
+    url: '/admin/car-space-type/',
+    method: 'get'
+  })
+}
+
+// 添加车位
+export function addStall(data: any) {
+  return _axios({
+    url: '/admin/car-space/',
+    method: 'post',
+    data
+  })
+}
+
+//修改车位
+export function editStall(data: any) {
+  return _axios({
+    url: `/admin/car-space/${data.id}/`,
+    method: 'patch',
+    data
+  })
+}
+
+//查询车牌
+export function querycarno(params: any) {
+  return _axios({
+    url: '/admin/usr-car',
+    method: 'get',
+    params
+  })
+}
+
+//新增绑定车牌
+export function addcarno(data: any) {
+  return _axios({
+    url: `/admin/car-space/${data.id}/add-card`,
+    method: 'post',
+    data
+  })
+}
+
+//删除绑定车牌
+export function deleteCarno(data: any) {
+  return _axios({
+    url: `/admin/car-space/${data.id}/delete-card/`,
+    method: 'delete',
+    data
   })
 }

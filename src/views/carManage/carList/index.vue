@@ -175,7 +175,7 @@
               </template>
             </el-table-column>
 
-             <el-table-column prop="modal" label="品牌" :show-overflow-tooltip="true"></el-table-column>
+            <el-table-column prop="modal" label="品牌" :show-overflow-tooltip="true"></el-table-column>
 
             <el-table-column prop="carType" label="车型" :show-overflow-tooltip="true"></el-table-column>
 
@@ -189,7 +189,7 @@
                 <el-input
                   :ref="row.id"
                   v-show="row.noteStatus&&editForm.id === row.id"
-                  size="small"
+                  size="mini"
                   @keyup.enter.native="confirmUpdateNote(row)"
                   @blur="noteBlur(row)"
                   @input="constraintLength(editForm.note,'200')"
@@ -550,7 +550,7 @@ import {
   addCar, //添加
   editCar, //修改
   getTargrtRecord, //获取目标车辆通行记录
-  getTargetUser //获取目标车辆车主信息
+  getOwnerUser //获取目标车辆车主信息
 } from "@/api/carApi.ts";
 
 const ActionHeader = () => import("@/components/ActionHeader.vue");
@@ -582,7 +582,6 @@ export default class CarList extends Vue {
   private dialogFormVisible: Boolean = false;
   private formLabelWidth: String = "120px";
 
-  private dialogCreate: Boolean = false; // 添加弹出表单
   private createForm: Array<Object> = [
     //添加表单字段
     {
@@ -878,7 +877,7 @@ export default class CarList extends Vue {
 
   handleClose() {
     /** @description 关闭添加/修改dialog */
-    this.dialogCreate = false; //车辆添加dialog
+    this["dialogCreate"] = false;
     this.dialogEdit = false; //修改dialog
     this.createForm[0]["carType"] = "";
     this.$refs["dataForm"]["resetFields"]();
@@ -925,7 +924,7 @@ export default class CarList extends Vue {
   async fetchUser() {
     /**@description 查看车辆管理名单用户详情 */
     try {
-      const { data } = await getTargetUser(this.CarDialogForm["scenceUserId"]);
+      const { data } = await getOwnerUser(this.CarDialogForm["scenceUserId"]);
       this.carUserDetail = data.data.user;
     } catch (err) {
       console.log(err.response);
