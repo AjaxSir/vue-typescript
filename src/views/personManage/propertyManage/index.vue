@@ -7,8 +7,14 @@
         @fetchData='fetchData'
         :filterForm='filterForm'
         ref="actionHeader"
-        :moreStatus='false'
         :dialogCreate.sync="dialogCreate" :total="page.total">
+        <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item>
+              <div @click='showExportIn'>
+                导入
+              </div>
+            </el-dropdown-item>
+          </el-dropdown-menu>
           <div slot="houseNum">
             <div class="word-filter">
               <span class="filter-name">姓&nbsp;&nbsp;&nbsp;名:</span>
@@ -286,7 +292,7 @@
         </el-form-item>
 
         <el-form-item   style="clear:both" label="证件号:"  label-width="85px"  prop='cardNo'>
-              <el-input style="width:420px" :maxlength="Form.cardName === '身份证' ? '18' : '20'"  clearable  v-model="Form.cardNo" :placeholder='"输入证件号"'></el-input>
+              <el-input style="width:420px" :maxlength="Form.otherCardName === '身份证' ? '18' : '20'"  clearable  v-model="Form.cardNo" :placeholder='"输入证件号"'></el-input>
             </el-form-item>
 
         <el-form-item label="备注:" style="clear:both"   prop='note'>
@@ -298,6 +304,12 @@
         <el-button type="primary" @click="confirmAddPropert">确 定</el-button>
       </span>
     </el-dialog>
+    <ExportIn
+    uploadUrl='/v1/admin/usrUser/import'
+    downTemplateUrl='/v1/admin/usrUser/PropertyManager/model'
+    @closeVisible='closeVisible'
+    @successUpload='fetchData(initForm)'
+    :visible.sync='visible' />
   </div>
 </template>
 <script lang="ts">
@@ -309,11 +321,14 @@ import { getUserPropertyCar } from '@/api/carApi.ts'
 import mixin from "@/config/minxins";
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 const DataTree = () => import("@/components/DataTree.vue");
+const ExportIn = () => import("@/components/exportIn/index.vue");
+
 @Component({
   mixins: [mixin],
   components: {
     ActionHeader,
-    DataTree
+    DataTree,
+    ExportIn
   }
 })
 export default class PropertyManage extends Vue {
@@ -365,6 +380,7 @@ export default class PropertyManage extends Vue {
     limit: 10,
     total:1
   }
+  visible: boolean = false // 导入框状态
   phoneString:string = '' // 手机号
   updateArray: Array<string> = ['noteStatus', 'phoneStatus'] //需要行内修改的
   TreeData: Array<object> = [] // 权限组
@@ -407,6 +423,12 @@ export default class PropertyManage extends Vue {
   Dialog: object = {
     name: ''  // 物业人员详细记录
   };
+  closeVisible(flag: boolean) {
+    this.visible = flag
+  }
+  showExportIn() {
+    this.visible = true
+  }
   menuVisible() {
     /**@description 控制楼栋 */
     if (this.rowSpan.row1 === 3) {

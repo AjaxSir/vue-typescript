@@ -7,8 +7,9 @@ import { MessageBox, Message } from 'element-ui';
 import { getToken, removeToken } from '@/utils/auth'
 import Cookie from 'js-cookie'
 // Full config:  https://github.com/axios/axios#request-config
-export const serverURL ="/v1"
 
+export const serverURL = process.env.NODE_ENV === 'development' ? '/v1' : 'http://47.103.184.184'
+console.log(process.env.NODE_ENV, '环境变量', serverURL, '请求地址')
 axios.defaults.headers.post["Content-Type"] =
   "application/x-www-form-urlencoded";
 

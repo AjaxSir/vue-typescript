@@ -361,18 +361,8 @@
 
     <el-dialog :close-on-click-modal='false' title="添加用户" :visible.sync="dialogCreate" width="440px" :before-close="handleClose">
           <el-form class="owner" :model="Form" :rules="rules" style="margin-right:40px" ref='Forms' label-width="85px">
-            <el-form-item label="姓名:"  prop='name'>
-              <el-input clearable maxlength="10" v-model="Form.name" placeholder='输入姓名'></el-input>
-            </el-form-item>
-            <el-form-item label="性别:" prop='sex'>
-              <el-select style="position: relative;left: -6px;width:275px" class="input-filter" size="small" v-model="Form.sex" placeholder="请选择">
-                <el-option label="请选择" value=""></el-option>
-                <el-option label="男" value="1"></el-option>
-                <el-option label="女" value="0"></el-option>
-              </el-select>
-            </el-form-item>
             <el-form-item  label="电话:"  prop='phone'>
-              <el-input
+              <!-- <el-input
                 class="phone-position"
                 v-model="Form.phone"
                 placeholder="请输入电话"
@@ -386,9 +376,38 @@
                 @blur="hintBlur"
                 @mouseover.native="hint(Form.phone)"
                 @mouseout.native="hint(Form.phone)"
-              ></el-input>
-              <!-- <span v-show="hintPhone" class="ei-input-hint">{{phoneNum}}/11</span> -->
+              ></el-input> -->
+              <el-select
+                style="width:100%; position: relative;"
+                v-model="Form.phone"
+                filterable
+                remote
+                :remote-method="remoteMethod"
+                :loading="loading"
+                @change="handleSelectWatchlist"
+              >
+                <el-option
+                  v-for="item in phoneList"
+                  :key="item.value"
+                  :label="item.value"
+                  :value="item"
+                >
+                  <span style="float: left">{{ item.value }}</span>
+                  <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span>
+                </el-option>
+              </el-select>
             </el-form-item>
+            <el-form-item label="姓名:"  prop='name'>
+              <el-input :disabled="nameDisabled" clearable maxlength="10" v-model="Form.name" placeholder='输入姓名'></el-input>
+            </el-form-item>
+            <el-form-item label="性别:" prop='sex'>
+              <el-select style="position: relative;left: -6px;width:275px" class="input-filter" size="small" v-model="Form.sex" placeholder="请选择">
+                <el-option label="请选择" value=""></el-option>
+                <el-option label="男" value="1"></el-option>
+                <el-option label="女" value="0"></el-option>
+              </el-select>
+            </el-form-item>
+
             <el-form-item label="证件类型:"  label-width="85px"  prop='otherCardName'>
               <el-select @change='Form.cardNo = ""' style="position: relative;left: -6px;width:275px" class="input-filter" size="small" v-model="Form.otherCardName" placeholder="请选择证件类型">
                 <el-option label="身份证" value="身份证"></el-option>
@@ -401,7 +420,7 @@
               <el-input maxlength="10" style="width:275px" v-model="Form.cardName" clearable placeholder='输入证件名称'></el-input>
             </el-form-item>
             <el-form-item label="证件号码:"  label-width="85px"  prop='cardNo'>
-              <el-input  :maxlength="Form.cardName === '身份证' ? '18' : '20'"  clearable  v-model="Form.cardNo" :placeholder='"输入证件号"'></el-input>
+              <el-input  :maxlength="Form.otherCardName === '身份证' ? '18' : '20'"  clearable  v-model="Form.cardNo" :placeholder='"输入证件号"'></el-input>
             </el-form-item>
             <el-form-item label="房屋:" style='clear:both'  prop='houseName'>
               <el-autocomplete
@@ -524,6 +543,9 @@ import _axios from '@/plugins/axios.js'
 import mixin from "@/config/minxins";
 import { searchSuggestHouse } from '@/api/houseApi.ts'
 import { getUserPropertyPass, getFaceList } from '@/api/peopleApi.ts'
+import {
+  queryCarPhone //根据手机号模糊查询用户
+} from "@/api/carApi.ts";
 import { getUserPropertyCar } from '@/api/carApi.ts'
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 const DiaLog = () => import("@/components/dialog.vue");
@@ -604,7 +626,9 @@ export default class OwnerManage extends Vue {
     method: 'delete',
     data: []
   }
-
+  loading:boolean = false
+  phoneList: Array<object> = []
+  nameDisabled: boolean = false
   visible: boolean = false // 批量导入状态
   updateArray: Array<string> = ['noteStatus', 'phoneStatus']
   rules: any = {
@@ -657,6 +681,42 @@ export default class OwnerManage extends Vue {
   private houseDtailTable: Array<Object> =[];
   created() {
     this.initForm['params'] = Object.assign(this.initForm['params'], this.page, this.filterForm) // 合并参数
+  }
+  async remoteMethod(query) {
+    /**@description 根据姓名模糊查询人员 */
+    console.log(query);
+    if (query !== "") {
+      this.loading = true;
+      setTimeout(() => {
+        if (query.length >= 1) {
+          this.fetchWatchList(query);
+        }
+      }, 200);
+    } else {
+      this.phoneList = [];
+    }
+  }
+  async fetchWatchList(name) {
+    /**@description 获取 */
+    const { data } = await queryCarPhone(name);
+    this.loading = false;
+    this.phoneList = data.data.map(item => {
+      return {
+        value: item.phone,
+        name: item.name,
+        scenceUserId: item.id
+      };
+    });
+  }
+  handleSelectWatchlist(item) {
+    this.Form['phone'] = item.value;
+    if (item.name) {
+      this.Form['name'] = item.name;
+      this.nameDisabled = true;
+    } else {
+      this.Form['name'] = '';
+      this.nameDisabled = false;
+    }
   }
   closeVisible(flag: boolean) {
     this.visible = flag
