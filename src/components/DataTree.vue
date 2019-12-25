@@ -67,6 +67,7 @@
           <el-form-item prop='min' label="编号:">
             <el-input
             clearable
+            maxlength="4"
                 @keyup.native="UpNumber"
                 @keydown.native="UpNumber"
                 @change="clearableBtn"
@@ -82,6 +83,7 @@
                 @keydown.native="UpNumber"
                 @change="clearableBtn"
                 @input="hint"
+                maxlength="4"
                 @focus="hintFocus"
                 @blur="hintBlur"
                 @mouseover.native="hint(batchForm.max)"

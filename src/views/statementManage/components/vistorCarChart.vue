@@ -18,7 +18,7 @@
                 format='yyyy-MM-dd HH:mm:ss'
                 value-format="yyyy-MM-dd HH:mm:ss"
                 start-placeholder="开始日期"
-                :clearable='false'
+                clearable
                 :picker-options="pickerOptions"
                 end-placeholder="结束日期">
               </el-date-picker>
@@ -91,12 +91,17 @@ import { formatTimeObj } from '@/utils'
     }
     // 点击确定筛选
     dataChange() {
+      if (!this.timeRange) {
+        return this.$message.error('请先选择时间段查询')
+      }
       this.fetchListData(1)
     }
     // 时间变化
     timeChange(val) {
-      this.sortForm['startTime'] = val[0]
-      this.sortForm['endTime'] =  val[1]
+       if (val) {
+        this.sortForm['startTime'] = val[0]
+        this.sortForm['endTime'] =  val[1]
+      }
     }
     created(){
       this.setTime(7)
