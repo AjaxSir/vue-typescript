@@ -81,11 +81,41 @@
           <template slot-scope="{row}">{{ row.meta && row.meta.title }}</template>
         </el-table-column>
         <el-table-column align="center" label="修改">
+          <template slot="header">
+            <el-dropdown @command="checkStatus">
+                <span class="el-dropdown-link">
+                  修改<i class="el-icon-arrow-down el-icon--right"></i>
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item command='all'>
+                    <span class="statistics">全选</span>
+                    </el-dropdown-item>
+                  <el-dropdown-item command='none'>
+                     <span class="statistics">取消全选</span>
+                    </el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+          </template>
           <template slot-scope="{row}">
             <el-checkbox @change="changeStatus(row)" v-model="row.Update"></el-checkbox>
           </template>
         </el-table-column>
         <el-table-column align="center" label="查看">
+          <template slot="header">
+            <el-dropdown @command="checkLookStatus">
+                <span class="el-dropdown-link">
+                  查看<i class="el-icon-arrow-down el-icon--right"></i>
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item command='all'>
+                    <span class="statistics">全选</span>
+                    </el-dropdown-item>
+                  <el-dropdown-item command='none'>
+                     <span class="statistics">取消全选</span>
+                    </el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+          </template>
           <template slot-scope="{row}">
             <el-checkbox :disabled="row.lookDisabled" v-model="row.Look"></el-checkbox>
           </template>
@@ -188,6 +218,31 @@ export default class InformIssue extends Vue {
       row.Look = row.Update
     }
     row.lookDisabled = row.Update
+  }
+  // 修改全选/取消
+  checkStatus(val:string) {
+      this.roleData.forEach(ele =>  {
+        if (val === 'all') {
+          this.$set(ele, 'Look', true)
+          this.$set(ele, 'Update', true)
+          this.$set(ele, 'lookDisabled', true)
+        } else {
+          this.$set(ele, 'Update', false)
+          this.$set(ele, 'lookDisabled', false)
+        }
+      })
+  }
+  // 查看全/取消
+  checkLookStatus(val:string) {
+    this.roleData.forEach(ele =>  {
+        if (val === 'all') {
+          this.$set(ele, 'Look', true)
+        } else {
+          this.$set(ele, 'Look', false)
+          this.$set(ele, 'Update', false)
+          this.$set(ele, 'lookDisabled', false)
+        }
+      })
   }
   // 打开权限修改框
   updateRoleAction(row) {
