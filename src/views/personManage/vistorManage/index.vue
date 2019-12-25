@@ -442,7 +442,7 @@
 import { Component, Prop, Vue, Mixins } from "vue-property-decorator";
 import { Getter, Action, Mutation } from "vuex-class";
 import mixin from "@/config/minxins";
-import { getTargetUser } from "@/api/carApi.ts"; //获取目标访客受访人信息
+import { getOwnerUser } from "@/api/carApi.ts"; //获取目标访客受访人信息
 import { getTargrtRecord } from "@/api/peopleApi.ts"; //获取目标车辆通行记录
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 @Component({
@@ -669,7 +669,7 @@ export default class VistoryManage extends Vue {
   async fetchUser() {
     /**@description 查看受访人员详情 */
     try {
-      const { data } = await getTargetUser(
+      const { data } = await getOwnerUser(
         this.visitorDialogForm["scenceUserId"]
       );
       this.interUserDetail = data.data.user;

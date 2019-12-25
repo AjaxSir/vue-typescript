@@ -26,8 +26,9 @@
       v-show="markerStatus"
       v-for="(item, index) in positionList"
       :position="item.position"
-      :key="index"
+      :key="'point-'+index"
       :dragging="false"
+      :icon="{url: require('../../assets/loc.png'), size: {width: 30, height: 30}}"
       @click="infoWindowOpen(index)"
     >
       <bm-info-window
@@ -61,30 +62,33 @@
 </template>
 
 <script lang='ts'>
-declare function require(string) :string
+declare function require(string): string;
 import { Component, Prop, Vue, Mixins, Emit } from "vue-property-decorator";
-import axios from 'axios'
+import axios from "axios";
 @Component({})
 export default class BaiDuMap extends Vue {
-  @Prop({ default: '' }) keyword : string
-  @Prop({ default: true }) searchStatus : string
-  @Prop({ default: false }) markerStatus : string
-  @Prop({ default: 10 }) zoom : number
-  @Prop({ default: false }) backStatus : boolean
-  @Prop({ default: () => {
-    return []
-  } }) positionList : Array<object>
-  @Prop({ default: '116.404' }) lng:string
-  @Prop({ default: '39.915' }) lat:string
-  location:string = ''
-  list: Array<object> = []
-  locImg: string = require('@/assets/loc.png')
-  autoVisible:boolean = true
+  @Prop({ default: "" }) keyword: string;
+  @Prop({ default: true }) searchStatus: string;
+  @Prop({ default: false }) markerStatus: string;
+  @Prop({ default: 10 }) zoom: number;
+  @Prop({ default: false }) backStatus: boolean;
+  @Prop({
+    default: () => {
+      return [];
+    }
+  })
+  positionList: Array<object>;
+  @Prop({ default: "116.404" }) lng: string;
+  @Prop({ default: "39.915" }) lat: string;
+  location: string = "";
+  list: Array<object> = [];
+  locImg: string = require("@/assets/loc.png");
+  autoVisible: boolean = true;
   infoWindowOpen(index) {
-    this.positionList[index]['show'] = true
+    this.positionList[index]["show"] = true;
   }
   infoWindowClose(index) {
-    this.positionList[index]['show'] = false
+    this.positionList[index]["show"] = false;
   }
     getPoint(e) { // 点击地图获取一些信息，
       const _this = this
@@ -154,7 +158,7 @@ export default class BaiDuMap extends Vue {
       //   }
       // })
     }
-  }
+}
 </script>
 <style lang="scss" scoped>
 .map {

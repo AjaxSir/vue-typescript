@@ -223,7 +223,6 @@ const ActionHeader = () => import("@/components/ActionHeader.vue");
 })
 export default class InformIssue extends Vue {
   filterForm: object = { tag: "pagination" }; //根据关键字查询
-  private dialogCreate: Boolean = false; // 添加弹出表单
   // 添加dialog弹框信息
   private createForm: Object = {
     name: "",
@@ -348,7 +347,7 @@ export default class InformIssue extends Vue {
 
   handleClose() {
     /** @description 关闭添加/修改dialog */
-    this.dialogCreate = false; //车辆添加dialog
+    this["dialogCreate"] = false;
     this.createForm = {
       name: "",
       note: ""

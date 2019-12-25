@@ -70,7 +70,7 @@
         <i
           v-if="pageStatus"
           @click="visible = !visible,visibleFilter = false"
-          style="font-size:18px;"
+          style="font-size:18px; margin-right: 20px;"
           class="iconfont icon-_shezhi-xian"
         ></i>
 
@@ -107,7 +107,7 @@ import {
   Emit
 } from "vue-property-decorator";
 import mixin from "@/config/minxins";
-import { Getter } from 'vuex-class'
+import { Getter } from "vuex-class";
 import qs from "qs";
 
 @Component({
@@ -129,14 +129,15 @@ export default class ActionManage extends Vue {
     }
   })
   initFormHeader: object; // 初始化的地址 方式
-  addUpdateStatus: boolean = true // 是否具有修改权限
-  @Getter('permissionList') permissionList: Array<string>
+  addUpdateStatus: boolean = true; // 是否具有修改权限
+  @Getter("permissionList") permissionList: Array<string>;
   @Prop({
     default: () => {
       return {};
     }
-  }) filterForm: object; // 筛选条件
-  @Prop({ default: '' }) linkUrl: string
+  })
+  filterForm: object; // 筛选条件
+  @Prop({ default: "" }) linkUrl: string;
 
   private visible: boolean = false; // 数据显示条数dialog状态
   private size: string = "10"; // 默认每页显示10条
@@ -173,7 +174,9 @@ export default class ActionManage extends Vue {
   }
 
   mounted() {
-    this.addUpdateStatus = this.permissionList.includes(this.$route.name + 'Update')
+    this.addUpdateStatus = this.permissionList.includes(
+      this.$route.name + "Update"
+    );
     this.fetchData();
   }
   handleHouse() {
@@ -204,7 +207,7 @@ export default class ActionManage extends Vue {
     //   this.filterForm[key] = this.filterForm[key] ? this.filterForm[key] : null;
     // }
     this["phoneNum"] = 0;
-    console.log(this.initFormHeader["params"],this.filterForm, this.page)
+    console.log(this.initFormHeader["params"], this.filterForm, this.page);
     return this.initFormHeader;
   }
   /**
@@ -248,11 +251,11 @@ export default class ActionManage extends Vue {
         const filterUrl = qs.stringify(this.initFormHeader["params"]);
         this["exportFunc"](this.exportName, this.exportUrl + "/?" + filterUrl);
         break;
-      case 'link':
-        this.$router.push({path: this.linkUrl})
-      // case 'exportTemplate':
-      //    this["exportFunc"]('用户导入模板.xls', '/v1/admin/uploadFile/exportModel');
-         break;
+      case "link":
+        this.$router.push({ path: this.linkUrl });
+        // case 'exportTemplate':
+        //    this["exportFunc"]('用户导入模板.xls', '/v1/admin/uploadFile/exportModel');
+        break;
     }
   }
 }
@@ -278,7 +281,7 @@ a {
   .rightAction {
     .setting {
       text-align: left;
-      padding: 10px 10px;
+      padding: 10px;
       width: 200px;
       height: 80px;
       position: absolute;
