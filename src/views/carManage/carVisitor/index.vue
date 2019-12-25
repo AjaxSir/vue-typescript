@@ -412,7 +412,7 @@ import { Getter, Action, Mutation } from "vuex-class";
 import mixin from "@/config/minxins";
 import {
   getTargrtRecord, //获取目标车辆通行记录
-  getTargetUser //获取目标车辆车主信息
+  getOwnerUser //获取目标车辆车主信息
 } from "@/api/carApi.ts";
 
 const ActionHeader = () => import("@/components/ActionHeader.vue");
@@ -572,7 +572,7 @@ export default class CardManage extends Vue {
   async fetchUser() {
     /**@description 查看车辆管理名单用户详情 */
     try {
-      const { data } = await getTargetUser(this.CarDialogForm["scenceUserId"]);
+      const { data } = await getOwnerUser(this.CarDialogForm["scenceUserId"]);
       this.carUserDetail = data.data.user;
       this.carInviterDetail = { ...data.data.house[0] };
     } catch (err) {

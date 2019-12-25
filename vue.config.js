@@ -10,7 +10,7 @@ module.exports = {
     proxy: {
       "/v1": {
         target: "http://192.168.3.19:8094", // 测试服务器 http://192.168.3.122:8080 开波 http://192.168.3.19:8094 测试 // 正式 47.103.184.184
-        changeOrigin: true,
+        changeOrigin: false,
         pathRewrite: {
           "^/v1": "/"
         }
@@ -23,7 +23,7 @@ module.exports = {
         }
       },
     },
-    host: 'localhost'
+    host: '0.0.0.0'
   },
   // 生产环境 sourceMap
   productionSourceMap: false,

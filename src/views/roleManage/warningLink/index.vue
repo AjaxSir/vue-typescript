@@ -64,7 +64,7 @@
           <el-input
             :ref="row.id"
             v-show="row.noteStatus&&editForm.id === row.id"
-            size="small"
+            size="mini"
             clearable
             :maxlength="200"
             v-model="editForm.note"
@@ -164,7 +164,7 @@
           :error="errorMessage.earlyGroupId"
         >
           <!-- <el-input v-model="createForm.earlyGroupId" autocomplete="off"></el-input> -->
-          <el-select v-model="createForm.earlyGroupId" placeholder="请选择">
+          <el-select style="width:100%" v-model="createForm.earlyGroupId" placeholder="请选择">
             <el-option
               v-for="tag in earlyGroup"
               :key="tag.id"
@@ -172,7 +172,7 @@
               :value="tag.id"
             ></el-option>
           </el-select>
-          <el-button @click="showUnitSetting = !showUnitSetting">添加分组</el-button>
+          <!-- <el-button @click="showUnitSetting = !showUnitSetting">添加分组</el-button>
           <div v-if="showUnitSetting">
             <el-tag
               style="margin-left:5px"
@@ -195,7 +195,7 @@
               @blur="handleInputConfirm"
             ></el-input>
             <el-button v-else class="button-new-tag" size="small" @click="showInput">添加分组</el-button>
-          </div>
+          </div>-->
         </el-form-item>
         <el-form-item
           label="备注:"
@@ -394,8 +394,6 @@ export default class WarningLink extends Vue {
     method: "delete",
     data: []
   };
-
-  dialogCreate: boolean = false;
 
   showUnitSetting: boolean = false; // 查看已有分组设置状态
   earlyGroup: Array<Object> = []; //获取分组
@@ -625,7 +623,7 @@ export default class WarningLink extends Vue {
   }
 
   createClose() {
-    this.dialogCreate = false; //添加dialog
+    this["dialogCreate"] = false;
     for (const key in this.errorMessage) {
       this.errorMessage[key] = "";
     }
