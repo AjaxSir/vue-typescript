@@ -356,11 +356,19 @@
           :show-message="showMessage"
           :error="errorMessage.typeId"
         >
-          <el-select style="width:100%" v-model="createForm.typeId" placeholder="请选择人员类别">
-            <el-option v-for="tag in earlyType" :key="tag.id" :label="tag.typeName" :value="tag.id"></el-option>
-          </el-select>
-          <!-- <el-button @click="showUnitSetting = !showUnitSetting">添加类别</!-->
-          <!-- <div v-if="showUnitSetting">
+          <div style="display: flex;flex-wrap: nowrap;justify-content: space-between;">
+            <el-select style="width:100%" v-model="createForm.typeId" placeholder="请选择人员类别">
+              <el-option
+                v-for="tag in earlyType"
+                :key="tag.id"
+                :label="tag.typeName"
+                :value="tag.id"
+              ></el-option>
+            </el-select>
+            <el-button style="margin-left:5px" @click="showUnitSetting = !showUnitSetting">添加类别</el-button>
+          </div>
+
+          <div v-if="showUnitSetting">
             <el-tag
               style="margin-left:5px"
               :key="index"
@@ -382,7 +390,7 @@
               @blur="handleInputConfirm('type')"
             ></el-input>
             <el-button v-else class="button-new-tag" size="small" @click="showInput('type')">添加类别</el-button>
-          </div>-->
+          </div>
         </el-form-item>
 
         <el-form-item
@@ -554,10 +562,18 @@
           :show-message="showMessage"
           :error="errorMessage.typeId"
         >
-          <el-select style="width:100%" v-model="editForm.typeId" placeholder="请选择">
-            <el-option v-for="tag in earlyType" :key="tag.id" :label="tag.typeName" :value="tag.id"></el-option>
-          </el-select>
-          <!-- <el-button @click="showUnitSetting = !showUnitSetting">添加类别</el-button>
+          <div style="display: flex;flex-wrap: nowrap;justify-content: space-between;">
+            <el-select style="width:100%" v-model="editForm.typeId" placeholder="请选择">
+              <el-option
+                v-for="tag in earlyType"
+                :key="tag.id"
+                :label="tag.typeName"
+                :value="tag.id"
+              ></el-option>
+            </el-select>
+            <el-button style="margin-left:5px" @click="showUnitSetting = !showUnitSetting">添加类别</el-button>
+          </div>
+
           <div v-if="showUnitSetting">
             <el-tag
               style="margin-left:5px"
@@ -580,7 +596,7 @@
               @blur="handleInputConfirm('type')"
             ></el-input>
             <el-button v-else class="button-new-tag" size="small" @click="showInput('type')">添加类别</el-button>
-          </div>-->
+          </div>
         </el-form-item>
 
         <el-form-item
