@@ -158,53 +158,6 @@ export default class BaiDuMap extends Vue {
       //   }
       // })
     }
-  getPoint(e) {
-    // 点击地图获取一些信息，
-    const _this = this;
-    this.autoVisible = true;
-    // if (this.backStatus) {
-    let addRess = {
-      lng: "",
-      lat: "",
-      province: "",
-      city: "",
-      district: "",
-      street: "",
-      streetNumber: ""
-    };
-    this.list = [];
-    this.list.push({
-      show: false,
-      position: { lng: e.point.lng, lat: e.point.lat }
-    });
-    addRess = Object.assign(addRess, e.point);
-    axios({
-      url: `/map-api/v2/`,
-      params: {
-        address: addRess["address"],
-        ak: "vCZU88Guz4BmAODWTm8k9BP0WlwId1V0",
-        location: `${addRess.lat},${addRess.lng}`,
-        output: "json"
-      },
-      method: "get"
-    }).then(res => {
-      if (!res.data.status) {
-        addRess["province"] = res.data.result.addressComponent.province;
-        addRess["city"] = res.data.result.addressComponent.city;
-        addRess["street"] = res.data.result.addressComponent.street;
-        addRess["streetNumber"] =
-          res.data.result.addressComponent.street_number;
-        addRess["district"] = res.data.result.addressComponent.district;
-        this.$emit("pointClick", addRess);
-      } else {
-        this.$message({
-          message: "没有找到对应的位置信息",
-          type: "error"
-        });
-      }
-    });
-    // }
-  }
 }
 </script>
 <style lang="scss" scoped>
