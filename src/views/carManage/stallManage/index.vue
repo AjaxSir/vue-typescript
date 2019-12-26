@@ -3,8 +3,8 @@
     <el-row>
       <el-col :span="24">
         <action-header
-          exportUrl="/v1/admin/hsHouse/export"
-          exportName="房屋.xls"
+          exportUrl="/v1/admin/car-space/export"
+          exportName="车位.xls"
           ref="actionHeader"
           :initFormHeader="initForm"
           :filterStatus="false"
@@ -15,8 +15,9 @@
           :total="page.total"
         >
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item command="export">批量添加车位</el-dropdown-item>
-            <el-dropdown-item command="export">导入</el-dropdown-item>
+            <el-dropdown-item>
+              <div @click="showExportIn">导入</div>
+            </el-dropdown-item>
             <el-dropdown-item command="export">导出</el-dropdown-item>
           </el-dropdown-menu>
           <div slot="houseNum">
@@ -486,6 +487,15 @@
         <el-button type="primary" @click="bindingcarnumBtn">绑 定</el-button>
       </span>
     </el-dialog>
+
+    <ExportIn
+      uploadUrl="/v1/admin/car-space/import"
+      downTemplateUrl="/v1/admin/usr-car/import"
+      @closeVisible="closeVisible"
+      TmplateName="车位导出模板.xlsx"
+      @successUpload="fetchData(initForm)"
+      :visible.sync="visible"
+    />
   </div>
 </template>
 
@@ -508,12 +518,14 @@ import {
 import { getUserName } from "@/api/vistorApi.ts"; //输入人名模糊查询人员
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 const DataTree = () => import("../carTree/index.vue");
+const ExportIn = () => import("@/components/exportIn/index.vue");
 
 @Component({
   mixins: [mixin],
   components: {
     ActionHeader,
-    DataTree
+    DataTree,
+    ExportIn
   },
   filters: {
     status(val: string) {
@@ -636,6 +648,8 @@ export default class CardManage extends Vue {
   private bindingcarnum: Object = { carId: "" }; //绑定车辆
 
   private carStatusFilter: Array<Object> = [];
+
+  visible: boolean = false; // 导入框状态
   private carType: Array<Object> = [
     //车辆类型筛选
     {
@@ -674,6 +688,16 @@ export default class CardManage extends Vue {
       this.page,
       this.filterForm
     ); // 合并参数
+  }
+
+  closeVisible(flag: boolean) {
+    /**@description 导出状态 */
+    this.visible = flag;
+  }
+
+  showExportIn() {
+    /**@description 导出状态 */
+    this.visible = true;
   }
 
   getHouseTreeData() {

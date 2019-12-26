@@ -203,7 +203,9 @@ img {
   position: absolute;
   left: 0px;
   top: 50%;
+  -ms-margin-top: 0px !important;
   margin-top: -11px;
+
 
   .iconfont {
     font-size: 19px;
@@ -293,10 +295,12 @@ div::-webkit-scrollbar-thumb:hover {
 div::-webkit-scrollbar-corner {
   background: #179a16;
 }
-.el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content {
+
+.el-tree--highlight-current .el-tree-node.is-current>.el-tree-node__content {
   background-color: #409EFF;
   color: white;
 }
+
 .el-time-panel {
   left: -34px !important;
 }
@@ -304,7 +308,8 @@ div::-webkit-scrollbar-corner {
 .el-range-editor--small .el-range-separator {
   width: 20px;
 }
-.el-carousel__button{
+
+.el-carousel__button {
   width: 6px;
   height: 6px;
   border-radius: 50%;
@@ -313,14 +318,19 @@ div::-webkit-scrollbar-corner {
 [v-cloak] {
   display: none;
 }
-.autoInput .el-input--suffix .el-input__inner{
+
+.autoInput .el-input--suffix .el-input__inner {
   height: 32px;
 }
-.is-current .icon-menu{
+
+.is-current .icon-menu {
   color: white;
 }
-.float .el-input__inner, .owner .el-input__inner{
-  height: 40px;;
+
+.float .el-input__inner,
+.owner .el-input__inner {
+  height: 40px;
+  ;
 }
 
 // .el-date-editor .el-range__icon, .el-date-editor .el-range__close-icon{
