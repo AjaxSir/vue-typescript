@@ -329,7 +329,7 @@
                   <span>{{visitorDialogForm.invalidDate ? visitorDialogForm.invalidDate :'--'}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="备注信息:">
-                  <span>{{visitorDialogForm.note ? visitorDialogForm.note :'--'}}</span>
+                  <span>{{visitorDialogForm.note ? visitorDialogForm.note :'暂无'}}</span>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -358,7 +358,7 @@
                   <span>{{interUserDetail.cardNo}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="车主备注:">
-                  <span>{{interUserDetail.note}}</span>
+                  <span>{{interUserDetail.note ? interUserDetail.note : '暂无'}}</span>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
@@ -387,7 +387,7 @@
                 </el-form-item>
 
                 <el-form-item style="margin-bottom:0" label="邀请人备注:">
-                  <span>{{houseInviterDetail.note}}</span>
+                  <span>{{houseInviterDetail.note ? houseInviterDetail.note : "暂无"}}</span>
                 </el-form-item>
               </el-col>
             </el-row>

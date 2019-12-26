@@ -248,7 +248,7 @@
                 </el-form-item>
 
                 <el-form-item v-if="CarDialogForm.isVisitCar" style="margin-bottom:0" label="备注信息:">
-                  <span>{{ carUserDetail.note ? carUserDetail.note : '--' }}</span>
+                  <span>{{ carUserDetail.note ? carUserDetail.note : '暂无' }}</span>
                 </el-form-item>
                 <el-form-item
                   v-if="!CarDialogForm.isVisitCar "
@@ -279,7 +279,7 @@
                   style="margin-bottom:0"
                   label="备注信息:"
                 >
-                  <span>{{ carVisitDetail.note ? carVisitDetail.note : '--'}}</span>
+                  <span>{{ carVisitDetail.note ? carVisitDetail.note : '暂无'}}</span>
                 </el-form-item>
               </el-col>
             </el-row>
