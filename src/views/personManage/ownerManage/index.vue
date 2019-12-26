@@ -257,7 +257,8 @@
                 <el-col :span='8' style="height:40px"><span class="right">证件类型: </span>&nbsp;&nbsp;{{ detailDialog.cardName || '--' }}</el-col>
                 <el-col :span='8' style="height:40px"><span class="right">证件号码: </span>&nbsp;&nbsp;{{ detailDialog.cardNo || '暂无' }}</el-col>
                 <el-col :span='24'><span class="right">备注: </span>&nbsp;&nbsp;
-                  <el-input v-model="detailDialog.note" style="width:600px" type='textarea'></el-input>
+                  <!-- <el-input v-model="detailDialog.note" style="width:600px" type='textarea'></el-input> -->
+                  <span>{{ detailDialog.note || '暂无' }}</span>
                 </el-col>
               </el-row>
 
@@ -377,7 +378,7 @@
                 @mouseover.native="hint(Form.phone)"
                 @mouseout.native="hint(Form.phone)"
               ></el-input> -->
-              <el-select
+              <!-- <el-select
                 style="width:100%; position: relative;"
                 v-model="Form.phone"
                 filterable
@@ -395,7 +396,19 @@
                   <span style="float: left">{{ item.value }}</span>
                   <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span>
                 </el-option>
-              </el-select>
+              </el-select> -->
+              <el-autocomplete
+               clearable
+                v-model="Form.phone"
+                style='width:275px'
+                :fetch-suggestions="remoteMethod"
+                placeholder="输入需要添加的住户电话"
+                @select="handleSelectWatchlist"
+              >
+              <template slot-scope="{ item }">
+              <span style="float: left">{{ item.value }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span>
+            </template></el-autocomplete>
             </el-form-item>
             <el-form-item label="姓名:"  prop='name'>
               <el-input :disabled="nameDisabled" clearable maxlength="10" v-model="Form.name" placeholder='输入姓名'></el-input>
@@ -682,31 +695,29 @@ export default class OwnerManage extends Vue {
   created() {
     this.initForm['params'] = Object.assign(this.initForm['params'], this.page, this.filterForm) // 合并参数
   }
-  async remoteMethod(query) {
+  async remoteMethod(query:string, cb) {
     /**@description 根据姓名模糊查询人员 */
-    console.log(query);
     if (query !== "") {
       this.loading = true;
-      setTimeout(() => {
-        if (query.length >= 1) {
-          this.fetchWatchList(query);
+      setTimeout(async () => {
+        if (query.length >= 1 && query.length < 12) {
+          const { data } = await queryCarPhone(query);
+            this.loading = false;
+            this.phoneList = data.data.map(item => {
+              return {
+                value: item.phone,
+                name: item.name,
+                scenceUserId: item.id
+              };
+            });
+            cb(this.phoneList)
+        } else {
+          cb([])
         }
       }, 200);
     } else {
-      this.phoneList = [];
+      cb([])
     }
-  }
-  async fetchWatchList(name) {
-    /**@description 获取 */
-    const { data } = await queryCarPhone(name);
-    this.loading = false;
-    this.phoneList = data.data.map(item => {
-      return {
-        value: item.phone,
-        name: item.name,
-        scenceUserId: item.id
-      };
-    });
   }
   handleSelectWatchlist(item) {
     this.Form['phone'] = item.value;

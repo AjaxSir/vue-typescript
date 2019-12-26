@@ -63,10 +63,7 @@ export default class AppMain extends Vue{
   // box-shadow: 2px 0px 10px 2px lightgray;
 }
 .routerView{
-  // flex: 1;
-  // margin-left: 15px;
-  width: calc(100% - 170px);
-  // padding-right: 20px;
+  width: calc(100% - 177px);
   box-sizing: border-box;
 }
 
