@@ -207,3 +207,15 @@ export function getRegisterPeople(houseId : string){
     }
   })
 }
+
+// 删除特定房屋下的某个注册人员
+export function deleteTheHousePeople(houseId:string, userId: string) {
+  return _axios({
+    url: '/admin/usrHouseLink',
+    method:'delete',
+    params: {
+      houseId,
+      userId
+    }
+  })
+}
