@@ -286,7 +286,7 @@
                   <span>{{CarDialogForm.numPeople ? CarDialogForm.numPeople : '--'}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="备注信息:">
-                  <span>{{CarDialogForm.note ? CarDialogForm.note :'--'}}</span>
+                  <span>{{CarDialogForm.note ? CarDialogForm.note :'暂无'}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="最后一次出时间:">
                   <span>{{CarDialogForm.lastOutTime ? CarDialogForm.lastOutTime :'--'}}</span>
@@ -327,7 +327,7 @@
                   <span>{{carUserDetail.cardNo}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="车主备注:">
-                  <span>{{carUserDetail.note}}</span>
+                  <span>{{carUserDetail.note ? carUserDetail.note : '暂无'}}</span>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
@@ -350,7 +350,7 @@
                   <span>{{carInviterDetail.createTime}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="邀请人备注:">
-                  <span>{{carInviterDetail.note}}</span>
+                  <span>{{carInviterDetail.note ? carInviterDetail.note : '暂无'}}</span>
                 </el-form-item>
               </el-col>
             </el-row>

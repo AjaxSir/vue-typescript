@@ -651,7 +651,7 @@
                   <span>{{userDetail.cardNo ? userDetail.cardNo :'--'}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="备注信息:">
-                  <span>{{userDetail.note ? userDetail.note :'--'}}</span>
+                  <span>{{userDetail.note ? userDetail.note :'暂无'}}</span>
                 </el-form-item>
               </el-col>
             </el-row>

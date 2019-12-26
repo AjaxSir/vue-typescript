@@ -429,7 +429,7 @@
                   <span>{{ownerDetail.cardNo}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="备注信息:">
-                  <span>{{ownerDetail.note}}</span>
+                  <span>{{ownerDetail.note ? ownerDetail.note : "暂无"}}</span>
                 </el-form-item>
               </el-col>
             </el-row>
