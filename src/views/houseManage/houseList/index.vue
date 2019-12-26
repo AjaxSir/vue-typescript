@@ -226,7 +226,12 @@
                 <span>{{ row.status | peopleStatus }}</span>
               </template>
             </el-table-column> -->
+
             <el-table-column align='center' :show-overflow-tooltip='true' prop="createTime" label="注册时间"></el-table-column>
+            <el-table-column align='center' :show-overflow-tooltip='true' prop="createTime" label="操作">
+              <template slot-scope="{row}">
+                <el-button type='text' @click='deleteHousePeople(row)'>删除</el-button> </template>
+            </el-table-column>
             <el-table-column align='center' prop="note" label="备注">
               <template slot-scope="{row}">
                 <span>{{ row.note ? row.note : '暂无' }}</span>
@@ -262,7 +267,7 @@ import { Component, Prop, Vue, Mixins } from "vue-property-decorator";
 import { Getter, Action, Mutation } from "vuex-class";
 import mixin from "@/config/minxins";
 import { getHouseTreeData, addHouse,
-updateStatusNote, getRegisterPeople } from '@/api/houseApi.ts'
+updateStatusNote, getRegisterPeople, deleteTheHousePeople } from '@/api/houseApi.ts'
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 const DataTree = () => import("@/components/DataTree.vue");
 
@@ -362,7 +367,7 @@ export default class CardManage extends Vue {
   updateArray: Array<string> = ['noteStatus', 'houseStatus']
   noteString: string = '' // 修改的备注
   private dialogFormVisible: Boolean = false;
-
+  houseId:string = ''
   private detailDialog: Object = {
     //查看目标详情
     name: ""
@@ -374,6 +379,26 @@ export default class CardManage extends Vue {
       ...row,
       houseStatus
     }
+  }
+
+  // 删除房屋下的某个用户
+  deleteHousePeople(row) {
+    this.$confirm('此操作将永久删除该人员, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          deleteTheHousePeople(this.houseId, row.userId).then(res => {
+            getRegisterPeople(this.houseId).then(res => {
+              this.dtailTable = res.data.data
+            })
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
   }
   // 注册人数排序
   sortChange({column, prop, order }){
@@ -395,7 +420,7 @@ export default class CardManage extends Vue {
     this.dialogFormVisible = true
     this.activeName = '详细信息'
     this.detailDialog = Object.assign(this.detailDialog, row)
-    console.log(this.detailDialog)
+    this.houseId = row.id
     getRegisterPeople(row.id).then(res => {
       this.dtailTable = res.data.data
     })

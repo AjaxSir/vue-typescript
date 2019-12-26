@@ -4,7 +4,7 @@
       <el-col :span="24">
         <ActionHeader
         exportUrl='/v1/admin/usrUser/export'
-        exportName='用户管理.xls'
+        exportName='住户管理.xls'
         :initFormHeader="initForm"
          ref="actionHeader"
           @fetchData="fetchData"
@@ -52,7 +52,7 @@
               @keyup.enter.native="emitFetchData" style="width:215px" class="input-filter" v-model="filterForm.key" size="small"></el-input>
             </div>
             <div class="word-filter">
-              <span class="filter-name">用户类型:</span>
+              <span class="filter-name">住户类型:</span>
               <el-select class="input-filter" size="small" v-model="filterForm.type" placeholder="请选择">
                 <el-option label="全部" value=""></el-option>
                 <el-option label="业主" value="1"></el-option>
@@ -150,7 +150,7 @@
                 <span>{{  row.house[0] && row.house[0].status | statusFilter}}</span>
               </template>
             </el-table-column>
-            <el-table-column :show-overflow-tooltip='true'  width="100" prop="far_door" align="center" label="用户类型">
+            <el-table-column :show-overflow-tooltip='true'  width="100" prop="far_door" align="center" label="住户类型">
               <template slot-scope="{row}">
                 <span>{{ row.house[0] && row.house[0].type | typeFilter }}</span>
               </template>
@@ -327,6 +327,10 @@
                 {{ row.enableRemoteOpen === '1' ? '允许' : '禁止' }}
               </template>
             </el-table-column>
+            <el-table-column align='center' :show-overflow-tooltip='true' prop="createTime" label="操作">
+              <template slot-scope="scope">
+                <el-button type='text' @click='deleteHouse(scope.row, scope.$index)'>删除</el-button> </template>
+            </el-table-column>
             <el-table-column align='center' :show-overflow-tooltip='true' prop="note" label="备注">
               <template slot-scope="{row}">
                 <span>{{row.note || '--'}}</span>
@@ -360,7 +364,7 @@
       </span>
     </el-dialog>
 
-    <el-dialog :close-on-click-modal='false' title="添加用户" :visible.sync="dialogCreate" width="440px" :before-close="handleClose">
+    <el-dialog :close-on-click-modal='false' title="添加住户" :visible.sync="dialogCreate" width="440px" :before-close="handleClose">
           <el-form class="owner" :model="Form" :rules="rules" style="margin-right:40px" ref='Forms' label-width="85px">
             <el-form-item  label="电话:"  prop='phone'>
               <el-autocomplete
@@ -445,20 +449,20 @@
     </el-dialog>
     <el-dialog :close-on-click-modal='false' width="400px" :title="updateHouseForm.buildingName" :visible.sync="updateHouseVisible">
       <el-form :model="updateHouseForm" label-width="80px">
-        <el-form-item label="用户类型" >
+        <el-form-item label="住户类型" >
           <el-select v-model="updateHouseForm.type" placeholder="请选择">
             <el-option label="业主" value="1"></el-option>
             <el-option label="租户" value="2"></el-option>
             <el-option label="成员" value="3"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="房屋状态">
+        <!-- <el-form-item label="房屋状态">
           <el-select v-model="updateHouseForm.status" placeholder="请选择活动区域">
             <el-option label="在住" value="0"></el-option>
             <el-option label="不在住" value="-1"></el-option>
             <el-option label="过期" value="-2"></el-option>
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item v-if='updateHouseForm.type !== "1"' label="过期时间">
           <el-date-picker
             format='yyyy-MM-dd HH:mm:ss'
@@ -529,10 +533,10 @@ import { addPeople,
   updateRoleHouse } from '@/api/peopleApi.ts'
 import _axios from '@/plugins/axios.js'
 import mixin from "@/config/minxins";
-import { searchSuggestHouse } from '@/api/houseApi.ts'
+import { searchSuggestHouse, deleteTheHousePeople } from '@/api/houseApi.ts'
 import { getUserPropertyPass, getFaceList } from '@/api/peopleApi.ts'
 import {
-  queryUserPhone //根据手机号模糊查询用户
+  queryUserPhone //根据手机号模糊查询住户
 } from "@/api/peopleApi.ts";
 import { getUserPropertyCar } from '@/api/carApi.ts'
 const ActionHeader = () => import("@/components/ActionHeader.vue");
@@ -597,7 +601,7 @@ export default class OwnerManage extends Vue {
     houseName: '',
     otherCardName: '身份证'
   }
-  updateHouseForm: object = {} // 增加用户时修改房屋的属性
+  updateHouseForm: object = {} // 增加住户时修改房屋的属性
   initForm: object = {
     url: '/admin/usrUser/list',
     method: 'get'
@@ -623,9 +627,9 @@ export default class OwnerManage extends Vue {
     name: [
             { required: true, message: '请输入姓名', trigger: 'blur' }
           ],
-    sex: [
-            { required: true, message: '请选择性别', trigger: 'change' }
-          ],
+    // sex: [
+    //         { required: true, message: '请选择性别', trigger: 'change' }
+    //       ],
     cardName: [
       { required: true, message: '请填入证件名', trigger: 'change' }
     ],
@@ -638,15 +642,15 @@ export default class OwnerManage extends Vue {
                 }
               }, trigger: 'blur' }
           ],
-    cardNo: [
-            { required: true, trigger: 'blur', validator: (rule, value, callback) => {
-                if (!(value.length === 15 || value.length === 18) && this.Form['otherCardName'] === '身份证') {
-                  callback(new Error('填写正确的证件号'))
-                } else {
-                  callback()
-                }
-              } }
-          ],
+    // cardNo: [
+    //         { required: true, trigger: 'blur', validator: (rule, value, callback) => {
+    //             if (!(value.length === 15 || value.length === 18) && this.Form['otherCardName'] === '身份证') {
+    //               callback(new Error('填写正确的证件号'))
+    //             } else {
+    //               callback()
+    //             }
+    //           } }
+    //       ],
     house: [
       { required: true, validator: (rule, value, callback) => {
                 if (!value.length) {
@@ -664,11 +668,33 @@ export default class OwnerManage extends Vue {
     limit: 10,
     page: 1
   }
+  userId: string = ''
   private dtailTable: Array<Object> = [];
   private carDtailTable: Array<Object> =[];
   private houseDtailTable: Array<Object> =[];
   created() {
     this.initForm['params'] = Object.assign(this.initForm['params'], this.page, this.filterForm) // 合并参数
+  }
+  // 删除某个用户下的某个房屋
+  deleteHouse(row, index) {
+    this.$confirm('此操作将永久删除该房屋, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          console.log(row)
+          deleteTheHousePeople(row.houseId, this.userId).then(res => {
+            if (res.data.code === 200) {
+              this.$message.success('删除成功')
+              this.houseDtailTable.splice(index, 1)
+            }
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
   }
   async remoteMethod(query:string, cb) {
     /**@description 根据姓名模糊查询人员 */
@@ -699,7 +725,20 @@ export default class OwnerManage extends Vue {
       cb([])
     }
   }
+  /**
+   *
+   * @param page 关闭添加/修改框
+   */
+  handleClose() {
+    for (let key in this.Form) {
+      this.Form[key] = ''
+    }
+    this.Form['house'] = []
+    this.$refs['Forms']['resetFields']();
+    this['dialogCreate'] = false
+  }
   handleSelectWatchlist(item) {
+    this.$refs['Forms']['clearValidate']();
     const Name = ['身份证', '护照', '港澳居民来往内地通行证']
     this.Form['phone'] = item.phone;
     // if (item.name) {
@@ -763,7 +802,7 @@ export default class OwnerManage extends Vue {
       }
     })
   }
-// 确定添加用户
+// 确定添加住户
   addUserConfirm() {
     if (this.Form.otherCardName !== '其它') {
       this.Form.cardName = this.Form.otherCardName
@@ -965,6 +1004,7 @@ export default class OwnerManage extends Vue {
   }
   /*** row 列表数据 查看详情*/
   showDetail(row, index, indexSort) {
+    this.userId = row.id
     this.activeName = 'first'
     this.passList['id'] = row.id
     this.dialogFormVisible = true;
@@ -990,7 +1030,7 @@ export default class OwnerManage extends Vue {
     })
   }
 
-  // 获取特定用户的通行记录
+  // 获取特定住户的通行记录
   pagePassChange(page: number) {
     this.passList['page'] = page
     getUserPropertyPass(this.passList).then(res => {
