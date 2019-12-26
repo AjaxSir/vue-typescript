@@ -110,7 +110,7 @@
           <el-input clearable style='position:fixed;bottom:-999999px' type='password'></el-input>
           <el-input clearable style="width:300px"
           auto-complete="off"
-          maxlength="10"
+          maxlength="16"
           placeholder="请输入密码"
           @input="constraintLength(Form.name, '10')"
           type='password'
@@ -144,10 +144,10 @@
           <span>{{ resetForms.name }}</span>
         </el-form-item>
         <el-form-item label="新密码" prop="newPassword">
-          <el-input maxlength="10" clearable style="width:300px" type='password' placeholder="请输入修改后的密码" v-model="resetForms.newPassword "></el-input>
+          <el-input maxlength="16" clearable style="width:300px" type='password' placeholder="请输入修改后的密码" v-model="resetForms.newPassword "></el-input>
         </el-form-item>
         <el-form-item label="确认密码" prop='reNewPassword'>
-          <el-input maxlength="10" clearable style="width:300px" type='password' placeholder="请再次确认密码" v-model="resetForms.reNewPassword "></el-input>
+          <el-input maxlength="16" clearable style="width:300px" type='password' placeholder="请再次确认密码" v-model="resetForms.reNewPassword "></el-input>
         </el-form-item>
 
       </el-form>
@@ -208,7 +208,7 @@ export default class InformIssue extends Vue {
           ],
     password: [
             { required: true, message: '请输入管理员的密码', trigger: 'blur' },
-            { min: 6, max: 10, message: '长度在 8 到 16 个字符', trigger: 'blur' },
+            { min: 8, max: 16, message: '长度在 8 到 16 个字符', trigger: 'blur' },
             {
              trigger: 'blur', validator: (rule, value, callback) => {
                 if (this.passwordDiff(value) !== 2) {
@@ -223,7 +223,7 @@ export default class InformIssue extends Vue {
   resetRules: object = {
     newPassword: [
             { required: true, message: '请输入管理员的密码', trigger: 'blur' },
-            { min: 6, max: 10, message: '长度在 8 到 16 个字符', trigger: 'blur' },
+            { min: 8, max: 16, message: '长度在 8 到 16 个字符', trigger: 'blur' },
             {
              trigger: 'blur', validator: (rule, value, callback) => {
                 if (this.passwordDiff(value) !== 2) {
@@ -236,7 +236,7 @@ export default class InformIssue extends Vue {
           ],
     reNewPassword: [
             { required: true, message: '请确认管理员的密码', trigger: 'blur' },
-            { min: 6, max: 10, message: '长度在 8 到 16 个字符', trigger: 'blur' },
+            { min: 8, max: 16, message: '长度在 8 到 16 个字符', trigger: 'blur' },
             {
              trigger: 'blur', validator: (rule, value, callback) => {
                 if (this.passwordDiff(value) !== 2) {

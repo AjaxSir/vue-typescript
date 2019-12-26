@@ -623,6 +623,7 @@ export default class DataTree extends Vue {
   // }
   // 关闭弹框
   closeDialog() {
+  this.newTagValue = ''
       // 添加分组表单
   this.HouseForm= {
     serialNumber: '', // 序号
@@ -776,7 +777,6 @@ export default class DataTree extends Vue {
   // 查找对应的父级元素 不关闭楼栋分组
   checkParent(treeData: Array<object>, data: object) {
     let flag = false
-    console.log(data, 'back data')
     let dataList: Array<object> = []
     try {
       treeData.forEach(ele => {

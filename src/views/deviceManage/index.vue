@@ -51,16 +51,20 @@
               </template>
             </el-table-column>
 
-            <el-table-column align="center" prop="name" label="设备名字" width="180">
+            <el-table-column :show-overflow-tooltip='true' align="center" prop="name" label="设备名字" width="180">
               <template slot-scope="scope">
                 <el-button @click="showDetails(scope.row)" type="text">{{scope.row.name}}</el-button>
               </template>
             </el-table-column>
-            <el-table-column align="center" prop="serialNumber" label="设备编号" width="90">
+            <el-table-column :show-overflow-tooltip='true' align="center" prop="serialNumber" label="设备编号" width="90">
             </el-table-column>
-            <el-table-column align="center" prop="address" label="单元信息"></el-table-column>
+            <el-table-column :show-overflow-tooltip='true' align="center" prop="address" label="绑定位置">
+              <template slot-scope="{row}">
+                <span> {{ row.address }} - {{ row.subAddress }} </span>
+              </template>
+            </el-table-column>
 
-            <el-table-column align="center" prop="bindingType" label="设备类型">
+            <el-table-column :show-overflow-tooltip='true' align="center" prop="bindingType" label="设备类型">
               <template slot-scope="{row}">
                 <span>{{ row.type | devType }}</span>
                 </template>
@@ -69,7 +73,7 @@
             <el-table-column align="center" :show-overflow-tooltip='true' prop="upTime" label="上线时间" width="160"></el-table-column>
             <el-table-column align="center" :show-overflow-tooltip='true' prop="downTime" label="离线时间" width="160"></el-table-column>
 
-            <el-table-column align="center" prop="note" label="设备说明">
+            <el-table-column :show-overflow-tooltip='true' align="center" prop="note" label="设备说明">
               <template slot-scope="{row}">
                 <span>{{ row.note || '--' }}</span>
                 </template>
@@ -152,7 +156,7 @@
     :close-on-click-modal='false'
       :title="roleTitle==='0' ? '添加设备' : '修改设备'"
       :visible.sync="dialogCreate"
-      width="540px"
+      width="510px"
       :before-close="handleClose"
     >
       <el-form
@@ -164,7 +168,7 @@
 
       >
         <el-form-item class="phone-input" label="设备编号: " prop="serialNumber">
-          <el-input clearable style="width:310px" placeholder="请输入设备编号" v-model="Form.serialNumber"></el-input>
+          <el-input clearable style="width:340px" placeholder="请输入设备编号" v-model="Form.serialNumber"></el-input>
         </el-form-item>
         <el-form-item class="phone-input" label="设备进出: " prop="inOut">
           <el-switch
@@ -178,19 +182,19 @@
           </el-switch>
         </el-form-item>
         <el-form-item class="phone-input" label="设备地址: " prop="address">
-          <el-input clearable @change="getlocLat" placeholder="输入设备所在地址" style="width:310px" v-model="Form.address"></el-input>
-          <el-button @click='mapVisible = true' type='text'>地图选点</el-button>
+          <el-input clearable @change="getlocLat" placeholder="输入设备所在地址" style="width:240px" v-model="Form.address"></el-input>
+          <el-button @click='mapVisible = true'>地图选点</el-button>
         </el-form-item>
 
         <el-form-item class="phone-input" label="绑定位置: " prop="bindingAddress">
-          <el-input clearable style="width:310px" placeholder="点击右方设备绑定选择对应设备" v-model="Form.bindingAddress"></el-input>
-          <el-button type='text' @click='deviceBindBtn'>设备绑定</el-button>
+          <el-input clearable style="width:240px" placeholder="点击右方设备绑定选择对应设备" v-model="Form.bindingAddress"></el-input>
+          <el-button  @click='deviceBindBtn'>设备绑定</el-button>
         </el-form-item>
          <!-- <el-form-item class="phone-input" label="具体位置: " prop="subAddress">
           <el-input clearable style="width:310px" placeholder="例如:楼上/楼下" v-model="Form.subAddress"></el-input>
         </el-form-item> -->
         <el-form-item class="phone-input" label="设备备注: " prop="note">
-          <el-input clearable type='textarea' placeholder="请输入设备备注" style="width:310px" v-model="Form.note"></el-input>
+          <el-input clearable type='textarea' placeholder="请输入设备备注" style="width:340px" v-model="Form.note"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -228,14 +232,6 @@
           align='center'
           label="地址">
         </el-table-column>
-        <!-- <el-table-column
-          prop="locationName"
-          align='center'
-          label="地址">
-          <template slot-scope="{row}">
-            <span>{{ row.locationName || '暂无' }}</span>
-          </template>
-        </el-table-column> -->
         <el-table-column
           prop="note"
           :show-overflow-tooltip='true'
@@ -255,10 +251,6 @@
           </template>
         </el-table-column>
       </el-table>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="deviceBindingVisible = false">取 消</el-button>
-        <el-button type="primary" @click="deviceBindingVisible = false">确 定</el-button>
-      </div>
     </el-dialog>
     <!-- 设备地址选择 -->
     <el-dialog :close-on-click-modal='false' title="选取设备地址" :visible.sync="mapVisible">
@@ -435,9 +427,13 @@ export default class DeviceManage extends Vue {
   deviceBindBtn() {
     this.deviceBindingVisible = true
     this.deviceBindingData.forEach(ele => {
-      ele['bindStatus'] = false
+      if (ele['id'] === this.Form['bindingId']) {
+        this.$set(ele, 'bindStatus', true)
+      } else {
+        ele['bindStatus'] = false
+      }
+
     })
-    this.Form['bindingId'] = ''
   }
   // 绑定设备
   bindDevice(row) {
@@ -450,6 +446,7 @@ export default class DeviceManage extends Vue {
     row.bindStatus = true
     this.Form['bindingId'] = row.id
     this.Form['bindingAddress'] = row.locationName || '暂无'
+    this.deviceBindingVisible = false
   }
   // 获取出入口列表
   fetchInputList() {

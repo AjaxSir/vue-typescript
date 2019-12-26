@@ -206,7 +206,8 @@
             <el-col :span='6'>业主电话: &nbsp;{{ detailDialog.phone || '--' }}</el-col>
           </el-row>
           <div style='margin-top:10px;padding:0px 20px'>
-            备注：<el-input style='' type='textarea' v-model='detailDialog.note'></el-input>
+            备注：<span> {{ detailDialog.note || '暂无' }} </span>
+            <!-- <el-input style='' type='textarea' v-model='detailDialog.note'></el-input> -->
           </div>
 
         </el-tab-pane>
@@ -220,11 +221,11 @@
                 <span>{{ row.type | type }}</span>
               </template>
             </el-table-column>
-            <el-table-column  width="80" align='center' prop="status" label="状态">
+            <!-- <el-table-column  width="80" align='center' prop="status" label="状态">
               <template slot-scope="{row}">
                 <span>{{ row.status | peopleStatus }}</span>
               </template>
-            </el-table-column>
+            </el-table-column> -->
             <el-table-column align='center' :show-overflow-tooltip='true' prop="createTime" label="注册时间"></el-table-column>
             <el-table-column align='center' prop="note" label="备注">
               <template slot-scope="{row}">
@@ -308,11 +309,7 @@ export default class CardManage extends Vue {
   };
   initForm: object = {
     url: '/admin/hsHouse/list',
-    method: 'get',
-    params: {
-      orderColumn: 'serialNumber',
-      asc: true
-    }
+    method: 'get'
   }
   filterForm: object = {
     keys: '',

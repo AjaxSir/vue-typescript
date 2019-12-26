@@ -257,7 +257,8 @@
                 <el-col :span='8' style="height:40px"><span class="right">证件类型: </span>&nbsp;&nbsp;{{ detailDialog.cardName || '--' }}</el-col>
                 <el-col :span='8' style="height:40px"><span class="right">证件号码: </span>&nbsp;&nbsp;{{ detailDialog.cardNo || '暂无' }}</el-col>
                 <el-col :span='24'><span class="right">备注: </span>&nbsp;&nbsp;
-                  <el-input v-model="detailDialog.note" style="width:600px" type='textarea'></el-input>
+                  <!-- <el-input v-model="detailDialog.note" style="width:600px" type='textarea'></el-input> -->
+                  <span>{{ detailDialog.note || '暂无' }}</span>
                 </el-col>
               </el-row>
 
@@ -362,46 +363,33 @@
     <el-dialog :close-on-click-modal='false' title="添加用户" :visible.sync="dialogCreate" width="440px" :before-close="handleClose">
           <el-form class="owner" :model="Form" :rules="rules" style="margin-right:40px" ref='Forms' label-width="85px">
             <el-form-item  label="电话:"  prop='phone'>
-              <!-- <el-input
-                class="phone-position"
-                v-model="Form.phone"
-                placeholder="请输入电话"
-                :maxlength="11"
-                clearable
+              <el-autocomplete
+               clearable
                 @keyup.native="UpNumber"
                 @keydown.native="UpNumber"
                 @change="clearableBtn"
                 @input="hint"
                 @focus="hintFocus"
                 @blur="hintBlur"
+                :maxlength='11'
                 @mouseover.native="hint(Form.phone)"
                 @mouseout.native="hint(Form.phone)"
-              ></el-input> -->
-              <el-select
-                style="width:100%; position: relative;"
                 v-model="Form.phone"
-                filterable
-                remote
-                :remote-method="remoteMethod"
-                :loading="loading"
-                @change="handleSelectWatchlist"
+                style='width:275px'
+                :fetch-suggestions="remoteMethod"
+                placeholder="输入需要添加的住户电话"
+                @select="handleSelectWatchlist"
               >
-                <el-option
-                  v-for="item in phoneList"
-                  :key="item.value"
-                  :label="item.value"
-                  :value="item"
-                >
-                  <span style="float: left">{{ item.value }}</span>
-                  <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span>
-                </el-option>
-              </el-select>
+              <template slot-scope="{ item }">
+              <span style="float: left">{{ item.phone }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span>
+            </template></el-autocomplete>
             </el-form-item>
             <el-form-item label="姓名:"  prop='name'>
               <el-input :disabled="nameDisabled" clearable maxlength="10" v-model="Form.name" placeholder='输入姓名'></el-input>
             </el-form-item>
             <el-form-item label="性别:" prop='sex'>
-              <el-select style="position: relative;left: -6px;width:275px" class="input-filter" size="small" v-model="Form.sex" placeholder="请选择">
+              <el-select :disabled="nameDisabled" style="position: relative;left: -6px;width:275px" class="input-filter" size="small" v-model="Form.sex" placeholder="请选择">
                 <el-option label="请选择" value=""></el-option>
                 <el-option label="男" value="1"></el-option>
                 <el-option label="女" value="0"></el-option>
@@ -409,7 +397,7 @@
             </el-form-item>
 
             <el-form-item label="证件类型:"  label-width="85px"  prop='otherCardName'>
-              <el-select @change='Form.cardNo = ""' style="position: relative;left: -6px;width:275px" class="input-filter" size="small" v-model="Form.otherCardName" placeholder="请选择证件类型">
+              <el-select  :disabled="nameDisabled" @change='Form.cardNo = ""' style="position: relative;left: -6px;width:275px" class="input-filter" size="small" v-model="Form.otherCardName" placeholder="请选择证件类型">
                 <el-option label="身份证" value="身份证"></el-option>
                 <el-option label="护照" value="护照"></el-option>
                 <el-option label="港澳居民来往内地通行证" value="港澳居民来往内地通行证"></el-option>
@@ -417,10 +405,10 @@
               </el-select>
             </el-form-item>
             <el-form-item v-show="Form.otherCardName === '其它'"  label="证件名称:"  prop='cardName'>
-              <el-input maxlength="10" style="width:275px" v-model="Form.cardName" clearable placeholder='输入证件名称'></el-input>
+              <el-input  :disabled="nameDisabled" maxlength="10" style="width:275px" v-model="Form.cardName" clearable placeholder='输入证件名称'></el-input>
             </el-form-item>
             <el-form-item label="证件号码:"  label-width="85px"  prop='cardNo'>
-              <el-input  :maxlength="Form.otherCardName === '身份证' ? '18' : '20'"  clearable  v-model="Form.cardNo" :placeholder='"输入证件号"'></el-input>
+              <el-input  :disabled="nameDisabled" :maxlength="Form.otherCardName === '身份证' ? '18' : '20'"  clearable  v-model="Form.cardNo" :placeholder='"输入证件号"'></el-input>
             </el-form-item>
             <el-form-item label="房屋:" style='clear:both'  prop='houseName'>
               <el-autocomplete
@@ -455,7 +443,7 @@
       </span>
       <!-- 增加房屋时修改房屋 -->
     </el-dialog>
-    <el-dialog :close-on-click-modal='false' width="400px" title="修改房屋" :visible.sync="updateHouseVisible">
+    <el-dialog :close-on-click-modal='false' width="400px" :title="updateHouseForm.buildingName" :visible.sync="updateHouseVisible">
       <el-form :model="updateHouseForm" label-width="80px">
         <el-form-item label="用户类型" >
           <el-select v-model="updateHouseForm.type" placeholder="请选择">
@@ -544,8 +532,8 @@ import mixin from "@/config/minxins";
 import { searchSuggestHouse } from '@/api/houseApi.ts'
 import { getUserPropertyPass, getFaceList } from '@/api/peopleApi.ts'
 import {
-  queryCarPhone //根据手机号模糊查询用户
-} from "@/api/carApi.ts";
+  queryUserPhone //根据手机号模糊查询用户
+} from "@/api/peopleApi.ts";
 import { getUserPropertyCar } from '@/api/carApi.ts'
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 const DiaLog = () => import("@/components/dialog.vue");
@@ -682,41 +670,49 @@ export default class OwnerManage extends Vue {
   created() {
     this.initForm['params'] = Object.assign(this.initForm['params'], this.page, this.filterForm) // 合并参数
   }
-  async remoteMethod(query) {
+  async remoteMethod(query:string, cb) {
     /**@description 根据姓名模糊查询人员 */
-    console.log(query);
     if (query !== "") {
       this.loading = true;
-      setTimeout(() => {
-        if (query.length >= 1) {
-          this.fetchWatchList(query);
+      setTimeout(async () => {
+        if (query.length >= 1 && query.length < 12) {
+          const { data } = await queryUserPhone(query);
+            this.loading = false;
+            this.phoneList = data.data
+            if (!this.phoneList.length) {
+              this.$refs['Forms']['clearValidate']();
+               this.Form['name'] = ''
+                this.Form['sex'] = ''
+                this.Form['otherCardName'] = '身份证'
+                this.Form['cardName'] = ''
+                this.Form['cardNo'] = ''
+                this.nameDisabled = false
+            }
+            cb(this.phoneList)
+        } else {
+
+          cb([])
         }
       }, 200);
     } else {
-      this.phoneList = [];
+      this.$refs['Forms']['resetFields']();
+      cb([])
     }
-  }
-  async fetchWatchList(name) {
-    /**@description 获取 */
-    const { data } = await queryCarPhone(name);
-    this.loading = false;
-    this.phoneList = data.data.map(item => {
-      return {
-        value: item.phone,
-        name: item.name,
-        scenceUserId: item.id
-      };
-    });
   }
   handleSelectWatchlist(item) {
-    this.Form['phone'] = item.value;
-    if (item.name) {
+    const Name = ['身份证', '护照', '港澳居民来往内地通行证']
+    this.Form['phone'] = item.phone;
+    // if (item.name) {
       this.Form['name'] = item.name;
+      this.Form['sex'] = item.sex;
+      this.Form['otherCardName'] = Name.includes(item.cardName) ? item.cardName : '其它'
+      this.Form['cardName'] = item.cardName
+      this.Form['cardNo'] = item.cardNo
       this.nameDisabled = true;
-    } else {
-      this.Form['name'] = '';
-      this.nameDisabled = false;
-    }
+    // } else {
+    //   this.Form['name'] = '';
+    //   this.nameDisabled = false;
+    // }
   }
   closeVisible(flag: boolean) {
     this.visible = flag
@@ -928,13 +924,14 @@ export default class OwnerManage extends Vue {
       overTime: null,
       note: '',
       houseId: '',
-      enableRemoteOpen: '1',
+      enableRemoteOpen: '0',
       enableInviteCar: "0",
       enableInviteVisitor: "0",
     }
     Obj.houseId = val['id']
     Obj.buildingName = val['name']
     this.Form.house.unshift(Obj)
+    this.updateAddHouse(0, Obj)
   }
   // 房屋搜索建议
   querySearch(string: string, cb) {
