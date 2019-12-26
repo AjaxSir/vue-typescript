@@ -13,16 +13,9 @@
           :total="page.total"
         >
           <el-dropdown-menu slot="dropdown">
-            <!-- <el-dropdown-item>
-              <el-upload
-                :action="actionUrl"
-                :show-file-list="false"
-                :on-success="successFile"
-                :on-error="errorFile"
-              >
-                <p>导入</p>
-              </el-upload>
-            </el-dropdown-item>-->
+            <el-dropdown-item>
+              <div @click="showExportIn">导入</div>
+            </el-dropdown-item>
             <el-dropdown-item command="export">导出</el-dropdown-item>
           </el-dropdown-menu>
           <div slot="houseNum">
@@ -538,6 +531,14 @@
       </span>-->
     </el-dialog>
     <!-- <ImageMagni :centerDialogVisible="imgVisible" bigTitle="抓拍图片" :bigImg="bigImg" /> -->
+    <ExportIn
+      uploadUrl="/v1/admin/usr-car/import"
+      downTemplateUrl="/v1/admin/usr-car/exportModel"
+      @closeVisible="closeVisible"
+      TmplateName="车辆导出模板.xlsx"
+      @successUpload="fetchData(initForm)"
+      :visible.sync="visible"
+    />
   </div>
 </template>
 
@@ -556,13 +557,15 @@ import {
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 const ImageMagni = () => import("@/components/BigImg/index.vue");
 const DataTree = () => import("@/components/DataTree.vue");
+const ExportIn = () => import("@/components/exportIn/index.vue");
 
 @Component({
   mixins: [mixin],
   components: {
     ActionHeader,
     ImageMagni,
-    DataTree
+    DataTree,
+    ExportIn
   }
 })
 export default class CarList extends Vue {
@@ -641,6 +644,9 @@ export default class CarList extends Vue {
   private loading: Boolean = false;
   private phoneList: Array<Object> = []; //人员
 
+  visible: boolean = false; // 导入框状态
+  dialogTableVisible: boolean = false; // 导出失败状态
+
   carTypeList: Array<Object> = [
     //车辆类型筛选
     {
@@ -691,6 +697,16 @@ export default class CarList extends Vue {
       this.page,
       this.filterForm
     ); // 合并参数
+  }
+
+  closeVisible(flag: boolean) {
+    /**@description 导出状态 */
+    this.visible = flag;
+  }
+
+  showExportIn() {
+    /**@description 导出状态 */
+    this.visible = true;
   }
 
   verification(queryString) {
