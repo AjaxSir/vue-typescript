@@ -38,7 +38,7 @@
     <el-dialog title="失败详情" width="1000px" :visible.sync="dialogTableVisible">
       <el-table height="300px" border :data="errData">
         <el-table-column
-          v-if="TmplateName!=='车辆导出模板.xlsx'"
+          v-if="TmplateName==='用户导入模板.xlsx'"
           :show-overflow-tooltip="true"
           :key="Math.random()"
           align="center"
@@ -47,7 +47,7 @@
           width="150"
         ></el-table-column>
         <el-table-column
-          v-if="TmplateName!=='车辆导出模板.xlsx'"
+          v-if="TmplateName==='用户导入模板.xlsx'"
           :show-overflow-tooltip="true"
           :key="Math.random()"
           align="center"
@@ -56,7 +56,7 @@
           width="120"
         ></el-table-column>
         <el-table-column
-          v-if="TmplateName!=='车辆导出模板.xlsx'"
+          v-if="TmplateName==='用户导入模板.xlsx'"
           :show-overflow-tooltip="true"
           :key="Math.random()"
           align="center"
@@ -65,7 +65,7 @@
           label="有效时间"
         ></el-table-column>
         <el-table-column
-          v-if="TmplateName!=='车辆导出模板.xlsx'"
+          v-if="TmplateName==='用户导入模板.xlsx'"
           :show-overflow-tooltip="true"
           :key="Math.random()"
           align="center"
@@ -74,7 +74,7 @@
           label="房屋编号"
         ></el-table-column>
         <el-table-column
-          v-if="TmplateName!=='车辆导出模板.xlsx'"
+          v-if="TmplateName==='用户导入模板.xlsx'"
           :show-overflow-tooltip="true"
           :key="Math.random()"
           align="center"
@@ -139,15 +139,145 @@
           property="note"
           label="备注"
         ></el-table-column>
-
         <el-table-column
-          v-if="TmplateName==='车辆导出模板.xlsx'"
+          v-if="TmplateName!=='车位导出模板.xlsx'"
           :show-overflow-tooltip="true"
           :key="Math.random()"
           align="center"
           property="caseFail"
           label="失败原因"
         ></el-table-column>
+        <el-table-column
+          v-if="TmplateName!=='车位导出模板.xlsx'"
+          :show-overflow-tooltip="true"
+          :key="Math.random()"
+          align="center"
+          property="caseFail"
+          label="错误定位"
+        >
+          <template slot-scope="{row}">
+            <span>第 {{row.index}} 行</span>
+          </template>
+        </el-table-column>
+
+        <!-- <el-table-column
+          v-if="TmplateName==='车位导出模板.xlsx'"
+          :show-overflow-tooltip="true"
+          :key="Math.random()"
+          align="center"
+          property="note"
+          label="所属分组"
+        ></el-table-column>-->
+
+        <!-- <el-table-column
+          v-if="TmplateName==='车位导出模板.xlsx'"
+          :show-overflow-tooltip="true"
+          :key="Math.random()"
+          align="center"
+          property="note"
+          label="编号"
+        ></el-table-column>-->
+        <el-table-column
+          v-if="TmplateName==='车位导出模板.xlsx'"
+          :show-overflow-tooltip="true"
+          :key="Math.random()"
+          align="center"
+          property="note"
+          label="绑定车辆"
+        >
+          <template slot-scope="{row}">
+            <span v-for="item in row.carSpaceCarVos" :key="item.carId">{{item.carNo}}</span>
+          </template>
+        </el-table-column>
+
+        <el-table-column
+          v-if="TmplateName==='车位导出模板.xlsx'"
+          :show-overflow-tooltip="true"
+          :key="Math.random()"
+          align="center"
+          property="status"
+          label="状态"
+        ></el-table-column>
+
+        <el-table-column
+          v-if="TmplateName==='车位导出模板.xlsx'"
+          :show-overflow-tooltip="true"
+          :key="Math.random()"
+          align="center"
+          property="ownerName"
+          label="业主姓名"
+        ></el-table-column>
+
+        <!-- <el-table-column
+          v-if="TmplateName==='车位导出模板.xlsx'"
+          :show-overflow-tooltip="true"
+          :key="Math.random()"
+          align="center"
+          property="note"
+          label="业主电话"
+        ></el-table-column>-->
+
+        <!-- <el-table-column
+          v-if="TmplateName==='车位导出模板.xlsx'"
+          :show-overflow-tooltip="true"
+          :key="Math.random()"
+          align="center"
+          property="note"
+          label="车位类型"
+        ></el-table-column>-->
+
+        <!-- <el-table-column
+          v-if="TmplateName==='车位导出模板.xlsx'"
+          :show-overflow-tooltip="true"
+          :key="Math.random()"
+          align="center"
+          property="note"
+          label="车主姓名"
+        ></el-table-column>-->
+
+        <!-- <el-table-column
+          v-if="TmplateName==='车位导出模板.xlsx'"
+          :show-overflow-tooltip="true"
+          :key="Math.random()"
+          align="center"
+          property="note"
+          label="车主电话"
+        ></el-table-column>-->
+
+        <!-- <el-table-column
+          v-if="TmplateName==='车位导出模板.xlsx'"
+          :show-overflow-tooltip="true"
+          :key="Math.random()"
+          align="center"
+          property="note"
+          label="备注"
+        ></el-table-column>-->
+
+        <el-table-column
+          v-if="TmplateName==='车位导出模板.xlsx'"
+          :show-overflow-tooltip="true"
+          :key="Math.random()"
+          align="center"
+          property="caseFail"
+          label="失败原因"
+        >
+          <template slot-scope="{row}">
+            <span v-for="(item,index) in row.errMsg" :key="'caseFail' + index">{{item}}</span>
+          </template>
+        </el-table-column>
+
+        <el-table-column
+          v-if="TmplateName==='车位导出模板.xlsx'"
+          :show-overflow-tooltip="true"
+          :key="Math.random()"
+          align="center"
+          property="caseFail"
+          label="错误定位"
+        >
+          <template slot-scope="{row}">
+            <span>第 {{row.rowIndex}} 行</span>
+          </template>
+        </el-table-column>
       </el-table>
     </el-dialog>
   </div>
