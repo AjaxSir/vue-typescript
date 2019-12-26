@@ -10,6 +10,18 @@ export function peoplePassList() {
     }
   })
 }
+
+//通过电话查看用户信息
+export function queryUserPhone(phone: string) {
+  return _axios({
+    url: '/admin/usrUser/byPhone',
+    method: 'put',
+    params: {
+      phone
+    }
+  })
+}
+
 /***** 物业/用户 禁用恢复 ****** */
 export function resetDisabledUser(status: string, id: string) {
   return _axios({
