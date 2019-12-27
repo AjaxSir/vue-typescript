@@ -381,7 +381,7 @@
         <el-button type="primary" @click="detailDialogVisible = false">确 定</el-button>
       </span>-->
     </el-dialog>
-    <!-- <ImageMagni :centerDialogVisible="imgVisible" bigTitle="抓拍图片" :bigImg="bigImg" /> -->
+    <ImageMagni :centerDialogVisible="imgVisible" bigTitle="抓拍图片" :bigImg="bigImg" />
     <StatisticDataDialog :formShowStatistic.sync="dialogStatisticData" :fromTitle="fromTitle" />
   </div>
 </template>
