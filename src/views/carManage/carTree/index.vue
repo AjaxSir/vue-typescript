@@ -162,11 +162,11 @@
             label-position="right"
             style="margin:20px 40px 0 0;"
           >
-            <el-form-item label="别名:" prop="name">
+            <el-form-item label="名称:" prop="name">
               <el-input
                 clearable
                 maxlength="10"
-                placeholder="填写分组的别名"
+                placeholder="填写分组的名称"
                 v-model="HouseForm.name"
                 autocomplete="off"
               ></el-input>
@@ -193,11 +193,11 @@
         label-position="right"
         style="margin:20px 40px 0 0;"
       >
-        <el-form-item label="别名:" prop="name" label-width="85px">
+        <el-form-item label="名称:" prop="name" label-width="85px">
           <el-input
             clearable
             maxlength="15"
-            placeholder="填写分组的别名"
+            placeholder="填写分组的名称"
             v-model="HouseForm.name"
             autocomplete="off"
           ></el-input>
@@ -300,8 +300,8 @@ export default class DataTree extends Vue {
   // 分组校验规则
   HouseRules: Object = {
     name: [
-      { required: true, message: "请输入别名", trigger: "blur" },
-      { min: 1, max: 15, message: "别名长度应在1到15位" }
+      { required: true, message: "请输入名称", trigger: "blur" },
+      { min: 1, max: 15, message: "名称长度应在1到15位" }
     ]
   };
   batchRules: object = {
@@ -387,7 +387,7 @@ export default class DataTree extends Vue {
   //     });
   //   });
   // }
-  // 自动补充别名
+  // 自动补充名称
   // autoName() {
   //   this.HouseForm['name'] = this.HouseForm['serialNumber'] + this.HouseForm['serialNumberUnit']
   // }
