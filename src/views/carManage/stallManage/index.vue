@@ -167,9 +167,22 @@
             <el-table-column prop="carNo" align="center" label="绑定车辆" :show-overflow-tooltip="true">
               <template slot-scope="scope">
                 <el-button @click="showHouseDetails(scope.row,'second')" type="text">
-                  <span
-                    style="margin-right:5px;"
-                  >{{ scope.row.carSpaceVos && scope.row.carSpaceVos.length > 0 ? scope.row.carSpaceVos[0].carNo : '--' }}</span>
+                  <div
+                    style="width: 100px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"
+                    v-if="scope.row.carSpaceVos && scope.row.carSpaceVos.length > 0"
+                  >
+                    <span
+                      v-for="(item,index) in scope.row.carSpaceVos"
+                      :key="'carSpaceVos' + index"
+                    >
+                      {{item.carNo}}
+                      <span
+                        v-if="scope.row.carSpaceVos && scope.row.carSpaceVos.length > 1"
+                      >,</span>
+                    </span>
+                  </div>
+
+                  <span v-else>--</span>
                 </el-button>
               </template>
             </el-table-column>
@@ -180,7 +193,7 @@
                   class="rowUpdate"
                   v-show="!scope.row.noteStatus"
                   @click="focusNoteInput(scope.row)"
-                >{{ scope.row.note || '点击编辑' }}</span>
+                >{{ scope.row.note || '--' }}</span>
                 <el-input
                   size="mini"
                   :ref="scope.row.id"
