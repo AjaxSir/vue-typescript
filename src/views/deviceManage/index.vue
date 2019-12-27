@@ -132,9 +132,9 @@
         <el-tab-pane v-if='detailDialogForm.type === "1" || detailDialogForm.type === "2"' label="门禁记录" name="second">
           <el-table :data="doorRecordTable" style="width: 100%">
             <el-table-column align="center" prop="name" label="姓名" width="150px"></el-table-column>
-            <el-table-column align="center" prop="passTime" label="通行时间" width="150px"></el-table-column>
-            <el-table-column align="center" :show-overflow-tooltip='true' prop="devAddress" label="通行地址"></el-table-column>
-            <el-table-column align="center" prop="devAddress" label="是否访客">
+            <el-table-column :show-overflow-tooltip='true' align="center" prop="passTime" label="通行时间" width="150px"></el-table-column>
+            <el-table-column :show-overflow-tooltip='true' align="center" prop="devAddress" label="通行地址"></el-table-column>
+            <el-table-column :show-overflow-tooltip='true' align="center" prop="devAddress" label="是否访客">
               <template slot-scope="{row}">
                <span>{{ row.isVisitor ? '否' : '是' }}</span></template>
             </el-table-column>
@@ -168,9 +168,10 @@
 
       >
         <el-form-item class="phone-input" label="设备编号: " prop="serialNumber">
-          <el-input clearable style="width:340px" placeholder="请输入设备编号" v-model="Form.serialNumber"></el-input>
+          <el-input @input='checkDevice' clearable style="width:340px" placeholder="请输入设备编号" v-model="Form.serialNumber"></el-input>
+          <h5 style="height:20px">此设备编号对应的是{{ deviceType | devType }}设备</h5>
         </el-form-item>
-        <el-form-item class="phone-input" label="设备进出: " prop="inOut">
+        <el-form-item v-if='deviceType === "1" || deviceType === "2"' class="phone-input" label="设备进出: " prop="inOut">
           <el-switch
             v-model="Form.inOut"
             active-text="进"
@@ -228,7 +229,8 @@
           width="50">
         </el-table-column>
         <el-table-column
-          prop="name"
+        :show-overflow-tooltip='true'
+          prop="locationName"
           align='center'
           label="地址">
         </el-table-column>
@@ -268,7 +270,7 @@
 import { Component, Prop, Vue, Mixins } from "vue-property-decorator";
 import { Getter, Action, Mutation } from "vuex-class";
 import mixin from "@/config/minxins";
-import { createDevice } from '@/api/deviceApi.ts'
+import { createDevice, checkdeviceByNum } from '@/api/deviceApi.ts'
 import { debounce } from '@/utils'
 import axios from 'axios'
 import { searchHouse, getInoutList } from '@/api/houseApi.ts'
@@ -290,7 +292,7 @@ const BaiduMap = () => import('@/components/baiduMap/index.vue')
         "3": '注册机',
         "4": '访客机',
       }
-      return data[val]
+      return data[val] || '无'
     }
   }
 })
@@ -332,6 +334,7 @@ export default class DeviceManage extends Vue {
     serialNumber: '',
     subAddress: ''
   };
+  deviceType: string = '' // 设备类型
   deviceBindingVisible: boolean = false // 设备绑定dialog状态
   deviceBindingData: Array<Object> = [
   ]
@@ -351,6 +354,13 @@ export default class DeviceManage extends Vue {
       //     ]
     }
   deviceId: string = ''
+  checkDevice(e) {
+    checkdeviceByNum(e).then(res => {
+      this.deviceType = res.data.data
+    }).catch(() => {
+      this.deviceType = ''
+    })
+  }
   created() {
     this.fetchBuilding()
     this.initForm['params'] = Object.assign(this.initForm['params'], this.page, this.filterForm) // 合并参数

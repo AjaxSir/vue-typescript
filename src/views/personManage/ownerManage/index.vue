@@ -28,72 +28,47 @@
               @keyup.enter.native="emitFetchData"  class="input-filter" v-model="filterForm.key" size="small"></el-input>
             </div>-->
             <div class="word-filter">
-              <span class="filter-name">姓&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;名:</span>
-              <el-input
-                clearable
-                placeholder="请输入需要查找的姓名"
-                @keyup.enter.native="emitFetchData"
-                class="input-filter"
-                v-model="filterForm.name"
-                size="small"
-              ></el-input>
+              <span class="filter-name">姓&nbsp;&nbsp;&nbsp;名:</span>
+              <el-input  clearable  
+              placeholder="请输入需要查找的姓名"
+              @keyup.enter.native="emitFetchData" class="input-filter" v-model="filterForm.name" size="small"></el-input>
             </div>
             <div class="word-filter">
-              <span class="filter-name">手&nbsp;&nbsp;机&nbsp;&nbsp;号:</span>
-              <el-input
-                clearable
-                placeholder="请输入需要查找的手机号"
-                @keyup.enter.native="emitFetchData"
-                class="input-filter"
-                v-model="filterForm.phone"
-                size="small"
-              ></el-input>
+              <span class="filter-name">手机号:</span>
+              <el-input clearable  
+              placeholder="请输入需要查找的手机号"
+              @keyup.enter.native="emitFetchData"  class="input-filter" v-model="filterForm.phone" size="small"></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">证件号码:</span>
-              <el-input
-                clearable
-                placeholder="请输入需要查找的姓名"
-                @keyup.enter.native="emitFetchData"
-                class="input-filter"
-                v-model="filterForm.cardNo"
-                size="small"
-              ></el-input>
+              <el-input  clearable  
+              placeholder="请输入需要查找的姓名"
+              @keyup.enter.native="emitFetchData"  class="input-filter" v-model="filterForm.cardNo" size="small"></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">房屋编号:</span>
-              <el-input
-                clearable
-                placeholder="请输入需要查找的手机号"
-                @keyup.enter.native="emitFetchData"
-                class="input-filter"
-                v-model="filterForm.key"
-                size="small"
-              ></el-input>
+              <el-input clearable  
+              placeholder="请输入需要查找的手机号"
+              @keyup.enter.native="emitFetchData"  class="input-filter" v-model="filterForm.key" size="small"></el-input>
             </div>
             <div class="word-filter">
-              <span class="filter-name filter-rewrite">住户类型:</span>
-              <el-select
-                class="select-class"
-                size="small"
-                v-model="filterForm.type"
-                placeholder="请选择"
-              >
-                <el-option label="全部" value></el-option>
+              <span class="filter-name">住户类型:</span> &nbsp;&nbsp;
+              <el-select multiple class="select-class" size="small" v-model="filterForm.types" placeholder="请选择">
+                <!-- <el-option label="全部" value=""></el-option> -->
                 <el-option label="业主" value="1"></el-option>
                 <el-option label="租户" value="2"></el-option>
                 <el-option label="成员" value="3"></el-option>
               </el-select>
             </div>
-            <!-- <div class="word-filter">
-              <span class="filter-name">房屋状态:</span>
-              <el-select class="input-filter" size="small" v-model="filterForm.type" placeholder="请选择">
-                <el-option label="全部" value=""></el-option>
+            <div class="word-filter">
+              <span class="filter-name">房屋状态:</span> &nbsp;&nbsp;
+              <el-select multiple class="select-class" size="small" v-model="filterForm.status" placeholder="请选择">
                 <el-option label="在住" value="0"></el-option>
                 <el-option label="不在住" value="-1"></el-option>
                 <el-option label="过期" value="-2"></el-option>
               </el-select>
-            </div>-->
+            </div>
+
           </div>
         </ActionHeader>
       </el-col>
@@ -672,7 +647,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose">取 消</el-button>
-        <el-button type="primary" @click="addUserConfirm">确 定</el-button>
+        <el-button type="primary" :loading="btnLoading" @click="addUserConfirm">确 定</el-button>
       </span>
       <!-- 增加房屋时修改房屋 -->
     </el-dialog>
@@ -814,6 +789,7 @@ const ExportIn = () => import("@/components/exportIn/index.vue");
   }
 })
 export default class OwnerManage extends Vue {
+  btnLoading: boolean = false
   private activeName: string = "first";
   private dialogFormVisible: boolean = false;
   UserType: string = "owner";
@@ -850,12 +826,13 @@ export default class OwnerManage extends Vue {
     method: "get"
   };
   filterForm: object = {
-    name: "",
-    phone: "",
-    key: "",
-    type: "",
-    cardNo: ""
-  };
+    name: '',
+    phone: '',
+    key: '',
+    types: [],
+    cardNo: '',
+    status: []
+  }
   deleteForm: object = {
     url: "/admin/usrUser",
     method: "delete",
@@ -1058,25 +1035,30 @@ export default class OwnerManage extends Vue {
   }
   // 确定添加住户
   addUserConfirm() {
-    if (this.Form.otherCardName !== "其它") {
-      this.Form.cardName = this.Form.otherCardName;
+    this.btnLoading = true
+    if (this.Form.otherCardName !== '其它') {
+      this.Form.cardName = this.Form.otherCardName
     }
 
-    this.$refs["Forms"]["validate"](valid => {
-      if (valid) {
-        if (!this.Form["house"].length) {
-          this.$message.error("未选择房屋");
-          return;
+    this.$refs['Forms']['validate']((valid) => {
+      if(valid) {
+        if (!this.Form['house'].length) {
+          this.btnLoading = false
+          this.$message.error('未选择房屋')
+          return
         }
         addPeople(this.Form).then(res => {
-          if (res.data.code === 200) {
-            this.$message.success("添加成功");
-            this["dialogCreate"] = false;
-            this.Form["house"] = [];
-            this["handleClose"]();
-            this.fetchData(this.initForm);
+          if(res.data.code === 200) {
+            this.$message.success('添加成功')
+            this['dialogCreate'] = false
+            this.Form['house'] = []
+            this['handleClose']()
+            this.fetchData(this.initForm)
+            this.btnLoading = false
           }
-        });
+        })
+      } else {
+        this.btnLoading = false
       }
     });
   }

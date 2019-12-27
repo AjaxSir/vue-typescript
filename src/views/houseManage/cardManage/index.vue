@@ -21,35 +21,18 @@
           <div slot="houseNum">
             <div class="word-filter">
               <span class="filter-name">关联房屋:</span>
-              <el-input
-                clearable
-                @keyup.enter.native="emitFetchData"
-                class="input-filter"
-                placeholder="请输入关联房屋查找"
-                v-model="filterForm.houseName"
-                size="small"
-              ></el-input>
+              <el-input clearable
+              @keyup.enter.native="emitFetchData"   class="input-filter" placeholder="请输入关联房屋查找" v-model='filterForm.houseName' size="small"></el-input>
             </div>
             <div class="word-filter">
-              <span class="filter-name">卡号:</span>
-              <el-input
-                clearable
-                @keyup.enter.native="emitFetchData"
-                class="input-filter"
-                placeholder="请输入卡号查找"
-                v-model="filterForm.cardNo"
-                size="small"
-              ></el-input>
+              <span class="filter-name">门禁卡号:</span>
+              <el-input clearable
+              @keyup.enter.native="emitFetchData"  class="input-filter" placeholder="请输入卡号查找" v-model='filterForm.cardNo' size="small"></el-input>
             </div>
-            <div class="word-filter">
-              <span class="filter-name filter-rewrite">状态:</span>
-              <el-select
-                class="select-class"
-                size="small"
-                v-model="filterForm.status"
-                placeholder="请选择"
-              >
-                <el-option label="全部" value></el-option>
+             <div class="word-filter">
+              <span class="filter-name">状态:</span> &nbsp;&nbsp;
+              <el-select multiple class="select-class" size="small" v-model="filterForm.status" placeholder="请选择">
+                <!-- <el-option label="全部" value=""></el-option> -->
                 <el-option label="正常" value="0"></el-option>
                 <el-option label="过期" value="-1"></el-option>
                 <el-option label="禁用" value="-2"></el-option>
@@ -290,13 +273,12 @@
       </span>
     </el-dialog>
     <ExportIn
-      uploadUrl="/v1/admin/hsDoorCard/import"
-      downTemplateUrl="/v1/admin/hsDoorCard/model"
-      @closeVisible="closeVisible"
-      TmplateName="门禁卡导出模板.xlsx"
-      @successUpload="fetchData(initForm)"
-      :visible.sync="visible"
-    />
+    uploadUrl='/v1/admin/hsDoorCard/import'
+    downTemplateUrl='/v1/admin/hsDoorCard/model'
+    @closeVisible='closeVisible'
+    TmplateName='门禁卡导入模板.xlsx'
+    @successUpload='fetchData(initForm)'
+    :visible.sync='visible' />
   </div>
 </template>
 
@@ -346,10 +328,10 @@ export default class CardManage extends Vue {
     //查看目标详情
   };
   filterForm: Object = {
-    houseName: "",
-    cardNo: "",
-    status: ""
-  };
+    houseName: '',
+    cardNo: '',
+    status: []
+  }
   initForm: Object = {
     url: "admin/hsDoorCard/list",
     method: "get"

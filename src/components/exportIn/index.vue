@@ -16,18 +16,21 @@
       <el-upload
         class="upload-demo color"
         style="display:inline-block;margin-right:5px"
-        accept=".xlsx"
-        :show-file-list="true"
+        :show-file-list="false"
         :on-error="errorUpload"
         :on-success="successUpload"
         :multiple="false"
         :action="uploadUrl"
+        accept=".xlsx"
         :on-change="changeFile"
         ref="upload"
         :auto-upload="false"
       >
+
         <i class="el-icon-plus"></i>
+
         添加文件
+        <h4>{{ fileName }}</h4>
       </el-upload>
       <h4>目前仅支持*.xlsx</h4>
       <!-- <h4>已选文件:{{fileName}}</h4> -->
@@ -43,12 +46,58 @@
           :show-overflow-tooltip="true"
           :key="Math.random()"
           align="center"
+          property="name"
+          label="姓名"
+          width="150"
+        ></el-table-column>
+        <el-table-column
+          v-if="TmplateName==='用户导入模板.xlsx'"
+          :show-overflow-tooltip="true"
+          :key="Math.random()"
+          align="center"
+          property="phone"
+          label="电话"
+          width="150"
+        ></el-table-column>
+        <el-table-column
+          v-if="TmplateName==='用户导入模板.xlsx'"
+          :show-overflow-tooltip="true"
+          :key="Math.random()"
+          align="center"
+          property="sex"
+          label="性别"
+          width="50"
+        >
+        </el-table-column>
+        <el-table-column
+          v-if="TmplateName==='用户导入模板.xlsx'"
+          :show-overflow-tooltip="true"
+          :key="Math.random()"
+          align="center"
+          property="carNo"
+          label="车牌"
+          width="150"
+        ></el-table-column>
+        <el-table-column
+          v-if="TmplateName==='用户导入模板.xlsx'"
+          :show-overflow-tooltip="true"
+          :key="Math.random()"
+          align="center"
+          property="note"
+          label="备注"
+          width="150"
+        ></el-table-column>
+        <el-table-column
+          v-if="TmplateName==='门禁卡导入模板.xlsx'"
+          :show-overflow-tooltip="true"
+          :key="Math.random()"
+          align="center"
           property="buildingName"
           label="单元名称"
           width="150"
         ></el-table-column>
         <el-table-column
-          v-if="TmplateName==='用户导入模板.xlsx'"
+          v-if="TmplateName==='门禁卡导入模板.xlsx'"
           :show-overflow-tooltip="true"
           :key="Math.random()"
           align="center"
@@ -57,7 +106,7 @@
           width="120"
         ></el-table-column>
         <el-table-column
-          v-if="TmplateName==='用户导入模板.xlsx'"
+          v-if="TmplateName==='门禁卡导入模板.xlsx'"
           :show-overflow-tooltip="true"
           :key="Math.random()"
           align="center"
@@ -66,7 +115,7 @@
           label="有效时间"
         ></el-table-column>
         <el-table-column
-          v-if="TmplateName==='用户导入模板.xlsx'"
+          v-if="TmplateName==='门禁卡导入模板.xlsx'"
           :show-overflow-tooltip="true"
           :key="Math.random()"
           align="center"
@@ -75,7 +124,7 @@
           label="房屋编号"
         ></el-table-column>
         <el-table-column
-          v-if="TmplateName==='用户导入模板.xlsx'"
+          v-if="TmplateName==='门禁卡导入模板.xlsx'"
           :show-overflow-tooltip="true"
           :key="Math.random()"
           align="center"
@@ -147,7 +196,10 @@
           align="center"
           property="caseFail"
           label="失败原因"
-        ></el-table-column>
+        >
+         <template slot-scope="{row}">
+            <span v-for="(item,index) in row.caseFail" :key="'caseFail' + index">{{item}}</span>
+          </template></el-table-column>
         <el-table-column
           v-if="TmplateName!=='车位导出模板.xlsx'"
           :show-overflow-tooltip="true"
@@ -160,24 +212,6 @@
             <span>第 {{row.index}} 行</span>
           </template>
         </el-table-column>
-
-        <!-- <el-table-column
-          v-if="TmplateName==='车位导出模板.xlsx'"
-          :show-overflow-tooltip="true"
-          :key="Math.random()"
-          align="center"
-          property="note"
-          label="所属分组"
-        ></el-table-column>-->
-
-        <!-- <el-table-column
-          v-if="TmplateName==='车位导出模板.xlsx'"
-          :show-overflow-tooltip="true"
-          :key="Math.random()"
-          align="center"
-          property="note"
-          label="编号"
-        ></el-table-column>-->
         <el-table-column
           v-if="TmplateName==='车位导出模板.xlsx'"
           :show-overflow-tooltip="true"
@@ -208,52 +242,6 @@
           property="ownerName"
           label="业主姓名"
         ></el-table-column>
-
-        <!-- <el-table-column
-          v-if="TmplateName==='车位导出模板.xlsx'"
-          :show-overflow-tooltip="true"
-          :key="Math.random()"
-          align="center"
-          property="note"
-          label="业主电话"
-        ></el-table-column>-->
-
-        <!-- <el-table-column
-          v-if="TmplateName==='车位导出模板.xlsx'"
-          :show-overflow-tooltip="true"
-          :key="Math.random()"
-          align="center"
-          property="note"
-          label="车位类型"
-        ></el-table-column>-->
-
-        <!-- <el-table-column
-          v-if="TmplateName==='车位导出模板.xlsx'"
-          :show-overflow-tooltip="true"
-          :key="Math.random()"
-          align="center"
-          property="note"
-          label="车主姓名"
-        ></el-table-column>-->
-
-        <!-- <el-table-column
-          v-if="TmplateName==='车位导出模板.xlsx'"
-          :show-overflow-tooltip="true"
-          :key="Math.random()"
-          align="center"
-          property="note"
-          label="车主电话"
-        ></el-table-column>-->
-
-        <!-- <el-table-column
-          v-if="TmplateName==='车位导出模板.xlsx'"
-          :show-overflow-tooltip="true"
-          :key="Math.random()"
-          align="center"
-          property="note"
-          label="备注"
-        ></el-table-column>-->
-
         <el-table-column
           v-if="TmplateName==='车位导出模板.xlsx'"
           :show-overflow-tooltip="true"
@@ -311,7 +299,6 @@ export default class ExportIn extends Vue {
   }
 
   changeFile(file) {
-    console.log(file);
     this.fileName = file.name;
   }
 

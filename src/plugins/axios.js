@@ -6,6 +6,7 @@ import store from '../store/index.ts'
 import { MessageBox, Message } from 'element-ui';
 import { getToken, removeToken } from '@/utils/auth'
 import Cookie from 'js-cookie'
+import qs from 'qs'
 // Full config:  https://github.com/axios/axios#request-config
 
 export const serverURL = process.env.NODE_ENV === 'development' ? '/v1' : process.env.NODE_ENV === 'test' ? '/v1' : 'http://47.103.184.184'
@@ -26,6 +27,11 @@ _axios.interceptors.request.use(
     if (getToken()) {
           config.headers['token'] = getToken()
         }
+      if(config.method === 'get'){
+        config.paramsSerializer = function(params) {
+            return qs.stringify(params, {arrayFormat: 'repeat'})
+        }
+      }
     return config;
   },
   function(error) {
@@ -41,7 +47,8 @@ _axios.interceptors.response.use(
           return response
       case 400:
           if (!Cookie.get('error')) {
-            Cookie.set('error', Date.now(), { expires: new Date(new Date().getTime() + 3 * 1000) }) // 五秒钟内不会重复出现提示框
+            Cookie.set('error', Date.now(), { expires: new Date(new Date().getTime() + 5 * 1000) }) // 五秒钟内不会重复出现提示框
+            console.log(Cookie.get('error'))
             Message({
               type: 'warning',
               message: response.data.message
@@ -50,13 +57,12 @@ _axios.interceptors.response.use(
           break
       case 500:
           if (!Cookie.get('error')) {
-            Cookie.set('error', Date.now(), { expires: new Date(new Date().getTime() + 3 * 1000) }) // 五秒钟内不会重复出现提示框
+            Cookie.set('error', Date.now(), { expires: new Date(new Date().getTime() + 5 * 1000) }) // 五秒钟内不会重复出现提示框
             Message({
               type: 'warning',
               message: '服务器出错!'
             });
           }
-
           break
     }
   },
@@ -77,10 +83,13 @@ _axios.interceptors.response.use(
         location.reload()
       })
     }else{
-      Message({
-        type: 'warning',
-        message: `请求出错! ${data.message}`
-      });
+      if (!Cookie.get('error')) {
+        Cookie.set('error', Date.now(), { expires: new Date(new Date().getTime() + 3 * 1000) }) // 五秒钟内不会重复出现提示框
+        Message({
+          type: 'warning',
+          message: data.message
+        });
+      }
     }
     return Promise.reject(error);
   },

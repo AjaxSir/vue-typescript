@@ -18,58 +18,33 @@
           </el-dropdown-menu>
           <div slot="houseNum">
             <div class="word-filter">
-              <span class="filter-name">用户姓名:</span>
-              <el-input
-                clearable
-                @keyup.enter.native="emitFetchData"
-                class="input-filter"
-                v-model="filterForm.userName"
-                placeholder="输入用户姓名"
-                size="small"
-              ></el-input>
+              <span class="filter-name">姓名:</span>
+              <el-input clearable
+              @keyup.enter.native="emitFetchData"
+              class="input-filter" v-model="filterForm.userName" placeholder='输入用户姓名' size="small"></el-input>
             </div>
             <div class="word-filter">
-              <span class="filter-name">用户电话:</span>
-              <el-input
-                clearable
-                @keyup.enter.native="emitFetchData"
-                class="input-filter"
-                v-model="filterForm.phone"
-                placeholder="输入用户电话"
-                size="small"
-              ></el-input>
+              <span class="filter-name">电话:</span>
+              <el-input clearable
+              @keyup.enter.native="emitFetchData"
+               class="input-filter" v-model="filterForm.phone" placeholder='输入用户电话' size="small"></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">证件号码:</span>
-              <el-input
-                clearable
-                @keyup.enter.native="emitFetchData"
-                class="input-filter"
-                v-model="filterForm.cardNo"
-                placeholder="输入用户证件号"
-                size="small"
-              ></el-input>
+              <el-input clearable
+              @keyup.enter.native="emitFetchData"
+               class="input-filter" v-model="filterForm.cardNo" placeholder='输入用户证件号' size="small"></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">房屋编号:</span>
-              <el-input
-                clearable
-                @keyup.enter.native="emitFetchData"
-                class="input-filter"
-                v-model="filterForm.keys"
-                placeholder="输入房屋编号"
-                size="small"
-              ></el-input>
+              <el-input clearable
+              @keyup.enter.native="emitFetchData"
+               class="input-filter" v-model="filterForm.keys" placeholder='输入房屋编号' size="small"></el-input>
             </div>
             <div class="word-filter">
-              <span class="filter-name filter-rewrite">房屋状态:</span>
-              <el-select
-                class="select-class"
-                size="small"
-                v-model="filterForm.status"
-                placeholder="请选择房屋状态筛选"
-              >
-                <el-option label="所有" value></el-option>
+              <span class="filter-name">房屋状态:</span> &nbsp;&nbsp;
+              <el-select multiple class="select-class " size="small" v-model="filterForm.status" placeholder="请选择房屋状态筛选">
+                <!-- <el-option label="所有" value=""></el-option> -->
                 <el-option label="业主居住" value="1"></el-option>
                 <el-option label="出租中" value="2"></el-option>
                 <!-- <el-option label="待售中" value="3"></el-option>
@@ -441,13 +416,13 @@ export default class CardManage extends Vue {
     method: "get"
   };
   filterForm: object = {
-    keys: "",
-    status: "",
-    buildingId: "",
-    userName: "",
-    cardNo: "",
-    phone: ""
-  };
+    keys: '',
+    status: [],
+    buildingId: '',
+    userName: '',
+    cardNo: '',
+    phone: ''
+  }
   deleteForm: object = {
     url: "/admin/hsHouse",
     method: "delete",
