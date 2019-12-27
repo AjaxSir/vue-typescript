@@ -27,7 +27,7 @@
             @cell-mouse-enter="enterRowChange"
             @cell-mouse-leave="leaveRowChange"
           >
-            <el-table-column type="selection" width="50" :selectable="isDisabled" disabled="true"></el-table-column>
+            <el-table-column v-if="globalUpdateStatus" type="selection" width="50" :selectable="isDisabled" disabled="true"></el-table-column>
 
             <el-table-column type="index" label="序号" width="50"></el-table-column>
 
