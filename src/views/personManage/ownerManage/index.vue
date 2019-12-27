@@ -826,7 +826,6 @@ export default class OwnerManage extends Vue {
     method: "get"
   };
   filterForm: object = {
-<<<<<<< HEAD
     name: '',
     phone: '',
     key: '',
@@ -834,14 +833,6 @@ export default class OwnerManage extends Vue {
     cardNo: '',
     status: []
   }
-=======
-    name: "",
-    phone: "",
-    key: "",
-    type: "",
-    cardNo: ""
-  };
->>>>>>> master
   deleteForm: object = {
     url: "/admin/usrUser",
     method: "delete",
@@ -1044,7 +1035,6 @@ export default class OwnerManage extends Vue {
   }
   // 确定添加住户
   addUserConfirm() {
-<<<<<<< HEAD
     this.btnLoading = true
     if (this.Form.otherCardName !== '其它') {
       this.Form.cardName = this.Form.otherCardName
@@ -1069,27 +1059,6 @@ export default class OwnerManage extends Vue {
         })
       } else {
         this.btnLoading = false
-=======
-    if (this.Form.otherCardName !== "其它") {
-      this.Form.cardName = this.Form.otherCardName;
-    }
-
-    this.$refs["Forms"]["validate"](valid => {
-      if (valid) {
-        if (!this.Form["house"].length) {
-          this.$message.error("未选择房屋");
-          return;
-        }
-        addPeople(this.Form).then(res => {
-          if (res.data.code === 200) {
-            this.$message.success("添加成功");
-            this["dialogCreate"] = false;
-            this.Form["house"] = [];
-            this["handleClose"]();
-            this.fetchData(this.initForm);
-          }
-        });
->>>>>>> master
       }
     });
   }

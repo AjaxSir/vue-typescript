@@ -328,17 +328,10 @@ export default class CardManage extends Vue {
     //查看目标详情
   };
   filterForm: Object = {
-<<<<<<< HEAD
     houseName: '',
     cardNo: '',
     status: []
   }
-=======
-    houseName: "",
-    cardNo: "",
-    status: ""
-  };
->>>>>>> master
   initForm: Object = {
     url: "admin/hsDoorCard/list",
     method: "get"
