@@ -367,7 +367,6 @@
     <el-dialog
       :close-on-click-modal="false"
       class="dialog-rewrite"
-      width="1000px"
       :title="detailDialog.name"
       :visible.sync="dialogFormVisible"
     >

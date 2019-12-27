@@ -16,6 +16,7 @@
       <el-upload
         class="upload-demo color"
         style="display:inline-block;margin-right:5px"
+        accept=".xlsx"
         :show-file-list="true"
         :on-error="errorUpload"
         :on-success="successUpload"
