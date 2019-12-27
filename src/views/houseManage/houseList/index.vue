@@ -321,6 +321,8 @@
               :show-overflow-tooltip="true"
               prop="createTime"
               label="操作"
+              :key="Math.random()"
+               v-if="globalUpdateStatus"
             >
               <template slot-scope="{row}">
                 <el-button type="text" @click="deleteHousePeople(row)">删除</el-button>

@@ -13,20 +13,12 @@
           :total="page.total"
         >
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>
-              <div @click="showExportIn">导入</div>
+            <el-dropdown-item >
+              <div @click="showExportIn" v-if="globalUpdateStatus">导入</div>
             </el-dropdown-item>
             <el-dropdown-item command="export">导出</el-dropdown-item>
-            <!-- <el-dropdown-item command='exportTemplate'>下载导入模板</el-dropdown-item> -->
-            <el-dropdown-item>统计信息</el-dropdown-item>
           </el-dropdown-menu>
           <div slot="houseNum">
-            <!-- <div class="word-filter">
-              <span class="filter-name">关键字:</span>
-              <el-input clearable
-              placeholder="请输入需要查找的关键字"
-              @keyup.enter.native="emitFetchData"  class="input-filter" v-model="filterForm.key" size="small"></el-input>
-            </div>-->
             <div class="word-filter">
               <span class="filter-name">姓&nbsp;&nbsp;&nbsp;名:</span>
               <el-input  clearable  
@@ -54,7 +46,6 @@
             <div class="word-filter">
               <span class="filter-name">住户类型:</span> &nbsp;&nbsp;
               <el-select multiple class="select-class" size="small" v-model="filterForm.types" placeholder="请选择">
-                <!-- <el-option label="全部" value=""></el-option> -->
                 <el-option label="业主" value="1"></el-option>
                 <el-option label="租户" value="2"></el-option>
                 <el-option label="成员" value="3"></el-option>
@@ -418,7 +409,11 @@
               :show-overflow-tooltip="true"
               prop="serialNumber"
               label="房屋编号"
-            ></el-table-column>
+            >
+            <template slot-scope="{row}">
+              <span>{{ row.groupName }} - {{ row.buildingName }} - {{ row. serialNumber}}</span>
+            </template>
+            </el-table-column>
             <el-table-column
               align="center"
               :show-overflow-tooltip="true"
@@ -440,6 +435,8 @@
               :show-overflow-tooltip="true"
               prop="createTime"
               label="操作"
+              :key="Math.random()"
+               v-if="globalUpdateStatus"
             >
               <template slot-scope="scope">
                 <el-button type="text" @click="deleteHouse(scope.row, scope.$index)">删除</el-button>
@@ -965,6 +962,7 @@ export default class OwnerManage extends Vue {
     this.Form["house"] = [];
     this.$refs["Forms"]["resetFields"]();
     this["dialogCreate"] = false;
+    this.nameDisabled = false
   }
   handleSelectWatchlist(item) {
     this.$refs["Forms"]["clearValidate"]();
@@ -1056,6 +1054,8 @@ export default class OwnerManage extends Vue {
             this.fetchData(this.initForm)
             this.btnLoading = false
           }
+        }).catch(err => {
+          this.btnLoading = false
         })
       } else {
         this.btnLoading = false

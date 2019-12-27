@@ -228,7 +228,9 @@ export default class GlobalMimins extends Vue {
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.deleteRow(this.deleteForm)
+          this.deleteRow(this.deleteForm).catch(() => {
+            this.deleteForm['data'] = []
+          })
         }).catch(() => {
           Message({
             type: 'info',
