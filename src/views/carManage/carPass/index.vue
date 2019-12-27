@@ -127,6 +127,7 @@
             @cell-mouse-leave="leaveRowChange"
           >
             <el-table-column
+              v-if="globalUpdateStatus"
               align="center"
               type="selection"
               width="50"
