@@ -17,3 +17,14 @@ export function getDeviceList(params: object){
     params
   })
 }
+
+// 通过编号查询设备类型
+export function checkdeviceByNum(serialNum: string) {
+  return _axios({
+    url: '/admin/dev-manage/query-type',
+    method: 'get',
+    params: {
+      serialNum
+    }
+  })
+}

@@ -187,6 +187,9 @@ export default class ActionManage extends Vue {
   }
   // 导出
   exportTable() {
+    if (process.env.NODE_ENV === 'production') {
+          this.exportUrl = this.exportUrl.replace('/v1', 'http://47.103.184.184')
+        }
     this["exportFunc"](this.exportName, this.exportUrl, this.filterForm);
   }
   /**
@@ -249,12 +252,13 @@ export default class ActionManage extends Vue {
           }
         }
         const filterUrl = qs.stringify(this.initFormHeader["params"]);
+        if (process.env.NODE_ENV === 'production') {
+          this.exportUrl = this.exportUrl.replace('/v1', 'http://47.103.184.184')
+        }
         this["exportFunc"](this.exportName, this.exportUrl + "/?" + filterUrl);
         break;
       case "link":
         this.$router.push({ path: this.linkUrl });
-        // case 'exportTemplate':
-        //    this["exportFunc"]('用户导入模板.xls', '/v1/admin/uploadFile/exportModel');
         break;
     }
   }

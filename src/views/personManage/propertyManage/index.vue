@@ -19,12 +19,12 @@
             <div class="word-filter">
               <span class="filter-name">姓&nbsp;&nbsp;&nbsp;名:</span>
               <el-input clearable  
-              @keyup.enter.native="emitFetchData" style="width:215px" class="input-filter" placeholder="输入需要查找的姓名" v-model="filterForm.name" size="small"></el-input>
+              @keyup.enter.native="emitFetchData"  class="input-filter" placeholder="输入需要查找的姓名" v-model="filterForm.name" size="small"></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">手机号:</span>
               <el-input clearable  
-              @keyup.enter.native="emitFetchData" style="width:215px" class="input-filter"  placeholder="输入需要查找的手机号"  v-model="filterForm.phone" size="small"></el-input>
+              @keyup.enter.native="emitFetchData" class="input-filter"  placeholder="输入需要查找的手机号"  v-model="filterForm.phone" size="small"></el-input>
             </div>
           </div>
         </ActionHeader>
