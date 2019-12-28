@@ -3,7 +3,7 @@
     <el-row>
       <el-col :span="24">
         <ActionHeader
-          exportUrl="/v1/admin/usrUser/export"
+          exportUrl="/admin/usrUser/export"
           exportName="住户管理.xls"
           :initFormHeader="initForm"
           ref="actionHeader"

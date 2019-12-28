@@ -12,7 +12,7 @@
         :btnStatus='2'
         linkUrl='/statementManage/personPassChart'
         :total="page.total">
-          <el-dropdown-menu slot="dropdown">
+          <el-dropdown-menu slot="dropdown" v-if='permissionList.includes("personPassChartLook")'>
             <el-dropdown-item command='link'>统计信息</el-dropdown-item>
           </el-dropdown-menu>
           <div slot="houseNum">
@@ -67,8 +67,7 @@
             </div>
             <div class="word-filter">
               <span class="filter-name">通行方式:</span>&nbsp;
-              <el-select  style="width:250px" class="input-filter" size="small" v-model="filterForm.passMethod" placeholder="请选择">
-                <el-option label="全部" value=""></el-option>
+              <el-select multiple style="width:250px" class="input-filter" size="small" v-model="filterForm.passMethod" placeholder="请选择">
                 <el-option label="蓝牙" value="3"></el-option>
                 <el-option label="人脸" value="1"></el-option>
                 <el-option label="二维码" value="2"></el-option>
@@ -227,7 +226,7 @@ export default class PersonPass extends Vue {
     userName: '',
     startPassTime: '',
     endPassTime: '',
-    passMethod: '',
+    passMethod: [],
     userType: 'all',
     isVisitor: false
   }

@@ -109,7 +109,7 @@ import {
 import mixin from "@/config/minxins";
 import { Getter } from "vuex-class";
 import qs from "qs";
-
+import { exportList } from '@/api/user.ts'
 @Component({
   mixins: [mixin],
   components: {}
@@ -190,6 +190,7 @@ export default class ActionManage extends Vue {
     if (process.env.NODE_ENV === 'production') {
           this.exportUrl = this.exportUrl.replace('/v1', 'http://47.103.184.184')
         }
+        console.log('导出地址', this.exportUrl)
     this["exportFunc"](this.exportName, this.exportUrl, this.filterForm);
   }
   /**
@@ -252,10 +253,15 @@ export default class ActionManage extends Vue {
           }
         }
         const filterUrl = qs.stringify(this.initFormHeader["params"]);
-        if (process.env.NODE_ENV === 'production') {
-          this.exportUrl = this.exportUrl.replace('/v1', 'http://47.103.184.184')
-        }
-        this["exportFunc"](this.exportName, this.exportUrl + "/?" + filterUrl);
+        // if (process.env.NODE_ENV === 'production') {
+        //   this.exportUrl = this.exportUrl.replace('/v1', 'http://47.103.184.184')
+        // }
+        // console.log('导出地址', this.exportUrl)
+        // this["exportFunc"](this.exportName, this.exportUrl + "/?" + filterUrl);
+        console.log(this.exportUrl)
+        exportList(this.exportUrl + "/?" + filterUrl).then(res => {
+          console.log(res)
+        })
         break;
       case "link":
         this.$router.push({ path: this.linkUrl });
