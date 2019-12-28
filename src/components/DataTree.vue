@@ -232,7 +232,7 @@
               <el-button v-else class="button-new-tag" size="small" @click="showInput">添加单位</el-button>
             </div>
             </el-form-item>-->
-            <el-form-item label="别名别名:" prop="name">
+            <el-form-item label="别名:" prop="name">
               <el-input
                 clearable
                 maxlength="10"
