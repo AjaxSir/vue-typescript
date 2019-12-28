@@ -38,6 +38,7 @@
       node-key="id"
       :props="dataFormate"
       accordion
+
       :highlight-current="highlightStatus"
       :default-expand-all="false"
       :expand-on-click-node="false"
@@ -53,9 +54,10 @@
           {{ node.label }}
           <!-- <i v-show='selectId === node.data.id' class="el-icon-check"></i> -->
         </span>
-        <div>
+        <div style="position:relative">
           <el-dropdown v-if="UpdateStatus" @command="commandTreeClick" placement="bottom-start">
             <i v-show="node.id===showMenu" class="iconfont icon-menu"></i>
+
             <el-dropdown-menu v-if="type === 'house'" slot="dropdown">
               <el-dropdown-item
                 v-if="node.data.type === 'group'"
@@ -300,7 +302,7 @@
         <el-form-item label="别名:" prop="name">
           <el-input
             clearable
-            maxlength="15"
+            maxlength="10"
             placeholder="填写分组的别名"
             v-model="HouseForm.name"
             autocomplete="off"
@@ -1303,6 +1305,7 @@ export default class DataTree extends Vue {
   text-align: left;
   border: 1px solid #ebeef5;
   overflow-y: auto;
+  overflow-x: auto;
 }
 .treeHeader {
   &:hover {
@@ -1361,4 +1364,8 @@ export default class DataTree extends Vue {
 .highlight .icon-menu {
   color: white;
 }
+.tree-rename{
+  overflow: auto;
+}
+
 </style>

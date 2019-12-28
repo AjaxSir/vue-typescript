@@ -16,3 +16,12 @@ export function getRoleList() {
     method: 'get'
   })
 }
+
+// 导出列表公用
+export function exportList(url:string ) {
+  return _axios({
+    url: url,
+    method: 'get',
+    responseType: 'blob'
+  })
+}

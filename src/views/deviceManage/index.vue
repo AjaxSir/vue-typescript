@@ -60,7 +60,7 @@
             </el-table-column>
             <el-table-column :show-overflow-tooltip='true' align="center" prop="address" label="绑定位置">
               <template slot-scope="{row}">
-                <span> {{ row.address }} - {{ row.subAddress }} </span>
+                <span> {{ row.bindingAddress }} </span>
               </template>
             </el-table-column>
 
