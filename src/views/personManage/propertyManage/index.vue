@@ -307,6 +307,7 @@
     <ExportIn
     :uploadUrl="env === 'production' ? 'http://47.103.184.184/admin/usrUser/PropertyManager/import' : '/v1/admin/usrUser/import'"
     downTemplateUrl='/admin/usrUser/PropertyManager/model'
+    TmplateName='物业人员导入模板.xlsx'
     @closeVisible='closeVisible'
     @successUpload='fetchData(initForm)'
     :visible.sync='visible' />
