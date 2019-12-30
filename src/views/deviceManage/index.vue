@@ -66,7 +66,7 @@
 
             <el-table-column :show-overflow-tooltip='true' align="center" prop="bindingType" label="设备类型">
               <template slot-scope="{row}">
-                <span>{{ row.type | devType }}</span>
+                <span>{{ row.type | devTypes }}</span>
                 </template>
             </el-table-column>
 
@@ -294,6 +294,15 @@ const BaiduMap = () => import('@/components/baiduMap/index.vue')
         "4": '访客机',
       }
       return data[val] ?  `此设备编号对应的是${data[val]}设备` : '未找到设备'
+    },
+    devTypes(val:string) {
+      const data = {
+        "1": '门禁',
+        "2": '车禁',
+        "3": '注册机',
+        "4": '访客机',
+      }
+      return data[val] + '设备'
     }
   }
 })
