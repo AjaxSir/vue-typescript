@@ -146,8 +146,9 @@
               <span class="filter-name filter-rewrite">访客状态:</span>
               <el-select
                 class="select-class"
+                multiple
                 size="small"
-                v-model="filterForm.status"
+                v-model="filterForm.multiStatus"
                 placeholder="请选择访客状态"
               >
                 <el-option
@@ -175,7 +176,7 @@
             @cell-mouse-leave="leaveRowChange"
             @selection-change="handleSelectionChange"
           >
-            <el-table-column v-if="globalUpdateStatus" type="selection" width="50" ></el-table-column>
+            <el-table-column v-if="globalUpdateStatus" type="selection" width="50"></el-table-column>
             <el-table-column type="index" align="center" label="序号" class="indexNum" width="50">
               <template slot-scope="scope">
                 <span>{{scope.$index+1}}</span>
@@ -463,7 +464,7 @@ export default class VistoryManage extends Vue {
     endInvalidDate: null, //有效期开始时间
     startInvalidDate: null, //有效期结束时间
     visitType: null, //访客类型
-    status: null //访客状态
+    multiStatus: [] //访客状态
   }; //根据关键字查询
   initForm: object = {
     //获取访客名单列表url

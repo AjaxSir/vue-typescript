@@ -409,4 +409,7 @@ td {
   left: 0;
   padding: 9px 38px;
 }
+.el-icon-plus{
+  text-align: center;
+}
 </style>
