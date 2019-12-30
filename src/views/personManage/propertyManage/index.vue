@@ -306,7 +306,7 @@
     </el-dialog>
     <ExportIn
     uploadUrl='/v1/admin/usrUser/propertyManager/import'
-    downTemplateUrl='/v1/admin/usrUser/PropertyManager/model'
+    downTemplateUrl='/admin/usrUser/PropertyManager/model'
     @closeVisible='closeVisible'
     @successUpload='fetchData(initForm)'
     :visible.sync='visible' />

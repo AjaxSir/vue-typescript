@@ -728,7 +728,7 @@
     </el-dialog>
     <BigImg :centerDialogVisible="imgVisible" bigTitle="抓拍图片" :bigImg="bigImg" />
     <ExportIn
-      uploadUrl="/admin/usrUser/import"
+      uploadUrl="/v1/admin/usrUser/import"
       downTemplateUrl="/admin/uploadFile/exportModel"
       @closeVisible="closeVisible"
       @successUpload="fetchData(initForm)"

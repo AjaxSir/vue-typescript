@@ -303,6 +303,7 @@ export default class ExportIn extends Vue {
   }
 
   mounted() {
+    console.log(this.uploadUrl)
     if (process.env.NODE_ENV === 'production') {
           this.uploadUrl = this.uploadUrl.replace('/v1', 'http://47.103.184.184')
         }
