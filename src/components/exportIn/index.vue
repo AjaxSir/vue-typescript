@@ -20,6 +20,7 @@
         :on-error="errorUpload"
         :on-success="successUpload"
         :multiple="false"
+        :headers="header"
         :action="uploadUrl"
         accept=".xlsx"
         :on-change="changeFile"
@@ -275,12 +276,15 @@
 <script lang="ts">
 import { exportList } from '@/api/user.ts'
 import { Component, Vue, Prop, Emit } from "vue-property-decorator";
+import { Getter } from "vuex-class";
 @Component({})
 export default class ExportIn extends Vue {
   @Prop({ default: "" }) downTemplateUrl: string;
   @Prop({ default: "" }) uploadUrl: string;
   @Prop({ default: false }) visible: boolean;
+  @Getter('token') token: string
   @Prop({ default: "用户导入模板.xlsx" }) TmplateName: string;
+  header: object =  {}
   @Emit("errorUpload")
   errorUpload(err, file, list) {
     this.errData = JSON.parse(err.message);
@@ -300,16 +304,13 @@ export default class ExportIn extends Vue {
     this.fileName = ''
     return true;
   }
-
   changeFile(file) {
     this.fileName = file.name;
   }
-
   mounted() {
-    console.log(this.uploadUrl)
-    if (process.env.NODE_ENV === 'production') {
-          this.uploadUrl = this.uploadUrl.replace('/v1', 'http://47.103.184.184')
-        }
+    this.header = {
+      token: this.token
+    }
   }
 
   @Emit("closeVisible")

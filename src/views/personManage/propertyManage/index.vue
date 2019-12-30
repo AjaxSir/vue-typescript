@@ -305,7 +305,7 @@
       </span>
     </el-dialog>
     <ExportIn
-    uploadUrl='/v1/admin/usrUser/PropertyManager/import'
+    :uploadUrl="env === 'production' ? 'http://47.103.184.184/admin/usrUser/PropertyManager/import' : '/v1/admin/usrUser/import'"
     downTemplateUrl='/admin/usrUser/PropertyManager/model'
     @closeVisible='closeVisible'
     @successUpload='fetchData(initForm)'
@@ -339,6 +339,7 @@ export default class PropertyManage extends Vue {
     row1: 3,
     row2: 21
   };
+  env: string =  process.env.NODE_ENV
   private menuControl1: String = "menu-control";
   private menuControl2: String = "menu-visible";
   passListData: Array<object> = [] // 物业人员通行记录

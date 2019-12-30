@@ -728,7 +728,7 @@
     </el-dialog>
     <BigImg :centerDialogVisible="imgVisible" bigTitle="抓拍图片" :bigImg="bigImg" />
     <ExportIn
-      uploadUrl="/v1/admin/usrUser/import"
+      :uploadUrl="env === 'production' ? 'http://47.103.184.184/admin/usrUser/import' : '/v1/admin/usrUser/import'"
       downTemplateUrl="/admin/uploadFile/exportModel"
       @closeVisible="closeVisible"
       @successUpload="fetchData(initForm)"
@@ -793,6 +793,7 @@ export default class OwnerManage extends Vue {
   spanArray: Array<number> = []; // 合并单元格
   index: number = 0; // 合并单元格参数
   private detailDialog: Object = {};
+  env: string =  process.env.NODE_ENV
   phoneString: string = ""; // 需要改成的电话
   noteString: string = ""; // 需要改成的备注
   houseIndex: number = 0; // 合并单元格用
