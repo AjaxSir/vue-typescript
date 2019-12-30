@@ -662,7 +662,7 @@
         style="margin:20px 40px 0 0;"
       >
         <el-form-item label="住户类型">
-          <el-select style="width:100%" v-model="updateHouseForm.type" placeholder="请选择">
+          <el-select style="width:320px" v-model="updateHouseForm.type" placeholder="请选择">
             <el-option label="业主" value="1"></el-option>
             <el-option label="租户" value="2"></el-option>
             <el-option label="成员" value="3"></el-option>
@@ -677,6 +677,7 @@
         </el-form-item>-->
         <el-form-item v-if="updateHouseForm.type !== '1'" label="过期时间">
           <el-date-picker
+           style="width:320px"
             format="yyyy-MM-dd HH:mm:ss"
             value-format="yyyy-MM-dd HH:mm:ss"
             v-model="updateHouseForm.overTime"
@@ -718,7 +719,7 @@
           ></el-switch>
         </el-form-item>
         <el-form-item label="备注信息:" prop="note">
-          <el-input type="textarea" v-model="updateHouseForm.note" placeholder="输入备注"></el-input>
+          <el-input style="width:320px" type="textarea" v-model="updateHouseForm.note" placeholder="输入备注"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -729,7 +730,7 @@
     <BigImg :centerDialogVisible="imgVisible" bigTitle="抓拍图片" :bigImg="bigImg" />
     <ExportIn
       :uploadUrl="env === 'production' ? 'http://47.103.184.184/admin/usrUser/import' : '/v1/admin/usrUser/import'"
-      downTemplateUrl="/admin/uploadFile/exportModel"
+      downTemplateUrl="/admin/usrUser/model"
       @closeVisible="closeVisible"
       @successUpload="fetchData(initForm)"
       :visible.sync="visible"
