@@ -273,7 +273,7 @@
       </span>
     </el-dialog>
     <ExportIn
-    uploadUrl='/v1/admin/hsDoorCard/import'
+    :uploadUrl="env === 'production' ? 'http://47.103.184.184/admin/hsDoorCard/import' : '/v1/admin/usrUser/import'"
     downTemplateUrl='/admin/hsDoorCard/model'
     @closeVisible='closeVisible'
     TmplateName='门禁卡导入模板.xlsx'
@@ -318,6 +318,7 @@ export default class CardManage extends Vue {
       { required: true, message: "请输入需关联的房屋", trigger: "blur" }
     ]
   };
+  env: string =  process.env.NODE_ENV
   private dialogFormVisible: Boolean = false;
   theCardPassListForm: object = {
     page: 1,
