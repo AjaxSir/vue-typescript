@@ -71,6 +71,7 @@
     <el-row :gutter="10">
       <el-col :span="rowSpan.row1">
         <data-tree
+          ref="dataTree"
           @fetchData="fetchData"
           :page="page"
           :initFormHeader="initForm"
@@ -655,7 +656,7 @@ export default class CardManage extends Vue {
   private carStatus: Array<Object> = []; //获取车位类型
 
   private ownerDetail: Object = {}; //业主信息
-  private carnoList: Array<Object> = []; //人员
+  private carnoList: Array<Object> = []; //车牌号
   private carIdDisabled: Boolean = false; // 是否允许绑定车牌
   private carLoading: Boolean = false; //车牌模糊查询
   private bindingcarnum: Object = { carId: "" }; //绑定车辆
@@ -768,6 +769,19 @@ export default class CardManage extends Vue {
     ].pop();
   }
 
+  initData() {
+    /**@description 初始化数据 */
+    for (const key in this.filterForm) {
+      this.filterForm[key] = null;
+    }
+    this["page"]["page"] = 1;
+    this.initForm["params"] = Object.assign(
+      this.initForm["params"],
+      this.page,
+      this.filterForm
+    ); // 合并参数
+  }
+
   createStall() {
     /**@description  添加车位 */
     this.$refs["dataForm"]["validate"](valid => {
@@ -778,6 +792,7 @@ export default class CardManage extends Vue {
         addStall(this.createForm).then(res => {
           if (res.data.code === 200) {
             this.$message.success("添加成功");
+            this.initData();
             this["fetchData"](this.initForm);
             this.handleClose();
           }
@@ -792,8 +807,11 @@ export default class CardManage extends Vue {
     for (const key in this.createForm) {
       this.createForm[key] = "";
     }
+
     this.getSatll();
     this.getHouseTreeData();
+    this.nameList = [];
+    this.$refs.dataTree["highlightStatus"] = false;
     this.$nextTick(() => {
       this.$refs["dataForm"]["resetFields"]();
     });
@@ -832,6 +850,7 @@ export default class CardManage extends Vue {
     this.$refs["updateForm"]["validate"](valid => {
       if (valid) {
         editStall(form).then(() => {
+          // this.initData();
           this.editClose();
           this["notify"]("success", "成功", "修改车位成功");
           this["fetchData"](this.initForm);
@@ -846,6 +865,7 @@ export default class CardManage extends Vue {
     for (const key in this.errorMessage) {
       this.errorMessage[key] = "";
     }
+    this.$refs.dataTree["highlightStatus"] = true;
     this.$refs["updateForm"]["resetFields"]();
   }
 
@@ -974,6 +994,7 @@ export default class CardManage extends Vue {
     this.dialogFormVisible = false; //车辆详情dialog
     this.activeName = "first";
     this.bindingcarnum["carId"] = "";
+    this.carnoList = [];
   }
 
   menuVisible() {

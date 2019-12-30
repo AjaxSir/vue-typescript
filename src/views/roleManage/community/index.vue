@@ -153,7 +153,9 @@ export default class InformIssue extends Vue {
     address: [{ required: true, message: "请输入具体位置", trigger: "blur" }]
   };
   private upPathPerson: any = `${serverURL}/admin/hs-scence/picture/`;
-  private myHeaders: object = { token: _token };
+  private myHeaders: object = {
+    token: _token
+  };
 
   private imageUrl: any = "";
   private dialogVisible: Boolean = false;
@@ -251,14 +253,14 @@ export default class InformIssue extends Vue {
   }
 
   getlocLat() {
-    this['$jsonp']('http://api.map.baidu.com/geocoder/v2/' , {
-              address: this.communityForm['address'],
-              output: 'json',
-              pois: '0',
-              coordtype: 'wgs84ll',
-              callback :'renderReverse',
-              ak: 'vCZU88Guz4BmAODWTm8k9BP0WlwId1V0'
-        }).then(res => {
+    this["$jsonp"]("http://api.map.baidu.com/geocoder/v2/", {
+      address: this.communityForm["address"],
+      output: "json",
+      pois: "0",
+      coordtype: "wgs84ll",
+      callback: "renderReverse",
+      ak: "vCZU88Guz4BmAODWTm8k9BP0WlwId1V0"
+    }).then(res => {
       if (res.status === 0) {
         this.communityForm["longitude"] = res.result.location.lng;
         this.communityForm["latitude"] = res.result.location.lat;
