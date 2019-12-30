@@ -649,7 +649,7 @@
                   <span>{{userDetail.age ? userDetail.age : '--'}}</span>
                 </el-form-item>-->
                 <el-form-item style="margin-bottom:0" label="性别:">
-                  <span>{{userDetail.sex ? userDetail.sex :'--'}}</span>
+                  <span>{{userDetail.sex==='0'?'女':'男'}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="电话:">
                   <span>{{userDetail.phone ? userDetail.phone:'--'}}</span>
@@ -667,7 +667,7 @@
           </el-form>
         </el-tab-pane>
 
-        <el-tab-pane label="预警组别" name="second">
+        <el-tab-pane label="预警人员" name="second">
           <el-table v-loading="earlyLoading" :data="earlyList" style="width: 100%" stripe>
             <el-table-column type="index" label="序号" width="50" align="center"></el-table-column>
             <el-table-column prop="name" align="center" label="姓名" :show-overflow-tooltip="true"></el-table-column>
