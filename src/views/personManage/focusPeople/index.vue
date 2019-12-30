@@ -106,7 +106,7 @@
             >
               <template slot-scope="scope">
                 <el-button
-                  @click="showCarDetails(scope.row)"
+                  @click="showCarDetails(scope.row,'first')"
                   type="text"
                   class="serial-num"
                 >{{scope.row.name}}</el-button>
@@ -147,7 +147,15 @@
               align="center"
               label="预警组别"
               :show-overflow-tooltip="true"
-            ></el-table-column>
+            >
+              <template slot-scope="scope">
+                <el-button
+                  @click="showCarDetails(scope.row,'second')"
+                  type="text"
+                  class="serial-num"
+                >{{scope.row.earlyGroupName}}</el-button>
+              </template>
+            </el-table-column>
 
             <el-table-column
               prop="earlyPeriod"
@@ -623,6 +631,7 @@
 
     <!-- 目标详情 -->
     <el-dialog
+      top="5vh"
       class="dialog-rewrite"
       title="人员详情"
       :visible.sync="detailDialogVisible"
@@ -657,15 +666,52 @@
             </el-row>
           </el-form>
         </el-tab-pane>
-        <el-tab-pane label="通行记录" name="second">
+
+        <el-tab-pane label="预警组别" name="second">
+          <el-table v-loading="earlyLoading" :data="earlyList" style="width: 100%" stripe>
+            <el-table-column type="index" label="序号" width="50" align="center"></el-table-column>
+            <el-table-column prop="name" align="center" label="姓名" :show-overflow-tooltip="true"></el-table-column>
+            <el-table-column prop="phone" align="center" label="电话" :show-overflow-tooltip="true"></el-table-column>
+            <el-table-column prop="email" align="center" label="邮箱" :show-overflow-tooltip="true"></el-table-column>
+            <el-table-column
+              prop="earlyGroupName"
+              align="center"
+              label="分组"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
+            <el-table-column prop="note" align="center" label="备注" :show-overflow-tooltip="true"></el-table-column>
+          </el-table>
+          <el-pagination
+            background
+            style="margin:10px 0"
+            @current-change="handleCurrentChangeEarly"
+            :page-size="listEarlyQuery.limit"
+            :current-page="listEarlyQuery.page"
+            layout="total, prev, pager, next, slot"
+            :total="listEarlyQuery.total"
+          ></el-pagination>
+        </el-tab-pane>
+
+        <el-tab-pane label="通行记录" name="thirdly">
           <el-table v-loading="passTarget" :data="passList" style="width: 100%" stripe>
             <el-table-column type="index" label="序号" width="50" align="center"></el-table-column>
-            <el-table-column align="center" prop="name" label="姓名"></el-table-column>
-            <el-table-column align="center" prop="devAddress" label="通行地址">
+            <el-table-column align="center" prop="name" label="姓名" :show-overflow-tooltip="true"></el-table-column>
+            <el-table-column
+              align="center"
+              prop="devAddress"
+              label="通行地址"
+              :show-overflow-tooltip="true"
+            >
               <template slot-scope="scope">{{scope.row.devAddress}} - {{scope.row.devSubAddress}}</template>
             </el-table-column>
-            <el-table-column align="center" prop="passTime" label="通行时间" width="150px"></el-table-column>
-            <el-table-column align="center" prop="inOut" label="通行类型">
+            <el-table-column
+              align="center"
+              prop="passTime"
+              label="通行时间"
+              width="150px"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
+            <el-table-column align="center" prop="inOut" label="通行类型" :show-overflow-tooltip="true">
               <template slot-scope="scope">
                 <el-tag
                   size="small"
@@ -683,7 +729,7 @@
           <el-pagination
             background
             style="margin:10px 0"
-            @current-change="handleCurrentChange"
+            @current-change="handleCurrentChangePass"
             :page-size="listQuery.limit"
             :current-page="listQuery.page"
             layout="total, prev, pager, next, slot"
@@ -708,6 +754,7 @@ import {
   getUserPass //获取目标通行记录
 } from "@/api/peopleApi.ts";
 import {
+  getWarning, //查询预警联系人
   getGroup, //获取关注人员分组
   addGroup, //添加关注人员分组
   deleteGroup //删除关注人员分组
@@ -724,7 +771,7 @@ const ActionHeader = () => import("@/components/ActionHeader.vue");
 export default class FocusPeople extends Vue {
   filterForm: object = { name: "", emergencyPhone: "", earlyGroupId: "" }; //根据关键字查询
   initForm: object = {
-    //获取车辆列表url
+    //获取关注人员列表url
     url: "/admin/usr-focus-personnel/",
     method: "get"
   };
@@ -809,10 +856,19 @@ export default class FocusPeople extends Vue {
   private passTarget: Boolean = true; //目标关注人员通行记录的loadding
   private passList: Array<Object> = []; // 关注人员名单目标通行记录
   private userDetail: Object = {}; //关注人员详细信息
+  private earlyList: Array<Object> = []; //预警组别详信息
+  private earlyLoading: Boolean = true; //预警组别表格loading
   private noteRewrite: String = ""; //保存未改变的note
 
   private listQuery: Object = {
     // 关注人员目标通行记录翻页
+    total: 0,
+    limit: 10,
+    page: 1
+  };
+
+  private listEarlyQuery: Object = {
+    // 关注人员预警组别翻页
     total: 0,
     limit: 10,
     page: 1
@@ -1101,14 +1157,26 @@ export default class FocusPeople extends Vue {
       });
   }
 
-  showCarDetails(row) {
+  showCarDetails(row, inviter) {
     this.detailDialogVisible = true;
+    this.activeName = inviter;
     this.CarDialogForm = Object.assign({}, row);
-    this.fetchUser();
+    if (inviter === "first") {
+      this.fetchUser();
+    } else if (inviter === "second") {
+      this.fetchEarlyContact();
+    }
+  }
+  handleCurrentChangeEarly(val) {
+    /** @description 处理目标预警组别翻页事件
+     * @augments val: 页数
+     */
+    this.listEarlyQuery["page"] = val;
+    this.fetchEarlyContact();
   }
 
-  handleCurrentChange(val) {
-    /** @description 处理目标车辆通行记录翻页事件
+  handleCurrentChangePass(val) {
+    /** @description 处理目标关注人员通行记录翻页事件
      * @augments val: 页数
      */
     this.listQuery["page"] = val;
@@ -1116,17 +1184,33 @@ export default class FocusPeople extends Vue {
   }
 
   async handleClick(tab) {
-    /**@description 查看车辆管理名单目标详情 */
+    /**@description 查看关注人员名单目标详情 */
     if (tab.name === "first") {
       this.fetchUser();
     } else if (tab.name === "second") {
+      this.listEarlyQuery["page"] = 1;
+      this.fetchEarlyContact();
+    } else if (tab.name === "thirdly") {
       this.listQuery["page"] = 1;
       this.fetchPass();
     }
   }
 
+  async fetchEarlyContact() {
+    /**@description 查看关注人员用户详情 */
+    const info = {
+      ...this.listEarlyQuery,
+      earlyGroupId: this.CarDialogForm["earlyGroupId"]
+    };
+    this.earlyLoading = true;
+    const { data } = await getWarning(info);
+    this.earlyList = data.data.records;
+    this.listEarlyQuery["total"] = data.data.total;
+    this.earlyLoading = false;
+  }
+
   async fetchUser() {
-    /**@description 查看车辆管理名单用户详情 */
+    /**@description 查看关注人员用户详情 */
     try {
       const { data } = await getOwnerUser(this.CarDialogForm["scenceUserId"]);
       this.userDetail = data.data.user;
@@ -1140,6 +1224,7 @@ export default class FocusPeople extends Vue {
       ...this.listQuery,
       scenceUserId: this.CarDialogForm["scenceUserId"]
     };
+    this.passTarget = true;
     const { data } = await getUserPass(info);
     this.passList = data.data.records;
     this.listQuery["total"] = data.data.total;
@@ -1150,6 +1235,8 @@ export default class FocusPeople extends Vue {
     /**@description 关闭人员详情 */
     this.activeName = "first";
     this.detailDialogVisible = false; //人员详情dialog
+    this.listQuery["page"] = 1;
+    this.listEarlyQuery["page"] = 1;
   }
 
   isDisabled(row, index) {
