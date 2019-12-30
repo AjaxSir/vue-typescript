@@ -4,7 +4,7 @@
       <el-col :span="24">
         <ActionHeader
           exportUrl="/admin/usrUser/export"
-          exportName="住户管理.xls"
+          exportName="住户管理.xlsx"
           :initFormHeader="initForm"
           ref="actionHeader"
           @fetchData="fetchData"
@@ -728,8 +728,8 @@
     </el-dialog>
     <BigImg :centerDialogVisible="imgVisible" bigTitle="抓拍图片" :bigImg="bigImg" />
     <ExportIn
-      uploadUrl="/v1/admin/usrUser/import"
-      downTemplateUrl="/v1/admin/uploadFile/exportModel"
+      uploadUrl="/admin/usrUser/import"
+      downTemplateUrl="/admin/uploadFile/exportModel"
       @closeVisible="closeVisible"
       @successUpload="fetchData(initForm)"
       :visible.sync="visible"

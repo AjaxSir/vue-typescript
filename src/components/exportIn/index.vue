@@ -15,7 +15,7 @@
       <h3 class="margin">上传数据文件</h3>
       <el-upload
         class="upload-demo color"
-        style="display:inline-block;margin-right:5px"
+        style="display:inline-block;margin-right:5px;text-align:left"
         :show-file-list="false"
         :on-error="errorUpload"
         :on-success="successUpload"
@@ -29,8 +29,8 @@
 
         <i class="el-icon-plus"></i>
 
-        添加文件
-        <h4>{{ fileName }}</h4>
+        添加文件 <br>
+        <span style="color:black">{{ fileName }}</span>
       </el-upload>
       <h4>目前仅支持*.xlsx</h4>
       <!-- <h4>已选文件:{{fileName}}</h4> -->
@@ -273,6 +273,7 @@
 </template>
 
 <script lang="ts">
+import { exportList } from '@/api/user.ts'
 import { Component, Vue, Prop, Emit } from "vue-property-decorator";
 @Component({})
 export default class ExportIn extends Vue {
@@ -282,7 +283,6 @@ export default class ExportIn extends Vue {
   @Prop({ default: "用户导入模板.xlsx" }) TmplateName: string;
   @Emit("errorUpload")
   errorUpload(err, file, list) {
-    console.log(JSON.parse(err.message));
     this.errData = JSON.parse(err.message);
     this.dialogTableVisible = true;
     this.$message.error("导入失败");
@@ -302,28 +302,41 @@ export default class ExportIn extends Vue {
     this.fileName = file.name;
   }
 
+  mounted() {
+    if (process.env.NODE_ENV === 'production') {
+          this.uploadUrl = this.uploadUrl.replace('/v1', 'http://47.103.184.184')
+        }
+  }
+
   @Emit("closeVisible")
   handleClose() {
     return false;
   }
   // 导出excel函数 处理数据
-  exportFunc(fileName: string, url: string): void {
-    // var blob = new Blob([data])
-    if ("download" in document.createElement("a")) {
-      // 非IE下载
-      const elink = document.createElement("a");
-      elink.download = fileName;
-      elink.style.display = "none";
-      elink.href = url;
-      // elink.href =URL.createObjectURL(blob)
-      document.body.appendChild(elink);
-      elink.click();
-      URL.revokeObjectURL(elink.href); // 释放URL 对象
-      document.body.removeChild(elink);
-    } else {
-      // IE10+下载
-      navigator.msSaveBlob(Blob, fileName);
-    }
+  exportFunc(fileNames: string, url: string): void {
+    if (process.env.NODE_ENV === 'production') {
+          url = url.replace('/v1', 'http://47.103.184.184')
+        }
+        exportList(url).then(res => {
+            const fileName = fileNames
+            var blob = new Blob([res.data], {
+              type: 'application/vnd.ms-excel;charset=UTF-8'
+            })
+            if ('download' in document.createElement('a')) {
+              // 非IE下载
+              const elink = document.createElement('a')
+              elink.download = fileName
+              elink.style.display = 'none'
+              elink.href = URL.createObjectURL(blob)
+              document.body.appendChild(elink)
+              elink.click()
+              URL.revokeObjectURL(elink.href) // 释放URL 对象
+              document.body.removeChild(elink)
+            } else {
+              // IE10+下载
+              navigator.msSaveBlob(blob, fileName)
+            }
+          })
   }
   // 确定上传
   confirmUpload() {

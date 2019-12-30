@@ -3,8 +3,8 @@
     <el-row>
       <el-col :span="24">
         <action-header
-          exportUrl="/v1/admin/hsHouse/export"
-          exportName="房屋.xls"
+          exportUrl="/admin/hsHouse/export"
+          exportName="房屋.xlsx"
           ref="actionHeader"
           :initFormHeader="initForm"
           @fetchData="fetchData"
