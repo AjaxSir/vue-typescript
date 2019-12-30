@@ -344,6 +344,7 @@ div::-webkit-scrollbar-corner {
   height: 40px;
   ;
 }
+
 // .el-tree-node__content{
 //   overflow-y: hidden;
 //   overflow-x: auto;
@@ -354,6 +355,10 @@ div::-webkit-scrollbar-corner {
 // .el-date-editor .el-range-separator{
 //   line-height: 23px;
 // }
-.el-upload{
+.el-upload {
   text-align: left;
+}
+
+.avatar-uploader .el-upload {
+  text-align: center;
 }
