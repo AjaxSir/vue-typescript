@@ -287,6 +287,7 @@ export default class ExportIn extends Vue {
     this.dialogTableVisible = true;
     this.$refs.upload["clearFiles"]();
     this.$message.error("导入失败");
+    this.fileName = ''
   }
   errData: Array<object> = []; // 失败路径
   fileName: string = ""; // 文件名字
@@ -296,6 +297,7 @@ export default class ExportIn extends Vue {
     this.$message.success("导入成功");
     this.$refs.upload["clearFiles"]();
     this.handleClose();
+    this.fileName = ''
     return true;
   }
 
