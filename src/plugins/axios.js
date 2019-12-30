@@ -64,6 +64,8 @@ _axios.interceptors.response.use(
             });
           }
           break
+      default:
+        return response
     }
   },
 

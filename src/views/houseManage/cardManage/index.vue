@@ -7,8 +7,8 @@
           :initFormHeader="initForm"
           @fetchData="fetchData"
           ref="actionHeader"
-          exportUrl="/v1/admin/hsDoorCard/export"
-          exportName="门禁卡.xls"
+          exportUrl="/admin/hsDoorCard/export"
+          exportName="门禁卡.xlsx"
           :filterForm="filterForm"
           :total="page.total"
         >
@@ -274,7 +274,7 @@
     </el-dialog>
     <ExportIn
     uploadUrl='/v1/admin/hsDoorCard/import'
-    downTemplateUrl='/v1/admin/hsDoorCard/model'
+    downTemplateUrl='/admin/hsDoorCard/model'
     @closeVisible='closeVisible'
     TmplateName='门禁卡导入模板.xlsx'
     @successUpload='fetchData(initForm)'

@@ -187,11 +187,30 @@ export default class ActionManage extends Vue {
   }
   // 导出
   exportTable() {
+     const filterUrl = qs.stringify(this.initFormHeader["params"]);
     if (process.env.NODE_ENV === 'production') {
           this.exportUrl = this.exportUrl.replace('/v1', 'http://47.103.184.184')
         }
-        console.log('导出地址', this.exportUrl)
-    this["exportFunc"](this.exportName, this.exportUrl, this.filterForm);
+        exportList(this.exportUrl + "/?" + filterUrl).then(res => {
+            const fileName = this.exportName
+            var blob = new Blob([res.data], {
+              type: 'application/vnd.ms-excel;charset=UTF-8'
+            })
+            if ('download' in document.createElement('a')) {
+              // 非IE下载
+              const elink = document.createElement('a')
+              elink.download = fileName
+              elink.style.display = 'none'
+              elink.href = URL.createObjectURL(blob)
+              document.body.appendChild(elink)
+              elink.click()
+              URL.revokeObjectURL(elink.href) // 释放URL 对象
+              document.body.removeChild(elink)
+            } else {
+              // IE10+下载
+              navigator.msSaveBlob(blob, fileName)
+            }
+          })
   }
   /**
    * 筛选按钮
@@ -253,15 +272,29 @@ export default class ActionManage extends Vue {
           }
         }
         const filterUrl = qs.stringify(this.initFormHeader["params"]);
-        // if (process.env.NODE_ENV === 'production') {
-        //   this.exportUrl = this.exportUrl.replace('/v1', 'http://47.103.184.184')
-        // }
-        // console.log('导出地址', this.exportUrl)
-        // this["exportFunc"](this.exportName, this.exportUrl + "/?" + filterUrl);
-        console.log(this.exportUrl)
+        if (process.env.NODE_ENV === 'production') {
+          this.exportUrl = this.exportUrl.replace('/v1', 'http://47.103.184.184')
+        }
         exportList(this.exportUrl + "/?" + filterUrl).then(res => {
-          console.log(res)
-        })
+            const fileName = this.exportName
+            var blob = new Blob([res.data], {
+              type: 'application/vnd.ms-excel;charset=UTF-8'
+            })
+            if ('download' in document.createElement('a')) {
+              // 非IE下载
+              const elink = document.createElement('a')
+              elink.download = fileName
+              elink.style.display = 'none'
+              elink.href = URL.createObjectURL(blob)
+              document.body.appendChild(elink)
+              elink.click()
+              URL.revokeObjectURL(elink.href) // 释放URL 对象
+              document.body.removeChild(elink)
+            } else {
+              // IE10+下载
+              navigator.msSaveBlob(blob, fileName)
+            }
+          })
         break;
       case "link":
         this.$router.push({ path: this.linkUrl });
