@@ -169,7 +169,7 @@
       >
         <el-form-item class="phone-input" label="设备编号: " prop="serialNumber">
           <el-input @input='checkDevice' clearable style="width:340px" placeholder="请输入设备编号" v-model="Form.serialNumber"></el-input>
-          <h5 style="height:20px">此设备编号对应的是{{ deviceType | devType }}设备</h5>
+          <h5 style="height:20px;line-height:20px">{{ deviceType | devType }}</h5>
         </el-form-item>
         <el-form-item v-if='deviceType === "1" || deviceType === "2"' class="phone-input" label="设备进出: " prop="inOut">
           <el-switch
@@ -276,6 +276,7 @@ import axios from 'axios'
 import { searchHouse, getInoutList } from '@/api/houseApi.ts'
 import { getUserPass } from '@/api/peopleApi.ts'
 import { getScene } from '@/api/screenApi.ts'
+import Cookie from 'js-cookie'
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 const BaiduMap = () => import('@/components/baiduMap/index.vue')
 @Component({
@@ -292,7 +293,7 @@ const BaiduMap = () => import('@/components/baiduMap/index.vue')
         "3": '注册机',
         "4": '访客机',
       }
-      return data[val] || '无'
+      return data[val] ?  `此设备编号对应的是${data[val]}设备` : '未找到设备'
     }
   }
 })
@@ -355,6 +356,7 @@ export default class DeviceManage extends Vue {
     }
   deviceId: string = ''
   checkDevice(e) {
+    Cookie.set('error', Date.now(), { expires: new Date(new Date().getTime() + 10 * 1000) }) // 五秒钟内不会重复出现提示框
     checkdeviceByNum(e).then(res => {
       this.deviceType = res.data.data
     }).catch(() => {

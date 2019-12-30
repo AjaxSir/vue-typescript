@@ -305,7 +305,7 @@
       </span>
     </el-dialog>
     <ExportIn
-    uploadUrl='/v1/admin/usrUser/propertyManager/import'
+    uploadUrl='/v1/admin/usrUser/PropertyManager/import'
     downTemplateUrl='/admin/usrUser/PropertyManager/model'
     @closeVisible='closeVisible'
     @successUpload='fetchData(initForm)'
