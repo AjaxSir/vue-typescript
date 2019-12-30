@@ -4,7 +4,7 @@
       <el-col :span="24">
         <action-header
           ref="actionHeader"
-          exportUrl="/v1/admin/usr-car/export/"
+          exportUrl="/admin/usr-car/export/"
           exportName="车辆管理列表.xls"
           :initFormHeader="initForm"
           @fetchData="fetchData"
@@ -531,9 +531,10 @@
       </span>-->
     </el-dialog>
     <ImageMagni :centerDialogVisible="imgVisible" bigTitle="抓拍图片" :bigImg="bigImg" />
+    <!-- uploadUrl="/v1/admin/usr-car/import" -->
     <ExportIn
-      uploadUrl="/v1/admin/usr-car/import"
-      downTemplateUrl="/v1/admin/usr-car/exportModel"
+      :uploadUrl="env === 'production' ? 'http://47.103.184.184/admin/usr-car/import' : '/v1/admin/usrUser/import'"
+      downTemplateUrl="/admin/usr-car/exportModel"
       @closeVisible="closeVisible"
       TmplateName="车辆导出模板.xlsx"
       @successUpload="fetchData(initForm)"

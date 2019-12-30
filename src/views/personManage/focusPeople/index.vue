@@ -674,7 +674,7 @@
             <el-table-column prop="phone" align="center" label="电话" :show-overflow-tooltip="true"></el-table-column>
             <el-table-column prop="email" align="center" label="邮箱" :show-overflow-tooltip="true"></el-table-column>
             <el-table-column
-              prop="groupName"
+              prop="earlyGroupName"
               align="center"
               label="分组"
               :show-overflow-tooltip="true"

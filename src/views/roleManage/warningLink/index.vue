@@ -53,7 +53,7 @@
       <el-table-column prop="name" align="center" label="姓名" :show-overflow-tooltip="true"></el-table-column>
       <el-table-column prop="phone" align="center" label="电话" :show-overflow-tooltip="true"></el-table-column>
       <el-table-column prop="email" align="center" label="邮箱" :show-overflow-tooltip="true"></el-table-column>
-      <el-table-column prop="groupName" align="center" label="分组" :show-overflow-tooltip="true"></el-table-column>
+      <el-table-column prop="earlyGroupName" align="center" label="分组" :show-overflow-tooltip="true"></el-table-column>
       <el-table-column prop="note" align="center" label="备注" :show-overflow-tooltip="true">
         <template slot-scope="{row}">
           <p
@@ -589,7 +589,7 @@ export default class WarningLink extends Vue {
       this.editForm["email"] = null;
     }
     this.editForm["phone"] = +item.phone;
-    this.editForm["earlyGroupId"] = item.groupId;
+    this.editForm["earlyGroupId"] = item.earlyGroupId;
     this.dialogEdit = true;
 
     if (item.phone) {

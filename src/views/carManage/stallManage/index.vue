@@ -3,7 +3,7 @@
     <el-row>
       <el-col :span="24">
         <action-header
-          exportUrl="/v1/admin/car-space/export"
+          exportUrl="/admin/car-space/export"
           exportName="车位.xls"
           ref="actionHeader"
           :initFormHeader="initForm"
@@ -501,10 +501,10 @@
         <el-button type="primary" @click="bindingcarnumBtn">绑 定</el-button>
       </span>
     </el-dialog>
-
+    <!-- uploadUrl="/v1/admin/car-space/import" -->
     <ExportIn
-      uploadUrl="/v1/admin/car-space/import"
-      downTemplateUrl="/v1/admin/usr-car/import"
+      :uploadUrl="env === 'production' ? 'http://47.103.184.184/admin/car-space/import' : '/v1/admin/usrUser/import'"
+      downTemplateUrl="/admin/usr-car/import"
       @closeVisible="closeVisible"
       TmplateName="车位导出模板.xlsx"
       @successUpload="fetchData(initForm)"
