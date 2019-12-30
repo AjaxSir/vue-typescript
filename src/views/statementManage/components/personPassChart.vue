@@ -59,7 +59,23 @@
             </LineChart>
             <span v-else>当前筛选条件无数据</span>
           </el-tab-pane>
-          <el-tab-pane label="表格展示" name="second">配置管理</el-tab-pane>
+          <el-tab-pane label="表格展示" name="second">
+            <el-table
+            :data="data"
+            height="65vh"
+            style="width: 100%">
+            <el-table-column
+              prop="date"
+              align="center"
+              label="时间">
+            </el-table-column>
+            <el-table-column
+              prop="count"
+              align="center"
+              label="次数">
+            </el-table-column>
+          </el-table>
+          </el-tab-pane>
         </el-tabs>
       </div>
     </el-card>
@@ -68,7 +84,7 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { getCarPassListChart } from '@/api/screenApi.ts'
+import { getPassListChart } from '@/api/screenApi.ts'
 import LineChart  from '@/components/chart/line.vue'
 import { formatTimeObj } from '@/utils'
 @Component({
@@ -104,7 +120,7 @@ import { formatTimeObj } from '@/utils'
     fetchListData() {
       this.lineX = []
       this.lineY = []
-      getCarPassListChart(this.sortForm).then(res => {
+      getPassListChart(this.sortForm).then(res => {
         if (res.data.code === 200) {
           this.data = res.data.data
           res.data.data.forEach(ele => {

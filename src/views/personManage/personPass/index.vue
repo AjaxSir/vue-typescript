@@ -140,7 +140,7 @@
                 <span>{{ row.isVisitor ? '是' : '否' }}</span>
               </template>
             </el-table-column>
-             <el-table-column width="60" align='center' prop="img" label="抓拍人脸">
+             <el-table-column width="100" align='center' prop="img" label="抓拍人脸">
               <template slot-scope="scope">
                 <img
                   class="capture-img"

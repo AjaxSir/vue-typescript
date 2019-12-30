@@ -273,7 +273,7 @@
       </span>
     </el-dialog>
     <ExportIn
-    :uploadUrl="env === 'production' ? 'http://47.103.184.184/admin/hsDoorCard/import' : '/v1/admin/usrUser/import'"
+    :uploadUrl="env === 'production' ? 'http://47.103.184.184/admin/hsDoorCard/import' : '/v1/admin/hsDoorCard/import'"
     downTemplateUrl='/admin/hsDoorCard/model'
     @closeVisible='closeVisible'
     TmplateName='门禁卡导入模板.xlsx'
