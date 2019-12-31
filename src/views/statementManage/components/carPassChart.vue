@@ -62,6 +62,7 @@
           <el-tab-pane label="表格展示" name="second">
             <el-table
           :data="data"
+          height="65vh"
           style="width: 100%">
           <el-table-column
             prop="date"
@@ -69,7 +70,7 @@
             label="时间">
           </el-table-column>
           <el-table-column
-            prop="name"
+            prop="count"
             align="center"
             label="次数">
           </el-table-column>
@@ -83,7 +84,7 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { getPassListChart } from '@/api/screenApi.ts'
+import { getCarPassListChart } from '@/api/screenApi.ts'
 import LineChart  from '@/components/chart/line.vue'
 import { formatTimeObj } from '@/utils'
 @Component({
@@ -119,7 +120,7 @@ import { formatTimeObj } from '@/utils'
     fetchListData() {
       this.lineX = []
       this.lineY = []
-      getPassListChart(this.sortForm).then(res => {
+      getCarPassListChart(this.sortForm).then(res => {
         if (res.data.code === 200) {
           this.data = res.data.data
           res.data.data.forEach(ele => {

@@ -533,7 +533,7 @@
     <ImageMagni :centerDialogVisible="imgVisible" bigTitle="抓拍图片" :bigImg="bigImg" />
     <!-- uploadUrl="/v1/admin/usr-car/import" -->
     <ExportIn
-      :uploadUrl="env === 'production' ? 'http://47.103.184.184/admin/usr-car/import' : '/v1/admin/usrUser/import'"
+      :uploadUrl="env === 'production' ? 'http://47.103.184.184/admin/usr-car/import' : '/v1/admin/usr-car/import'"
       downTemplateUrl="/admin/usr-car/exportModel"
       @closeVisible="closeVisible"
       TmplateName="车辆导出模板.xlsx"
