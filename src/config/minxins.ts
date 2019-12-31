@@ -292,9 +292,9 @@ export default class GlobalMimins extends Vue {
           this.message('不能超过30个字符')
         }
         break;
-      case '7':
-        if (value.length === 7) {
-          this.message('车牌不能超过7个字符')
+      case '12':
+        if (value.length === 12) {
+          this.message('车牌不能超过12个字符')
         }
         break;
       case '10':

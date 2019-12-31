@@ -29,24 +29,8 @@
                 @keyup.enter.native="emitFetchData"
               ></el-input>
             </div>
-            <div class="word-filter">
-              <span class="filter-name filter-rewrite">预警组别:</span>
-              <el-select
-                class="select-class"
-                multiple
-                v-model="filterForm.earlyGroupId"
-                size="small"
-                placeholder="请选择预警组别"
-              >
-                <el-option
-                  v-for="tag in earlyGroup"
-                  :key="tag.id"
-                  :label="tag.groupName"
-                  :value="tag.id"
-                ></el-option>
-              </el-select>
-            </div>
-            <div class="word-filter">
+
+             <div class="word-filter">
               <span class="filter-name">紧急电话:</span>
               <el-input
                 class="input-filter"
@@ -59,6 +43,25 @@
                 @keydown.native="filterNumber"
               ></el-input>
             </div>
+
+            <div class="word-filter">
+              <span class="filter-name filter-rewrite">预警组别:</span>
+              <el-select
+                class="select-class"
+                multiple
+                v-model="filterForm.earlyGroupIdList"
+                size="small"
+                placeholder="请选择预警组别"
+              >
+                <el-option
+                  v-for="tag in earlyGroup"
+                  :key="tag.id"
+                  :label="tag.groupName"
+                  :value="tag.id"
+                ></el-option>
+              </el-select>
+            </div>
+
           </div>
         </ActionHeader>
       </el-col>
@@ -770,7 +773,7 @@ const ActionHeader = () => import("@/components/ActionHeader.vue");
   }
 })
 export default class FocusPeople extends Vue {
-  filterForm: object = { name: "", emergencyPhone: "", earlyGroupId: [] }; //根据关键字查询
+  filterForm: object = { name: "", emergencyPhone: "", earlyGroupIdList: [] }; //根据关键字查询
   initForm: object = {
     //获取关注人员列表url
     url: "/admin/usr-focus-personnel/",
