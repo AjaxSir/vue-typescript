@@ -434,6 +434,12 @@
             <el-table-column align="center" label="远程开门">
               <template slot-scope="{row}">{{ row.enableRemoteOpen === '1' ? '允许' : '禁止' }}</template>
             </el-table-column>
+
+            <el-table-column align="center" :show-overflow-tooltip="true" prop="note" label="备注">
+              <template slot-scope="{row}">
+                <span>{{row.note}}</span>
+              </template>
+            </el-table-column>
             <el-table-column
               align="center"
               :show-overflow-tooltip="true"
@@ -444,11 +450,6 @@
             >
               <template slot-scope="scope">
                 <el-button type="text" @click="deleteHouse(scope.row, scope.$index)">删除</el-button>
-              </template>
-            </el-table-column>
-            <el-table-column align="center" :show-overflow-tooltip="true" prop="note" label="备注">
-              <template slot-scope="{row}">
-                <span>{{row.note}}</span>
               </template>
             </el-table-column>
           </el-table>
