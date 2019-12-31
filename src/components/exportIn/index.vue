@@ -34,7 +34,6 @@
         <span style="color:black">{{ fileName }}</span>
       </el-upload>
       <h4>目前仅支持*.xlsx</h4>
-      <!-- <h4>已选文件:{{fileName}}</h4> -->
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose">取 消</el-button>
         <el-button type="primary" @click="confirmUpload">确 定</el-button>
@@ -43,7 +42,7 @@
     <el-dialog title="失败详情" width="1000px" :visible.sync="dialogTableVisible">
       <el-table height="300px" border :data="errData">
         <el-table-column
-          v-if="TmplateName==='用户导入模板.xlsx'"
+          v-if="uploadUrl.indexOf('/admin/usrUser/import') !== -1 || uploadUrl.indexOf('/admin/usrUser/PropertyManager/import') !== -1"
           :show-overflow-tooltip="true"
           :key="Math.random()"
           align="center"
@@ -52,7 +51,7 @@
           width="150"
         ></el-table-column>
         <el-table-column
-          v-if="TmplateName==='用户导入模板.xlsx'"
+          v-if="uploadUrl.indexOf('/admin/usrUser/import') !== -1 || uploadUrl.indexOf('/admin/usrUser/PropertyManager/import') !== -1"
           :show-overflow-tooltip="true"
           :key="Math.random()"
           align="center"
@@ -61,7 +60,7 @@
           width="150"
         ></el-table-column>
         <el-table-column
-          v-if="TmplateName==='用户导入模板.xlsx'"
+           v-if="uploadUrl.indexOf('/admin/usrUser/import') !== -1 || uploadUrl.indexOf('/admin/usrUser/PropertyManager/import') !== -1"
           :show-overflow-tooltip="true"
           :key="Math.random()"
           align="center"
@@ -71,7 +70,7 @@
         >
         </el-table-column>
         <el-table-column
-          v-if="TmplateName==='用户导入模板.xlsx'"
+          v-if="uploadUrl.indexOf('/admin/usrUser/import') !== -1"
           :show-overflow-tooltip="true"
           :key="Math.random()"
           align="center"
@@ -80,7 +79,7 @@
           width="150"
         ></el-table-column>
         <el-table-column
-          v-if="TmplateName==='用户导入模板.xlsx'"
+          v-if="uploadUrl.indexOf('/admin/usrUser/import') !== -1"
           :show-overflow-tooltip="true"
           :key="Math.random()"
           align="center"
@@ -89,7 +88,7 @@
           width="150"
         ></el-table-column>
         <el-table-column
-          v-if="TmplateName==='门禁卡导入模板.xlsx'"
+          v-if="uploadUrl.indexOf('/admin/hsDoorCard/import') !== -1"
           :show-overflow-tooltip="true"
           :key="Math.random()"
           align="center"
@@ -98,7 +97,7 @@
           width="150"
         ></el-table-column>
         <el-table-column
-          v-if="TmplateName==='门禁卡导入模板.xlsx'"
+          v-if="uploadUrl.indexOf('/admin/hsDoorCard/import') !== -1"
           :show-overflow-tooltip="true"
           :key="Math.random()"
           align="center"
@@ -107,7 +106,7 @@
           width="120"
         ></el-table-column>
         <el-table-column
-          v-if="TmplateName==='门禁卡导入模板.xlsx'"
+          v-if="uploadUrl.indexOf('/admin/hsDoorCard/import') !== -1"
           :show-overflow-tooltip="true"
           :key="Math.random()"
           align="center"
@@ -116,7 +115,7 @@
           label="有效时间"
         ></el-table-column>
         <el-table-column
-          v-if="TmplateName==='门禁卡导入模板.xlsx'"
+          v-if="uploadUrl.indexOf('/admin/hsDoorCard/import') !== -1"
           :show-overflow-tooltip="true"
           :key="Math.random()"
           align="center"
@@ -125,7 +124,7 @@
           label="房屋编号"
         ></el-table-column>
         <el-table-column
-          v-if="TmplateName==='门禁卡导入模板.xlsx'"
+          v-if="uploadUrl.indexOf('/admin/hsDoorCard/import') !== -1"
           :show-overflow-tooltip="true"
           :key="Math.random()"
           align="center"
@@ -135,7 +134,8 @@
         ></el-table-column>
 
         <el-table-column
-          v-if="TmplateName==='车辆导出模板.xlsx'"
+
+          v-if="uploadUrl.indexOf('/admin/usr-car/import') !== -1"
           :show-overflow-tooltip="true"
           :key="Math.random()"
           align="center"
@@ -143,7 +143,7 @@
           label="车牌"
         ></el-table-column>
         <el-table-column
-          v-if="TmplateName==='车辆导出模板.xlsx'"
+           v-if="uploadUrl.indexOf('/admin/usr-car/import') !== -1"
           :show-overflow-tooltip="true"
           :key="Math.random()"
           align="center"
@@ -151,7 +151,7 @@
           label="车主姓名"
         ></el-table-column>
         <el-table-column
-          v-if="TmplateName==='车辆导出模板.xlsx'"
+          v-if="uploadUrl.indexOf('/admin/usr-car/import') !== -1"
           :show-overflow-tooltip="true"
           :key="Math.random()"
           align="center"
@@ -159,7 +159,7 @@
           label="车主电话"
         ></el-table-column>
         <el-table-column
-          v-if="TmplateName==='车辆导出模板.xlsx'"
+           v-if="uploadUrl.indexOf('/admin/usr-car/import') !== -1"
           :show-overflow-tooltip="true"
           :key="Math.random()"
           align="center"
@@ -167,7 +167,7 @@
           label="状态"
         ></el-table-column>
         <el-table-column
-          v-if="TmplateName==='车辆导出模板.xlsx'"
+           v-if="uploadUrl.indexOf('/admin/usr-car/import') !== -1"
           :show-overflow-tooltip="true"
           :key="Math.random()"
           align="center"
@@ -175,7 +175,7 @@
           label="车辆品牌"
         ></el-table-column>
         <el-table-column
-          v-if="TmplateName==='车辆导出模板.xlsx'"
+           v-if="uploadUrl.indexOf('/admin/usr-car/import') !== -1"
           :show-overflow-tooltip="true"
           :key="Math.random()"
           align="center"
@@ -183,7 +183,7 @@
           label="车辆型号"
         ></el-table-column>
         <el-table-column
-          v-if="TmplateName==='车辆导出模板.xlsx'"
+           v-if="uploadUrl.indexOf('/admin/usr-car/import') !== -1"
           :show-overflow-tooltip="true"
           :key="Math.random()"
           align="center"
@@ -191,7 +191,7 @@
           label="备注"
         ></el-table-column>
         <el-table-column
-          v-if="TmplateName!=='车位导出模板.xlsx'"
+           v-if="uploadUrl.indexOf('/admin/usr-car/import') === -1"
           :show-overflow-tooltip="true"
           :key="Math.random()"
           align="center"
@@ -199,10 +199,10 @@
           label="失败原因"
         >
          <template slot-scope="{row}">
-            <span v-for="(item,index) in row.caseFail" :key="'caseFail' + index">{{item}}</span>
+            <span v-for="(item,index) in row.caseFail" :key="'caseFail' + index">{{item}},</span>
           </template></el-table-column>
         <el-table-column
-          v-if="TmplateName!=='车位导出模板.xlsx'"
+           v-if="uploadUrl.indexOf('/admin/usr-car/import') === -1"
           :show-overflow-tooltip="true"
           :key="Math.random()"
           align="center"
@@ -214,7 +214,7 @@
           </template>
         </el-table-column>
         <el-table-column
-          v-if="TmplateName==='车位导出模板.xlsx'"
+           v-if="uploadUrl.indexOf('/admin/usr-car/import') !== -1"
           :show-overflow-tooltip="true"
           :key="Math.random()"
           align="center"
@@ -222,12 +222,12 @@
           label="绑定车辆"
         >
           <template slot-scope="{row}">
-            <span v-for="item in row.carSpaceCarVos" :key="item.carId">{{item.carNo}}</span>
+            <span v-for="item in row.carSpaceCarVos" :key="item.carId">{{item.carNo}},</span>
           </template>
         </el-table-column>
 
         <el-table-column
-          v-if="TmplateName==='车位导出模板.xlsx'"
+         v-if="uploadUrl.indexOf('/admin/usr-car/import') !== -1"
           :show-overflow-tooltip="true"
           :key="Math.random()"
           align="center"
@@ -236,7 +236,7 @@
         ></el-table-column>
 
         <el-table-column
-          v-if="TmplateName==='车位导出模板.xlsx'"
+         v-if="uploadUrl.indexOf('/admin/usr-car/import') !== -1"
           :show-overflow-tooltip="true"
           :key="Math.random()"
           align="center"
@@ -244,7 +244,7 @@
           label="业主姓名"
         ></el-table-column>
         <el-table-column
-          v-if="TmplateName==='车位导出模板.xlsx'"
+          v-if="uploadUrl.indexOf('/admin/usr-car/import') !== -1"
           :show-overflow-tooltip="true"
           :key="Math.random()"
           align="center"
@@ -257,7 +257,7 @@
         </el-table-column>
 
         <el-table-column
-          v-if="TmplateName==='车位导出模板.xlsx'"
+          v-if="uploadUrl.indexOf('/admin/usr-car/import') !== -1"
           :show-overflow-tooltip="true"
           :key="Math.random()"
           align="center"
@@ -285,23 +285,27 @@ export default class ExportIn extends Vue {
   @Getter('token') token: string
   @Prop({ default: "用户导入模板.xlsx" }) TmplateName: string;
   header: object =  {}
+  errData: Array<object> = []; // 失败路径
+  fileName: string = ""; // 文件名字
+  dialogTableVisible: boolean = false; // 导出失败状态
   @Emit("errorUpload")
   errorUpload(err, file, list) {
+    this.$nextTick(() => {
+      this.fileName = ''
+    })
     this.errData = JSON.parse(err.message);
     this.dialogTableVisible = true;
     this.$refs.upload["clearFiles"]();
     this.$message.error("导入失败");
-    this.fileName = ''
   }
-  errData: Array<object> = []; // 失败路径
-  fileName: string = ""; // 文件名字
-  dialogTableVisible: boolean = false; // 导出失败状态
   @Emit("successUpload")
   successUpload(file) {
+    this.$nextTick(() => {
+      this.fileName = ''
+    })
     this.$message.success("导入成功");
     this.$refs.upload["clearFiles"]();
     this.handleClose();
-    this.fileName = ''
     return true;
   }
   changeFile(file) {
