@@ -85,7 +85,7 @@
                 @keyup.native="UpNumber"
                 @keydown.native="UpNumber"
                 @change="clearableBtn"
-                @input="hint"
+                @input="hintChange"
                 @focus="hintFocus"
                 @blur="hintBlur"
                 @mouseover.native="hint(batchForm.start)"
@@ -101,7 +101,7 @@
                 @keyup.native="UpNumber"
                 @keydown.native="UpNumber"
                 @change="clearableBtn"
-                @input="hint"
+                @input="hintChange"
                 @focus="hintFocus"
                 @blur="hintBlur"
                 @mouseover.native="hint(batchForm.end)"
@@ -115,7 +115,12 @@
               :show-message="showMessage"
               :error="errorMessage.unitId"
             >
-              <el-select style="width:212px" v-model="batchForm.unitId" placeholder="请选择">
+              <el-select
+                style="width:212px"
+                v-model="batchForm.unitId"
+                placeholder="请选择"
+                @change="changeSelect"
+              >
                 <el-option v-for="item in Tags" :key="item.id" :label="item.name" :value="item.id"></el-option>
               </el-select>
               <el-button @click="showUnitSetting = !showUnitSetting">单位设置</el-button>
@@ -140,6 +145,20 @@
                 ></el-input>
                 <el-button v-else class="button-new-tag" size="small" @click="showInput">添加单位</el-button>
               </div>
+            </el-form-item>
+            <el-form-item label="生成示例:" prop="note" label-width="85px">
+              <p
+                style="height:16px;"
+                v-for="(item,index) in sample.slice(0,2)"
+                :key="'unit'+index"
+              >{{item}}</p>
+              <p style="height:16px;" v-if="sample.length>2">...</p>
+              <p
+                style="height:16px;"
+                v-if="sample.length>2"
+                v-for="(item,index) in sample.slice(sample.length-1)"
+                :key="'unitend'+index"
+              >{{item}}</p>
             </el-form-item>
             <!-- <el-form-item label="备注:" prop="note" label-width="85px">
               <el-input
@@ -352,6 +371,7 @@ export default class DataTree extends Vue {
   newTagValue: string = "";
   // 权限dialog状态
   // RoleVisible: boolean = false;
+  private sample: Array<Object> = []; //生成示例
   mounted() {
     this.UpdateStatus = this.permissionList.includes(
       this.$route.name + "Update"
@@ -402,6 +422,13 @@ export default class DataTree extends Vue {
       parentId: "",
       title: "添加子分组"
     };
+    this.batchForm = {
+      end: "",
+      parentId: "",
+      start: "",
+      unitId: "",
+      title: "添加子分组"
+    }; // 批量添加表单
 
     // if (this.HouseUnitVisible) {
     //   this.$refs["buildings"]["resetFields"]();
@@ -413,6 +440,7 @@ export default class DataTree extends Vue {
     }
     // this.HouseUnitVisible = false;
     this.HouseVisible = false;
+    this.sample = [];
   }
 
   fetchUnitList(type: string = "group") {
@@ -452,6 +480,22 @@ export default class DataTree extends Vue {
       dataList["sonBuildGroups"].length
     ) {
       return this.checkParent(dataList, data);
+    }
+  }
+
+  changeSelect() {
+    /**@description 生成示例 */
+    var unitName = "";
+    this.sample = [];
+    for (const item of this.Tags) {
+      if (item["id"] === this.batchForm["unitId"]) {
+        unitName = item["name"];
+      }
+    }
+    for (var i = this.batchForm["start"]; i <= this.batchForm["end"]; i++) {
+      if (i) {
+        this.sample.push(i + unitName);
+      }
     }
   }
 
@@ -509,7 +553,6 @@ export default class DataTree extends Vue {
   }
   // 循环创建
   async sortCreated() {
-    console.log(this.batchForm);
     let success = 0;
     let error = 0;
     await addHouseGroups(this.batchForm).then(res => {
@@ -674,7 +717,16 @@ export default class DataTree extends Vue {
     this.phoneNum = v ? v.length : 0;
   }
 
-  hint(v: any) {
+  hint(v: any) {}
+  hintChange(v: any) {
+    if (!this.batchRules["start"] || !this.batchRules["start"]) {
+      this.sample = [];
+    } else {
+      if (this.batchForm["unitId"]) {
+        this.changeSelect();
+      }
+    }
+
     this.hintPhone = v ? true : false;
   }
 
