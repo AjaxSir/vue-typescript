@@ -49,7 +49,7 @@
               <el-select
                 class="select-class"
                 multiple
-                v-model="filterForm.earlyGroupId"
+                v-model="filterForm.earlyGroupIdList"
                 size="small"
                 placeholder="请选择预警组别"
               >
@@ -773,7 +773,7 @@ const ActionHeader = () => import("@/components/ActionHeader.vue");
   }
 })
 export default class FocusPeople extends Vue {
-  filterForm: object = { name: "", emergencyPhone: "", earlyGroupId: [] }; //根据关键字查询
+  filterForm: object = { name: "", emergencyPhone: "", earlyGroupIdList: [] }; //根据关键字查询
   initForm: object = {
     //获取关注人员列表url
     url: "/admin/usr-focus-personnel/",
