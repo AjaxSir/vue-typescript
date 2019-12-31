@@ -83,7 +83,7 @@ export function carPassList() {
     url: '/admin/car-pass/homeOrderVisitCar',
     method: 'get',
     params: {
-      limit: 5
+      limit: 6
     }
   })
 }
@@ -94,7 +94,7 @@ export function peoplePassList() {
     url: '/admin/people-pass/homeList',
     method: 'get',
     params: {
-      limit: 5
+      limit: 6
     }
   })
 }

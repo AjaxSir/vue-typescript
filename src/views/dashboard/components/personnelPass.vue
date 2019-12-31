@@ -10,81 +10,65 @@
         </router-link>
       </div>
       <div>
-        <ul>
-          <li>类型</li>
-          <li>姓名</li>
-          <li>电话</li>
-          <li>开门方式</li>
-          <li>照片</li>
-          <li>时间</li>
-        </ul>
-        <div  @mouseenter="enterList" @mouseleave="leaveList" v-show='tableData.length' id='content' style="height: 250px;overflow:hidden">
-          <div id='listOne'>
-            <ul v-for='(item, index) in tableData' :key='index'>
-              <li><el-tag
-                  size="small"
-                  style="border-radius: 50px;padding: 0 10px;"
-                  :type="!item.isVisitCar? 'success' : 'danger'"
-                >{{ item.isVisitCar? "访客" : "住户" }}</el-tag></li>
-              <li>
-                <el-tooltip class="item" effect="dark" :content="item.userName" placement="top">
-                    <span>{{ item.userName || '--' }}</span>
-                  </el-tooltip>
-                </li>
-              <li>
-                <el-tooltip class="item" effect="dark" :content="item.phone" placement="top">
-                    <span>{{ item.phone || '--' }}</span>
-                  </el-tooltip>
-                  </li>
-              <li>
-                <el-tooltip class="item" effect="dark" :content="item.passMethod | passMethod" placement="top">
-                    <span>{{ item.passMethod | passMethod }}</span>
-                  </el-tooltip>
-                </li>
-              <li><img style="margin-top:10px" :src="item.photos" alt=""></li>
-              <li>
-                <el-tooltip class="item" effect="dark" :content="item.passTime" placement="top">
-                    <span>{{ item.passTime }}</span>
-                  </el-tooltip>
-               </li>
-            </ul>
-          </div>
-           <div id='listTwo'>
-           <ul v-for='(item, index) in tableData' :key='index'>
-              <li><el-tag
-                  size="small"
-                  style="border-radius: 50px;padding: 0 10px;"
-                  :type="!item.isVisitCar? 'success' : 'danger'"
-                >{{ item.isVisitCar? "访客" : "住户" }}</el-tag></li>
-              <li>
-                <el-tooltip class="item" effect="dark" :content="item.userName" placement="top">
-                    <span>{{ item.userName || '--' }}</span>
-                  </el-tooltip>
-                </li>
-              <li>
-                <el-tooltip class="item" effect="dark" :content="item.phone" placement="top">
-                    <span>{{ item.phone || '--' }}</span>
-                  </el-tooltip>
-                  </li>
-              <li>
-                <el-tooltip class="item" effect="dark" :content="item.passMethod | passMethod" placement="top">
-                    <span>{{ item.passMethod | passMethod }}</span>
-                  </el-tooltip>
-                </li>
-              <li><img style="margin-top:10px" :src="item.photos" alt=""></li>
-              <li>
-                <el-tooltip class="item" effect="dark" :content="item.passTime" placement="top">
-                    <span>{{ item.passTime }}</span>
-                  </el-tooltip>
-               </li>
-            </ul>
-          </div>
-        </div>
-        <div
-        style="height: 250px;text-align:center;line-height:250px;font-size:15px;color:#474758"
-        v-show='!tableData.length'>暂无人员通行记录</div>
+        <el-table
+          :data="tableData"
+          height="340px"
+          style="width: 100%">
+          <el-table-column
+            prop="date"
+            label="类型"
+            align="center"
+            width="80"
+            >
+            <template slot-scope="{row}">
+              <span>{{ row.isVisitor ? '访客' : '住户' }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="date"
+            :show-overflow-tooltip="true"
+            label="姓名"
+            align="center"
 
+            >
+            <template slot-scope="{row}">
+              <span>{{ row.userName || '--' }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="phone"
+            label="电话"
+            :show-overflow-tooltip="true"
+            align="center"
+            >
+          </el-table-column>
+          <el-table-column
+            prop="date"
+            label="开门方式"
+            align="center"
+            :show-overflow-tooltip="true"
+            >
+            <template slot-scope="{row}">
+              <span>{{ row.passMethod | passMethod }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="照片"
+            align="center"
+            >
+            <template slot-scope="{row}">
+              <img :src="row.photos" alt="">
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="passTime"
+            label="时间"
+            :show-overflow-tooltip="true"
+            align="center"
+            >
 
+          </el-table-column>
+        </el-table>
       </div>
     </div>
   </div>
@@ -119,44 +103,19 @@ export default class openDoor extends Vue {
       tableData: Array<object> = []
 
   created() {
-
     this.fetchList();
+    this.timer = setInterval(() => {
+       this.fetchList();
+    }, 30000)
   }
   beforeDestroy() {
     clearInterval(this.timer)
   }
   mounted() {
-    this.roll(50)
-  }
-  enterList() {
-    clearInterval(this.timer)
-  }
-  leaveList() {
-    this.roll(50)
-  }
-
-  roll(time) {
-    // if (this.timer) return
-    const content = document.getElementById('content') as HTMLElement
-    const listOne = document.getElementById('listOne') as HTMLElement
-    if (this.timer) {
-      content.scrollTop = content.scrollTop
-    } else {
-      content.scrollTop =  0
-    }
-      this.timer = setInterval(() => {
-        if (content.scrollTop >= listOne.scrollHeight) {
-          content.scrollTop = 0
-        } else {
-          content.scrollTop ++
-        }
-      }, time)
-    // }
-
   }
   fetchList() {
     peoplePassList().then(res => {
-      this.tableData = res.data.data
+      this.tableData = [...this.tableData, ...res.data.data]
     })
   }
 }

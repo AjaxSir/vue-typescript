@@ -61,7 +61,7 @@
 
             <el-table-column prop="note" label="备注" align="center">
               <template slot-scope="{row}">
-                <span>{{ row.note || '--' }}</span>
+                <span>{{ row.note || '' }}</span>
               </template>
             </el-table-column>
 

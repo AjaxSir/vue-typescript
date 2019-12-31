@@ -206,7 +206,7 @@
 
               <p class="detai-info">
                 <span class="labelTitle">最近刷卡时间</span>
-                :&nbsp;&nbsp;&nbsp;{{detailDialog.lastUseTime || '- -'}}
+                :&nbsp;&nbsp;&nbsp;{{detailDialog.lastUseTime || ''}}
               </p>
             </el-col>
           </el-row>

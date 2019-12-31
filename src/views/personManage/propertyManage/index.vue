@@ -87,9 +87,8 @@
                 <el-input
                 :clearable="true"
                 v-show='row.phoneStatus'
-                @blur="phoneBlur(row)"
+                @blur="confirmUpdatePhone(row)"
                 :ref='"name" + row.id'
-                @keyup.enter.native="confirmUpdatePhone(row)"
                 v-model="phoneString"
                 placeholder="输入电话"></el-input>
               </template>
@@ -135,12 +134,11 @@
               <template slot-scope="scope">
               <span class="rowUpdate"
               v-show='!scope.row.noteStatus'
-              @click='focusNoteInput(scope.row)'>{{ scope.row.note || '点击编辑' }}</span>
+              @click='focusNoteInput(scope.row)'>{{ scope.row.note || '--' }}</span>
               <el-input
               :clearable="true"
               :ref='scope.row.id'
-              @keyup.enter.native="confirmUpdateNote(scope.row)"
-              @blur="noteBlur(scope.row)"
+              @blur="confirmUpdateNote(scope.row)"
               v-model="noteString"
               v-show='scope.row.noteStatus'
               placeholder="输入备注">
@@ -178,11 +176,15 @@
            <el-table
             :data="passListData"
             style="width: 100%">
-            <el-table-column prop="name" align='center' label="姓名" width="150px"></el-table-column>
-            <el-table-column prop="passTime" align='center' label="通行时间" width="150px"></el-table-column>
-            <el-table-column prop="inOut" align='center' label="进/出" width="150px"></el-table-column>
-            <el-table-column prop="passMethod" align='center' label="通行方式"></el-table-column>
-            <el-table-column prop="passMethod" align='center' label="抓拍图片">
+            <el-table-column prop="name" align='center' label="姓名" width="100px"></el-table-column>
+            <el-table-column prop="passTime" :show-overflow-tooltip='true' align='center' label="通行时间" width="150px"></el-table-column>
+            <el-table-column prop="inOut" align='center' label="进/出" width="80px"></el-table-column>
+            <el-table-column prop="passMethod" align='center' label="通行方式">
+              <template slot-scope="{row}">
+                <span>{{ row.passMethod | passMethod }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column align='center' label="抓拍图片">
               <template slot-scope="{row}">
                 <img :src="row.photos" alt=""></template>
             </el-table-column>
@@ -330,6 +332,19 @@ const ExportIn = () => import("@/components/exportIn/index.vue");
     ActionHeader,
     DataTree,
     ExportIn
+  },
+  filters: {
+    passMethod(val: string) {
+      const data = {
+        "1": '人脸开门',
+        "2": '二维码开门',
+        "3": '蓝牙开门',
+        "4": '远程开门',
+        "5": '密码开门',
+        "6": '刷卡开门'
+      }
+      return data[val]
+    }
   }
 })
 export default class PropertyManage extends Vue {
@@ -465,20 +480,50 @@ export default class PropertyManage extends Vue {
   }
   // 确定修改 电话
   confirmUpdatePhone(row) {
-    if(!(/^1[3456789]\d{9}$/.test(this.phoneString))){
-      this.$message.error('请输入正确的手机格式');
-      return
-    }
-    updateUserPhone(row.id, this.phoneString).then(res => {
-      if (res.data.code === 200) {
-        this.$message.success('修改成功')
-        row.phoneStatus = false
-        this.phoneString = ''
-        this.fetchData(this.initForm)
-      } else {
-        this.$message.error(res.data.message)
-      }
-    })
+    if (!/^1[3578]\d{9}$/.test(this.phoneString)) {
+              this.$message.error("请输入正确的手机格式");
+              this.$set(row, 'phoneStatus', false)
+              return;
+            }
+    this.$confirm("此操作将修改物业人员手机号, 是否继续?", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        })
+          .then(() => {
+
+            updateUserPhone(row.id, this.phoneString).then(res => {
+              if (res.data.code === 200) {
+                this.$message.success("修改成功");
+                row.phoneStatus = false;
+                this.phoneString = "";
+                this.fetchData(this.initForm);
+              } else {
+                this.$message.error(res.data.message);
+              }
+            });
+          })
+          .catch(() => {
+            this.$set(row, 'phoneStatus', false)
+            this.$message({
+              type: "info",
+              message: "已取消修改"
+            });
+          });
+    // if(!(/^1[3456789]\d{9}$/.test(this.phoneString))){
+    //   this.$message.error('请输入正确的手机格式');
+    //   return
+    // }
+    // updateUserPhone(row.id, this.phoneString).then(res => {
+    //   if (res.data.code === 200) {
+    //     this.$message.success('修改成功')
+    //     row.phoneStatus = false
+    //     this.phoneString = ''
+    //     this.fetchData(this.initForm)
+    //   } else {
+    //     this.$message.error(res.data.message)
+    //   }
+    // })
   }
   // 修改电话离开输入框
   phoneBlur(row) {
@@ -499,16 +544,31 @@ export default class PropertyManage extends Vue {
   }
   // 修改备注
   confirmUpdateNote(row) {
-    updateUserNote( row.id, this.noteString ).then(res => {
-      if (res.data.code === 200) {
-        this.$message.success('修改成功')
-        row.noteStatus = false
-        this.noteString = ''
-        this.fetchData(this.initForm)
-      } else {
-        this.$message.error(res.data.message)
-      }
-    })
+    this.$confirm("此操作将修改房屋备注, 是否继续?", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        })
+          .then(() => {
+            updateUserNote( row.id, this.noteString ).then(res => {
+              if (res.data.code === 200) {
+                this.$message.success('修改成功')
+                row.noteStatus = false
+                this.noteString = ''
+                this.fetchData(this.initForm)
+              } else {
+                this.$message.error(res.data.message)
+              }
+            })
+          })
+          .catch(() => {
+            row.noteStatus = false;
+            this.$set(row, 'phoneStatus', false)
+            this.$message({
+              type: "info",
+              message: "已取消修改"
+            });
+          });
   }
   // 修改备注离开输入框
   noteBlur(row) {

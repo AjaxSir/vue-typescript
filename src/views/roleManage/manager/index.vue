@@ -55,7 +55,7 @@
 
             <el-table-column :show-overflow-tooltip='true' prop="note" label="备注" align="center">
               <template slot-scope="{row}">
-                <span>{{ row.note || '--' }}</span>
+                <span>{{ row.note || '' }}</span>
               </template>
             </el-table-column>
 
@@ -68,11 +68,11 @@
                     size="small"
                     style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
                     :type='row.status === "0" ? "error" : "danger" '
-                    >{{ row.status === '0' ? '使用' : '禁用' }}
+                    >{{ row.status === '0' ? '正常' : '禁用' }}
                     </el-tag>
                   </span>
                   <el-dropdown-menu  slot="dropdown">
-                    <el-dropdown-item :command='ComponentCommand("0", row)'>使用</el-dropdown-item>
+                    <el-dropdown-item :command='ComponentCommand("0", row)'>正常</el-dropdown-item>
                     <el-dropdown-item :command='ComponentCommand("-1", row)'>禁用</el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>

@@ -293,10 +293,15 @@ export default class ExportIn extends Vue {
     this.$nextTick(() => {
       this.fileName = ''
     })
-    this.errData = JSON.parse(err.message);
-    this.dialogTableVisible = true;
-    this.$refs.upload["clearFiles"]();
-    this.$message.error("导入失败");
+    this.errData = []
+    if (JSON.parse(err.message).code === 400) {
+      this.$message.error(JSON.parse(err.message).message);
+    } else {
+      this.errData = JSON.parse(err.message);
+      this.dialogTableVisible = true;
+      this.$refs.upload["clearFiles"]();
+    }
+
   }
   @Emit("successUpload")
   successUpload(file) {
