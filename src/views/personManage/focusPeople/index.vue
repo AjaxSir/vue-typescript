@@ -29,6 +29,21 @@
                 @keyup.enter.native="emitFetchData"
               ></el-input>
             </div>
+
+             <div class="word-filter">
+              <span class="filter-name">紧急电话:</span>
+              <el-input
+                class="input-filter"
+                size="small"
+                v-model="filterForm.emergencyPhone"
+                placeholder="请输入手机号码"
+                clearable
+                @keyup.enter.native="emitFetchData"
+                @keyup.native="filterNumber"
+                @keydown.native="filterNumber"
+              ></el-input>
+            </div>
+
             <div class="word-filter">
               <span class="filter-name filter-rewrite">预警组别:</span>
               <el-select
@@ -46,19 +61,7 @@
                 ></el-option>
               </el-select>
             </div>
-            <div class="word-filter">
-              <span class="filter-name">紧急电话:</span>
-              <el-input
-                class="input-filter"
-                size="small"
-                v-model="filterForm.emergencyPhone"
-                placeholder="请输入手机号码"
-                clearable
-                @keyup.enter.native="emitFetchData"
-                @keyup.native="filterNumber"
-                @keydown.native="filterNumber"
-              ></el-input>
-            </div>
+
           </div>
         </ActionHeader>
       </el-col>
