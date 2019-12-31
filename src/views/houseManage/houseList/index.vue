@@ -314,6 +314,12 @@
               prop="createTime"
               label="注册时间"
             ></el-table-column>
+
+            <el-table-column align="center" prop="note" label="备注">
+              <template slot-scope="{row}">
+                <span>{{ row.note ? row.note : '' }}</span>
+              </template>
+            </el-table-column>
             <el-table-column
               align="center"
               :show-overflow-tooltip="true"
@@ -324,11 +330,6 @@
             >
               <template slot-scope="{row}">
                 <el-button type="text" @click="deleteHousePeople(row)">删除</el-button>
-              </template>
-            </el-table-column>
-            <el-table-column align="center" prop="note" label="备注">
-              <template slot-scope="{row}">
-                <span>{{ row.note ? row.note : '' }}</span>
               </template>
             </el-table-column>
           </el-table>
