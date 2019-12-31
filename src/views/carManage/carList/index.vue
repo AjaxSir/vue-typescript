@@ -266,7 +266,7 @@
           :show-message="showMessage"
           :error="errorMessage.carNo"
         >
-          <el-input v-model="createForm[0].carNo" placeholder="请输入车牌号" clearable></el-input>
+          <el-input v-model="createForm[0].carNo" :maxlength="12" placeholder="请输入车牌号" clearable @input="constraintLength(createForm[0].carNo,'12')"></el-input>
         </el-form-item>
 
         <el-form-item
