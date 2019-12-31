@@ -103,17 +103,17 @@
             @cell-mouse-leave="leaveRowChange"
           >
             <el-table-column type="index" align='center' label="序号" width="50"></el-table-column>
-            <el-table-column  :show-overflow-tooltip='true' width="120" align='center' prop="userName" label="姓名">
+            <el-table-column  :show-overflow-tooltip='true' align='center' prop="userName" label="姓名">
               <template slot-scope="scope">
                 <span class="serial-num">{{scope.row.name || '--'}}</span>
               </template>
             </el-table-column>
-            <el-table-column  :show-overflow-tooltip='true' width="120" align='center' prop="passMethod" label="通行方式">
+            <el-table-column  :show-overflow-tooltip='true' align='center' prop="passMethod" label="通行方式">
               <template slot-scope="{row}">
                 <span>{{ row.passMethod | passMethod }}</span>
               </template>
             </el-table-column>
-            <el-table-column  :show-overflow-tooltip='true' width="120" align='center' prop="inOut" label="出入类型">
+            <el-table-column  :show-overflow-tooltip='true' align='center' prop="inOut" label="出入类型">
             </el-table-column>
             <el-table-column  :show-overflow-tooltip='true' width="120" align='center' prop="devId" label="设备编号">
               <template slot-scope="scope">
@@ -162,7 +162,7 @@
                 />
               </template>
             </el-table-column>
-            <el-table-column align='center' prop="passTime" label="通行时间"> </el-table-column>
+            <el-table-column align='center' prop="passTime" label="通行时间" :show-overflow-tooltip="true"> </el-table-column>
           </el-table>
           <el-pagination
           @current-change='pageChange'

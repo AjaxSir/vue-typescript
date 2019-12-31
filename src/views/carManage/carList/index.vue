@@ -585,7 +585,7 @@ export default class CarList extends Vue {
 
   private dialogFormVisible: Boolean = false;
   private formLabelWidth: String = "120px";
-
+  env: string = process.env.NODE_ENV;
   private createForm: Array<Object> = [
     //添加表单字段
     {

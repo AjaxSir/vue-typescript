@@ -33,6 +33,7 @@
               <span class="filter-name filter-rewrite">预警组别:</span>
               <el-select
                 class="select-class"
+                multiple
                 v-model="filterForm.earlyGroupId"
                 size="small"
                 placeholder="请选择预警组别"
@@ -649,7 +650,7 @@
                   <span>{{userDetail.age ? userDetail.age : '--'}}</span>
                 </el-form-item>-->
                 <el-form-item style="margin-bottom:0" label="性别:">
-                  <span>{{userDetail.sex ? userDetail.sex :'--'}}</span>
+                  <span>{{userDetail.sex==='0'?'女':'男'}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="电话:">
                   <span>{{userDetail.phone ? userDetail.phone:'--'}}</span>
@@ -667,7 +668,7 @@
           </el-form>
         </el-tab-pane>
 
-        <el-tab-pane label="预警组别" name="second">
+        <el-tab-pane label="预警人员" name="second">
           <el-table v-loading="earlyLoading" :data="earlyList" style="width: 100%" stripe>
             <el-table-column type="index" label="序号" width="50" align="center"></el-table-column>
             <el-table-column prop="name" align="center" label="姓名" :show-overflow-tooltip="true"></el-table-column>
@@ -769,7 +770,7 @@ const ActionHeader = () => import("@/components/ActionHeader.vue");
   }
 })
 export default class FocusPeople extends Vue {
-  filterForm: object = { name: "", emergencyPhone: "", earlyGroupId: "" }; //根据关键字查询
+  filterForm: object = { name: "", emergencyPhone: "", earlyGroupId: [] }; //根据关键字查询
   initForm: object = {
     //获取关注人员列表url
     url: "/admin/usr-focus-personnel/",

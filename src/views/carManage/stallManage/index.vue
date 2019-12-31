@@ -591,7 +591,7 @@ export default class CardManage extends Vue {
     method: "delete",
     data: []
   };
-
+  env: string = process.env.NODE_ENV;
   createForm: object = {
     ownerScenceUserId: "", // 业主场景用户id
     carSpaceGroupId: "", // 车位分组id
