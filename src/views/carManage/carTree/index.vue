@@ -82,30 +82,20 @@
             <el-form-item prop="start" label="编号:">
               <el-input
                 clearable
-                @keyup.native="UpNumber"
-                @keydown.native="UpNumber"
-                @change="clearableBtn"
-                @input="hintChange"
-                @focus="hintFocus"
-                @blur="hintBlur"
-                @mouseover.native="hint(batchForm.start)"
-                @mouseout.native="hint(batchForm.start)"
-                style="width:140px"
                 placeholder="开始编号"
+                style="width:140px"
+                @keydown.native="UpNumber"
+                @keyup.native="inputHouseCheck"
+                @change="hintChange"
                 v-model="batchForm.start"
               ></el-input>&nbsp;&nbsp;至&nbsp;&nbsp;
               <el-input
                 clearable
                 placeholder="结束编号"
                 style="width:140px"
-                @keyup.native="UpNumber"
                 @keydown.native="UpNumber"
-                @change="clearableBtn"
-                @input="hintChange"
-                @focus="hintFocus"
-                @blur="hintBlur"
-                @mouseover.native="hint(batchForm.end)"
-                @mouseout.native="hint(batchForm.end)"
+                @keyup.native="inputHouseCheck"
+                @change="hintChange"
                 v-model="batchForm.end"
               ></el-input>
             </el-form-item>
@@ -153,12 +143,13 @@
                 :key="'unit'+index"
               >{{item}}</p>
               <p style="height:16px;" v-if="sample.length>2">...</p>
-              <p
-                style="height:16px;"
-                v-if="sample.length>2"
-                v-for="(item,index) in sample.slice(sample.length-1)"
-                :key="'unitend'+index"
-              >{{item}}</p>
+              <div v-if="sample.length>2">
+                <p
+                  style="height:16px;"
+                  v-for="(item,index) in sample.slice(sample.length-1)"
+                  :key="'unitend'+index"
+                >{{item}}</p>
+              </div>
             </el-form-item>
             <!-- <el-form-item label="备注:" prop="note" label-width="85px">
               <el-input
@@ -323,20 +314,9 @@ export default class DataTree extends Vue {
       { min: 1, max: 15, message: "名称长度应在1到15位" }
     ]
   };
+
   batchRules: object = {
-    start: [
-      {
-        required: true,
-        trigger: "blur",
-        validator: (rule, value, callback) => {
-          if (!/^\+?[1-9]\d*$/.test(value)) {
-            callback(new Error("填写正确的楼栋编号"));
-          } else {
-            callback();
-          }
-        }
-      }
-    ],
+    start: [{ required: true, message: "请输入开始编号", trigger: "blur" }],
     end: [{ required: true, message: "请输入结束编号", trigger: "blur" }],
     unitId: [{ required: true, message: "请选择楼单位", trigger: "blur" }]
   };
@@ -483,18 +463,67 @@ export default class DataTree extends Vue {
     }
   }
 
+  checkHouseInput() {
+    /**@description 检测子分组开始和结束规则 */
+    if (/^[1-9]\d*$/.test(this.batchForm["start"])) {
+      if (!/^\d+$/.test(this.batchForm["end"])) {
+        this.$message.error("开始和结束的序号类型不一致");
+        this.batchForm["unitId"] = "";
+        return false;
+      }
+      if (Number(this.batchForm["start"]) > Number(this.batchForm["end"])) {
+        this.$message.error("请确保序号由小到大");
+        this.batchForm["unitId"] = "";
+        return false;
+      }
+
+      return true;
+    } else if (/^[A-Z]$/.test(this.batchForm["start"])) {
+      if (!/^[A-Z]$/.test(this.batchForm["end"])) {
+        this.$message.error("开始和结束的序号类型不一致");
+        this.batchForm["unitId"] = "";
+        return false;
+      }
+      if (
+        this.batchForm["start"].charCodeAt() >
+        this.batchForm["end"].charCodeAt()
+      ) {
+        this.$message.error("请确保序号由小到大");
+        this.batchForm["unitId"] = "";
+        return false;
+      }
+
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   changeSelect() {
     /**@description 生成示例 */
-    var unitName = "";
     this.sample = [];
+    if (!this.checkHouseInput()) {
+      return;
+    }
+
+    let unitName = "";
     for (const item of this.Tags) {
       if (item["id"] === this.batchForm["unitId"]) {
         unitName = item["name"];
       }
     }
-    for (var i = this.batchForm["start"]; i <= this.batchForm["end"]; i++) {
-      if (i) {
+
+    if (/^\d+$/.test(this.batchForm["start"])) {
+      for (let i = this.batchForm["start"]; i <= this.batchForm["end"]; i++) {
         this.sample.push(i + unitName);
+      }
+    } else if (/^[A-Z]$/.test(this.batchForm["start"])) {
+      for (
+        let i = this.batchForm["start"].charCodeAt();
+        i <= this.batchForm["end"].charCodeAt();
+        i++
+      ) {
+        this.sample.push(String.fromCharCode(i) + unitName);
       }
     }
   }
@@ -531,26 +560,19 @@ export default class DataTree extends Vue {
       }
     } else {
       /**@description 批量增加分组 */
-      const reg = /^[0-9]+$/;
-      if (
-        !reg.test(this.batchForm["start"]) &&
-        !reg.test(this.batchForm["end"])
-      ) {
-        return this.$message.error("请输入正整数!");
-      } else if (
-        Number(this.batchForm["start"]) > Number(this.batchForm["end"])
-      ) {
-        return this.$message.error("请确保序号由小到大!");
-      } else {
-        this.sortCreated().then(res => {
-          this.$message.success(`创建${res.success}个成功,${res.error}个失败`);
-          this.$refs["batchForm"]["resetFields"]();
-          this.$emit("getHouseTreeData");
-          this.HouseVisible = false;
-        });
+      if (this.sample.length == 0) {
+        this.$message.error("请输入正确的楼栋编号");
+        return;
       }
+      this.sortCreated().then(res => {
+        this.$message.success(`创建${res.success}个成功,${res.error}个失败`);
+        this.$refs["batchForm"]["resetFields"]();
+        this.$emit("getHouseTreeData");
+        this.HouseVisible = false;
+      });
     }
   }
+
   // 循环创建
   async sortCreated() {
     let success = 0;
@@ -563,15 +585,8 @@ export default class DataTree extends Vue {
       }
     });
     return Promise.resolve({ success, error });
-    // for (
-    //   var i = Number(this.batchForm["start"]);
-    //   i <= Number(this.batchForm["end"]);
-    //   i++
-    // ) {
-    //   this.batchForm["serialNumber"] = i;
-    //   this.batchForm["name"] = i + this.batchForm["serialNumberUnit"];
-    // }
   }
+
   // 关闭添加/修改单元楼
   closeBuildingAction() {
     this.$refs["buildings"]["resetFields"]();
@@ -700,7 +715,6 @@ export default class DataTree extends Vue {
     };
   }
 
-  ///
   public phoneNum: any = 0;
   public regPos = /^\d+(\.\d+)?$/;
   public upNum = /[^\d]/g;
@@ -708,8 +722,16 @@ export default class DataTree extends Vue {
   // phone只可输入数字
   UpNumber(e: any) {
     var v = e.target.value;
-
     e.target.value = v.replace(this.upNum, "");
+  }
+
+  // 楼栋编号输入检测
+  private housePartern = /^([1-9]\d*|[A-Z])$/;
+  inputHouseCheck(e: any) {
+    let v = e.target.value;
+    if (!this.housePartern.test(v)) {
+      e.target.value = "";
+    }
   }
 
   clearableBtn(v) {
@@ -719,12 +741,8 @@ export default class DataTree extends Vue {
 
   hint(v: any) {}
   hintChange(v: any) {
-    if (!this.batchRules["start"] || !this.batchRules["start"]) {
-      this.sample = [];
-    } else {
-      if (this.batchForm["unitId"]) {
-        this.changeSelect();
-      }
+    if (this.batchForm["unitId"]) {
+      this.changeSelect();
     }
 
     this.hintPhone = v ? true : false;
