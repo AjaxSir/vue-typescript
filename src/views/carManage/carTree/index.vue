@@ -136,7 +136,7 @@
                 <el-button v-else class="button-new-tag" size="small" @click="showInput">添加单位</el-button>
               </div>
             </el-form-item>
-            <el-form-item label="生成示例:" prop="note" label-width="85px">
+            <!-- <el-form-item label="生成示例:" prop="note" label-width="85px">
               <p
                 style="height:16px;"
                 v-for="(item,index) in sample.slice(0,2)"
@@ -150,7 +150,7 @@
                   :key="'unitend'+index"
                 >{{item}}</p>
               </div>
-            </el-form-item>
+            </el-form-item> -->
             <!-- <el-form-item label="备注:" prop="note" label-width="85px">
               <el-input
                 style="width:260px"
@@ -779,6 +779,7 @@ export default class DataTree extends Vue {
   text-align: left;
   border: 1px solid #ebeef5;
   overflow-y: auto;
+  overflow-x: auto;
 }
 .treeHeader {
   &:hover {
@@ -837,4 +838,8 @@ export default class DataTree extends Vue {
 .highlight .icon-menu {
   color: white;
 }
+.tree-rename{
+  overflow: auto;
+}
+
 </style>

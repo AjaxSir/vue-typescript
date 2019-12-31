@@ -389,6 +389,7 @@
         <el-button type="primary" @click="modifCar">确 定</el-button>
       </span>
     </el-dialog>
+
     <!-- 目标详情 -->
     <el-dialog
       class="dialog-rewrite"
@@ -413,8 +414,6 @@
                 <el-form-item style="margin-bottom:0" label="最后一次进照片:">
                   <img
                     class="capture-img"
-                    @mouseout="imgVisible=false"
-                    @mouseover="imgVisible=true,bigImg=CarDialogForm.lastInPhoto"
                     :src="CarDialogForm.lastInPhoto"
                     alt
                   />
@@ -435,8 +434,6 @@
                   <img
                     class="capture-img"
                     @mouseout="imgVisible=false"
-                    @mouseover="imgVisible=true,bigImg=CarDialogForm.lastOutPhoto"
-                    :src="CarDialogForm.lastOutPhoto"
                     alt
                   />
                 </el-form-item>

@@ -16,6 +16,9 @@
         >
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>
+              <div @click="addstalls">批量添加车位</div>
+            </el-dropdown-item>
+            <el-dropdown-item>
               <div @click="showExportIn">导入</div>
             </el-dropdown-item>
             <el-dropdown-item command="export">导出</el-dropdown-item>
@@ -167,7 +170,7 @@
 
             <el-table-column prop="carNo" align="center" label="绑定车辆" :show-overflow-tooltip="true">
               <template slot-scope="scope">
-                <el-button @click="showHouseDetails(scope.row,'second')" type="text">
+                <el-button @click="bindingPlates(scope.row)" type="text">
                   <div
                     style="width: 100px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"
                     v-if="scope.row.carSpaceVos && scope.row.carSpaceVos.length > 0"
@@ -227,11 +230,11 @@
       </el-col>
     </el-row>
 
-    <!-- 添加车位 -->
+    <!-- 批量添加车位 -->
     <el-dialog
       :close-on-click-modal="false"
       title="添加车位"
-      :visible.sync="dialogCreate"
+      :visible.sync="dialogAdds"
       width="500px"
       :before-close="handleClose"
     >
@@ -316,6 +319,182 @@
         <el-button @click="handleClose">取 消</el-button>
         <el-button type="primary" @click="createStall">确 定</el-button>
       </span>
+    </el-dialog>
+
+    <!-- 添加车位 -->
+    <el-dialog
+      :close-on-click-modal="false"
+      title="添加车位"
+      :visible.sync="dialogCreate"
+      width="500px"
+      :before-close="handleClose"
+    >
+      <el-form
+        :model="createForm"
+        :rules="rules"
+        ref="dataForm"
+        label-width="100px"
+        label-position="right"
+        style="margin-right:40px;"
+      >
+        <el-form-item label="所属分组:" prop="carSpaceGroupId">
+          <el-cascader
+            style="width:100%"
+            v-model="createForm.carSpaceGroupId"
+            :options="TreeData"
+            :show-all-levels="false"
+            :props="{ label: 'name', children: 'sonCarSpaceGroups', value: 'id' }"
+            @change="handleChange"
+          ></el-cascader>
+        </el-form-item>
+
+        <el-form-item label="车位编号:" prop="serialNumber">
+          <el-input
+            clearable
+            v-model="createForm.serialNumber"
+            placeholder="请输入车位编号"
+            :maxlength="10"
+            @input="constraintLength(createForm.serialNumber,'10')"
+          ></el-input>
+        </el-form-item>
+
+        <el-form-item label="车位状态:" prop="status">
+          <el-select style="width:100%" v-model="createForm.status" placeholder="请选择">
+            <el-option label="已售（自用）" value="已售（自用）"></el-option>
+            <el-option label="已售（出租）" value="已售（出租）"></el-option>
+            <el-option label="未售（出租）" value="未售（出租）"></el-option>
+            <el-option label="未售（闲置）" value="未售（闲置）"></el-option>
+          </el-select>
+        </el-form-item>
+
+        <el-form-item
+          label="选择业主:"
+          prop="name"
+          :show-message="showMessage"
+          :error="errorMessage.name"
+        >
+          <el-input
+            :style="targetuser.name ? 'width:216px':'width:230px'"
+            v-model="targetuser.name"
+            :disabled="true"
+            placeholder="请选择业主"
+          ></el-input>
+          <el-button @click="chooseOwner">{{targetuser.name ? '重新选择' :'请选择'}}</el-button>
+          <!-- <el-select
+            style="width:100%"
+            v-model="createForm.ownerScenceUserId"
+            filterable
+            remote
+            :remote-method="remoteMethod"
+            :loading="loading"
+            placeholder="请输入姓名进行模糊查询"
+          >
+            <el-option
+              v-for="item in nameList"
+              :key="item.ownerScenceUserId"
+              :label="item.name"
+              :value="item.ownerScenceUserId"
+            >
+              <span style="float: left">{{ item.name }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item. value }}</span>
+            </el-option>
+          </el-select>-->
+        </el-form-item>
+
+        <el-form-item label="车位类型:" prop="carSpaceTypeId">
+          <el-select style="width:100%" v-model="createForm.carSpaceTypeId" placeholder="请选择">
+            <el-option v-for="item in carStatus" :key="item.id" :label="item.name" :value="item.id"></el-option>
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="备注信息:" prop="note">
+          <el-input
+            type="textarea"
+            v-model="createForm.note"
+            :maxlength="200"
+            placeholder="输入备注信息"
+            @input="constraintLength(editForm.note,'200')"
+          ></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="handleClose">取 消</el-button>
+        <el-button type="primary" @click="createStall">确 定</el-button>
+      </span>
+    </el-dialog>
+
+    <!-- 选择业主 -->
+    <el-dialog
+      class="dialog-rewrite"
+      width="700px"
+      title="选择业主"
+      :visible.sync="dialogOwnerVisible"
+      :before-close="ownerClose"
+    >
+      <div class="word-filter" style="margin-top:20px;">
+        <div class="word-filter">
+          <span class="filter-name">姓名:</span>
+          <el-input
+            class="input-filter"
+            size="small"
+            clearable
+            v-model="filterUser.name"
+            placeholder="请输入姓名"
+          ></el-input>
+        </div>
+
+        <div class="word-filter">
+          <span class="filter-name">电话:</span>
+          <el-input
+            class="input-filter"
+            size="small"
+            clearable
+            v-model="filterUser.phone"
+            placeholder="请输入电话"
+          ></el-input>
+        </div>
+
+        <div class="word-filter">
+          <span class="filter-name" style="width:150px">证件号码:</span>
+          <el-input
+            class="input-filter"
+            size="small"
+            clearable
+            v-model="filterUser.cardNo"
+            placeholder="请输入证件号码"
+          ></el-input>
+        </div>
+
+        <div class="word-filter">
+          <el-button style="margin-left:20px;" type="primary" size="small" @click="searchUser">搜 索</el-button>
+        </div>
+      </div>
+      <div style="margin-top:10px;">
+        <div class="user-father">
+          <div class="user-item" v-for="(item,index) in nameList" :key="'nameList' + index">
+            <div>
+              <span>{{item.name}}</span>
+              <span>{{item.phone}}</span>
+              <span>{{item.cardNo}}</span>
+            </div>
+            <el-button
+              style="margin-left:20px;"
+              type="primary"
+              size="small"
+              @click="chooseUser(item)"
+            >选 择</el-button>
+          </div>
+        </div>
+        <el-pagination
+          background
+          style="margin:10px 0"
+          @current-change="handleCurrentChangePass"
+          :page-size="listQuery.limit"
+          :current-page="listQuery.page"
+          layout="total, prev, pager, next, slot"
+          :total="listQuery.total"
+        ></el-pagination>
+      </div>
     </el-dialog>
 
     <!-- 修改车位 -->
@@ -412,92 +591,114 @@
     <!-- 业主详细信息 -->
     <el-dialog
       class="dialog-rewrite"
-      :width=" activeName==='first' ? '650px' : '500px'"
+      width="650px"
       :title="'业主: '+ detailDialog.ownerName"
       :visible.sync="dialogFormVisible"
       :before-close="detailClose"
     >
-      <el-tabs type="card" v-model="activeName" @tab-click="handleClick">
-        <el-tab-pane label="业主信息" name="first">
-          <el-form label-width="100px" v-model="ownerDetail">
-            <el-row :gutter="20">
-              <el-col :span="12" class="col-line">
-                <el-form-item style="margin-bottom:0" label="姓名:">
-                  <span>{{ownerDetail.name}}</span>
-                </el-form-item>
-                <el-form-item style="margin-bottom:0" label="性别:">
-                  <span>{{ownerDetail.sex==='0' ? '女' : '男'}}</span>
-                </el-form-item>
-                <el-form-item style="margin-bottom:0" label="年龄:">
-                  <span>{{ownerDetail.age}}</span>
-                </el-form-item>
-                <el-form-item style="margin-bottom:0" label="电话:">
-                  <span>{{ownerDetail.phone}}</span>
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item style="margin-bottom:0" label="证件类型:">
-                  <span>{{ownerDetail.cardName}}</span>
-                </el-form-item>
-                <el-form-item style="margin-bottom:0" label="证件号码:">
-                  <span>{{ownerDetail.cardNo}}</span>
-                </el-form-item>
-                <el-form-item style="margin-bottom:0" label="备注信息:">
-                  <span>{{ownerDetail.note ? ownerDetail.note : "暂无"}}</span>
-                </el-form-item>
-              </el-col>
-            </el-row>
-          </el-form>
-        </el-tab-pane>
-        <el-tab-pane label="绑定车辆" name="second">
-          <el-form
-            label-position="right"
-            label-width="120px"
-            style="margin-right:56px;"
-            v-model="bindingcarnum"
+      <!-- <el-tabs type="card" v-model="activeName" @tab-click="handleClick"> -->
+      <!-- <el-tab-pane label="业主信息" name="first"> -->
+      <el-form label-width="100px" v-model="ownerDetail">
+        <el-row :gutter="20">
+          <el-col :span="12" class="col-line">
+            <el-form-item style="margin-bottom:0" label="姓名:">
+              <span>{{ownerDetail.name}}</span>
+            </el-form-item>
+            <el-form-item style="margin-bottom:0" label="性别:">
+              <span>{{ownerDetail.sex==='0' ? '女' : '男'}}</span>
+            </el-form-item>
+            <el-form-item style="margin-bottom:0" label="年龄:">
+              <span>{{ownerDetail.age}}</span>
+            </el-form-item>
+            <el-form-item style="margin-bottom:0" label="电话:">
+              <span>{{ownerDetail.phone}}</span>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item style="margin-bottom:0" label="证件类型:">
+              <span>{{ownerDetail.cardName}}</span>
+            </el-form-item>
+            <el-form-item style="margin-bottom:0" label="证件号码:">
+              <span>{{ownerDetail.cardNo}}</span>
+            </el-form-item>
+            <el-form-item style="margin-bottom:0" label="备注信息:">
+              <span>{{ownerDetail.note ? ownerDetail.note : "暂无"}}</span>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+      <!-- </el-tab-pane> -->
+      <!-- </el-tabs> -->
+    </el-dialog>
+
+    <el-dialog
+      class="dialog-rewrite"
+      width="500px"
+      title="查看车牌"
+      :visible.sync="dialogCarVisible"
+      :before-close="bindingPlatesClose"
+    >
+      <el-form
+        label-width="100px"
+        label-position="right"
+        style="margin-right:40px;"
+        v-model="bindingcarnum"
+      >
+        <el-form-item style="margin-bottom:0" label="车位:" prop="carSpaceGroupName">
+          <span>{{detailDialog.carSpaceGroupName}}</span>
+        </el-form-item>
+
+        <el-form-item style="margin-bottom:14px" label="已绑车辆:" prop="bindCarName">
+          <el-tag
+            style="margin-left:5px"
+            :key="index"
+            v-for="(tag, index) in detailDialog.carSpaceVos"
+            closable
+            :disable-transitions="false"
+            @close="deleteTag(tag,index)"
+          >{{tag.carNo}}</el-tag>
+
+          <el-tag
+            style="margin-left:5px"
+            type="info"
+            v-for="(tag, index) in selectCarNo"
+            :key="'selectCarNo' + index"
+            closable
+            :disable-transitions="false"
+            @close="deleteTagInfo(tag)"
+          >{{tag.name}}</el-tag>
+          <el-select
+            size="small"
+            v-if="selectCar"
+            v-model="bindingcarnum.carItem"
+            filterable
+            remote
+            placeholder="请输入车牌号进行模糊查询"
+            :disabled="carIdDisabled"
+            :remote-method="remoteMethodCar"
+            :loading="carLoading"
+            @change="selectChange"
           >
-            <el-form-item style="margin-bottom:0" label="所属分组:" prop="carSpaceGroupName">
-              <span>{{detailDialog.carSpaceGroupName}}</span>
-            </el-form-item>
+            <el-option v-for="item in carnoList" :key="item.carId" :label="item.name" :value="item">
+              <span style="float: left">{{ item.name }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item. value }}</span>
+            </el-option>
+          </el-select>
 
-            <el-form-item style="margin-bottom:14px" label="已绑车辆:" prop="bindCarName">
-              <el-tag
-                style="margin-left:5px"
-                :key="index"
-                v-for="(tag, index) in detailDialog.carSpaceVos"
-                closable
-                :disable-transitions="false"
-                @close="deleteTag(tag)"
-              >{{tag.carNo}}</el-tag>
-            </el-form-item>
+          <el-button
+            v-else
+            size="small"
+            plain
+            class="el-icon-plus"
+            type="primary"
+            @click="handeleCar()"
+          ></el-button>
+        </el-form-item>
 
-            <el-form-item label="绑定车辆:" prop="carId">
-              <el-select
-                style="width:100%"
-                v-model="bindingcarnum.carId"
-                filterable
-                remote
-                :disabled="carIdDisabled"
-                placeholder="请输入车牌号进行模糊查询"
-                :remote-method="remoteMethodCar"
-                :loading="carLoading"
-              >
-                <el-option
-                  v-for="item in carnoList"
-                  :key="item.carId"
-                  :label="item.name"
-                  :value="item.carId"
-                >
-                  <span style="float: left">{{ item.name }}</span>
-                  <span style="float: right; color: #8492a6; font-size: 13px">{{ item. value }}</span>
-                </el-option>
-              </el-select>
-            </el-form-item>
-          </el-form>
-        </el-tab-pane>
-      </el-tabs>
-      <span v-if="activeName==='second'" slot="footer" class="dialog-footer">
-        <el-button @click="detailClose">取 消</el-button>
+        <!-- <el-form-item label="绑定车辆:" prop="carId"></el-form-item> -->
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="bindingPlatesClose">取 消</el-button>
         <el-button type="primary" @click="bindingcarnumBtn">绑 定</el-button>
       </span>
     </el-dialog>
@@ -592,7 +793,29 @@ export default class CardManage extends Vue {
     data: []
   };
   env: string = process.env.NODE_ENV;
+  dialogAdds: Boolean = false; //批量添加车位状态
+  private dialogOwnerVisible: Boolean = false; //选择业主弹出框
+
+  private filterUser: Object = { name: "", phone: "", cardno: "" };
+  private userList: Array<Object> = [
+    { name: "zhang3", phone: "1111111111", cardNo: "1111111111" },
+    { name: "zhang3", phone: "1111111111", cardNo: "1111111111" },
+    { name: "zhang3", phone: "1111111111", cardNo: "1111111111" },
+    { name: "zhang3", phone: "1111111111", cardNo: "1111111111" },
+    { name: "zhang3", phone: "1111111111", cardNo: "1111111111" },
+    { name: "zhang3", phone: "1111111111", cardNo: "1111111111" },
+    { name: "zhang3", phone: "1111111111", cardNo: "1111111111" }
+  ]; //搜索出的业主
+  private targetuser: Object = {}; //选中的业主
+  private listQuery: Object = {
+    // 关注人员目标通行记录翻页
+    total: 0,
+    limit: 7,
+    page: 1
+  };
+
   createForm: object = {
+    name: "",
     ownerScenceUserId: "", // 业主场景用户id
     carSpaceGroupId: "", // 车位分组id
     carSpaceTypeId: "", // 车位类型id
@@ -601,9 +824,7 @@ export default class CardManage extends Vue {
     note: "" // 备注
   };
   rules: any = {
-    ownerScenceUserId: [
-      { required: true, message: "请车位选择业主", trigger: "change" }
-    ],
+    // name: [{ required: true, message: "请车位选择业主", trigger: "change" }],
     carSpaceGroupId: [
       { required: true, message: "请选择车位所属分组", trigger: "change" }
     ],
@@ -618,7 +839,7 @@ export default class CardManage extends Vue {
   private showMessage: Boolean = true; //是否显示表单错误信息
   private errorMessage: Object = {
     // 表单错误信息
-    ownerScenceUserId: "", // 业主场景用户id
+    name: "", // 业主场景用户id
     carSpaceGroupId: "", // 车位分组id
     carSpaceTypeId: "", // 车位类型id
     serialNumber: "", // 车位编号
@@ -642,7 +863,10 @@ export default class CardManage extends Vue {
   private menuControl2: String = "menu-visible";
   updateArray: Array<string> = ["noteStatus", "houseStatus"];
   noteString: string = ""; // 修改的备注
-  private dialogFormVisible: Boolean = false;
+  private dialogFormVisible: Boolean = false; //查看详细信息
+  private dialogCarVisible: Boolean = false; //绑定车牌
+  private selectCar: Boolean = false; //input与按钮切换
+  private selectCarNo: Array<Object> = []; //选中的注册车牌
 
   private detailDialog: Object = {
     //查看目标详情
@@ -659,7 +883,7 @@ export default class CardManage extends Vue {
   private carnoList: Array<Object> = []; //车牌号
   private carIdDisabled: Boolean = false; // 是否允许绑定车牌
   private carLoading: Boolean = false; //车牌模糊查询
-  private bindingcarnum: Object = { carId: "" }; //绑定车辆
+  private bindingcarnum: Object = { carItem: {}, carId: "" }; //绑定车辆
 
   private carStatusFilter: Array<Object> = [];
 
@@ -704,6 +928,11 @@ export default class CardManage extends Vue {
     ); // 合并参数
   }
 
+  addstalls() {
+    /**@description 批量添加车位 */
+    this.dialogAdds = true;
+  }
+
   closeVisible(flag: boolean) {
     /**@description 导出状态 */
     this.visible = flag;
@@ -719,6 +948,28 @@ export default class CardManage extends Vue {
     getHouseTreeData().then((res: Object) => {
       this.TreeData = res["data"]["data"];
     });
+  }
+
+  searchUser() {
+    /**@description 根据不同条件查询业主 */
+    console.log(this.filterUser);
+    this.getName(this.filterUser);
+  }
+
+  chooseUser(item) {
+    /**@description 选中目标业主 */
+    console.log(item);
+    this.targetuser = item;
+    this.createForm["carSpaceGroupId"] = item.id;
+    this.ownerClose();
+  }
+
+  handleCurrentChangePass(val) {
+    /** @description 处理目标关注人员通行记录翻页事件
+     * @augments val: 页数
+     */
+    this.listQuery["page"] = val;
+    // this.fetchPass();
   }
 
   async remoteMethod(query) {
@@ -737,13 +988,14 @@ export default class CardManage extends Vue {
 
   getName(query) {
     /**@description 获取业主信息 */
-    getUserName({ name: query }).then(res => {
+    getUserName(query).then(res => {
       this.loading = false;
       this.nameList = res.data.data.map(item => {
         return {
-          value: item.phone,
+          phone: item.phone,
           name: item.name,
-          ownerScenceUserId: item.id
+          ownerScenceUserId: item.id,
+          cardNo: item.cardNo
         };
       });
     });
@@ -769,6 +1021,17 @@ export default class CardManage extends Vue {
     ].pop();
   }
 
+  chooseOwner() {
+    /**@description 选择业主弹出框 */
+    this.dialogOwnerVisible = true;
+  }
+
+  ownerClose() {
+    /**@description 选择业主取消弹出框 */
+
+    this.dialogOwnerVisible = false;
+  }
+
   initData() {
     /**@description 初始化数据 */
     for (const key in this.filterForm) {
@@ -784,6 +1047,9 @@ export default class CardManage extends Vue {
 
   createStall() {
     /**@description  添加车位 */
+    const form = {
+      ...this.createForm
+    };
     this.$refs["dataForm"]["validate"](valid => {
       if (valid) {
         // this.createForm["carSpaceGroupId"] = [
@@ -929,25 +1195,35 @@ export default class CardManage extends Vue {
     }
   }
 
-  showHouseDetails(row, inviter) {
+  showHouseDetails(row) {
     /**@description 查看目标车位详情
      * @argument first 查询业主信息
      * @argument second 绑定车牌
      */
-    this.activeName = inviter;
+    // this.activeName = inviter;
     this.dialogFormVisible = true;
+    this.getOwnerDetail(row);
+    this.detailDialog = Object.assign({}, row);
+  }
+
+  detailClose() {
+    /** @description 关闭详情diolog */
+    this.dialogFormVisible = false; //车辆详情dialog
+    this.activeName = "first";
+    this.bindingcarnum["carId"] = "";
+    this.carnoList = [];
+  }
+
+  bindingPlates(row) {
+    /**@description 绑定车牌 */
+    this.dialogCarVisible = true;
+    this.getOwnerDetail(row);
     this.detailDialog = Object.assign({}, row);
     this.carIdDisabled =
       this.detailDialog["carSpaceVos"] &&
       this.detailDialog["carSpaceVos"].length === 6
         ? true
         : false;
-
-    if (inviter === "first") {
-      this.getOwnerDetail(row);
-    } else if (inviter === "second") {
-      // 绑定车牌
-    }
   }
 
   async getOwnerDetail(row) {
@@ -984,32 +1260,62 @@ export default class CardManage extends Vue {
     });
   }
 
+  selectChange() {
+    /**@description 选中车牌 */
+    this.selectCarNo = [];
+    this.selectCar = false;
+    this.selectCarNo.push(this.bindingcarnum["carItem"]);
+  }
+
+  handeleCar() {
+    /**@description 搜索车牌 */
+    this.selectCar = true;
+  }
+
   bindingcarnumBtn() {
     /**@description 绑定车牌 */
-    const form = { ...this.bindingcarnum };
+    const form = { ...this.bindingcarnum["carItem"] };
     form["id"] = this.detailDialog["id"];
     addcarno(form).then(res => {
       this["fetchData"](this.initForm);
-      this.detailClose();
+      this.selectCarNo = [];
+      this.bindingPlatesClose();
       this["notify"]("success", "成功", "绑定车牌成功");
     });
   }
 
-  deleteTag(tag) {
-    /**@description 删除绑定车牌 */
-    const form = { id: this.detailDialog["id"], removeCarIds: [tag.carId] };
-    deleteCarno(form).then(res => {
-      if (res.data.code === 200) {
-        this["fetchData"](this.initForm);
-        this.detailClose();
-        this["notify"]("success", "成功", "绑定车牌删除成功");
-      }
-    });
+  deleteTagInfo() {
+    /**@description 删除选中的值 */
+    this.selectCarNo = [];
   }
 
-  detailClose() {
-    /** @description 关闭详情diolog */
-    this.dialogFormVisible = false; //车辆详情dialog
+  deleteTag(tag, index) {
+    /**@description 删除绑定车牌 */
+    const form = { id: this.detailDialog["id"], removeCarIds: [tag.carId] };
+    this.$confirm("此操作将永久删除该车牌, 是否继续?", "提示", {
+      confirmButtonText: "确定",
+      cancelButtonText: "取消",
+      type: "warning"
+    })
+      .then(() => {
+        deleteCarno(form).then(res => {
+          if (res.data.code === 200) {
+            this["fetchData"](this.initForm);
+            this.detailDialog["carSpaceVos"].splice(index, 1);
+            this["notify"]("success", "成功", "绑定车牌删除成功");
+          }
+        });
+      })
+      .catch(() => {
+        this.$message({
+          type: "info",
+          message: "已取消删除"
+        });
+      });
+  }
+
+  bindingPlatesClose() {
+    this.dialogCarVisible = false; //车牌绑定dialog
     this.activeName = "first";
     this.bindingcarnum["carId"] = "";
     this.carnoList = [];
@@ -1083,5 +1389,17 @@ export default class CardManage extends Vue {
   line-height: 48px;
   position: absolute;
   left: -1px;
+}
+.user-father {
+  height: 288px;
+  border: 1px solid #dcdfe6;
+}
+
+.user-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px;
+  border-bottom: 1px solid #dcdfe6;
 }
 </style>
