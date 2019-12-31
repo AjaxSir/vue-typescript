@@ -105,7 +105,7 @@
             <el-table-column type="index" align='center' label="序号" width="50"></el-table-column>
             <el-table-column  :show-overflow-tooltip='true' align='center' prop="userName" label="姓名">
               <template slot-scope="scope">
-                <span class="serial-num">{{scope.row.name || '--'}}</span>
+                <span class="serial-num">{{scope.row.name }}</span>
               </template>
             </el-table-column>
             <el-table-column  :show-overflow-tooltip='true' align='center' prop="passMethod" label="通行方式">
@@ -127,7 +127,7 @@
              </el-table-column> -->
              <el-table-column align='center' prop="devType" label="通行位置">
                <template slot-scope="scope">
-                <span class="serial-num">{{scope.row.devAddress}} - {{ scope.row.devSubAddress }}</span>
+                <span class="serial-num">{{scope.row.devAddress}}{{ scope.row.devSubAddress }}</span>
               </template>
              </el-table-column>
             <el-table-column  :show-overflow-tooltip='true' width="120" align='center' prop="devType" label="设备型号">

@@ -9,66 +9,55 @@
         </router-link>
       </div>
       <div>
-        <ul>
-          <li>类型</li>
-          <li>姓名</li>
-          <li>车牌号</li>
-          <li>照片</li>
-          <li>时间</li>
-        </ul>
-        <div @mouseenter="enterList" @mouseleave="leaveList" v-show='tableData.length' id='content1' style="height: 250px;overflow:hidden">
-          <div id='listOne1'>
-            <ul v-for='(item, index) in tableData' :key='index'>
-              <li><el-tag
-                  size="small"
-                  style="border-radius: 50px;padding: 0 10px;"
-                  :type="!item.isVisitCar? 'success' : 'danger'"
-                >{{ item.isVisitCar? "访客" : "常驻" }}</el-tag></li>
-              <li>
-                <el-tooltip class="item" effect="dark" :content="item.ownerName" placement="top">
-                    <span>{{ item.ownerName }}</span>
-                  </el-tooltip>
-              </li>
-              <li>
-                <el-tooltip class="item" effect="dark" :content="item.carNo" placement="top">
-                    <span>{{ item.carNo }}</span>
-                  </el-tooltip>
-              </li>
-              <li><img style="margin-top:10px" :src="item.photos" alt=""></li>
-              <li>
-                <el-tooltip class="item" effect="dark" :content="item.passTime" placement="top">
-                    <span>{{ item.passTime }}</span>
-                  </el-tooltip>
-              </li>
-            </ul>
-          </div>
-           <div id='listTwo'>
-            <ul v-for='(item, index) in tableData' :key='index'>
-              <li><el-tag
-                  size="small"
-                  style="border-radius: 50px;padding: 0 10px;"
-                  :type="!item.isVisitCar? 'success' : 'danger'"
-                >{{ item.isVisitCar? "访客" : "常驻" }}</el-tag></li>
-              <li>
-                <el-tooltip class="item" effect="dark" :content="item.ownerName" placement="top">
-                    <span>{{ item.ownerName }}</span>
-                  </el-tooltip>
-              </li>
-              <li>
-                <el-tooltip class="item" effect="dark" :content="item.carNo" placement="top">
-                    <span>{{ item.carNo }}</span>
-                  </el-tooltip>
-              </li>
-              <li><img style="margin-top:10px" :src="item.photos" alt=""></li>
-              <li>
-                <el-tooltip class="item" effect="dark" :content="item.passTime" placement="top">
-                    <span>{{ item.passTime }}</span>
-                  </el-tooltip>
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div style="height: 250px;text-align:center;line-height:250px;font-size:15px;color:#474758" v-show='!tableData.length'>暂无车辆通行记录</div>
+        <el-table
+        height="340px"
+          :data="tableData"
+          style="width: 100%">
+          <el-table-column
+            prop="date"
+            label="类型"
+            align="center"
+            :show-overflow-tooltip="true"
+            >
+            <template slot-scope="{row}">
+              <span>{{ row.isVisitor ? '访客车辆' : '住户车辆' }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="date"
+            label="姓名"
+            align="center"
+            :show-overflow-tooltip="true"
+            >
+            <template slot-scope="{row}">
+              <span>{{ row.ownerName || '--' }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="carNo"
+            label="车牌"
+            align="center"
+            :show-overflow-tooltip="true"
+            >
+          </el-table-column>
+          <el-table-column
+            :show-overflow-tooltip="true"
+            label="照片"
+            align="center"
+            >
+            <template slot-scope="{row}">
+              <img :src="row.photos" alt="">
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="passTime"
+            label="时间"
+            :show-overflow-tooltip="true"
+            align="center"
+            >
+
+          </el-table-column>
+        </el-table>
       </div>
     </div>
   </div>
@@ -81,6 +70,19 @@ import { Getter } from 'vuex-class'
 
 @Component({
   components: {
+  },
+  filters: {
+    passMethod(val: string) {
+      const data = {
+        "1": '人脸开门',
+        "2": '二维码开门',
+        "3": '蓝牙开门',
+        "4": '远程开门',
+        "5": '密码开门',
+        "6": '刷卡开门'
+      }
+      return data[val]
+    },
   }
 })
 export default class openDoor extends Vue {
@@ -90,44 +92,20 @@ export default class openDoor extends Vue {
   tableData: Array<object> = []
 
   created() {
-
     this.fetchCarList();
+    this.timer = setInterval(() => {
+      this.fetchCarList();
+    }, 30000)
   }
   beforeDestroy() {
     clearInterval(this.timer)
   }
   mounted() {
-    this.roll(50)
-  }
-
-  enterList() {
-    clearInterval(this.timer)
-  }
-  leaveList() {
-    this.roll(50)
-  }
-
-  roll(time) {
-    // if (this.timer) return
-    const content = document.getElementById('content1') as HTMLElement
-    const listOne = document.getElementById('listOne1') as HTMLElement
-     if (this.timer) {
-      content.scrollTop = content.scrollTop
-    } else {
-      content.scrollTop = 0
-    }
-    this.timer = setInterval(() => {
-      if (content.scrollTop >= listOne.scrollHeight) {
-        content.scrollTop = 0
-      } else {
-        content.scrollTop ++
-      }
-    }, time)
   }
   // 获取车辆同行记录
   fetchCarList() {
     carPassList().then(res => {
-      this.tableData = res.data.data
+      this.tableData = [...this.tableData, ...res.data.data]
     })
   }
 }

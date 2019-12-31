@@ -119,6 +119,7 @@
               label="电话"
             >
               <template slot-scope="{row}">
+                <!-- @keyup.enter.native="confirmUpdatePhone(row)" -->
                 <span
                   class="rowUpdate"
                   v-show="!row.phoneStatus"
@@ -126,9 +127,8 @@
                 >{{ row.phone }}</span>
                 <el-input
                   v-show="row.phoneStatus"
-                  @blur="phoneBlur(row)"
+                  @blur="confirmUpdatePhone(row)"
                   :ref="row.id"
-                  @keyup.enter.native="confirmUpdatePhone(row)"
                   v-model="phoneString"
                   placeholder="输入电话"
                 ></el-input>
@@ -313,7 +313,7 @@
               label="房屋备注"
             >
               <template slot-scope="{row}">
-                <span>{{ row.house[0] && row.house[0].note || '--' }}</span>
+                <span>{{ row.house[0] && row.house[0].note }}</span>
               </template>
             </el-table-column>
           </el-table>
@@ -363,7 +363,7 @@
                 </el-form-item>
 
                 <el-form-item style="margin-bottom:0" label="备注信息:">
-                  <span>{{detailDialog.note || '暂无'}}</span>
+                  <el-input @keyup.enter.native='confirmUpdateNote' v-model="detailDialog.note" placeholder="编辑备注信息"></el-input>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -373,10 +373,14 @@
         <el-tab-pane label="通行记录" name="second">
           <el-table :data="dtailTable" style="width: 100%">
             <el-table-column prop="name" align="center" label="姓名" width="150px"></el-table-column>
-            <el-table-column prop="passTime" align="center" label="通行时间" width="150px"></el-table-column>
-            <el-table-column prop="inOut" align="center" label="进/出" width="150px"></el-table-column>
-            <el-table-column prop="passMethod" align="center" label="通行方式"></el-table-column>
-            <el-table-column prop="passMethod" align="center" label="抓拍图片">
+            <el-table-column prop="passTime" :show-overflow-tooltip="true" align="center" label="通行时间"></el-table-column>
+            <el-table-column prop="inOut" align="center" label="进/出" width="60px"></el-table-column>
+            <el-table-column prop="passMethod" align="center" width="150" label="通行方式">
+              <template slot-scope="{row}">
+                <span>{{ row.passMethod | passMethod  }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column width="100" align="center" label="抓拍图片">
               <template slot-scope="{row}">
                 <img :src="row.photos" alt />
               </template>
@@ -444,7 +448,7 @@
             </el-table-column>
             <el-table-column align="center" :show-overflow-tooltip="true" prop="note" label="备注">
               <template slot-scope="{row}">
-                <span>{{row.note || '--'}}</span>
+                <span>{{row.note}}</span>
               </template>
             </el-table-column>
           </el-table>
@@ -476,7 +480,6 @@
               prop="createTime"
               label="注册时间"
             ></el-table-column>
-            <!-- <el-table-column align='center' prop="note" label="备注"></el-table-column> -->
             <el-table-column width="80" align="center" label="人脸图片">
               <template slot-scope="{row}">
                 <img :src="row.face" alt />
@@ -783,6 +786,17 @@ const ExportIn = () => import("@/components/exportIn/index.vue");
         "3": "成员"
       };
       return data[val];
+    },
+    passMethod(val: string) {
+      const data = {
+        "1": '人脸开门',
+        "2": '二维码开门',
+        "3": '蓝牙开门',
+        "4": '远程开门',
+        "5": '密码开门',
+        "6": '刷卡开门'
+      }
+      return data[val]
     }
   }
 })
@@ -793,7 +807,9 @@ export default class OwnerManage extends Vue {
   UserType: string = "owner";
   spanArray: Array<number> = []; // 合并单元格
   index: number = 0; // 合并单元格参数
-  private detailDialog: Object = {};
+  private detailDialog: Object = {
+    note: ''
+  };
   env: string =  process.env.NODE_ENV
   phoneString: string = ""; // 需要改成的电话
   noteString: string = ""; // 需要改成的备注
@@ -1076,29 +1092,47 @@ export default class OwnerManage extends Vue {
   }
   // 确定修改 电话
   confirmUpdatePhone(row) {
-    if (!/^1[3456789]\d{9}$/.test(this.phoneString)) {
-      this.$message.error("请输入正确的手机格式");
-      return;
-    }
-    updateUserPhone(row.id, this.phoneString).then(res => {
-      if (res.data.code === 200) {
-        this.$message.success("修改成功");
-        row.phoneStatus = false;
-        this.phoneString = "";
-        this.fetchData(this.initForm);
-      } else {
-        this.$message.error(res.data.message);
-      }
-    });
+    if (!/^1[3578]\d{9}$/.test(this.phoneString)) {
+              this.$message.error("请输入正确的手机格式");
+              this.$set(row, 'phoneStatus', false)
+              return;
+            }
+    this.$confirm("此操作将修改用户手机号, 是否继续?", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        })
+          .then(() => {
+
+            updateUserPhone(row.id, this.phoneString).then(res => {
+              if (res.data.code === 200) {
+                this.$message.success("修改成功");
+                row.phoneStatus = false;
+                this.phoneString = "";
+                this.fetchData(this.initForm);
+              } else {
+                this.$message.error(res.data.message);
+              }
+            });
+          })
+          .catch(() => {
+            this.$set(row, 'phoneStatus', false)
+            this.$message({
+              type: "info",
+              message: "已取消修改"
+            });
+          });
   }
   // 确定修改 备注
-  confirmUpdateNote(row) {
-    updateUserNote(row.id, this.noteString).then(res => {
+  confirmUpdateNote() {
+    if (!this.detailDialog['note']) {
+      return this.$message.error('请输入备注信息')
+    }
+    updateUserNote(this.detailDialog['id'], this.detailDialog['note']).then(res => {
       if (res.data.code === 200) {
         this.$message.success("修改成功");
-        row.noteStatus = false;
-        this.noteString = "";
-        this.fetchData(this.initForm);
+        // this.noteString = "";
+        // this.fetchData(this.initForm);
       } else {
         this.$message.error(res.data.message);
       }

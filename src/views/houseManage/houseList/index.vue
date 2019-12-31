@@ -92,11 +92,9 @@
                       <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
                     </el-tooltip>
                     <el-dropdown-menu slot="dropdown">
-                      <!-- <el-dropdown-item :command='returnCommand("update", scope.row)'>远程开门</el-dropdown-item> -->
                       <el-dropdown-item
                         :command="returnCommand('delete', scope.row)"
                       >{{ deleteForm.data.length ? '批量删除' : '删除' }}</el-dropdown-item>
-                      <!-- <el-dropdown-item :command='returnCommand("delete", scope.row)'>编辑信息</el-dropdown-item> -->
                     </el-dropdown-menu>
                   </el-dropdown>
                 </div>
@@ -146,11 +144,11 @@
                   v-show="!scope.row.noteStatus"
                   @click="focusNoteInput(scope.row)"
                 >{{ scope.row.note || '--' }}</span>
+                <!-- @keyup.enter.native="confirmUpdateNote(scope.row)" -->
                 <el-input
                   :ref="scope.row.id"
                   size="mini"
-                  @keyup.enter.native="confirmUpdateNote(scope.row)"
-                  @blur="noteBlur(scope.row)"
+                  @blur="confirmUpdateNote(scope.row)"
                   v-model="noteString"
                   v-show="scope.row.noteStatus"
                   :clearable="true"
@@ -242,15 +240,15 @@
             <el-row :gutter="20">
               <el-col :span="12" class="col-line">
                 <el-form-item style="margin-bottom:0" label="所在单元:">
-                  <span>{{detailDialog.buildingName ? detailDialog.buildingName : '--'}}</span>
+                  <span>{{detailDialog.buildingName ? detailDialog.buildingName : '0'}}</span>
                 </el-form-item>
 
                 <el-form-item style="margin-bottom:0" label="所在楼层:">
-                  <span>{{detailDialog.storeyNum ? detailDialog.storeyNum : '--'}}</span>
+                  <span>{{detailDialog.storeyNum ? detailDialog.storeyNum : ''}}</span>
                 </el-form-item>
 
                 <el-form-item style="margin-bottom:0" label="房屋编号:">
-                  <span>{{detailDialog.serialNumber ? detailDialog.serialNumber : '--'}}</span>
+                  <span>{{detailDialog.serialNumber ? detailDialog.serialNumber : ''}}</span>
                 </el-form-item>
 
                 <el-form-item style="margin-bottom:0" label="注册时间:">
@@ -260,7 +258,7 @@
 
               <el-col :span="12">
                 <el-form-item style="margin-bottom:0" label="注册人数:">
-                  <span>{{detailDialog.personCnt ? detailDialog.personCnt : '--'}}人</span>
+                  <span>{{detailDialog.personCnt ? detailDialog.personCnt : '0'}}人</span>
                 </el-form-item>
 
                 <el-form-item style="margin-bottom:0" label="房屋状态:">
@@ -268,11 +266,11 @@
                 </el-form-item>
 
                 <el-form-item style="margin-bottom:0" label="业主电话:">
-                  <span>{{detailDialog.phone || '--'}}</span>
+                  <span>{{detailDialog.phone || ''}}</span>
                 </el-form-item>
 
                 <el-form-item style="margin-bottom:0" label="备注信息:">
-                  <span>{{ detailDialog.note || '暂无' }}</span>
+                  <span>{{ detailDialog.note || '' }}</span>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -330,24 +328,9 @@
             </el-table-column>
             <el-table-column align="center" prop="note" label="备注">
               <template slot-scope="{row}">
-                <span>{{ row.note ? row.note : '暂无' }}</span>
+                <span>{{ row.note ? row.note : '' }}</span>
               </template>
             </el-table-column>
-            <!-- <el-table-column align='center' prop="enableInviteCar" label="邀请车辆">
-              <template slot-scope="{row}">
-                <span>{{ row.enableInviteCar === '1' ? '允许' : '禁止' }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column align='center' prop="enableInviteVisitor" label="邀请访客">
-              <template slot-scope="{row}">
-                <span>{{ row.enableInviteVisitor === '1' ? '允许' : '禁止' }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column align='center' prop="enableRemoteOpen" label="远程开门">
-              <template slot-scope="{row}">
-                <span>{{ row.enableRemoteOpen === '1' ? '允许' : '禁止' }}</span>
-              </template>
-            </el-table-column>-->
           </el-table>
         </el-tab-pane>
       </el-tabs>
@@ -568,20 +551,37 @@ export default class CardManage extends Vue {
   }
   // 修改备注
   confirmUpdateNote(row) {
-    updateStatusNote({
-      id: row.id,
-      note: this.noteString,
-      status: row.status
-    }).then(res => {
-      if (res.data.code === 200) {
-        this.$message.success("修改成功");
-        row.noteStatus = false;
-        this.noteString = "";
-        this.fetchData(this.initForm);
-      } else {
-        this.$message.error(res.data.message);
-      }
-    });
+    this.$confirm("此操作将修改房屋备注, 是否继续?", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        })
+          .then(() => {
+            updateStatusNote({
+                  id: row.id,
+                  note: this.noteString,
+                  status: row.status
+                }).then(res => {
+                  if (res.data.code === 200) {
+                    this.$message.success("修改成功");
+                    row.noteStatus = false;
+                    this.noteString = "";
+                    this.fetchData(this.initForm);
+                  } else {
+                    row.noteStatus = false;
+                    this.$message.error(res.data.message);
+                  }
+                });
+          })
+          .catch(() => {
+            row.noteStatus = false;
+            this.$set(row, 'phoneStatus', false)
+            this.$message({
+              type: "info",
+              message: "已取消修改"
+            });
+          });
+
   }
   // 添加房屋
   addHouseConfirm() {
