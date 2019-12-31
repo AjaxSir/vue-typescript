@@ -127,7 +127,13 @@
             </el-table-column>
             <el-table-column align="center" width="120" prop="status" label="状态">
               <template slot-scope="{row}">
-                <el-dropdown @command="cardStatusChange" trigger="click">
+                <el-tag
+                v-if='row.status === "-1"'
+                      size="small"
+                      style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
+                      type="danger"
+                    >过期</el-tag>
+                <el-dropdown v-else @command="cardStatusChange" trigger="click">
                   <span class="el-dropdown-link">
                     <el-tag
                       size="small"

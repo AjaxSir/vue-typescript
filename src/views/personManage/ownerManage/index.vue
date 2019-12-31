@@ -727,7 +727,7 @@
         <el-button type="primary" @click="confirmHouse">确 定</el-button>
       </div>
     </el-dialog>
-    <BigImg :centerDialogVisible="imgVisible" bigTitle="抓拍图片" :bigImg="bigImg" />
+    <BigImg :centerDialogVisible="imgVisible" bigTitle="注册人脸" :bigImg="bigImg" />
     <ExportIn
       :uploadUrl="env === 'production' ? 'http://47.103.184.184/admin/usrUser/import' : '/v1/admin/usrUser/import'"
       downTemplateUrl="/admin/usrUser/model"
