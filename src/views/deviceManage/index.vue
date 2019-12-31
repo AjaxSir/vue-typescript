@@ -81,7 +81,7 @@
 
             <el-table-column align="center" prop="type" label="状态">
               <template slot-scope="scope">
-                <span :style="{ color : scope.row.type === '1' ? '#67c23a' : '#f56c6c' }">{{scope.row.type === '1' ? "连线中" : "离线中"}}</span>
+                <span :style="{ color : scope.row.status === '1' ? '#67c23a' : '#f56c6c' }">{{scope.row.status === '1' ? "连线中" : "离线中"}}</span>
               </template>
             </el-table-column>
 
