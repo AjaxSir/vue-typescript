@@ -58,7 +58,7 @@
 
             <el-table-column prop="name" align="center" label="车位类型" :show-overflow-tooltip="true">
               <template slot-scope="{row}">
-                <p>{{ row.name ? row.name :'--'}}</p>
+                <p>{{ row.name ? row.name :''}}</p>
                 <!-- <p
                   class="rowUpdate"
                   v-show="!row.nameStatus || editForm.id !== row.id"
@@ -84,7 +84,7 @@
               :show-overflow-tooltip="true"
             >
               <template slot-scope="{row}">
-                <p>{{ row.maxCar ? row.maxCar :'--'}}</p>
+                <p>{{ row.maxCar ? row.maxCar :''}}</p>
                 <!-- <p
                   class="rowUpdate"
                   v-show="!row.maxCarStatus || editForm.id !== row.id"
