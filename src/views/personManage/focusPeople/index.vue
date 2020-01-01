@@ -182,23 +182,21 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="note" align="center" label="备注" :show-overflow-tooltip="true">
-              <template slot-scope="{row}">
-                <p
+            <el-table-column align="center" :show-overflow-tooltip="true" prop="note" label="备注">
+              <template slot-scope="scope">
+                <span
                   class="rowUpdate"
-                  v-show="!row.noteStatus || editForm.id !== row.id"
-                  @click="editNote(row)"
-                >{{ row.note ? row.note :'--'}}</p>
+                  v-show="!scope.row.noteStatus"
+                  @click="editNote(scope.row)"
+                >{{ scope.row.note || '--' }}</span>
                 <el-input
-                  :ref="row.id"
-                  v-show="row.noteStatus&&editForm.id === row.id"
                   size="mini"
-                  clearable
-                  :maxlength="200"
+                  :ref="scope.row.id"
+                  @blur="confirmUpdateNote(scope.row)"
                   v-model="editForm.note"
+                  v-show="scope.row.noteStatus"
+                  :clearable="true"
                   placeholder="输入备注"
-                  @keyup.enter.native="noteBlur(row,'2')"
-                  @input="constraintLength(editForm.note,'200')"
                 ></el-input>
               </template>
             </el-table-column>
@@ -1142,10 +1140,23 @@ export default class FocusPeople extends Vue {
   confirmUpdateNote(item) {
     /**@description 修改备注 */
     const form = { note: this.editForm["note"], id: item.id };
-    editFocusPeople(form).then(() => {
-      this["notify"]("success", "成功", "修改关注人员备注成功");
-      this["fetchData"](this.initForm);
-    });
+    this.$confirm("此操作将修改该关注人员的备注, 是否继续?", "提示", {
+      confirmButtonText: "确定",
+      cancelButtonText: "取消",
+      type: "warning"
+    })
+      .then(() => {
+        editFocusPeople(form).then(() => {
+          this["notify"]("success", "成功", "修改关注人员备注成功");
+          this["fetchData"](this.initForm);
+        });
+      })
+      .catch(() => {
+        this.$message({
+          type: "info",
+          message: "已取消修改"
+        });
+      });
   }
 
   editClose() {

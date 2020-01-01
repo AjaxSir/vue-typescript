@@ -53,8 +53,13 @@
       <el-table-column prop="name" align="center" label="姓名" :show-overflow-tooltip="true"></el-table-column>
       <el-table-column prop="phone" align="center" label="电话" :show-overflow-tooltip="true"></el-table-column>
       <el-table-column prop="email" align="center" label="邮箱" :show-overflow-tooltip="true"></el-table-column>
-      <el-table-column prop="earlyGroupName" align="center" label="分组" :show-overflow-tooltip="true"></el-table-column>
-      <el-table-column prop="note" align="center" label="备注" :show-overflow-tooltip="true">
+      <el-table-column
+        prop="earlyGroupName"
+        align="center"
+        label="分组"
+        :show-overflow-tooltip="true"
+      ></el-table-column>
+      <!-- <el-table-column prop="note" align="center" label="备注" :show-overflow-tooltip="true">
         <template slot-scope="{row}">
           <p
             class="rowUpdate"
@@ -71,6 +76,25 @@
             placeholder="输入备注"
             @keyup.enter.native="noteBlur(row,'2')"
             @input="constraintLength(editForm.note,'200')"
+          ></el-input>
+        </template>
+      </el-table-column>-->
+
+      <el-table-column align="center" :show-overflow-tooltip="true" prop="note" label="备注">
+        <template slot-scope="scope">
+          <span
+            class="rowUpdate"
+            v-show="!scope.row.noteStatus"
+            @click="editNote(scope.row)"
+          >{{ scope.row.note || '--' }}</span>
+          <el-input
+            size="mini"
+            :ref="scope.row.id"
+            @blur="confirmUpdateNote(scope.row)"
+            v-model="editForm.note"
+            v-show="scope.row.noteStatus"
+            :clearable="true"
+            placeholder="输入备注"
           ></el-input>
         </template>
       </el-table-column>
@@ -569,10 +593,24 @@ export default class WarningLink extends Vue {
   confirmUpdateNote(item) {
     /**@description 修改备注 */
     const form = { note: this.editForm["note"], id: item.id };
-    editWarning(form).then(() => {
-      this["notify"]("success", "成功", "修改预警人员备注成功");
-      this["fetchData"](this.initForm);
-    });
+
+    this.$confirm("此操作将修改该预警人员的备注, 是否继续?", "提示", {
+      confirmButtonText: "确定",
+      cancelButtonText: "取消",
+      type: "warning"
+    })
+      .then(() => {
+        editWarning(form).then(() => {
+          this["notify"]("success", "成功", "修改预警人员备注成功");
+          this["fetchData"](this.initForm);
+        });
+      })
+      .catch(() => {
+        this.$message({
+          type: "info",
+          message: "已取消修改"
+        });
+      });
   }
 
   editTarget(item) {
