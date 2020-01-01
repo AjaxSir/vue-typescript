@@ -307,30 +307,30 @@
             <el-row :gutter="20">
               <el-col :span="12" class="col-line">
                 <el-form-item style="margin-bottom:0" label="访客姓名:">
-                  <span>{{visitorDialogForm.name ? visitorDialogForm.name :'--'}}</span>
+                  <span>{{visitorDialogForm.name ? visitorDialogForm.name :''}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="访客类型:">
-                  <span>{{visitorDialogForm.visitType ==='1' ?'APP' : visitorDialogForm.visitType ==='2' ?'访客机' : '--'}}</span>
+                  <span>{{visitorDialogForm.visitType ==='1' ?'APP' : visitorDialogForm.visitType ==='2' ?'访客机' : ''}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="证件号码:">
-                  <span>{{visitorDialogForm.cardNo ? visitorDialogForm.cardNo :'--'}}</span>
+                  <span>{{visitorDialogForm.cardNo ? visitorDialogForm.cardNo :''}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="同行人数:">
-                  <span>{{visitorDialogForm.numPeople ? visitorDialogForm.numPeople:'--'}}</span>
+                  <span>{{visitorDialogForm.numPeople ? visitorDialogForm.numPeople:''}}</span>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
                 <el-form-item style="margin-bottom:0" label="状态:">
-                  <span>{{visitorDialogForm.status ? statusFilter(visitorDialogForm.status) :'--'}}</span>
+                  <span>{{visitorDialogForm.status ? statusFilter(visitorDialogForm.status) :''}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="创建时间:">
-                  <span>{{visitorDialogForm.createTime ? visitorDialogForm.createTime :'--'}}</span>
+                  <span>{{visitorDialogForm.createTime ? visitorDialogForm.createTime :''}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="有效时间:">
-                  <span>{{visitorDialogForm.invalidDate ? visitorDialogForm.invalidDate :'--'}}</span>
+                  <span>{{visitorDialogForm.invalidDate ? visitorDialogForm.invalidDate :''}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="备注信息:">
-                  <span>{{visitorDialogForm.note ? visitorDialogForm.note :'暂无'}}</span>
+                  <span>{{visitorDialogForm.note ? visitorDialogForm.note :''}}</span>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -359,7 +359,7 @@
                   <span>{{interUserDetail.cardNo}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="车主备注:">
-                  <span>{{interUserDetail.note ? interUserDetail.note : '暂无'}}</span>
+                  <span>{{interUserDetail.note ? interUserDetail.note : ''}}</span>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
@@ -368,19 +368,19 @@
                 </el-form-item>
 
                 <el-form-item style="margin-bottom:0" label="居住楼栋:">
-                  <span>{{houseInviterDetail.houseDetail ? houseInviterDetail.houseDetail.houseName : '--'}}</span>
+                  <span>{{houseInviterDetail.houseDetail ? houseInviterDetail.houseDetail.houseName : ''}}</span>
                 </el-form-item>
 
                 <el-form-item style="margin-bottom:0" label="单元号:">
-                  <span>{{houseInviterDetail.houseDetail ? houseInviterDetail.houseDetail.buildingName: '--'}}</span>
+                  <span>{{houseInviterDetail.houseDetail ? houseInviterDetail.houseDetail.buildingName: ''}}</span>
                 </el-form-item>
 
                 <el-form-item style="margin-bottom:0" label="楼层:">
-                  <span>{{houseInviterDetail.houseDetail ? houseInviterDetail.houseDetail.storeyNum: '--'}}</span>
+                  <span>{{houseInviterDetail.houseDetail ? houseInviterDetail.houseDetail.storeyNum: ''}}</span>
                 </el-form-item>
 
                 <el-form-item style="margin-bottom:0" label="房屋号:">
-                  <span>{{houseInviterDetail.houseDetail ? houseInviterDetail.houseDetail.serialNumber: '--'}}</span>
+                  <span>{{houseInviterDetail.houseDetail ? houseInviterDetail.houseDetail.serialNumber: ''}}</span>
                 </el-form-item>
 
                 <el-form-item style="margin-bottom:0" label="注册时间:">
@@ -388,7 +388,7 @@
                 </el-form-item>
 
                 <el-form-item style="margin-bottom:0" label="邀请人备注:">
-                  <span>{{houseInviterDetail.note ? houseInviterDetail.note : "暂无"}}</span>
+                  <span>{{houseInviterDetail.note ? houseInviterDetail.note : ""}}</span>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -397,20 +397,24 @@
         <el-tab-pane label="通行记录" name="thirdly">
           <el-table v-loading="passTarget" :data="passList" style="width: 100%" stripe>
             <el-table-column type="index" label="序号" width="50" align="center"></el-table-column>
-            <el-table-column align="center" prop="passTime" label="通行时间" width="150px"></el-table-column>
-            <el-table-column align="center" prop="devName" label="抓拍设备"></el-table-column>
-            <el-table-column align="center" prop="devType" label="设备类型"></el-table-column>
-            <el-table-column align="center" prop="passTime" label="通行地址" min-width="150px">
+            <el-table-column  :show-overflow-tooltip="true" align="center" prop="passTime" label="通行时间" width="150px"></el-table-column>
+            <el-table-column :show-overflow-tooltip="true" align="center" prop="devName" label="抓拍设备"></el-table-column>
+            <el-table-column :show-overflow-tooltip="true" align="center" prop="devType" label="设备类型">
+              <template slot-scope="{row}">
+                <span>{{ row.devType | devTypes }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column :show-overflow-tooltip="true" align="center" prop="passTime" label="通行地址" min-width="150px">
               <template slot-scope="scope">
                 <span>{{scope.row.devAddress}} - {{scope.row.devSubAddress}}</span>
               </template>
             </el-table-column>
-            <el-table-column align="center" prop="passMethod" label="通行方式">
+            <el-table-column :show-overflow-tooltip="true" align="center" prop="passMethod" label="通行方式">
               <template slot-scope="scope">
                 <span>{{passMethod(scope.row.passMethod)}}</span>
               </template>
             </el-table-column>
-            <el-table-column align="center" prop="inOut" label="通行类型">
+            <el-table-column :show-overflow-tooltip="true" align="center" prop="inOut" label="通行类型">
               <template slot-scope="scope">
                 <el-tag
                   size="small"
@@ -450,6 +454,17 @@ const ActionHeader = () => import("@/components/ActionHeader.vue");
   mixins: [mixin],
   components: {
     ActionHeader
+  },
+  filters: {
+    devTypes(val:string) {
+      const data = {
+        "1": '门禁',
+        "2": '车禁',
+        "3": '注册机',
+        "4": '访客机',
+      }
+      return data[val] + '设备'
+    }
   }
 })
 export default class VistoryManage extends Vue {

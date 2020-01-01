@@ -198,8 +198,8 @@
                 <el-input
                   size="mini"
                   :ref="scope.row.id"
-                  @keyup.enter.native="confirmUpdateNote(scope.row)"
-                  @blur="noteBlur(scope.row)"
+
+                  @blur="confirmUpdateNote(scope.row)"
                   v-model="noteString"
                   v-show="scope.row.noteStatus"
                   :clearable="true"
@@ -887,19 +887,37 @@ export default class CardManage extends Vue {
 
   // 修改备注
   confirmUpdateNote(row) {
-    editStall({
-      id: row.id,
-      note: this.noteString
-    }).then(res => {
-      if (res.data.code === 200) {
-        this.$message.success("修改成功");
-        row.noteStatus = false;
-        this.noteString = "";
-        this.fetchData(this.initForm);
-      } else {
-        this.$message.error(res.data.message);
-      }
-    });
+
+    this.$confirm("此操作将修改该车位的备注, 是否继续?", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        })
+          .then(() => {
+            editStall({
+              id: row.id,
+              note: this.noteString
+            }).then(res => {
+              if (res.data.code === 200) {
+                this.$message.success("修改成功");
+                row.noteStatus = false;
+                this.noteString = "";
+                this.fetchData(this.initForm);
+              } else {
+                this.$message.error(res.data.message);
+              }
+            }).catch(() => {
+              row.noteStatus = false;
+            })
+          })
+          .catch(() => {
+            row.noteStatus = false;
+            this.$set(row, 'phoneStatus', false)
+            this.$message({
+              type: "info",
+              message: "已取消修改"
+            });
+          });
   }
 
   async handleClick(tab) {
