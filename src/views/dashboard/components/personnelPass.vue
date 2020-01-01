@@ -32,7 +32,7 @@
 
             >
             <template slot-scope="{row}">
-              <span>{{ row.userName || '--' }}</span>
+              <span>{{ row.userName || '' }}</span>
             </template>
           </el-table-column>
           <el-table-column

@@ -30,7 +30,7 @@
             :show-overflow-tooltip="true"
             >
             <template slot-scope="{row}">
-              <span>{{ row.ownerName || '--' }}</span>
+              <span>{{ row.ownerName || '' }}</span>
             </template>
           </el-table-column>
           <el-table-column
