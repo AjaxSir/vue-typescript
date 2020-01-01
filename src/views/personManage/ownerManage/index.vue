@@ -163,7 +163,7 @@
               label="所属楼栋"
             >
               <template slot-scope="{row}">
-                <span>{{ row.house[0] && row.house[0].groupName || '--' }}</span>
+                <span>{{ row.house[0] && row.house[0].groupName || '' }}</span>
               </template>
             </el-table-column>
             <el-table-column
@@ -173,7 +173,7 @@
               label="所属单元"
             >
               <template slot-scope="{row}">
-                <span>{{ row.house[0] && row.house[0].buildingName || '--' }}</span>
+                <span>{{ row.house[0] && row.house[0].buildingName || '' }}</span>
               </template>
             </el-table-column>
             <el-table-column
@@ -183,7 +183,7 @@
               label="房屋编号"
             >
               <template slot-scope="{row}">
-                <span>{{ row.house[0] && row.house[0].serialNumber || '--' }}</span>
+                <span>{{ row.house[0] && row.house[0].serialNumber || '' }}</span>
               </template>
             </el-table-column>
             <el-table-column
@@ -333,7 +333,7 @@
             <el-row :gutter="20">
               <el-col :span="12" class="col-line">
                 <el-form-item style="margin-bottom:0" label="姓名:">
-                  <span>{{detailDialog.name ? detailDialog.name : '--'}}</span>
+                  <span>{{detailDialog.name ? detailDialog.name : ''}}</span>
                 </el-form-item>
 
                 <el-form-item style="margin-bottom:0" label="性别:">
@@ -341,20 +341,20 @@
                 </el-form-item>
 
                 <el-form-item style="margin-bottom:0" label="手机号:">
-                  <span>{{detailDialog.phone ? detailDialog.phone : '--'}}</span>
+                  <span>{{detailDialog.phone ? detailDialog.phone : ''}}</span>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
                 <el-form-item style="margin-bottom:0" label="证件类型:">
-                  <span>{{detailDialog.cardName || '--' }}</span>
+                  <span>{{detailDialog.cardName || '' }}</span>
                 </el-form-item>
 
                 <el-form-item style="margin-bottom:0" label="证件号码:">
-                  <span>{{ detailDialog.cardNo || '暂无' }}</span>
+                  <span>{{ detailDialog.cardNo || '' }}</span>
                 </el-form-item>
 
                 <el-form-item style="margin-bottom:0" label="备注信息:">
-                  <el-input @blur='confirmUpdateNote' v-model="detailDialog.note" placeholder="编辑备注信息"></el-input>
+                  <el-input @blur='confirmUpdateNote' maxlength="200" v-model="detailDialog.note" placeholder="编辑备注信息(最多输入200字)"></el-input>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -1115,8 +1115,8 @@ export default class OwnerManage extends Vue {
     updateUserNote(this.detailDialog['id'], this.detailDialog['note']).then(res => {
       if (res.data.code === 200) {
         this.$message.success("修改成功");
-        // this.noteString = "";
-        // this.fetchData(this.initForm);
+        this.noteString = "";
+        this.fetchData(this.initForm);
       } else {
         this.$message.error(res.data.message);
       }
