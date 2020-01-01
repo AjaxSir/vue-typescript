@@ -480,6 +480,7 @@ export default class CardManage extends Vue {
         deleteTheHousePeople(this.houseId, row.userId).then(res => {
           getRegisterPeople(this.houseId).then(res => {
             this.dtailTable = res.data.data;
+            this.fetchData(this.initForm)
           });
         });
       })
