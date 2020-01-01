@@ -354,7 +354,7 @@
                 </el-form-item>
 
                 <el-form-item style="margin-bottom:0" label="备注信息:">
-                  <el-input @keyup.enter.native='confirmUpdateNote' v-model="detailDialog.note" placeholder="编辑备注信息"></el-input>
+                  <el-input @blur='confirmUpdateNote' v-model="detailDialog.note" placeholder="编辑备注信息"></el-input>
                 </el-form-item>
               </el-col>
             </el-row>

@@ -75,7 +75,7 @@
 
             <el-table-column :show-overflow-tooltip='true' align="center" prop="note" label="设备说明">
               <template slot-scope="{row}">
-                <span>{{ row.note || '--' }}</span>
+                <span>{{ row.note || '' }}</span>
                 </template>
             </el-table-column>
 
@@ -85,9 +85,9 @@
               </template>
             </el-table-column>
 
-            <el-table-column align="center" prop="bindTime" label="绑定时间" width="220">
+            <el-table-column align="center" prop="bindTime" label="设备添加时间" width="220">
               <template slot-scope="{row}">
-                <span>{{ row.bindTime || '--' }}</span>
+                <span>{{ row.bindTime || '' }}</span>
                 </template>
             </el-table-column>
           </el-table>
@@ -116,16 +116,16 @@
               <span :style="{ color : detailDialogForm.type === '1' ? '#67c23a' : '#f56c6c' }">{{detailDialogForm.type === '1' ? "正常" : "离线"}}</span>
             </el-form-item>
             <el-form-item class="marginForm" label="绑定时间:">
-              <span>{{detailDialogForm.bindTime || '--'}}</span>
+              <span>{{detailDialogForm.bindTime || ''}}</span>
             </el-form-item>
             <el-form-item class="marginForm" label="设备绑定时间:">
-              <span>{{detailDialogForm.bindingTime || '--'}}</span>
+              <span>{{detailDialogForm.bindingTime || ''}}</span>
             </el-form-item>
             <el-form-item class="marginForm" label="创建时间:">
-              <span>{{detailDialogForm.createDate || '--'}}</span>
+              <span>{{detailDialogForm.createDate || ''}}</span>
             </el-form-item>
             <el-form-item class="marginForm" label="最后离线时间:">
-              <span>{{detailDialogForm.downTime || '--'}}</span>
+              <span>{{detailDialogForm.downTime || ''}}</span>
             </el-form-item>
           </el-form>
         </el-tab-pane>

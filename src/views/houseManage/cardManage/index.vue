@@ -190,7 +190,9 @@
                   size="small"
                   style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
                   :type="detailDialog.status === '0' ? 'success' : 'danger'"
-                >{{ detailDialog.status === '0' ? "正常" : "禁用" }}</el-tag>
+                >
+                {{ detailDialog.status === '0' ? "正常" : (detailDialog.status === '-2' ? "禁用" : "过期" ) }}
+                </el-tag>
               </p>
             </el-col>
             <el-col :span="12">
