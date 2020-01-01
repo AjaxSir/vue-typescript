@@ -130,7 +130,7 @@
                 <el-tag
                 v-if='row.status === "-1"'
                       size="small"
-                      style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
+                      style="border-radius: 50px;padding: 0 10px; "
                       type="danger"
                     >过期</el-tag>
                 <el-dropdown v-else @command="cardStatusChange" trigger="click">

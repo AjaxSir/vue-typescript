@@ -145,7 +145,7 @@
                 <span>{{ row.sex === '1' ? '男' : '女' }}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="img" align="center" width="60" label="人脸">
+            <el-table-column prop="img" align="center" width="100" label="注册人脸">
               <template slot-scope="scope">
                 <img
                   class="capture-img"
