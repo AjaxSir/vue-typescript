@@ -215,9 +215,6 @@
               align="center"
               label="邀请访客"
             >
-              <!-- <template slot-scope="{row}">
-                <span>{{ row.house[0] && row.house[0].enableInviteVisitor === '1' ? '允许' : '禁止' }}</span>
-              </template>-->
               <template slot-scope="{row}">
                 <el-dropdown @command="changeStatus" trigger="click">
                   <span class="el-dropdown-link">
@@ -241,9 +238,6 @@
               align="center"
               label="访客车辆"
             >
-              <!-- <template slot-scope="{row}">
-                <span>{{ row.house[0] && row.house[0].enableInviteCar === '1' ? '允许' : '禁止' }}</span>
-              </template>-->
               <template slot-scope="{row}">
                 <el-dropdown @command="changeStatus" trigger="click">
                   <span class="el-dropdown-link">
@@ -267,9 +261,6 @@
               align="center"
               label="远程开门"
             >
-              <!-- <template slot-scope="{row}">
-                <span>{{ row.house[0] && row.house[0].enableRemoteOpen === '1' ? '允许' : '禁止' }}</span>
-              </template>-->
               <template slot-scope="{row}">
                 <el-dropdown @command="changeStatus" trigger="click">
                   <span class="el-dropdown-link">
@@ -487,15 +478,6 @@
               </template>
             </el-table-column>
           </el-table>
-          <el-pagination
-            @current-change="fetchFaceList"
-            :page-size="facePage.limit"
-            :current-page="facePage.page"
-            style="margin-top:10px;"
-            background
-            layout="prev, pager, next"
-            :total="facePage.total"
-          ></el-pagination>
         </el-tab-pane>
       </el-tabs>
       <span slot="footer" class="dialog-footer">
@@ -1104,17 +1086,17 @@ export default class OwnerManage extends Vue {
           type: "warning"
         })
           .then(() => {
-
             updateUserPhone(row.id, this.phoneString).then(res => {
               if (res.data.code === 200) {
                 this.$message.success("修改成功");
-                row.phoneStatus = false;
                 this.phoneString = "";
                 this.fetchData(this.initForm);
               } else {
                 this.$message.error(res.data.message);
               }
-            });
+            }).catch(() => {
+              this.$set(row, 'phoneStatus', false)
+            })
           })
           .catch(() => {
             this.$set(row, 'phoneStatus', false)
