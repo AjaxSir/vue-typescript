@@ -30,7 +30,7 @@
               ></el-input>
             </div>
 
-             <div class="word-filter">
+            <div class="word-filter">
               <span class="filter-name">紧急电话:</span>
               <el-input
                 class="input-filter"
@@ -61,7 +61,6 @@
                 ></el-option>
               </el-select>
             </div>
-
           </div>
         </ActionHeader>
       </el-col>
@@ -135,7 +134,7 @@
               :show-overflow-tooltip="true"
             >
               <template slot-scope="scope">
-                <span>{{scope.row.house&&scope.row.house.length>0 ? scope.row.house[0].locationName :'--'}}</span>
+                <span>{{scope.row.house&&scope.row.house.length>0 ? scope.row.house[0].locationName :''}}</span>
               </template>
             </el-table-column>
 
@@ -164,17 +163,22 @@
             <el-table-column
               prop="earlyPeriod"
               align="center"
-              label="预警周期"
+              label="预警周期(天)"
               :show-overflow-tooltip="true"
-            ></el-table-column>
+            >
+              <!-- <template slot-scope="{row}">
+                <span>{{row.earlyPeriod ? row.earlyPeriod +'天': ''}}</span>
+              </template>-->
+            </el-table-column>
 
             <el-table-column align="center" label="状态" :show-overflow-tooltip="true">
               <template slot-scope="scope">
-                <el-tag
+                <!-- <el-tag
                   size="small"
                   style="border-radius: 50px;padding: 0 10px;"
                   :type="scope.row.isNormal ? 'success' : 'danger'"
-                >{{ scope.row.isNormal? "正常" : "异常" }}</el-tag>
+                >{{ scope.row.isNormal? "启用" : "禁用" }}</el-tag>-->
+                <span>{{ scope.row.isNormal? "启用" : "禁用" }}</span>
               </template>
             </el-table-column>
 
@@ -635,6 +639,7 @@
 
     <!-- 目标详情 -->
     <el-dialog
+      width="800px"
       top="5vh"
       class="dialog-rewrite"
       title="人员详情"
@@ -647,24 +652,33 @@
             <el-row :gutter="20">
               <el-col :span="12" class="col-line">
                 <el-form-item style="margin-bottom:0" label="姓名:">
-                  <span>{{userDetail.name ? userDetail.name :'--'}}</span>
+                  <span>{{userDetail.name ? userDetail.name :''}}</span>
                 </el-form-item>
                 <!-- <el-form-item style="margin-bottom:0" label="年龄:">
-                  <span>{{userDetail.age ? userDetail.age : '--'}}</span>
+                  <span>{{userDetail.age ? userDetail.age : ''}}</span>
                 </el-form-item>-->
                 <el-form-item style="margin-bottom:0" label="性别:">
                   <span>{{userDetail.sex==='0'?'女':'男'}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="电话:">
-                  <span>{{userDetail.phone ? userDetail.phone:'--'}}</span>
+                  <span>{{userDetail.phone ? userDetail.phone:''}}</span>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
+                <el-form-item style="margin-bottom:0" label="证件类型:">
+                  <span>{{userDetail.cardName ? userDetail.cardName :''}}</span>
+                </el-form-item>
                 <el-form-item style="margin-bottom:0" label="身份证号:">
-                  <span>{{userDetail.cardNo ? userDetail.cardNo :'--'}}</span>
+                  <span>{{userDetail.cardNo ? userDetail.cardNo :''}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="备注信息:">
-                  <span>{{userDetail.note ? userDetail.note :'暂无'}}</span>
+                  <!-- <span>{{userDetail.note ? userDetail.note :'暂无'}}</span> -->
+                  <el-input
+                    size="small"
+                    @keyup.enter.native="peopleUpdateNote"
+                    v-model="userDetail.note"
+                    placeholder="编辑备注信息"
+                  ></el-input>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -673,7 +687,6 @@
 
         <el-tab-pane label="预警人员" name="second">
           <el-table v-loading="earlyLoading" :data="earlyList" style="width: 100%" stripe>
-            <el-table-column type="index" label="序号" width="50" align="center"></el-table-column>
             <el-table-column prop="name" align="center" label="姓名" :show-overflow-tooltip="true"></el-table-column>
             <el-table-column prop="phone" align="center" label="电话" :show-overflow-tooltip="true"></el-table-column>
             <el-table-column prop="email" align="center" label="邮箱" :show-overflow-tooltip="true"></el-table-column>
@@ -698,7 +711,6 @@
 
         <el-tab-pane label="通行记录" name="thirdly">
           <el-table v-loading="passTarget" :data="passList" style="width: 100%" stripe>
-            <el-table-column type="index" label="序号" width="50" align="center"></el-table-column>
             <el-table-column align="center" prop="name" label="姓名" :show-overflow-tooltip="true"></el-table-column>
             <el-table-column
               align="center"
@@ -706,7 +718,11 @@
               label="通行地址"
               :show-overflow-tooltip="true"
             >
-              <template slot-scope="scope">{{scope.row.devAddress}} - {{scope.row.devSubAddress}}</template>
+              <template slot-scope="scope">
+                <span>{{scope.row.devAddress}}</span>
+                <span v-if="scope.row.devAddress">-</span>
+                <span>{{scope.row.devSubAddress}}</span>
+              </template>
             </el-table-column>
             <el-table-column
               align="center"
@@ -717,11 +733,12 @@
             ></el-table-column>
             <el-table-column align="center" prop="inOut" label="通行类型" :show-overflow-tooltip="true">
               <template slot-scope="scope">
-                <el-tag
+                <span>{{ scope.row.inOut}}</span>
+                <!-- <el-tag
                   size="small"
                   style="border-radius: 50px;"
                   :type="scope.row.inOut==='进'? 'success' : 'danger'"
-                >{{ scope.row.inOut}}</el-tag>
+                >{{ scope.row.inOut}}</el-tag>-->
               </template>
             </el-table-column>
             <el-table-column align="center" prop="address" label="抓拍图片">
@@ -755,8 +772,10 @@ import {
   getType, //获取关注人员类别
   addType, //添加关注人员类别
   deleteType, //删除关注人员类别
-  getUserPass //获取目标通行记录
+  getUserPass, //获取目标通行记录
+  updateUserNote //修改人员备注
 } from "@/api/peopleApi.ts";
+
 import {
   getWarning, //查询预警联系人
   getGroup, //获取关注人员分组
@@ -1085,6 +1104,19 @@ export default class FocusPeople extends Vue {
     //   } else {
     //     this["message"]("请输入正确的电话号码");
     //   }
+  }
+  // 确定修改人员详情 备注
+  peopleUpdateNote() {
+    if (!this.userDetail["note"]) {
+      return this.$message.error("请输入备注信息");
+    }
+    updateUserNote(this.userDetail["id"], this.userDetail["note"]).then(res => {
+      if (res.data.code === 200) {
+        this.$message.success("修改成功");
+      } else {
+        this.$message.error(res.data.message);
+      }
+    });
   }
 
   editNote(row) {
