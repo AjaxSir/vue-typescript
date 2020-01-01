@@ -239,7 +239,6 @@
                 <el-input
                   size="mini"
                   :ref="scope.row.id"
-
                   @blur="confirmUpdateNote(scope.row)"
                   v-model="noteString"
                   v-show="scope.row.noteStatus"
@@ -1267,29 +1266,49 @@ export default class CardManage extends Vue {
     /**@description 单独修改车位状态 */
     this.editForm["id"] = val;
   }
-  //  ownerScenceUserId: "", // 业主场景用户id
-  //     carSpaceGroupId: "", // 车位分组id
-  //     carSpaceTypeId: "", // 车位类型id
-  //     serialNumber: "", // 车位编号
-  //     status: "", // 车位状态
-  //     id: "", //目标id
-  //     note: "" // 备注
+
   handleCommand(val) {
     /**@description 单独修改车位状态 事件 */
     const form = { status: val, id: this.editForm["id"] };
-    editStall(form).then(() => {
-      this["notify"]("success", "成功", "修改车位状态成功");
-      this["fetchData"](this.initForm);
-    });
+    this.$confirm("此操作将修改该车位的状态, 是否继续?", "提示", {
+      confirmButtonText: "确定",
+      cancelButtonText: "取消",
+      type: "warning"
+    })
+      .then(() => {
+        editStall(form).then(() => {
+          this["notify"]("success", "成功", "修改车位状态成功");
+          this["fetchData"](this.initForm);
+        });
+      })
+      .catch(() => {
+        this.$message({
+          type: "info",
+          message: "已取消修改"
+        });
+      });
   }
 
   handlEcarSpaceType(val) {
     /**@description 单独修改车位类型 事件 */
     const form = { carSpaceTypeId: val, id: this.editForm["id"] };
-    editStall(form).then(() => {
-      this["notify"]("success", "成功", "修改车位类型成功");
-      this["fetchData"](this.initForm);
-    });
+    this.$confirm("此操作将修改该车位的类型, 是否继续?", "提示", {
+      confirmButtonText: "确定",
+      cancelButtonText: "取消",
+      type: "warning"
+    })
+      .then(() => {
+        editStall(form).then(() => {
+          this["notify"]("success", "成功", "修改车位类型成功");
+          this["fetchData"](this.initForm);
+        });
+      })
+      .catch(() => {
+        this.$message({
+          type: "info",
+          message: "已取消修改"
+        });
+      });
   }
 
   editTarget(item) {
@@ -1368,37 +1387,38 @@ export default class CardManage extends Vue {
 
   // 修改备注
   confirmUpdateNote(row) {
-
     this.$confirm("此操作将修改该车位的备注, 是否继续?", "提示", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning"
+      confirmButtonText: "确定",
+      cancelButtonText: "取消",
+      type: "warning"
+    })
+      .then(() => {
+        editStall({
+          id: row.id,
+          note: this.noteString
         })
-          .then(() => {
-            editStall({
-              id: row.id,
-              note: this.noteString
-            }).then(res => {
-              if (res.data.code === 200) {
-                this.$message.success("修改成功");
-                row.noteStatus = false;
-                this.noteString = "";
-                this.fetchData(this.initForm);
-              } else {
-                this.$message.error(res.data.message);
-              }
-            }).catch(() => {
+          .then(res => {
+            if (res.data.code === 200) {
+              this.$message.success("修改成功");
               row.noteStatus = false;
-            })
+              this.noteString = "";
+              this.fetchData(this.initForm);
+            } else {
+              this.$message.error(res.data.message);
+            }
           })
           .catch(() => {
             row.noteStatus = false;
-            this.$set(row, 'phoneStatus', false)
-            this.$message({
-              type: "info",
-              message: "已取消修改"
-            });
           });
+      })
+      .catch(() => {
+        row.noteStatus = false;
+        this.$set(row, "phoneStatus", false);
+        this.$message({
+          type: "info",
+          message: "已取消修改"
+        });
+      });
   }
 
   async handleClick(tab) {
