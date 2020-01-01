@@ -232,99 +232,84 @@
 
     <!-- 批量添加车位 -->
     <el-dialog
+      :before-close="closeDialog"
       :close-on-click-modal="false"
-      title="添加车位"
-      :visible.sync="dialogAdds"
       width="500px"
-      :before-close="handleClose"
+      class="formDialog"
+      :title="'批量添加车位'"
+      :visible.sync="dialogAdds"
     >
       <el-form
-        :model="createForm"
-        :rules="rules"
-        ref="dataForm"
+        ref="batchForm"
+        :rules="batchRules"
+        :model="batchForm"
         label-width="100px"
         label-position="right"
-        style="margin-right:40px;"
+        style="margin:20px 40px 0 0;"
       >
+        <el-form-item prop="start" label="编号:">
+          <el-input
+            clearable
+            placeholder="开始编号"
+            style="width:140px"
+            @keydown.native="UpNumber"
+            @keyup.native="inputHouseCheck"
+            @change="hintChange"
+            v-model="batchForm.start"
+          ></el-input>&nbsp;&nbsp;至&nbsp;&nbsp;
+          <el-input
+            clearable
+            placeholder="结束编号"
+            style="width:140px"
+            @keydown.native="UpNumber"
+            @keyup.native="inputHouseCheck"
+            @change="hintChange"
+            v-model="batchForm.end"
+          ></el-input>
+        </el-form-item>
+
         <el-form-item
-          label="选择业主:"
-          prop="ownerScenceUserId"
+          label="车位类型:"
+          prop="unitId"
           :show-message="showMessage"
-          :error="errorMessage.ownerScenceUserId"
+          :error="errorMessage.unitId"
         >
           <el-select
             style="width:100%"
-            v-model="createForm.ownerScenceUserId"
-            filterable
-            remote
-            :remote-method="remoteMethod"
-            :loading="loading"
-            placeholder="请输入姓名进行模糊查询"
+            v-model="batchForm.unitId"
+            placeholder="请选择"
+            @change="changeSelect"
           >
-            <el-option
-              v-for="item in nameList"
-              :key="item.ownerScenceUserId"
-              :label="item.name"
-              :value="item.ownerScenceUserId"
-            >
-              <span style="float: left">{{ item.name }}</span>
-              <span style="float: right; color: #8492a6; font-size: 13px">{{ item. value }}</span>
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="所属分组:" prop="carSpaceGroupId">
-          <el-cascader
-            style="width:100%"
-            v-model="createForm.carSpaceGroupId"
-            :options="TreeData"
-            :show-all-levels="false"
-            :props="{ label: 'name', children: 'sonCarSpaceGroups', value: 'id' }"
-            @change="handleChange"
-          ></el-cascader>
-        </el-form-item>
-        <el-form-item label="车位编号:" prop="serialNumber">
-          <el-input
-            clearable
-            v-model="createForm.serialNumber"
-            placeholder="请输入车位编号"
-            :maxlength="10"
-            @input="constraintLength(createForm.serialNumber,'10')"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="车位类型:" prop="carSpaceTypeId">
-          <el-select style="width:100%" v-model="createForm.carSpaceTypeId" placeholder="请选择">
             <el-option v-for="item in carStatus" :key="item.id" :label="item.name" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="车位状态:" prop="status">
-          <el-select style="width:100%" v-model="createForm.status" placeholder="请选择">
-            <el-option label="已售（自用）" value="已售（自用）"></el-option>
-            <el-option label="已售（出租）" value="已售（出租）"></el-option>
-            <el-option label="未售（出租）" value="未售（出租）"></el-option>
-            <el-option label="未售（闲置）" value="未售（闲置）"></el-option>
-          </el-select>
-        </el-form-item>
 
-        <el-form-item label="备注信息:" prop="note">
-          <el-input
-            type="textarea"
-            v-model="createForm.note"
-            :maxlength="200"
-            placeholder="输入备注信息"
-            @input="constraintLength(editForm.note,'200')"
-          ></el-input>
+        <el-form-item label="生成示例:" prop="note" label-width="85px">
+          <p
+            style="height:16px;"
+            v-for="(item,index) in sample.slice(0,2)"
+            :key="'unit'+index"
+          >{{item}}</p>
+          <p style="height:16px;" v-if="sample.length>2">...</p>
+          <div v-if="sample.length>2">
+            <p
+              style="height:16px;"
+              v-for="(item,index) in sample.slice(sample.length-1)"
+              :key="'unitend'+index"
+            >{{item}}</p>
+          </div>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="handleClose">取 消</el-button>
-        <el-button type="primary" @click="createStall">确 定</el-button>
+        <el-button @click="closeDialog">取 消</el-button>
+        <el-button type="primary" @click="createStalls">确 定</el-button>
       </span>
     </el-dialog>
 
     <!-- 添加车位 -->
     <el-dialog
       :close-on-click-modal="false"
-      title="添加车位"
+      title="批量车位"
       :visible.sync="dialogCreate"
       width="500px"
       :before-close="handleClose"
@@ -512,7 +497,42 @@
         label-position="right"
         style="margin-right:40px;"
       >
+        <el-form-item label="所属分组:" prop="carSpaceGroupId">
+          <el-cascader
+            style="width:100%"
+            v-model="editForm.carSpaceGroupId"
+            :options="TreeData"
+            :show-all-levels="false"
+            :props="{ label: 'name', children: 'sonCarSpaceGroups', value: 'id' }"
+            @change="handleEdit"
+          ></el-cascader>
+        </el-form-item>
+
+        <el-form-item label="车位编号:" prop="serialNumber">
+          <el-input
+            clearable
+            v-model="editForm.serialNumber"
+            placeholder="请输入车位编号"
+            :maxlength="10"
+            @input="constraintLength(editForm.serialNumber,'10')"
+          ></el-input>
+        </el-form-item>
+
         <el-form-item
+          label="选择业主:"
+          prop="name"
+          :show-message="showMessage"
+          :error="errorMessage.name"
+        >
+          <el-input
+            :style="targetuser.name ? 'width:216px':'width:230px'"
+            v-model="targetuser.name"
+            :disabled="true"
+            placeholder="请选择业主"
+          ></el-input>
+          <el-button @click="chooseOwner">{{targetuser.name ? '重新选择' :'请选择'}}</el-button>
+
+          <!-- <el-form-item
           label="选择业主:"
           prop="ownerScenceUserId"
           :show-message="showMessage"
@@ -537,27 +557,9 @@
               <span style="float: left">{{ item.name }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item. value }}</span>
             </el-option>
-          </el-select>
+          </el-select>-->
         </el-form-item>
-        <el-form-item label="所属分组:" prop="carSpaceGroupId">
-          <el-cascader
-            style="width:100%"
-            v-model="editForm.carSpaceGroupId"
-            :options="TreeData"
-            :show-all-levels="false"
-            :props="{ label: 'name', children: 'sonCarSpaceGroups', value: 'id' }"
-            @change="handleEdit"
-          ></el-cascader>
-        </el-form-item>
-        <el-form-item label="车位编号:" prop="serialNumber">
-          <el-input
-            clearable
-            v-model="editForm.serialNumber"
-            placeholder="请输入车位编号"
-            :maxlength="10"
-            @input="constraintLength(editForm.serialNumber,'10')"
-          ></el-input>
-        </el-form-item>
+
         <el-form-item label="车位类型:" prop="carSpaceTypeId">
           <el-select style="width:100%" v-model="editForm.carSpaceTypeId" placeholder="请选择">
             <el-option v-for="item in carStatus" :key="item.id" :label="item.name" :value="item.id"></el-option>
@@ -631,9 +633,10 @@
       <!-- </el-tabs> -->
     </el-dialog>
 
+    <!-- 绑定车牌 -->
     <el-dialog
       class="dialog-rewrite"
-      width="500px"
+      width="550px"
       title="查看车牌"
       :visible.sync="dialogCarVisible"
       :before-close="bindingPlatesClose"
@@ -731,6 +734,7 @@ import {
   deleteCarno // 删除车牌
 } from "@/api/carApi.ts";
 import { getUserName } from "@/api/vistorApi.ts"; //输入人名模糊查询人员
+import { getUnitList, addUnit, deleteUnit } from "@/api/houseApi.ts";
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 const DataTree = () => import("../carTree/index.vue");
 const ExportIn = () => import("@/components/exportIn/index.vue");
@@ -793,19 +797,24 @@ export default class CardManage extends Vue {
     data: []
   };
   env: string = process.env.NODE_ENV;
+
   dialogAdds: Boolean = false; //批量添加车位状态
   private dialogOwnerVisible: Boolean = false; //选择业主弹出框
+  batchForm: object = {
+    end: "",
+    parentId: "",
+    start: "",
+    unitId: "",
+    title: "添加子分组"
+  }; // 批量添加表单
+  batchRules: object = {
+    start: [{ required: true, message: "请输入开始编号", trigger: "blur" }],
+    end: [{ required: true, message: "请输入结束编号", trigger: "blur" }],
+    unitId: [{ required: true, message: "请选择楼单位", trigger: "blur" }]
+  };
+  private sample: Array<Object> = []; //生成示例
 
   private filterUser: Object = { name: "", phone: "", cardno: "" };
-  private userList: Array<Object> = [
-    { name: "zhang3", phone: "1111111111", cardNo: "1111111111" },
-    { name: "zhang3", phone: "1111111111", cardNo: "1111111111" },
-    { name: "zhang3", phone: "1111111111", cardNo: "1111111111" },
-    { name: "zhang3", phone: "1111111111", cardNo: "1111111111" },
-    { name: "zhang3", phone: "1111111111", cardNo: "1111111111" },
-    { name: "zhang3", phone: "1111111111", cardNo: "1111111111" },
-    { name: "zhang3", phone: "1111111111", cardNo: "1111111111" }
-  ]; //搜索出的业主
   private targetuser: Object = {}; //选中的业主
   private listQuery: Object = {
     // 关注人员目标通行记录翻页
@@ -815,7 +824,6 @@ export default class CardManage extends Vue {
   };
 
   createForm: object = {
-    name: "",
     ownerScenceUserId: "", // 业主场景用户id
     carSpaceGroupId: "", // 车位分组id
     carSpaceTypeId: "", // 车位类型id
@@ -824,7 +832,7 @@ export default class CardManage extends Vue {
     note: "" // 备注
   };
   rules: any = {
-    // name: [{ required: true, message: "请车位选择业主", trigger: "change" }],
+    name: [{ required: false, message: "请车位选择业主", trigger: "change" }],
     carSpaceGroupId: [
       { required: true, message: "请选择车位所属分组", trigger: "change" }
     ],
@@ -929,8 +937,94 @@ export default class CardManage extends Vue {
   }
 
   addstalls() {
-    /**@description 批量添加车位 */
+    /**@description 批量添加车位 表单*/
     this.dialogAdds = true;
+  }
+
+  public phoneNum: any = 0;
+  public regPos = /^\d+(\.\d+)?$/;
+  public upNum = /[^\d]/g;
+  public hintPhone: any = false;
+  // 编号只可输入数字
+  UpNumber(e: any) {
+    var v = e.target.value;
+    e.target.value = v.replace(this.upNum, "");
+  }
+
+  // 起止编号输入检测
+  private housePartern = /^[1-9]\d*$/;
+  inputHouseCheck(e: any) {
+    let v = e.target.value;
+
+    if (!this.housePartern.test(e.target.value)) {
+      this["message"]("开始和结束必须为数值");
+      e.target.value = "";
+    }
+    // this.batchForm["start"] = this.batchForm["start"].toUpperCase();
+    // this.batchForm["end"] = this.batchForm["end"].toUpperCase();
+  }
+
+  clearableBtn(v) {
+    //清除
+    this.phoneNum = v ? v.length : 0;
+  }
+
+  hintChange(v: any) {
+    if (this.batchForm["start"] && this.batchForm["end"]) {
+      this.changeSelect();
+    }
+    this.hintPhone = v ? true : false;
+  }
+
+  changeSelect() {
+    /**@description 生成示例 */
+    this.sample = [];
+    if (!this.checkHouseInput()) {
+      return;
+    }
+
+    let unitName = "";
+    // for (const item of this.Tags) {
+    //   if (item["id"] === this.batchForm["unitId"]) {
+    //     unitName = item["name"];
+    //   }
+    // }
+
+    if (/^\d+$/.test(this.batchForm["start"])) {
+      for (let i = this.batchForm["start"]; i <= this.batchForm["end"]; i++) {
+        this.sample.push(i + unitName);
+      }
+    }
+  }
+
+  checkHouseInput() {
+    /**@description 检测子分组开始和结束规则 */
+    if (/^[1-9]\d*$/.test(this.batchForm["start"])) {
+      if (!/^\d+$/.test(this.batchForm["end"])) {
+        this["message"]("开始和结束必须为数值");
+        // this.batchForm["unitId"] = "";
+        return false;
+      }
+      if (Number(this.batchForm["start"]) > Number(this.batchForm["end"])) {
+        this["message"]("请确保序号由小到大");
+        // this.batchForm["unitId"] = "";
+        return false;
+      }
+
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  createStalls() {
+    /**@description 批量添加车位 提交 */
+    console.log("表单");
+  }
+
+  closeDialog() {
+    /**@description 关闭批量添加车位*/
+    this.dialogAdds = false;
   }
 
   closeVisible(flag: boolean) {
@@ -952,15 +1046,12 @@ export default class CardManage extends Vue {
 
   searchUser() {
     /**@description 根据不同条件查询业主 */
-    console.log(this.filterUser);
     this.getName(this.filterUser);
   }
 
   chooseUser(item) {
     /**@description 选中目标业主 */
-    console.log(item);
     this.targetuser = item;
-    this.createForm["carSpaceGroupId"] = item.id;
     this.ownerClose();
   }
 
@@ -972,19 +1063,19 @@ export default class CardManage extends Vue {
     // this.fetchPass();
   }
 
-  async remoteMethod(query) {
-    /**@description 根据姓名模糊查询业主 */
-    if (query !== "") {
-      this.loading = true;
-      setTimeout(() => {
-        if (query.length >= 1) {
-          this.getName(query);
-        }
-      }, 200);
-    } else {
-      this.nameList = [];
-    }
-  }
+  // async remoteMethod(query) {
+  //   /**@description 根据姓名模糊查询业主 */
+  //   if (query !== "") {
+  //     this.loading = true;
+  //     setTimeout(() => {
+  //       if (query.length >= 1) {
+  //         this.getName(query);
+  //       }
+  //     }, 200);
+  //   } else {
+  //     this.nameList = [];
+  //   }
+  // }
 
   getName(query) {
     /**@description 获取业主信息 */
@@ -1028,8 +1119,9 @@ export default class CardManage extends Vue {
 
   ownerClose() {
     /**@description 选择业主取消弹出框 */
-
     this.dialogOwnerVisible = false;
+    this.filterUser = { name: "", phone: "", cardno: "" };
+    this.nameList = [];
   }
 
   initData() {
@@ -1050,6 +1142,10 @@ export default class CardManage extends Vue {
     const form = {
       ...this.createForm
     };
+    form["ownerScenceUserId"] = this.targetuser["ownerScenceUserId"];
+    if (!form["ownerScenceUserId"]) {
+      this.errorMessage["name"] = "请选择业主";
+    }
     this.$refs["dataForm"]["validate"](valid => {
       if (valid) {
         // this.createForm["carSpaceGroupId"] = [
@@ -1081,6 +1177,8 @@ export default class CardManage extends Vue {
     this.$nextTick(() => {
       this.$refs["dataForm"]["resetFields"]();
     });
+    this.targetuser = {};
+    this.errorMessage["name"] = "";
   }
 
   editTarget(item) {
@@ -1089,7 +1187,9 @@ export default class CardManage extends Vue {
       this.editForm[key] = item[key];
     }
     this.ownerName = item.ownerName;
-    this.editForm["ownerScenceUserId"] = null;
+    this.targetuser["name"] = item.ownerName;
+    this.targetuser["ownerScenceUserId"] = item.ownerScenceUserId;
+    // this.editForm["ownerScenceUserId"] = null;
     this.dialogEdit = true;
   }
 
@@ -1108,6 +1208,7 @@ export default class CardManage extends Vue {
   updateStall() {
     /**@description 修改车位 */
     const form = { ...this.editForm };
+    form["ownerScenceUserId"] = this.targetuser["ownerScenceUserId"];
     for (const key in form) {
       if (form[key] === "") {
         delete form[key];
@@ -1133,6 +1234,9 @@ export default class CardManage extends Vue {
     }
     this.$refs.dataTree["highlightStatus"] = true;
     this.$refs["updateForm"]["resetFields"]();
+    this.targetuser = {};
+    this.errorMessage["name"] = "";
+    this.nameList = [];
   }
 
   // 修改备注自动获取焦点

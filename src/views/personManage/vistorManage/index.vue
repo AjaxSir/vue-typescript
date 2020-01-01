@@ -225,7 +225,7 @@
               width="100px"
             >
               <template slot-scope="scope">
-                <span>{{scope.row.visitType ==='1' ?'APP' : scope.row.visitType ==='2' ?'访客机' : '--'}}</span>
+                <span>{{scope.row.visitType ==='1' ?'APP' : scope.row.visitType ==='2' ?'访客机' : ''}}</span>
               </template>
             </el-table-column>
 

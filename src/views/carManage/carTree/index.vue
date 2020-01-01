@@ -136,7 +136,7 @@
                 <el-button v-else class="button-new-tag" size="small" @click="showInput">添加单位</el-button>
               </div>
             </el-form-item>
-            <!-- <el-form-item label="生成示例:" prop="note" label-width="85px">
+            <el-form-item label="生成示例:" prop="note" label-width="85px">
               <p
                 style="height:16px;"
                 v-for="(item,index) in sample.slice(0,2)"
@@ -150,7 +150,7 @@
                   :key="'unitend'+index"
                 >{{item}}</p>
               </div>
-            </el-form-item> -->
+            </el-form-item>
             <!-- <el-form-item label="备注:" prop="note" label-width="85px">
               <el-input
                 style="width:260px"
@@ -565,7 +565,7 @@ export default class DataTree extends Vue {
         return;
       }
       this.sortCreated().then(res => {
-        this.$message.success(`创建${res.success}个成功,${res.error}个失败`);
+        this.$message.success('添加成功');
         this.$refs["batchForm"]["resetFields"]();
         this.$emit("getHouseTreeData");
         this.HouseVisible = false;
@@ -729,9 +729,12 @@ export default class DataTree extends Vue {
   private housePartern = /^([1-9]\d*|[A-Z])$/;
   inputHouseCheck(e: any) {
     let v = e.target.value;
-    if (!this.housePartern.test(v)) {
+
+    if (!this.housePartern.test(e.target.value)) {
       e.target.value = "";
     }
+    this.batchForm["start"] = this.batchForm["start"].toUpperCase();
+    this.batchForm["end"] = this.batchForm["end"].toUpperCase();
   }
 
   clearableBtn(v) {
@@ -838,8 +841,7 @@ export default class DataTree extends Vue {
 .highlight .icon-menu {
   color: white;
 }
-.tree-rename{
+.tree-rename {
   overflow: auto;
 }
-
 </style>
