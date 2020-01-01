@@ -561,7 +561,7 @@
           <el-select
             style="width:100%"
             :disabled="nameDisabled"
-            @change="Form.cardNo = ''"
+            @change="Form.cardNo = '',Form.cardName = ''"
             size="small"
             v-model="Form.otherCardName"
             placeholder="请选择证件类型"
@@ -860,15 +860,18 @@ export default class OwnerManage extends Vue {
         trigger: "blur"
       }
     ],
-    // cardNo: [
-    //         { required: true, trigger: 'blur', validator: (rule, value, callback) => {
-    //             if (!(value.length === 15 || value.length === 18) && this.Form['otherCardName'] === '身份证') {
-    //               callback(new Error('填写正确的证件号'))
-    //             } else {
-    //               callback()
-    //             }
-    //           } }
-    //       ],
+    cardNo: [
+            { required: true, trigger: 'blur', validator: (rule, value, callback) => {
+                if (!(value.length === 15 || value.length === 18) && this.Form['otherCardName'] === '身份证') {
+                  callback(new Error('填写正确的证件号号'))
+                } else {
+                  callback()
+                }
+              } }
+          ],
+    otherCardName: [
+            { required: true, trigger: 'change', message: '请选择证件' }
+          ],
     house: [
       {
         required: true,

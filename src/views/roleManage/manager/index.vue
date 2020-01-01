@@ -54,9 +54,26 @@
             <el-table-column prop="roleName" align="center" label="角色"></el-table-column>
 
             <el-table-column :show-overflow-tooltip='true' prop="note" label="备注" align="center">
-              <template slot-scope="{row}">
-                <span>{{ row.note || '' }}</span>
+              <!-- <template slot-scope="scope"> -->
+                <template slot-scope="scope">
+                <span
+                  class="rowUpdate"
+                  v-show="!scope.row.noteStatus"
+                  @click="focusNoteInput(scope.row)"
+                >{{ scope.row.note || '--' }}</span>
+                <!-- @keyup.enter.native="confirmUpdateNote(scope.row)" -->
+                <el-input
+                  :ref="scope.row.id"
+                  size="mini"
+                  @blur="confirmUpdateNote(scope.row)"
+                  v-model="noteString"
+                  v-show="scope.row.noteStatus"
+                  :clearable="true"
+                  placeholder="输入备注"
+                ></el-input>
               </template>
+                <!-- <span>{{ row.note || '' }}</span> -->
+              <!-- </template> -->
             </el-table-column>
 
             <el-table-column  :show-overflow-tooltip='true' width="180" label="操作" align="center">
@@ -188,6 +205,7 @@ export default class InformIssue extends Vue {
     reNewPassword: '',
     name: ''
   }
+  noteString: string = ''
   private Form: Object = {
     name: null,
     roleId: null,
@@ -255,7 +273,7 @@ export default class InformIssue extends Vue {
   filterForm: object = {
     name: ''
   }
-  updateArray: Array<string> = ['statusEdit'] //需要行内修改的
+  updateArray: Array<string> = ['noteStatus'] //需要行内修改的
   deleteForm: object = {
     url: '/admin/usrUser/admin',
     method: 'delete',
@@ -275,6 +293,55 @@ export default class InformIssue extends Vue {
       diffcult++
     }
     return diffcult
+  }
+  // 修改备注自动获取焦点
+  focusNoteInput(row) {
+    this.noteString = row.note;
+    row.noteStatus = !row.noteStatus;
+    this.$nextTick(() => {
+      const input = this.$refs[row.id] as HTMLElement;
+      input.focus();
+    });
+  }
+  // 修改备注
+  confirmUpdateNote(row) {
+    this.$confirm("此操作将修改管理员备注, 是否继续?", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        })
+          .then(() => {
+            let roleId = ''
+            this.roleList.forEach(ele => {
+              if (ele['name'] === row['roleName']) {
+                roleId = ele['id']
+              }
+            })
+            addManager({
+                  ...row,
+                  roleId,
+                  note: this.noteString,
+                }).then(res => {
+                  if (res.data.code === 200) {
+                    this.$message.success("修改成功");
+                    row.noteStatus = false;
+                    this.noteString = "";
+                    this.fetchData(this.initForm);
+                  } else {
+                    row.noteStatus = false;
+                    this.$message.error(res.data.message);
+                  }
+                });
+          })
+          .catch(() => {
+            row.noteStatus = false;
+            this.$set(row, 'phoneStatus', false)
+            this.$message({
+              type: "info",
+              message: "已取消修改"
+            });
+          });
+
   }
   // 确定添加/修改管理员
   addManagerConfirm() {
