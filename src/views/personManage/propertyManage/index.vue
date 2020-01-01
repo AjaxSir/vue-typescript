@@ -166,11 +166,11 @@
         <el-tab-pane label="详细信息" name="first">
           <div class="singleInfo"><span class="right">姓名: </span>&nbsp;&nbsp;{{ Dialog.name }}</div>
           <div class="singleInfo"><span class="right">性别: </span>&nbsp;&nbsp;{{ Dialog.sex === '1' ? '男' : '女' }}</div>
-          <div class="singleInfo"><span class="right">出生日期: </span>&nbsp;&nbsp;{{ Dialog.birthday || '--' }}</div>
+          <div class="singleInfo"><span class="right">出生日期: </span>&nbsp;&nbsp;{{ Dialog.birthday || '' }}</div>
           <div class="singleInfo"><span class="right">身份证号: </span>&nbsp;&nbsp;{{ Dialog.cardNo }}</div>
           <div class="singleInfo"><span class="right">年龄: </span>&nbsp;&nbsp;{{ Dialog.age }}</div>
           <div class="singleInfo"><span class="right">手机号: </span>&nbsp;&nbsp;{{ Dialog.phone }}</div>
-          <div class="singleInfo"><span class="right">权限组: </span>&nbsp;&nbsp;{{ Dialog.auth && Dialog.auth.name || '--' }}</div>
+          <div class="singleInfo"><span class="right">权限组: </span>&nbsp;&nbsp;{{ Dialog.auth && Dialog.auth.name || '' }}</div>
         </el-tab-pane>
         <el-tab-pane label="通行记录" name="second">
            <el-table

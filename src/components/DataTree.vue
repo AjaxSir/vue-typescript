@@ -143,7 +143,7 @@
                 v-model="batchForm.max"
               ></el-input>
             </el-form-item>
-            <el-form-item label="序号单位:" prop="serialNumberUnit">
+            <el-form-item label="单位:" prop="serialNumberUnit">
               <el-select style="width:212px" v-model="batchForm.serialNumberUnit" placeholder="请选择">
                 <el-option
                   v-for="item in Tags"
