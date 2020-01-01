@@ -544,7 +544,7 @@ export default class PropertyManage extends Vue {
   }
   // 修改备注
   confirmUpdateNote(row) {
-    this.$confirm("此操作将修改房屋备注, 是否继续?", "提示", {
+    this.$confirm("此操作将修改物业人员备注, 是否继续?", "提示", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
