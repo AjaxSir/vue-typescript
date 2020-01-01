@@ -134,9 +134,9 @@
             <el-table-column align="center" prop="name" label="姓名" width="150px"></el-table-column>
             <el-table-column :show-overflow-tooltip='true' align="center" prop="passTime" label="通行时间" width="150px"></el-table-column>
             <el-table-column :show-overflow-tooltip='true' align="center" prop="devAddress" label="通行地址"></el-table-column>
-            <el-table-column :show-overflow-tooltip='true' align="center" prop="devAddress" label="是否访客">
+            <el-table-column :show-overflow-tooltip='true' align="center" width="120" prop="devAddress" label="是否访客">
               <template slot-scope="{row}">
-               <span>{{ row.isVisitor ? '否' : '是' }}</span></template>
+               <span>{{ row.isVisitor ? '是' : '否' }}</span></template>
             </el-table-column>
             <el-table-column prop="passMethod" align='center' label="抓拍图片">
               <template slot-scope="{row}">
