@@ -239,6 +239,7 @@
 
     <!-- 目标详情 -->
     <el-dialog
+      width="800px"
       class="dialog-rewrite"
       :title="'车牌: ' + CarDialogForm.carNo?CarDialogForm.carNo:'未知'"
       :visible.sync="detailDialogVisible"
@@ -250,55 +251,43 @@
             <el-row :gutter="20">
               <el-col :span="12" class="col-line">
                 <el-form-item style="margin-bottom:0" label="车牌:">
-                  <span>{{CarDialogForm.carNo ? CarDialogForm.carNo :'--'}}</span>
+                  <span>{{CarDialogForm.carNo ? CarDialogForm.carNo :''}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="车辆品牌:">
-                  <span>{{CarDialogForm.modal ? CarDialogForm.modal : '--'}}</span>
+                  <span>{{CarDialogForm.modal ? CarDialogForm.modal : ''}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="车辆型号:">
-                  <span>{{CarDialogForm.carType ? CarDialogForm.carType :'--'}}</span>
+                  <span>{{CarDialogForm.carType ? CarDialogForm.carType :''}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="车辆状态:">
                   <span>{{CarDialogForm.status &&CarDialogForm.status=='1' ? '正常' :'禁用'}}</span>
                 </el-form-item>
 
                 <el-form-item style="margin-bottom:0" label="最后一次进时间:">
-                  <span>{{CarDialogForm.lastInTime ? CarDialogForm.lastInTime :'--'}}</span>
+                  <span>{{CarDialogForm.lastInTime ? CarDialogForm.lastInTime :''}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="最后一次进照片:">
-                  <img
-                    class="capture-img"
-                    @mouseout="imgVisible=false"
-                    @mouseover="imgVisible=true,bigImg=CarDialogForm.lastInPhoto"
-                    :src="CarDialogForm.lastInPhoto"
-                    alt
-                  />
+                  <img class="capture-img" :src="CarDialogForm.lastInPhoto" alt />
                 </el-form-item>
               </el-col>
               <el-col :span="12">
                 <el-form-item style="margin-bottom:0" label="车主姓名:">
-                  <span>{{CarDialogForm.ownerName ? CarDialogForm.ownerName :'--'}}</span>
+                  <span>{{CarDialogForm.ownerName ? CarDialogForm.ownerName :''}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="车主电话:">
-                  <span>{{CarDialogForm.ownerPhone ? CarDialogForm.ownerPhone : '--'}}</span>
+                  <span>{{CarDialogForm.ownerPhone ? CarDialogForm.ownerPhone : ''}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="随同人数:">
-                  <span>{{CarDialogForm.numPeople ? CarDialogForm.numPeople : '--'}}</span>
+                  <span>{{CarDialogForm.numPeople ? CarDialogForm.numPeople : ''}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="备注信息:">
                   <span>{{CarDialogForm.note ? CarDialogForm.note :'暂无'}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="最后一次出时间:">
-                  <span>{{CarDialogForm.lastOutTime ? CarDialogForm.lastOutTime :'--'}}</span>
+                  <span>{{CarDialogForm.lastOutTime ? CarDialogForm.lastOutTime :''}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="最后一次出照片:">
-                  <img
-                    class="capture-img"
-                    @mouseout="imgVisible=false"
-                    @mouseover="imgVisible=true,bigImg=CarDialogForm.lastOutPhoto"
-                    :src="CarDialogForm.lastOutPhoto"
-                    alt
-                  />
+                  <img class="capture-img" :src="CarDialogForm.lastOutPhoto" alt />
                 </el-form-item>
               </el-col>
             </el-row>
@@ -332,16 +321,16 @@
               </el-col>
               <el-col :span="12">
                 <el-form-item style="margin-bottom:0" label="居住楼栋:">
-                  <span>{{carInviterDetail.houseDetail ? carInviterDetail.houseDetail.houseName : '--'}}</span>
+                  <span>{{carInviterDetail.houseDetail ? carInviterDetail.houseDetail.houseName : ''}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="单元号:">
-                  <span>{{carInviterDetail.houseDetail ? carInviterDetail.houseDetail.buildingName: '--'}}</span>
+                  <span>{{carInviterDetail.houseDetail ? carInviterDetail.houseDetail.buildingName: ''}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="楼层:">
-                  <span>{{carInviterDetail.houseDetail ? carInviterDetail.houseDetail.storeyNum: '--'}}</span>
+                  <span>{{carInviterDetail.houseDetail ? carInviterDetail.houseDetail.storeyNum: ''}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="房屋号:">
-                  <span>{{carInviterDetail.houseDetail ? carInviterDetail.houseDetail.serialNumber: '--'}}</span>
+                  <span>{{carInviterDetail.houseDetail ? carInviterDetail.houseDetail.serialNumber: ''}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="人员类型:">
                   <span>{{filterType(carInviterDetail.type)}}</span>
@@ -358,7 +347,6 @@
         </el-tab-pane>
         <el-tab-pane label="通行记录" name="thirdly">
           <el-table v-loading="passTarget" :data="passList" style="width: 100%" stripe>
-            <el-table-column type="index" label="序号" width="50" align="center"></el-table-column>
             <el-table-column align="center" prop="carNo" label="车牌号" :show-overflow-tooltip="true"></el-table-column>
             <el-table-column
               align="center"

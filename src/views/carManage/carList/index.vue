@@ -266,7 +266,13 @@
           :show-message="showMessage"
           :error="errorMessage.carNo"
         >
-          <el-input v-model="createForm[0].carNo" :maxlength="12" placeholder="请输入车牌号" clearable @input="constraintLength(createForm[0].carNo,'12')"></el-input>
+          <el-input
+            v-model="createForm[0].carNo"
+            :maxlength="12"
+            placeholder="请输入车牌号"
+            clearable
+            @input="constraintLength(createForm[0].carNo,'12')"
+          ></el-input>
         </el-form-item>
 
         <el-form-item
@@ -389,8 +395,10 @@
         <el-button type="primary" @click="modifCar">确 定</el-button>
       </span>
     </el-dialog>
+
     <!-- 目标详情 -->
     <el-dialog
+      width="800px"
       class="dialog-rewrite"
       :title="'车牌: ' + CarDialogForm.carNo ? CarDialogForm.carNo: '未知'"
       :visible.sync="detailDialogVisible"
@@ -402,22 +410,16 @@
             <el-row :gutter="20">
               <el-col :span="12" class="col-line">
                 <el-form-item style="margin-bottom:0" label="车辆品牌:">
-                  <span>{{CarDialogForm.modal ? CarDialogForm.modal : '--'}}</span>
+                  <span>{{CarDialogForm.modal ? CarDialogForm.modal : ''}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="车辆型号:">
-                  <span>{{CarDialogForm.carType ? CarDialogForm.carType :'--'}}</span>
+                  <span>{{CarDialogForm.carType ? CarDialogForm.carType :''}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="最后一次进时间:">
-                  <span>{{CarDialogForm.lastInTime ? CarDialogForm.lastInTime :'--'}}</span>
+                  <span>{{CarDialogForm.lastInTime ? CarDialogForm.lastInTime :''}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="最后一次进照片:">
-                  <img
-                    class="capture-img"
-                    @mouseout="imgVisible=false"
-                    @mouseover="imgVisible=true,bigImg=CarDialogForm.lastInPhoto"
-                    :src="CarDialogForm.lastInPhoto"
-                    alt
-                  />
+                  <img class="capture-img" :src="CarDialogForm.lastInPhoto" alt />
                 </el-form-item>
               </el-col>
               <el-col :span="12">
@@ -429,16 +431,10 @@
                 </el-form-item>
 
                 <el-form-item style="margin-bottom:0" label="最后一次出时间:">
-                  <span>{{CarDialogForm.lastOutTime ? CarDialogForm.lastOutTime :'--'}}</span>
+                  <span>{{CarDialogForm.lastOutTime ? CarDialogForm.lastOutTime :''}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="最后一次出照片:">
-                  <img
-                    class="capture-img"
-                    @mouseout="imgVisible=false"
-                    @mouseover="imgVisible=true,bigImg=CarDialogForm.lastOutPhoto"
-                    :src="CarDialogForm.lastOutPhoto"
-                    alt
-                  />
+                  <img class="capture-img" @mouseout="imgVisible=false" alt />
                 </el-form-item>
               </el-col>
             </el-row>
@@ -454,22 +450,23 @@
                 <el-form-item style="margin-bottom:0" label="性别:">
                   <span>{{carUserDetail.sex==='0' ? '女' : '男'}}</span>
                 </el-form-item>
-                <el-form-item style="margin-bottom:0" label="年龄:">
-                  <span>{{carUserDetail.age}}</span>
-                </el-form-item>
-                <el-form-item style="margin-bottom:0" label="备注:">
-                  <span>{{carUserDetail.note ? carUserDetail.note :'暂无'}}</span>
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
                 <el-form-item style="margin-bottom:0" label="电话:">
                   <span>{{carUserDetail.phone}}</span>
                 </el-form-item>
-                <el-form-item style="margin-bottom:0" label="身份证:">
-                  <span>{{carUserDetail.cardNo}}</span>
-                </el-form-item>
+                <!-- <el-form-item style="margin-bottom:0" label="年龄:">
+                  <span>{{carUserDetail.age}}</span>
+                </el-form-item>-->
+              </el-col>
+              <el-col :span="12">
                 <el-form-item style="margin-bottom:0" label="证件类型:">
                   <span>{{carUserDetail.cardName}}</span>
+                </el-form-item>
+                <el-form-item style="margin-bottom:0" label="证件号码:">
+                  <span>{{carUserDetail.cardNo}}</span>
+                </el-form-item>
+
+                <el-form-item style="margin-bottom:0" label="备注信息:">
+                  <span>{{carUserDetail.note ? carUserDetail.note :'暂无'}}</span>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -477,7 +474,6 @@
         </el-tab-pane>
         <el-tab-pane label="通行记录" name="thirdly">
           <el-table v-loading="passTarget" :data="passList" style="width: 100%" stripe>
-            <el-table-column type="index" label="序号" width="50" align="center"></el-table-column>
             <el-table-column align="center" prop="carNo" label="车牌号" :show-overflow-tooltip="true"></el-table-column>
             <el-table-column
               align="center"
@@ -530,7 +526,7 @@
         <el-button type="primary" @click="detailDialogVisible = false">确 定</el-button>
       </span>-->
     </el-dialog>
-    <ImageMagni :centerDialogVisible="imgVisible" bigTitle="抓拍图片" :bigImg="bigImg" />
+    <ImageMagni :centerDialogVisible="imgVisible" bigTitle="最近抓拍图片" :bigImg="bigImg" />
     <!-- uploadUrl="/v1/admin/usr-car/import" -->
     <ExportIn
       :uploadUrl="env === 'production' ? 'http://47.103.184.184/admin/usr-car/import' : '/v1/admin/usr-car/import'"

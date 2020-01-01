@@ -225,7 +225,7 @@
               width="100px"
             >
               <template slot-scope="scope">
-                <span>{{scope.row.visitType ==='1' ?'APP' : scope.row.visitType ==='2' ?'访客机' : '--'}}</span>
+                <span>{{scope.row.visitType ==='1' ?'APP' : scope.row.visitType ==='2' ?'访客机' : ''}}</span>
               </template>
             </el-table-column>
 
@@ -296,6 +296,7 @@
 
     <!-- 目标详情 -->
     <el-dialog
+      width="800px"
       class="dialog-rewrite"
       :title="'访客: ' + visitorDialogForm.name ? visitorDialogForm.name : '未知'"
       :visible.sync="detailDialogVisible"
@@ -346,9 +347,9 @@
                 <el-form-item style="margin-bottom:0" label="性别:">
                   <span>{{interUserDetail.sex==='0'?'女':'男'}}</span>
                 </el-form-item>
-                <el-form-item style="margin-bottom:0" label="年龄:">
+                <!-- <el-form-item style="margin-bottom:0" label="年龄:">
                   <span>{{interUserDetail.age}}</span>
-                </el-form-item>
+                </el-form-item>-->
                 <el-form-item style="margin-bottom:0" label="电话:">
                   <span>{{interUserDetail.phone}}</span>
                 </el-form-item>
@@ -358,7 +359,7 @@
                 <el-form-item style="margin-bottom:0" label="证件号码:">
                   <span>{{interUserDetail.cardNo}}</span>
                 </el-form-item>
-                <el-form-item style="margin-bottom:0" label="车主备注:">
+                <el-form-item style="margin-bottom:0" label="业主备注:">
                   <span>{{interUserDetail.note ? interUserDetail.note : ''}}</span>
                 </el-form-item>
               </el-col>
@@ -387,7 +388,7 @@
                   <span>{{houseInviterDetail.createTime}}</span>
                 </el-form-item>
 
-                <el-form-item style="margin-bottom:0" label="邀请人备注:">
+                <el-form-item style="margin-bottom:0" label="房屋备注:">
                   <span>{{houseInviterDetail.note ? houseInviterDetail.note : ""}}</span>
                 </el-form-item>
               </el-col>
@@ -396,7 +397,6 @@
         </el-tab-pane>
         <el-tab-pane label="通行记录" name="thirdly">
           <el-table v-loading="passTarget" :data="passList" style="width: 100%" stripe>
-            <el-table-column type="index" label="序号" width="50" align="center"></el-table-column>
             <el-table-column  :show-overflow-tooltip="true" align="center" prop="passTime" label="通行时间" width="150px"></el-table-column>
             <el-table-column :show-overflow-tooltip="true" align="center" prop="devName" label="抓拍设备"></el-table-column>
             <el-table-column :show-overflow-tooltip="true" align="center" prop="devType" label="设备类型">
@@ -416,11 +416,12 @@
             </el-table-column>
             <el-table-column :show-overflow-tooltip="true" align="center" prop="inOut" label="通行类型">
               <template slot-scope="scope">
-                <el-tag
+                <span>{{ scope.row.inOut}}</span>
+                <!-- <el-tag
                   size="small"
                   style="border-radius: 50px;"
                   :type="scope.row.inOut==='进'? 'success' : 'danger'"
-                >{{ scope.row.inOut}}</el-tag>
+                >{{ scope.row.inOut}}</el-tag>-->
               </template>
             </el-table-column>
             <el-table-column align="center" prop="address" label="抓拍图片">
@@ -514,25 +515,37 @@ export default class VistoryManage extends Vue {
   private visitorDialogForm: Object = {}; // 访客详情
   private activeName: string = "first"; //目标访客详细信息 tab Title
   private selectType: Array<Object> = [
-    {
-      command: null,
-      lable: "全部"
-    },
+    // {
+    //   command: null,
+    //   lable: "全部"
+    // },
+    // {
+    //   command: "2",
+    //   lable: "正常"
+    // },
     {
       command: "2",
-      lable: "正常"
+      lable: "过期"
     },
+    // {
+    //   command: "1",
+    //   lable: "未开始"
+    // },
     {
       command: "1",
-      lable: "未开始"
+      lable: "待访问"
     },
-    {
-      command: "4",
-      lable: "其他"
-    },
+    // {
+    //   command: "4",
+    //   lable: "其他"
+    // },
+    // {
+    //   command: "3",
+    //   lable: "已结束"
+    // }
     {
       command: "3",
-      lable: "已结束"
+      lable: "已访问"
     }
   ];
 
@@ -625,13 +638,16 @@ export default class VistoryManage extends Vue {
     /** @description 状态显示过滤 */
     switch (status) {
       case "1":
-        return "未开始";
+        // return "未开始";
+        return "待访问";
       case "2":
-        return "正常";
+        // return "正常";
+        return "过期";
       case "3":
-        return "已结束";
-      case "4":
-        return "其他";
+        // return "已结束";
+        return "已访问";
+      // case "4":
+      //   return "其他";
     }
   }
 
@@ -717,6 +733,8 @@ export default class VistoryManage extends Vue {
     /** @description 关闭添加/修改diolog */
     this.detailDialogVisible = false; //车辆详情dialog
     this.activeName = "first";
+    this.interUserDetail = {};
+    this.houseInviterDetail = {};
   }
 }
 </script>

@@ -190,3 +190,13 @@ export function deleteCarno(data: any) {
     data
   })
 }
+
+
+//批量新增车位
+export function batchStall(data: any) {
+  return _axios({
+    url: `/admin/car-space/batch-create`,
+    method: 'post',
+    data
+  })
+}
