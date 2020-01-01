@@ -21,25 +21,25 @@
           <div slot="houseNum">
             <div class="word-filter">
               <span class="filter-name">姓&nbsp;&nbsp;&nbsp;名:</span>
-              <el-input  clearable  
+              <el-input  clearable
               placeholder="请输入需要查找的姓名"
               @keyup.enter.native="emitFetchData" class="input-filter" v-model="filterForm.name" size="small"></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">手机号:</span>
-              <el-input clearable  
+              <el-input clearable
               placeholder="请输入需要查找的手机号"
               @keyup.enter.native="emitFetchData"  class="input-filter" v-model="filterForm.phone" size="small"></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">证件号码:</span>
-              <el-input  clearable  
+              <el-input  clearable
               placeholder="请输入需要查找的证件号码"
               @keyup.enter.native="emitFetchData"  class="input-filter" v-model="filterForm.cardNo" size="small"></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">房屋编号:</span>
-              <el-input clearable  
+              <el-input clearable
               placeholder="请输入需要查找的房屋编号"
               @keyup.enter.native="emitFetchData"  class="input-filter" v-model="filterForm.key" size="small"></el-input>
             </div>
@@ -48,7 +48,7 @@
               <el-select multiple class="select-class" size="small" v-model="filterForm.types" placeholder="请选择">
                 <el-option label="业主" value="1"></el-option>
                 <el-option label="租户" value="2"></el-option>
-                <el-option label="成员" value="3"></el-option>
+                <el-option label="家庭成员" value="3"></el-option>
               </el-select>
             </div>
             <div class="word-filter">
@@ -651,7 +651,7 @@
           <el-select style="width:320px" v-model="updateHouseForm.type" placeholder="请选择">
             <el-option label="业主" value="1"></el-option>
             <el-option label="租户" value="2"></el-option>
-            <el-option label="成员" value="3"></el-option>
+            <el-option label="家庭成员" value="3"></el-option>
           </el-select>
         </el-form-item>
         <!-- <el-form-item label="房屋状态">
@@ -766,7 +766,7 @@ const ExportIn = () => import("@/components/exportIn/index.vue");
       const data = {
         "1": "业主",
         "2": "租户",
-        "3": "成员"
+        "3": "家庭成员"
       };
       return data[val];
     },
@@ -1135,7 +1135,7 @@ export default class OwnerManage extends Vue {
         this.updateHouseForm["overTime"] === "" ||
         this.updateHouseForm["overTime"] === null
       ) {
-        this.$message.error("租客和成员需要添加过期时间!");
+        this.$message.error("租客和家庭成员需要添加过期时间!");
         return;
       }
     }

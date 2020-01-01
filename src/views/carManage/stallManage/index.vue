@@ -557,7 +557,7 @@ const ExportIn = () => import("@/components/exportIn/index.vue");
       const data = {
         "1": "业主",
         "2": "租户",
-        "3": "成员"
+        "3": "家庭成员"
       };
       return data[val];
     },

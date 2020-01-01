@@ -315,7 +315,7 @@
               label="注册时间"
             ></el-table-column>
 
-            <el-table-column align="center" prop="note" label="备注">
+            <el-table-column :show-overflow-tooltip="true" align="center" prop="note" label="备注">
               <template slot-scope="{row}">
                 <span>{{ row.note ? row.note : '' }}</span>
               </template>
@@ -378,7 +378,7 @@ const DataTree = () => import("@/components/DataTree.vue");
       const data = {
         "1": "业主",
         "2": "租户",
-        "3": "成员"
+        "3": "家庭成员"
       };
       return data[val];
     },

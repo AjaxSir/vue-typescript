@@ -645,7 +645,7 @@ export default class VistoryManage extends Vue {
         return "租户";
         break;
       case "3":
-        return "成员";
+        return "家庭成员";
         break;
     }
   }
