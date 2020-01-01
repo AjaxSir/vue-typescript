@@ -995,7 +995,8 @@ export default class OwnerManage extends Vue {
     this["list_data"].forEach(el => {
       this.$set(el, "phoneStatus", false);
     });
-    row.phoneStatus = !row.phoneStatus;
+    this.$set(row, "phoneStatus", !row.phoneStatus);
+    // row.phoneStatus = !row.phoneStatus;
     this.$nextTick(() => {
       const input = this.$refs[row.id] as HTMLElement;
       input.focus();
