@@ -34,13 +34,13 @@
             <div class="word-filter">
               <span class="filter-name">证件号码:</span>
               <el-input  clearable  
-              placeholder="请输入需要查找的姓名"
+              placeholder="请输入需要查找的证件号码"
               @keyup.enter.native="emitFetchData"  class="input-filter" v-model="filterForm.cardNo" size="small"></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">房屋编号:</span>
               <el-input clearable  
-              placeholder="请输入需要查找的手机号"
+              placeholder="请输入需要查找的房屋编号"
               @keyup.enter.native="emitFetchData"  class="input-filter" v-model="filterForm.key" size="small"></el-input>
             </div>
             <div class="word-filter">

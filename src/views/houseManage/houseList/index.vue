@@ -45,8 +45,8 @@
               <span class="filter-name">房屋状态:</span> &nbsp;&nbsp;
               <el-select multiple class="select-class " size="small" v-model="filterForm.status" placeholder="请选择房屋状态筛选">
                 <!-- <el-option label="所有" value=""></el-option> -->
-                <el-option label="业主居住" value="1"></el-option>
-                <el-option label="出租中" value="2"></el-option>
+                <el-option label="自住" value="1"></el-option>
+                <el-option label="出租" value="2"></el-option>
                 <!-- <el-option label="待售中" value="3"></el-option>
                 <el-option label="待租中" value="4"></el-option>-->
                 <el-option label="闲置" value="3"></el-option>
@@ -210,8 +210,8 @@
 
         <!-- <el-form-item label="状态:"  prop='status'>
           <el-select   size="small" v-model="Form.status" placeholder="请选择">
-                <el-option label="业主居住" value="1"></el-option>
-                <el-option label="出租中" value="2"></el-option>
+                <el-option label="自住" value="1"></el-option>
+                <el-option label="出租" value="2"></el-option>
                 <el-option label="待售中" value="3"></el-option>
                 <el-option label="待租中" value="4"></el-option>
                 <el-option label="闲置" value="5"></el-option>
@@ -365,8 +365,8 @@ const DataTree = () => import("@/components/DataTree.vue");
   filters: {
     status(val: string) {
       const data = {
-        "1": "业主居住",
-        "2": "出租中",
+        "1": "自住",
+        "2": "出租",
         // "3": '待售中',
         // "4": '待租中',
         "3": "闲置"

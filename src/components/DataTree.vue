@@ -1138,7 +1138,7 @@ export default class DataTree extends Vue {
         this.activeName = "first";
         break;
       case "deleteGroup":
-        this.$confirm("此操作将永久删除该目标, 是否继续?", "提示", {
+        this.$confirm("此操作将永久删除该分组, 是否继续?", "提示", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"

@@ -544,8 +544,8 @@ const ExportIn = () => import("@/components/exportIn/index.vue");
   filters: {
     status(val: string) {
       const data = {
-        "1": "业主居住",
-        "2": "出租中",
+        "1": "自住",
+        "2": "出租",
         // "3": '待售中',
         // "4": '待租中',
         "3": "闲置"
