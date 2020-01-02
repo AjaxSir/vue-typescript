@@ -34,9 +34,9 @@
                       <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
                     </el-tooltip>
                     <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item :command="returnCommand('update', scope.row)">修改</el-dropdown-item>
+                      <el-dropdown-item v-if='scope.row.roleName !== "初始管理员"' :command="returnCommand('update', scope.row)">修改</el-dropdown-item>
                       <el-dropdown-item :command="returnCommand('resetPassword', scope.row)">重置密码</el-dropdown-item>
-                      <el-dropdown-item :command="returnCommand('delete', scope.row)">
+                      <el-dropdown-item v-if='scope.row.roleName !== "初始管理员"' :command="returnCommand('delete', scope.row)">
                         {{ deleteForm.data.length ? '批量删除' : '删除' }}
                       </el-dropdown-item>
                     </el-dropdown-menu>
