@@ -52,10 +52,10 @@
               </el-select>
             </div>
             <div class="word-filter">
-              <span class="filter-name">房屋状态:</span> &nbsp;&nbsp;
+              <span class="filter-name">住户状态:</span> &nbsp;&nbsp;
               <el-select multiple class="select-class" size="small" v-model="filterForm.status" placeholder="请选择">
-                <el-option label="在住" value="0"></el-option>
-                <el-option label="不在住" value="-1"></el-option>
+                <el-option label="正常" value="0"></el-option>
+                <!-- <el-option label="不在住" value="-1"></el-option> -->
                 <el-option label="过期" value="-2"></el-option>
               </el-select>
             </div>
@@ -191,7 +191,7 @@
               width="100"
               prop="status"
               align="center"
-              label="状态"
+              label="住户状态"
             >
               <template slot-scope="{row}">
                 <span>{{ row.house[0] && row.house[0].status | statusFilter}}</span>
@@ -297,7 +297,7 @@
                 <span>{{ row.house[0] && row.house[0].createTime }}</span>
               </template>
             </el-table-column>
-            <el-table-column
+            <!-- <el-table-column
               prop="detail"
               :show-overflow-tooltip="true"
               align="center"
@@ -306,7 +306,7 @@
               <template slot-scope="{row}">
                 <span>{{ row.house[0] && row.house[0].note }}</span>
               </template>
-            </el-table-column>
+            </el-table-column> -->
           </el-table>
         </div>
         <el-pagination
@@ -656,7 +656,7 @@
         </el-form-item>
         <!-- <el-form-item label="房屋状态">
           <el-select v-model="updateHouseForm.status" placeholder="请选择活动区域">
-            <el-option label="在住" value="0"></el-option>
+            <el-option label="正常" value="0"></el-option>
             <el-option label="不在住" value="-1"></el-option>
             <el-option label="过期" value="-2"></el-option>
           </el-select>
@@ -756,8 +756,8 @@ const ExportIn = () => import("@/components/exportIn/index.vue");
   filters: {
     statusFilter(val: string) {
       const data = {
-        "0": "在住",
-        "-1": "不在住",
+        "0": "正常",
+        // "-1": "不在住",
         "-2": "过期"
       };
       return data[val];

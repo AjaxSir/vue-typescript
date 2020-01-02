@@ -213,7 +213,7 @@
             <span>第 {{row.index}} 行</span>
           </template>
         </el-table-column>
-        <el-table-column
+        <!-- <el-table-column
            v-if="uploadUrl.indexOf('/admin/usr-car/import') !== -1"
           :show-overflow-tooltip="true"
           :key="Math.random()"
@@ -224,7 +224,7 @@
           <template slot-scope="{row}">
             <span v-for="item in row.carSpaceCarVos" :key="item.carId">{{item.carNo}},</span>
           </template>
-        </el-table-column>
+        </el-table-column> -->
 
         <el-table-column
          v-if="uploadUrl.indexOf('/admin/usr-car/import') !== -1"
@@ -236,7 +236,7 @@
         ></el-table-column>
 
         <el-table-column
-         v-if="uploadUrl.indexOf('/admin/usr-car/import') !== -1"
+         v-if="uploadUrl.indexOf('/admin/usr-car/import') === -1"
           :show-overflow-tooltip="true"
           :key="Math.random()"
           align="center"
@@ -252,7 +252,7 @@
           label="失败原因"
         >
           <template slot-scope="{row}">
-            <span v-for="(item,index) in row.errMsg" :key="'caseFail' + index">{{item}}</span>
+            <span v-for="(item,index) in row.caseFail" :key="'caseFail' + index">{{item}},</span>
           </template>
         </el-table-column>
 
@@ -265,7 +265,7 @@
           label="错误定位"
         >
           <template slot-scope="{row}">
-            <span>第 {{row.rowIndex}} 行</span>
+            <span>第 {{row.index}} 行</span>
           </template>
         </el-table-column>
       </el-table>
@@ -314,6 +314,7 @@ export default class ExportIn extends Vue {
     return true;
   }
   changeFile(file) {
+    console.log(this.uploadUrl.indexOf('/admin/usr-car/import'))
     this.fileName = file.name;
   }
   mounted() {
