@@ -3,7 +3,7 @@
     <el-row>
       <el-col :span="24">
         <action-header
-        exportUrl='/v1/admin/people-pass/export'
+        exportUrl='/admin/people-pass/export'
         exportName='人员通行.xls'
         ref="actionHeader"
         :initFormHeader='initForm'

@@ -120,6 +120,7 @@
                   format="yyyy - MM - dd"
                   value-format="yyyy-MM-dd"
                   @blur="blurDate(scope.row)"
+                  :picker-options="options"
                   @change="validDateChange($event, scope.row.id)"
                   placeholder="选择日期"
                 ></el-date-picker>
@@ -333,6 +334,11 @@ export default class CardManage extends Vue {
     id: "",
     total: 1
   };
+  options: object = {
+    disabledDate(time) {
+      return time.getTime() < Date.now() - 8.64e7;
+    }
+  }
   private detailDialog: Object = {
     //查看目标详情
   };

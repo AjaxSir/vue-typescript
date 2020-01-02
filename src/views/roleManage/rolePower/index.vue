@@ -169,19 +169,15 @@ export default class InformIssue extends Vue {
   @Getter('router') router: Array<object>
   mounted() {
     this.roleData = []
-    const outRouter = [''] // 不需要显示的路由
+    const outRouter: Array<string> = ['chart'] // 不需要显示的路由
     this.router.forEach((ele: any, index:number) => {
-      // if (ele.name === 'statementManage') {
-      //   this.router.splice(index, 1)
-      // }
       ele.children.forEach(item => {
         this.$set(item, 'Update', false)
         this.$set(item, 'Look', false)
         this.$set(item, 'lookDisabled', false)
-        // item.Update = false;
-        // item.Look = false;
-        // item.lookDisabled = false; // 当有其他权限存在时 查看权限必须有
-        this.roleData.push(item)
+        if(!outRouter.includes(item['name'])) {
+          this.roleData.push(item)
+        }
       })
     });
     // this.roleData = this.router;
