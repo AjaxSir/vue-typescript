@@ -302,6 +302,11 @@ export default class GlobalMimins extends Vue {
           this.message('此项不能超过10个字符')
         }
         break;
+      case '5':
+        if (value.length === 5) {
+          this.message('此项不能超过5个字符')
+        }
+        break;
       case '3':
         if (!(/^[1-9]\d*$/).test(value)) {
           return this.message('年龄只能输入数字')
