@@ -62,7 +62,8 @@
           <el-tab-pane label="表格展示" name="second">
             <el-table
             :data="data"
-            height="65vh"
+            border
+            height="50vh"
             style="width: 100%">
             <el-table-column
               prop="date"

@@ -73,6 +73,7 @@
           <el-table
             :data="list_data"
             stripe
+            border
             @sort-change="sortChange"
             height="65vh"
             v-loading="showLoading"

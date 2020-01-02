@@ -27,6 +27,7 @@
         <el-table
           :data="data"
           border
+          height="50vh"
           style="width: 100%;margin-top:10px">
           <el-table-column
             prop="carNo"

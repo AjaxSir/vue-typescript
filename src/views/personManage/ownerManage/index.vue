@@ -105,7 +105,6 @@
             >
               <template slot-scope="scope">
                 <el-button
-                  style="padding:0px;"
                   type="text"
                   @click="showDetail(scope.row, scope.$index, scope.row.indexSort)"
                 >{{scope.row.name }}</el-button>
@@ -843,9 +842,9 @@ export default class OwnerManage extends Vue {
   updateArray: Array<string> = ["noteStatus", "phoneStatus"];
   rules: any = {
     name: [{ required: true, message: "请输入姓名", trigger: "blur" }],
-    // sex: [
-    //         { required: true, message: '请选择性别', trigger: 'change' }
-    //       ],
+    sex: [
+            { required: true, message: '请选择性别', trigger: 'change' }
+          ],
     cardName: [{ required: true, message: "请填入证件名", trigger: "change" }],
     phone: [
       {
@@ -1079,7 +1078,7 @@ export default class OwnerManage extends Vue {
   }
   // 确定修改 电话
   confirmUpdatePhone(row) {
-    if (!/^1[3578]\d{9}$/.test(this.phoneString)) {
+    if (!/^1[123456789]\d{9}$/.test(this.phoneString)) {
               this.$message.error("请输入正确的手机格式");
               this.$set(row, 'phoneStatus', false)
               return;

@@ -23,6 +23,7 @@
           <el-table
             :data="list_data"
             stripe
+            border
             v-loading='showLoading'
             height='65vh'
             highlight-current-row
@@ -113,7 +114,7 @@
               <span>{{detailDialogForm.type | devType}}</span>
             </el-form-item>
             <el-form-item class="marginForm" label="状态:">
-              <span :style="{ color : detailDialogForm.type === '1' ? '#67c23a' : '#f56c6c' }">{{detailDialogForm.type === '1' ? "正常" : "离线"}}</span>
+              <span :style="{ color : detailDialogForm.status === '1' ? '#67c23a' : '#f56c6c' }">{{detailDialogForm.status === '1' ? "正常" : "离线"}}</span>
             </el-form-item>
             <el-form-item class="marginForm" label="绑定时间:">
               <span>{{detailDialogForm.bindTime || ''}}</span>

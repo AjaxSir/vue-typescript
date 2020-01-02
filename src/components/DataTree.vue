@@ -114,7 +114,7 @@
             <el-form-item prop="min" label="编号:">
               <el-input
                 clearable
-                maxlength="4"
+                maxlength="5"
                 @keyup.native="UpNumber"
                 @keydown.native="UpNumber"
                 @change="clearableBtn"
@@ -135,7 +135,7 @@
                 @keydown.native="UpNumber"
                 @change="clearableBtn"
                 @input="hint"
-                maxlength="4"
+                maxlength="5"
                 @focus="hintFocus"
                 @blur="hintBlur"
                 @mouseover.native="hint(batchForm.max)"
@@ -344,6 +344,7 @@
           <el-input
             placeholder="填写单元名称"
             clearable
+            maxlength="10"
             v-model="UnitForm.name"
             autocomplete="off"
           ></el-input>
@@ -395,6 +396,7 @@
             @input="hint"
             @focus="hintFocus"
             @blur="hintBlur"
+            maxlength="3"
             placeholder="填写楼层数"
             @mouseover.native="hint(UnitForm.storeyNum)"
             @mouseout.native="hint(UnitForm.storeyNum)"
@@ -405,6 +407,7 @@
         <el-form-item label="每层户数:" prop="houseNum" >
           <el-input
             clearable
+            maxlength="3"
             placeholder="填写每层户数"
             @keyup.native="UpNumber"
             @keydown.native="UpNumber"

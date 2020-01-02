@@ -18,7 +18,7 @@
             :data="list_data"
             stripe
             v-loading='showLoading'
-
+            border
             height='65vh'
             highlight-current-row
             @selection-change="handleSelectionChange"

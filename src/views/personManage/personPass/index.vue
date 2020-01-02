@@ -143,6 +143,7 @@
              <el-table-column width="100" align='center' prop="img" label="抓拍人脸">
               <template slot-scope="scope">
                 <img
+                style="margin-top: 3px"
                   class="capture-img"
                   @mouseout="imgVisible=false"
                   @mouseover="imgVisible=true,bigImg=scope.row.photos,imgTitle='抓拍人脸'"
@@ -154,6 +155,7 @@
              <el-table-column width="100" align='center' prop="img" label="注册人脸">
               <template slot-scope="scope">
                 <img
+                style="margin-top: 3px"
                   class="capture-img"
                   @mouseout="imgVisible=false"
                   @mouseover="imgVisible=true,bigImg=scope.row.facePhone,imgTitle='注册人脸'"
