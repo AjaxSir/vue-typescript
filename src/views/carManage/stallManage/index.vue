@@ -1368,13 +1368,6 @@ export default class CardManage extends Vue {
 
   // 修改备注
   confirmUpdateNote(row) {
-
-    this.$confirm("此操作将修改该车位的备注, 是否继续?", "提示", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning"
-        })
-          .then(() => {
             editStall({
               id: row.id,
               note: this.noteString
@@ -1390,15 +1383,6 @@ export default class CardManage extends Vue {
             }).catch(() => {
               row.noteStatus = false;
             })
-          })
-          .catch(() => {
-            row.noteStatus = false;
-            this.$set(row, 'phoneStatus', false)
-            this.$message({
-              type: "info",
-              message: "已取消修改"
-            });
-          });
   }
 
   async handleClick(tab) {

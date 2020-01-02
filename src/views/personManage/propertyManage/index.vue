@@ -544,12 +544,7 @@ export default class PropertyManage extends Vue {
   }
   // 修改备注
   confirmUpdateNote(row) {
-    this.$confirm("此操作将修改物业人员备注, 是否继续?", "提示", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning"
-        })
-          .then(() => {
+
             updateUserNote( row.id, this.noteString ).then(res => {
               if (res.data.code === 200) {
                 this.$message.success('修改成功')
@@ -560,15 +555,6 @@ export default class PropertyManage extends Vue {
                 this.$message.error(res.data.message)
               }
             })
-          })
-          .catch(() => {
-            row.noteStatus = false;
-            this.$set(row, 'phoneStatus', false)
-            this.$message({
-              type: "info",
-              message: "已取消修改"
-            });
-          });
   }
   // 修改备注离开输入框
   noteBlur(row) {

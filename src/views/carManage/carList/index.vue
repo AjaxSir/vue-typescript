@@ -857,12 +857,6 @@ export default class CarList extends Vue {
 
   confirmUpdateNote(item) {
     /**@description 修改备注 */
-    this.$confirm("此操作将修改该车辆的备注, 是否继续?", "提示", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning"
-        })
-          .then(() => {
             const form = { note: this.editForm["note"], id: item.id };
             editCar(form).then(() => {
               this["notify"]("success", "成功", "修改车辆备注成功");
@@ -870,15 +864,6 @@ export default class CarList extends Vue {
             }).catch(() => {
                 item.noteStatus = false;
               })
-          })
-          .catch(() => {
-            item.noteStatus = false;
-            this.$set(item, 'phoneStatus', false)
-            this.$message({
-              type: "info",
-              message: "已取消修改"
-            });
-          });
 
   }
 
