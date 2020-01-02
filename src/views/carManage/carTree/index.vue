@@ -84,19 +84,23 @@
                 clearable
                 placeholder="开始编号"
                 style="width:140px"
+                :maxlength="5"
+                v-model="batchForm.start"
                 @keydown.native="UpNumber"
                 @keyup.native="inputHouseCheck"
                 @change="hintChange"
-                v-model="batchForm.start"
+                @input="constraintLength(batchForm.start,'5')"
               ></el-input>&nbsp;&nbsp;至&nbsp;&nbsp;
               <el-input
                 clearable
                 placeholder="结束编号"
                 style="width:140px"
+                :maxlength="5"
+                v-model="batchForm.end"
                 @keydown.native="UpNumber"
                 @keyup.native="inputHouseCheck"
                 @change="hintChange"
-                v-model="batchForm.end"
+                @input="constraintLength(batchForm.end,'5')"
               ></el-input>
             </el-form-item>
             <el-form-item
@@ -179,6 +183,7 @@
                 placeholder="填写分组的名称"
                 v-model="HouseForm.name"
                 autocomplete="off"
+                @input="constraintLength(HouseForm.name,'10')"
               ></el-input>
             </el-form-item>
             <!-- <el-form-item label="备注:" prop="note">
@@ -235,6 +240,7 @@
 import { Component, Prop, Vue, Mixins, Emit } from "vue-property-decorator";
 import { Getter, Action, Mutation } from "vuex-class";
 import { getUnitList, addUnit, deleteUnit } from "@/api/houseApi.ts";
+import Cookie from "js-cookie";
 import {
   addHouseGroup,
   addHouseGroups,
@@ -565,7 +571,7 @@ export default class DataTree extends Vue {
         return;
       }
       this.sortCreated().then(res => {
-        this.$message.success('添加成功');
+        this.$message.success("添加成功");
         this.$refs["batchForm"]["resetFields"]();
         this.$emit("getHouseTreeData");
         this.HouseVisible = false;
@@ -757,6 +763,33 @@ export default class DataTree extends Vue {
 
   hintBlur() {
     this.hintPhone = false;
+  }
+
+  constraintLength(value: string, note: string) {
+    switch (note) {
+      case "10":
+        if (value.length === 10) {
+          this.message("此项不能超过10个字符");
+        }
+        break;
+      case "5":
+        if (value.length === 5) {
+          this.message("此项不能超过5个字符");
+        }
+        break;
+    }
+  }
+
+  message(val: string) {
+    if (!Cookie.get("error")) {
+      Cookie.set("error", Date.now(), {
+        expires: new Date(new Date().getTime() + 3 * 1000)
+      }); // 五秒钟内不会重复出现提示框
+      this.$message({
+        message: val,
+        type: "warning"
+      });
+    }
   }
 }
 </script>
