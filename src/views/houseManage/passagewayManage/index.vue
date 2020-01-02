@@ -332,21 +332,38 @@ export default class InformIssue extends Vue {
   noteBlur(row) {
     row.noteStatus = false;
     // if (this.noteRewrite !== this.editForm["note"]) {
-      this.confirmUpdateNote(row);
+    this.confirmUpdateNote(row);
     // }
   }
 
   confirmUpdateNote(item) {
     /**@description 修改备注 */
 
-            const form = { note: this.editForm["note"], id: item.id };
-            editPassageway(form).then(() => {
-              this["notify"]("success", "成功", "修改出入口备注成功");
-              this["fetchData"](this.initForm);
-              item.noteStatus = false;
-            }).catch(() => {
-              item.noteStatus = false;
-            })
+    // this.$confirm("此操作将修改出入口的备注, 是否继续?", "提示", {
+    //       confirmButtonText: "确定",
+    //       cancelButtonText: "取消",
+    //       type: "warning"
+    //     })
+    //       .then(() => {
+    const form = { note: this.editForm["note"], id: item.id };
+    editPassageway(form)
+      .then(() => {
+        this["notify"]("success", "成功", "修改出入口备注成功");
+        this["fetchData"](this.initForm);
+        item.noteStatus = false;
+      })
+      .catch(() => {
+        item.noteStatus = false;
+      });
+    // })
+    // .catch(() => {
+    //   item.noteStatus = false;
+    //   this.$set(item, 'phoneStatus', false)
+    //   this.$message({
+    //     type: "info",
+    //     message: "已取消修改"
+    //   });
+    // });
   }
 
   handleClose() {

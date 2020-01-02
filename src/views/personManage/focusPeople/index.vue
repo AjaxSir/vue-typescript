@@ -1140,23 +1140,23 @@ export default class FocusPeople extends Vue {
   confirmUpdateNote(item) {
     /**@description 修改备注 */
     const form = { note: this.editForm["note"], id: item.id };
-    this.$confirm("此操作将修改该关注人员的备注, 是否继续?", "提示", {
-      confirmButtonText: "确定",
-      cancelButtonText: "取消",
-      type: "warning"
-    })
-      .then(() => {
-        editFocusPeople(form).then(() => {
-          this["notify"]("success", "成功", "修改关注人员备注成功");
-          this["fetchData"](this.initForm);
-        });
-      })
-      .catch(() => {
-        this.$message({
-          type: "info",
-          message: "已取消修改"
-        });
-      });
+    // this.$confirm("此操作将修改该关注人员的备注, 是否继续?", "提示", {
+    //   confirmButtonText: "确定",
+    //   cancelButtonText: "取消",
+    //   type: "warning"
+    // })
+    //   .then(() => {
+    editFocusPeople(form).then(() => {
+      this["notify"]("success", "成功", "修改关注人员备注成功");
+      this["fetchData"](this.initForm);
+    });
+    // })
+    // .catch(() => {
+    //   this.$message({
+    //     type: "info",
+    //     message: "已取消修改"
+    //   });
+    // });
   }
 
   editClose() {
