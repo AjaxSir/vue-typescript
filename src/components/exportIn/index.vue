@@ -27,10 +27,9 @@
         ref="upload"
         :auto-upload="false"
       >
-
         <i class="el-icon-plus"></i>
-
-        添加文件 <br>
+        添加文件
+        <br />
         <span style="color:black">{{ fileName }}</span>
       </el-upload>
       <h4>目前仅支持*.xlsx</h4>
@@ -60,15 +59,14 @@
           width="150"
         ></el-table-column>
         <el-table-column
-           v-if="uploadUrl.indexOf('/admin/usrUser/import') !== -1 || uploadUrl.indexOf('/admin/usrUser/PropertyManager/import') !== -1"
+          v-if="uploadUrl.indexOf('/admin/usrUser/import') !== -1 || uploadUrl.indexOf('/admin/usrUser/PropertyManager/import') !== -1"
           :show-overflow-tooltip="true"
           :key="Math.random()"
           align="center"
           property="sex"
           label="性别"
           width="50"
-        >
-        </el-table-column>
+        ></el-table-column>
         <el-table-column
           v-if="uploadUrl.indexOf('/admin/usrUser/import') !== -1"
           :show-overflow-tooltip="true"
@@ -134,7 +132,6 @@
         ></el-table-column>
 
         <el-table-column
-
           v-if="uploadUrl.indexOf('/admin/usr-car/import') !== -1"
           :show-overflow-tooltip="true"
           :key="Math.random()"
@@ -143,7 +140,7 @@
           label="车牌"
         ></el-table-column>
         <el-table-column
-           v-if="uploadUrl.indexOf('/admin/usr-car/import') !== -1"
+          v-if="uploadUrl.indexOf('/admin/usr-car/import') !== -1"
           :show-overflow-tooltip="true"
           :key="Math.random()"
           align="center"
@@ -159,7 +156,7 @@
           label="车主电话"
         ></el-table-column>
         <el-table-column
-           v-if="uploadUrl.indexOf('/admin/usr-car/import') !== -1"
+          v-if="uploadUrl.indexOf('/admin/usr-car/import') !== -1"
           :show-overflow-tooltip="true"
           :key="Math.random()"
           align="center"
@@ -167,7 +164,7 @@
           label="状态"
         ></el-table-column>
         <el-table-column
-           v-if="uploadUrl.indexOf('/admin/usr-car/import') !== -1"
+          v-if="uploadUrl.indexOf('/admin/usr-car/import') !== -1"
           :show-overflow-tooltip="true"
           :key="Math.random()"
           align="center"
@@ -175,7 +172,7 @@
           label="车辆品牌"
         ></el-table-column>
         <el-table-column
-           v-if="uploadUrl.indexOf('/admin/usr-car/import') !== -1"
+          v-if="uploadUrl.indexOf('/admin/usr-car/import') !== -1"
           :show-overflow-tooltip="true"
           :key="Math.random()"
           align="center"
@@ -183,7 +180,7 @@
           label="车辆型号"
         ></el-table-column>
         <el-table-column
-           v-if="uploadUrl.indexOf('/admin/usr-car/import') !== -1"
+          v-if="uploadUrl.indexOf('/admin/usr-car/import') !== -1"
           :show-overflow-tooltip="true"
           :key="Math.random()"
           align="center"
@@ -191,18 +188,19 @@
           label="备注"
         ></el-table-column>
         <el-table-column
-           v-if="uploadUrl.indexOf('/admin/usr-car/import') === -1"
+          v-if="uploadUrl.indexOf('/admin/usr-car/import') === -1"
           :show-overflow-tooltip="true"
           :key="Math.random()"
           align="center"
           property="caseFail"
           label="失败原因"
         >
-         <template slot-scope="{row}">
+          <template slot-scope="{row}">
             <span v-for="(item,index) in row.caseFail" :key="'caseFail' + index">{{item}},</span>
-          </template></el-table-column>
+          </template>
+        </el-table-column>
         <el-table-column
-           v-if="uploadUrl.indexOf('/admin/usr-car/import') === -1"
+          v-if="uploadUrl.indexOf('/admin/usr-car/import') === -1"
           :show-overflow-tooltip="true"
           :key="Math.random()"
           align="center"
@@ -214,7 +212,7 @@
           </template>
         </el-table-column>
         <!-- <el-table-column
-           v-if="uploadUrl.indexOf('/admin/usr-car/import') !== -1"
+          v-if="uploadUrl.indexOf('/admin/usr-car/import') !== -1"
           :show-overflow-tooltip="true"
           :key="Math.random()"
           align="center"
@@ -227,7 +225,7 @@
         </el-table-column> -->
 
         <el-table-column
-         v-if="uploadUrl.indexOf('/admin/usr-car/import') !== -1"
+          v-if="uploadUrl.indexOf('/admin/usr-car/import') !== -1"
           :show-overflow-tooltip="true"
           :key="Math.random()"
           align="center"
@@ -236,7 +234,7 @@
         ></el-table-column>
 
         <el-table-column
-         v-if="uploadUrl.indexOf('/admin/usr-car/import') === -1"
+          v-if="uploadUrl.indexOf('/admin/usr-car/import') !== -1"
           :show-overflow-tooltip="true"
           :key="Math.random()"
           align="center"
@@ -274,26 +272,27 @@
 </template>
 
 <script lang="ts">
-import { exportList } from '@/api/user.ts'
+import { exportList } from "@/api/user.ts";
 import { Component, Vue, Prop, Emit } from "vue-property-decorator";
 import { Getter } from "vuex-class";
+import qs from "qs";
 @Component({})
 export default class ExportIn extends Vue {
   @Prop({ default: "" }) downTemplateUrl: string;
   @Prop({ default: "" }) uploadUrl: string;
   @Prop({ default: false }) visible: boolean;
-  @Getter('token') token: string
+  @Getter("token") token: string;
   @Prop({ default: "用户导入模板.xlsx" }) TmplateName: string;
-  header: object =  {}
+  header: object = {};
   errData: Array<object> = []; // 失败路径
   fileName: string = ""; // 文件名字
   dialogTableVisible: boolean = false; // 导出失败状态
   @Emit("errorUpload")
   errorUpload(err, file, list) {
     this.$nextTick(() => {
-      this.fileName = ''
-    })
-    this.errData = []
+      this.fileName = "";
+    });
+    this.errData = [];
     if (JSON.parse(err.message).code === 400) {
       this.$message.error(JSON.parse(err.message).message);
     } else {
@@ -301,13 +300,12 @@ export default class ExportIn extends Vue {
       this.dialogTableVisible = true;
       this.$refs.upload["clearFiles"]();
     }
-
   }
   @Emit("successUpload")
   successUpload(file) {
     this.$nextTick(() => {
-      this.fileName = ''
-    })
+      this.fileName = "";
+    });
     this.$message.success("导入成功");
     this.$refs.upload["clearFiles"]();
     this.handleClose();
@@ -320,39 +318,41 @@ export default class ExportIn extends Vue {
   mounted() {
     this.header = {
       token: this.token
-    }
+    };
   }
 
   @Emit("closeVisible")
   handleClose() {
-    this.fileName = ''
+    this.fileName = "";
     return false;
   }
-  // 导出excel函数 处理数据
-  exportFunc(fileNames: string, url: string): void {
-    if (process.env.NODE_ENV === 'production') {
-          url = url.replace('/v1', 'http://47.103.184.184')
-        }
-        exportList(url).then(res => {
-            const fileName = fileNames
-            var blob = new Blob([res.data], {
-              type: 'application/vnd.ms-excel;charset=UTF-8'
-            })
-            if ('download' in document.createElement('a')) {
-              // 非IE下载
-              const elink = document.createElement('a')
-              elink.download = fileName
-              elink.style.display = 'none'
-              elink.href = URL.createObjectURL(blob)
-              document.body.appendChild(elink)
-              elink.click()
-              URL.revokeObjectURL(elink.href) // 释放URL 对象
-              document.body.removeChild(elink)
-            } else {
-              // IE10+下载
-              navigator.msSaveBlob(blob, fileName)
-            }
-          })
+
+  exportFunc(fileNames: string, exportUrl: string): void {
+    const filterUrl = qs.stringify({ isData: false });
+    if (process.env.NODE_ENV === "production") {
+      exportUrl = exportUrl.replace("/v1", "http://47.103.184.184");
+    }
+
+    exportList(exportUrl + "/?" + filterUrl).then(res => {
+      const fileName = fileNames;
+      var blob = new Blob([res.data], {
+        type: "application/vnd.ms-excel;charset=UTF-8"
+      });
+      if ("download" in document.createElement("a")) {
+        // 非IE下载
+        const elink = document.createElement("a");
+        elink.download = fileName;
+        elink.style.display = "none";
+        elink.href = URL.createObjectURL(blob);
+        document.body.appendChild(elink);
+        elink.click();
+        URL.revokeObjectURL(elink.href); // 释放URL 对象
+        document.body.removeChild(elink);
+      } else {
+        // IE10+下载
+        navigator.msSaveBlob(blob, fileName);
+      }
+    });
   }
   // 确定上传
   confirmUpload() {
