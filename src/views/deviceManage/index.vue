@@ -71,8 +71,8 @@
                 </template>
             </el-table-column>
 
-            <el-table-column align="center" :show-overflow-tooltip='true' prop="upTime" label="上线时间" width="160"></el-table-column>
-            <el-table-column align="center" :show-overflow-tooltip='true' prop="downTime" label="离线时间" width="160"></el-table-column>
+            <el-table-column align="center" :show-overflow-tooltip='true' prop="upTime" label="最近上线时间" width="160"></el-table-column>
+            <el-table-column align="center" :show-overflow-tooltip='true' prop="downTime" label="最近离线时间" width="160"></el-table-column>
 
             <el-table-column :show-overflow-tooltip='true' align="center" prop="note" label="设备说明">
               <template slot-scope="{row}">

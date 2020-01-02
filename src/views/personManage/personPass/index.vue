@@ -143,6 +143,7 @@
              <el-table-column width="100" align='center' prop="img" label="抓拍人脸">
               <template slot-scope="scope">
                 <img
+                v-if='scope.row.photos'
                 style="margin-top: 3px"
                   class="capture-img"
                   @mouseout="imgVisible=false"
@@ -150,11 +151,13 @@
                   :src="scope.row.photos"
                   alt
                 />
+                <span v-else></span>
               </template>
             </el-table-column>
              <el-table-column width="100" align='center' prop="img" label="注册人脸">
               <template slot-scope="scope">
                 <img
+                v-if='scope.row.facePhone'
                 style="margin-top: 3px"
                   class="capture-img"
                   @mouseout="imgVisible=false"
@@ -162,6 +165,7 @@
                   :src="scope.row.facePhone"
                   alt
                 />
+                <span v-else></span>
               </template>
             </el-table-column>
             <el-table-column align='center' prop="passTime" label="通行时间" :show-overflow-tooltip="true"> </el-table-column>

@@ -186,7 +186,10 @@
             </el-table-column>
             <el-table-column align='center' label="抓拍图片">
               <template slot-scope="{row}">
-                <img :src="row.photos" alt=""></template>
+                <img v-if='row.photos' :src="row.photos" alt="">
+                <span v-else></span>
+                </template>
+
             </el-table-column>
           </el-table>
           <el-pagination
@@ -216,7 +219,8 @@
               align='center'
               label="照片">
               <template slot-scope="{row}">
-                <img :src="row.photo" alt="">
+                <img v-if='row.photo' :src="row.photo" alt="">
+                <span v-else></span>
               </template>
             </el-table-column>
           </el-table>

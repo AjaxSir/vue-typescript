@@ -147,12 +147,14 @@
             <el-table-column prop="img" align="center" width="100" label="注册人脸">
               <template slot-scope="scope">
                 <img
+                v-if='scope.row.face'
                   class="capture-img"
                   @mouseout="imgVisible=false"
                   @mouseover="imgVisible=true,bigImg=scope.row.face"
                   :src="scope.row.face"
                   alt
                 />
+                <span v-else></span>
               </template>
             </el-table-column>
             <el-table-column
@@ -372,7 +374,8 @@
             </el-table-column>
             <el-table-column width="100" align="center" label="抓拍图片">
               <template slot-scope="{row}">
-                <img :src="row.photos" alt />
+                <img v-if='row.photos' :src="row.photos" alt />
+                <span v-else></span>
               </template>
             </el-table-column>
           </el-table>
@@ -473,7 +476,8 @@
             ></el-table-column>
             <el-table-column width="80" align="center" label="人脸图片">
               <template slot-scope="{row}">
-                <img :src="row.face" alt />
+                <img v-if='row.face' :src="row.face" alt />
+                <span v-else></span>
               </template>
             </el-table-column>
           </el-table>
