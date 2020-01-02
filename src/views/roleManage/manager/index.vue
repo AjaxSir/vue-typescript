@@ -17,7 +17,7 @@
           <el-table
             :data="list_data"
             stripe
-
+            border
             highlight-current-row
             @selection-change="handleSelectionChange"
             @cell-mouse-enter="enterRowChange"
@@ -47,7 +47,7 @@
 
             <el-table-column prop="name"  :show-overflow-tooltip='true' width="200" class="serial-num" label="账号名" align="center">
               <template slot-scope="scope">
-                <span>{{scope.row.name}}</span>
+                <span style="display:inline-block;padding:8px 0px">{{scope.row.name}}</span>
               </template>
             </el-table-column>
 
@@ -82,8 +82,7 @@
                 trigger="click">
                   <span class="el-dropdown-link">
                     <el-tag
-                    size="small"
-                    style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
+                    style="border-radius: 50px;padding: 0px 10px; cursor: pointer;"
                     :type='row.status === "0" ? "error" : "danger" '
                     >{{ row.status === '0' ? '正常' : '禁用' }}
                     </el-tag>

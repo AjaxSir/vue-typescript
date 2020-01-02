@@ -52,10 +52,10 @@
               </el-select>
             </div>
             <div class="word-filter">
-              <span class="filter-name">房屋状态:</span> &nbsp;&nbsp;
+              <span class="filter-name">住户状态:</span> &nbsp;&nbsp;
               <el-select multiple class="select-class" size="small" v-model="filterForm.status" placeholder="请选择">
-                <el-option label="在住" value="0"></el-option>
-                <el-option label="不在住" value="-1"></el-option>
+                <el-option label="正常" value="0"></el-option>
+                <!-- <el-option label="不在住" value="-1"></el-option> -->
                 <el-option label="过期" value="-2"></el-option>
               </el-select>
             </div>
@@ -105,7 +105,6 @@
             >
               <template slot-scope="scope">
                 <el-button
-                  style="padding:0px;"
                   type="text"
                   @click="showDetail(scope.row, scope.$index, scope.row.indexSort)"
                 >{{scope.row.name }}</el-button>
@@ -148,12 +147,14 @@
             <el-table-column prop="img" align="center" width="100" label="注册人脸">
               <template slot-scope="scope">
                 <img
+                v-if='scope.row.face'
                   class="capture-img"
                   @mouseout="imgVisible=false"
                   @mouseover="imgVisible=true,bigImg=scope.row.face"
                   :src="scope.row.face"
                   alt
                 />
+                <span v-else></span>
               </template>
             </el-table-column>
             <el-table-column
@@ -191,7 +192,7 @@
               width="100"
               prop="status"
               align="center"
-              label="状态"
+              label="住户状态"
             >
               <template slot-scope="{row}">
                 <span>{{ row.house[0] && row.house[0].status | statusFilter}}</span>
@@ -297,7 +298,7 @@
                 <span>{{ row.house[0] && row.house[0].createTime }}</span>
               </template>
             </el-table-column>
-            <el-table-column
+            <!-- <el-table-column
               prop="detail"
               :show-overflow-tooltip="true"
               align="center"
@@ -306,7 +307,7 @@
               <template slot-scope="{row}">
                 <span>{{ row.house[0] && row.house[0].note }}</span>
               </template>
-            </el-table-column>
+            </el-table-column> -->
           </el-table>
         </div>
         <el-pagination
@@ -373,7 +374,8 @@
             </el-table-column>
             <el-table-column width="100" align="center" label="抓拍图片">
               <template slot-scope="{row}">
-                <img :src="row.photos" alt />
+                <img v-if='row.photos' :src="row.photos" alt />
+                <span v-else></span>
               </template>
             </el-table-column>
           </el-table>
@@ -474,7 +476,8 @@
             ></el-table-column>
             <el-table-column width="80" align="center" label="人脸图片">
               <template slot-scope="{row}">
-                <img :src="row.face" alt />
+                <img v-if='row.face' :src="row.face" alt />
+                <span v-else></span>
               </template>
             </el-table-column>
           </el-table>
@@ -656,7 +659,7 @@
         </el-form-item>
         <!-- <el-form-item label="房屋状态">
           <el-select v-model="updateHouseForm.status" placeholder="请选择活动区域">
-            <el-option label="在住" value="0"></el-option>
+            <el-option label="正常" value="0"></el-option>
             <el-option label="不在住" value="-1"></el-option>
             <el-option label="过期" value="-2"></el-option>
           </el-select>
@@ -756,8 +759,8 @@ const ExportIn = () => import("@/components/exportIn/index.vue");
   filters: {
     statusFilter(val: string) {
       const data = {
-        "0": "在住",
-        "-1": "不在住",
+        "0": "正常",
+        // "-1": "不在住",
         "-2": "过期"
       };
       return data[val];
@@ -843,9 +846,9 @@ export default class OwnerManage extends Vue {
   updateArray: Array<string> = ["noteStatus", "phoneStatus"];
   rules: any = {
     name: [{ required: true, message: "请输入姓名", trigger: "blur" }],
-    // sex: [
-    //         { required: true, message: '请选择性别', trigger: 'change' }
-    //       ],
+    sex: [
+            { required: true, message: '请选择性别', trigger: 'change' }
+          ],
     cardName: [{ required: true, message: "请填入证件名", trigger: "change" }],
     phone: [
       {
@@ -1079,7 +1082,7 @@ export default class OwnerManage extends Vue {
   }
   // 确定修改 电话
   confirmUpdatePhone(row) {
-    if (!/^1[3578]\d{9}$/.test(this.phoneString)) {
+    if (!/^1[123456789]\d{9}$/.test(this.phoneString)) {
               this.$message.error("请输入正确的手机格式");
               this.$set(row, 'phoneStatus', false)
               return;

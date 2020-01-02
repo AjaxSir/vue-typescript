@@ -29,6 +29,7 @@
             <el-table
               :data="data"
                border
+               height="50vh"
               style="width: 100%">
               <el-table-column
                 prop="name"
@@ -65,6 +66,7 @@
           <el-tab-pane label="被访人排序" name="second">
             <el-table
             border
+            height="50vh"
               :data="data"
               style="width: 100%">
               <el-table-column

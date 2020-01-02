@@ -48,6 +48,7 @@
           <el-table
             :data="list_data"
             stripe
+            border
             v-loading="showLoading"
             height="65vh"
             highlight-current-row
@@ -77,7 +78,6 @@
             <el-table-column align="center" class="serial-num" prop="cardNo" label="卡号">
               <template slot-scope="scope">
                 <el-button
-                  style="padding:0px;"
                   type="text"
                   @click="queryIdetity(scope.row)"
                 >{{scope.row.cardNo}}</el-button>

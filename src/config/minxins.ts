@@ -51,7 +51,7 @@ export default class GlobalMimins extends Vue {
     this.globalUpdateStatus = this.permissionList.includes(this.$route.name + 'Update')
   }
   is_Phone(str: string) {
-    return (/^1[3578]\d{9}$/).test(str)
+    return (/^1[123456789]\d{9}$/).test(str)
   }
   fetchData(option: object) {
     /**@description init数据

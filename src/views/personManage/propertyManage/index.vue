@@ -68,7 +68,7 @@
             </el-table-column>
             <el-table-column prop="name" width="120" :show-overflow-tooltip='true' align="center" label="姓名">
               <template slot-scope="{row}">
-                <el-button style="padding:0px;" type="text" @click="showDetail(row)">{{row.name }}</el-button>
+                <el-button type="text" @click="showDetail(row)">{{row.name }}</el-button>
               </template>
             </el-table-column>
             <el-table-column prop="birthday" :show-overflow-tooltip='true' width="120" align="center" label="出生日期"></el-table-column>
@@ -186,7 +186,10 @@
             </el-table-column>
             <el-table-column align='center' label="抓拍图片">
               <template slot-scope="{row}">
-                <img :src="row.photos" alt=""></template>
+                <img v-if='row.photos' :src="row.photos" alt="">
+                <span v-else></span>
+                </template>
+
             </el-table-column>
           </el-table>
           <el-pagination
@@ -216,7 +219,8 @@
               align='center'
               label="照片">
               <template slot-scope="{row}">
-                <img :src="row.photo" alt="">
+                <img v-if='row.photo' :src="row.photo" alt="">
+                <span v-else></span>
               </template>
             </el-table-column>
           </el-table>
@@ -416,7 +420,7 @@ export default class PropertyManage extends Vue {
     ],
     phone: [
             { required: true, trigger: 'blur', validator: (rule, value, callback) => {
-                if (value.length !== 11 || !(/^1[3|4|5|8][0-9]\d{4,8}$/).test(value)) {
+                if (value.length !== 11 || !(/^1[123456789]\d{9}$/).test(value)) {
                   callback(new Error('填写正确的手机号'))
                 } else {
                   callback()
@@ -480,7 +484,7 @@ export default class PropertyManage extends Vue {
   }
   // 确定修改 电话
   confirmUpdatePhone(row) {
-    if (!/^1[3578]\d{9}$/.test(this.phoneString)) {
+    if (!/^1[123456789]\d{9}$/.test(this.phoneString)) {
               this.$message.error("请输入正确的手机格式");
               this.$set(row, 'phoneStatus', false)
               return;
