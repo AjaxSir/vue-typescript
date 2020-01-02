@@ -22,7 +22,7 @@
           :filterForm="filterForm"
           :btnStatus="2"
           :moreStatus="false"
-          :exportUrl="'/v1/admin/usr-visit-car/export/'"
+          :exportUrl="'/admin/usr-visit-car/export'"
           :exportName="'访客车辆记录'"
           :total="page.total"
         >

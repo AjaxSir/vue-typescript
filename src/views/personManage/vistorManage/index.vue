@@ -21,7 +21,7 @@
           @fetchData="fetchData"
           :filterForm="filterForm"
           :total="page.total"
-          :exportUrl="'/v1/admin/usr-visitor/export/'"
+          :exportUrl="'/admin/usr-visitor/export'"
           :exportName="'访客列表'"
         >
           <el-dropdown-menu slot="dropdown">
@@ -264,14 +264,14 @@
             <el-table-column
               prop="visitTime"
               align="center"
-              label="访问时间"
+              label="开始时间"
               :show-overflow-tooltip="true"
             ></el-table-column>
 
             <el-table-column
               prop="invalidDate"
               align="center"
-              label="有效时间"
+              label="结束时间"
               :show-overflow-tooltip="true"
             ></el-table-column>
 
@@ -397,19 +397,46 @@
         </el-tab-pane>
         <el-tab-pane label="通行记录" name="thirdly">
           <el-table v-loading="passTarget" :data="passList" style="width: 100%" stripe>
-            <el-table-column  :show-overflow-tooltip="true" align="center" prop="passTime" label="通行时间" width="150px"></el-table-column>
-            <el-table-column :show-overflow-tooltip="true" align="center" prop="devName" label="抓拍设备"></el-table-column>
-            <el-table-column :show-overflow-tooltip="true" align="center" prop="devType" label="设备类型">
+            <el-table-column
+              :show-overflow-tooltip="true"
+              align="center"
+              prop="passTime"
+              label="通行时间"
+              width="150px"
+            ></el-table-column>
+            <el-table-column
+              :show-overflow-tooltip="true"
+              align="center"
+              prop="devName"
+              label="抓拍设备"
+            ></el-table-column>
+            <el-table-column
+              :show-overflow-tooltip="true"
+              align="center"
+              prop="devType"
+              label="设备类型"
+            >
               <template slot-scope="{row}">
                 <span>{{ row.devType | devTypes }}</span>
               </template>
             </el-table-column>
-            <el-table-column :show-overflow-tooltip="true" align="center" prop="passTime" label="通行地址" min-width="150px">
+            <el-table-column
+              :show-overflow-tooltip="true"
+              align="center"
+              prop="passTime"
+              label="通行地址"
+              min-width="150px"
+            >
               <template slot-scope="scope">
                 <span>{{scope.row.devAddress}} - {{scope.row.devSubAddress}}</span>
               </template>
             </el-table-column>
-            <el-table-column :show-overflow-tooltip="true" align="center" prop="passMethod" label="通行方式">
+            <el-table-column
+              :show-overflow-tooltip="true"
+              align="center"
+              prop="passMethod"
+              label="通行方式"
+            >
               <template slot-scope="scope">
                 <span>{{passMethod(scope.row.passMethod)}}</span>
               </template>
@@ -457,14 +484,14 @@ const ActionHeader = () => import("@/components/ActionHeader.vue");
     ActionHeader
   },
   filters: {
-    devTypes(val:string) {
+    devTypes(val: string) {
       const data = {
-        "1": '门禁',
-        "2": '车禁',
-        "3": '注册机',
-        "4": '访客机',
-      }
-      return data[val] + '设备'
+        "1": "门禁",
+        "2": "车禁",
+        "3": "注册机",
+        "4": "访客机"
+      };
+      return data[val] + "设备";
     }
   }
 })
@@ -515,37 +542,17 @@ export default class VistoryManage extends Vue {
   private visitorDialogForm: Object = {}; // 访客详情
   private activeName: string = "first"; //目标访客详细信息 tab Title
   private selectType: Array<Object> = [
-    // {
-    //   command: null,
-    //   lable: "全部"
-    // },
-    // {
-    //   command: "2",
-    //   lable: "正常"
-    // },
-    {
-      command: "2",
-      lable: "过期"
-    },
-    // {
-    //   command: "1",
-    //   lable: "未开始"
-    // },
     {
       command: "1",
       lable: "待访问"
     },
-    // {
-    //   command: "4",
-    //   lable: "其他"
-    // },
-    // {
-    //   command: "3",
-    //   lable: "已结束"
-    // }
+    {
+      command: "2",
+      lable: "已访问"
+    },
     {
       command: "3",
-      lable: "已访问"
+      lable: "过期"
     }
   ];
 
@@ -638,16 +645,11 @@ export default class VistoryManage extends Vue {
     /** @description 状态显示过滤 */
     switch (status) {
       case "1":
-        // return "未开始";
         return "待访问";
       case "2":
-        // return "正常";
-        return "过期";
-      case "3":
-        // return "已结束";
         return "已访问";
-      // case "4":
-      //   return "其他";
+      case "3":
+        return "过期";
     }
   }
 

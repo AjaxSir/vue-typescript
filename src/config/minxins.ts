@@ -35,6 +35,7 @@ export default class GlobalMimins extends Vue {
   public regPos = /^\d+(\.\d+)?$/
   public upNum = /[^\d]/g
   public hintPhone: any = false
+  public groupDisable: boolean = true
   updateArray: Array<string> = [] /// 行内需要修改的状态
   initForm: object = {
     url: '',
@@ -58,6 +59,7 @@ export default class GlobalMimins extends Vue {
      * @argument tag no 不init数据
      * @argument tag pagination 不分页init数据
      */
+
     if (option['params'].tag !== 'no') {
       for (let key in option['params']) {
         if (option['params'][key] === '') {
@@ -84,6 +86,12 @@ export default class GlobalMimins extends Vue {
           } else {
             this.page.total = res.data.data.total
             this.list_data = res.data.data.records
+
+            if (option['params'].status) {
+              this.groupDisable = true;
+            } else {
+              this.groupDisable = this.list_data.length === 0 ? true : false;
+            }
             console.log(this.list_data)
             if (res.data.data.records.length) {
               res.data.data.records.forEach((ele: object) => {

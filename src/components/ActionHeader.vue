@@ -15,6 +15,7 @@
           size="small"
           icon="el-icon-plus"
           @click="handleHouse"
+          :disabled="addDisabled"
         >添加</el-button>
         <el-button
           v-else-if="btnStatus === 2"
@@ -44,7 +45,7 @@
               <router-link to="/house/chart">楼控视图</router-link>
             </el-dropdown-item>
           </el-dropdown-menu>
-        </el-dropdown> -->
+        </el-dropdown>-->
 
         <div v-if="filterStatus" class="content">
           <span @click="visibleFilter = !visibleFilter,visible = false">
@@ -104,12 +105,13 @@ import {
   Vue,
   Mixins,
   Watch,
-  Emit
+  Emit,
+  Provide
 } from "vue-property-decorator";
 import mixin from "@/config/minxins";
 import { Getter } from "vuex-class";
 import qs from "qs";
-import { exportList } from '@/api/user.ts'
+import { exportList } from "@/api/user.ts";
 @Component({
   mixins: [mixin],
   components: {}
@@ -117,6 +119,7 @@ import { exportList } from '@/api/user.ts'
 export default class ActionManage extends Vue {
   @Prop() private total: any; // 显示总共多少条记录
   @Prop({ default: 1 }) btnStatus: Number; //  btnStatus: 0 表示没有创建导出按钮 1 创建按钮 2 导出按钮
+  @Prop({ default: false }) addDisabled: Boolean;
   @Prop({ default: false }) houseStatus: boolean; // 住宅管理才显示
   @Prop({ default: true }) filterStatus: boolean; // 是否需要显示过滤条件
   @Prop({ default: true }) moreStatus: boolean; // 是否显示更多菜单
@@ -187,30 +190,30 @@ export default class ActionManage extends Vue {
   }
   // 导出
   exportTable() {
-     const filterUrl = qs.stringify(this.initFormHeader["params"]);
-    if (process.env.NODE_ENV === 'production') {
-          this.exportUrl = this.exportUrl.replace('/v1', 'http://47.103.184.184')
-        }
-        exportList(this.exportUrl + "/?" + filterUrl).then(res => {
-            const fileName = this.exportName
-            var blob = new Blob([res.data], {
-              type: 'application/vnd.ms-excel;charset=UTF-8'
-            })
-            if ('download' in document.createElement('a')) {
-              // 非IE下载
-              const elink = document.createElement('a')
-              elink.download = fileName
-              elink.style.display = 'none'
-              elink.href = URL.createObjectURL(blob)
-              document.body.appendChild(elink)
-              elink.click()
-              URL.revokeObjectURL(elink.href) // 释放URL 对象
-              document.body.removeChild(elink)
-            } else {
-              // IE10+下载
-              navigator.msSaveBlob(blob, fileName)
-            }
-          })
+    const filterUrl = qs.stringify(this.initFormHeader["params"]);
+    if (process.env.NODE_ENV === "production") {
+      this.exportUrl = this.exportUrl.replace("/v1", "http://47.103.184.184");
+    }
+    exportList(this.exportUrl + "/?" + filterUrl).then(res => {
+      const fileName = this.exportName;
+      var blob = new Blob([res.data], {
+        type: "application/vnd.ms-excel;charset=UTF-8"
+      });
+      if ("download" in document.createElement("a")) {
+        // 非IE下载
+        const elink = document.createElement("a");
+        elink.download = fileName;
+        elink.style.display = "none";
+        elink.href = URL.createObjectURL(blob);
+        document.body.appendChild(elink);
+        elink.click();
+        URL.revokeObjectURL(elink.href); // 释放URL 对象
+        document.body.removeChild(elink);
+      } else {
+        // IE10+下载
+        navigator.msSaveBlob(blob, fileName);
+      }
+    });
   }
   /**
    * 筛选按钮
@@ -272,29 +275,32 @@ export default class ActionManage extends Vue {
           }
         }
         const filterUrl = qs.stringify(this.initFormHeader["params"]);
-        if (process.env.NODE_ENV === 'production') {
-          this.exportUrl = this.exportUrl.replace('/v1', 'http://47.103.184.184')
+        if (process.env.NODE_ENV === "production") {
+          this.exportUrl = this.exportUrl.replace(
+            "/v1",
+            "http://47.103.184.184"
+          );
         }
         exportList(this.exportUrl + "/?" + filterUrl).then(res => {
-            const fileName = this.exportName
-            var blob = new Blob([res.data], {
-              type: 'application/vnd.ms-excel;charset=UTF-8'
-            })
-            if ('download' in document.createElement('a')) {
-              // 非IE下载
-              const elink = document.createElement('a')
-              elink.download = fileName
-              elink.style.display = 'none'
-              elink.href = URL.createObjectURL(blob)
-              document.body.appendChild(elink)
-              elink.click()
-              URL.revokeObjectURL(elink.href) // 释放URL 对象
-              document.body.removeChild(elink)
-            } else {
-              // IE10+下载
-              navigator.msSaveBlob(blob, fileName)
-            }
-          })
+          const fileName = this.exportName;
+          var blob = new Blob([res.data], {
+            type: "application/vnd.ms-excel;charset=UTF-8"
+          });
+          if ("download" in document.createElement("a")) {
+            // 非IE下载
+            const elink = document.createElement("a");
+            elink.download = fileName;
+            elink.style.display = "none";
+            elink.href = URL.createObjectURL(blob);
+            document.body.appendChild(elink);
+            elink.click();
+            URL.revokeObjectURL(elink.href); // 释放URL 对象
+            document.body.removeChild(elink);
+          } else {
+            // IE10+下载
+            navigator.msSaveBlob(blob, fileName);
+          }
+        });
         break;
       case "link":
         this.$router.push({ path: this.linkUrl });

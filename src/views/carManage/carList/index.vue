@@ -131,7 +131,6 @@
                 <el-dropdown trigger="click">
                   <span class="el-dropdown-link">
                     <el-tag
-                      size="small"
                       style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
                       :type="scope.row.status=='1'? 'success' : 'danger'"
                       @click="editStatus(scope.row.id)"

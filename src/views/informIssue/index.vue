@@ -216,7 +216,7 @@
       </el-form>
 
       <div slot="footer" class="dialog-footer">
-        <el-button type="info" @click="handleClose">取消</el-button>
+        <el-button @click="handleClose">取消</el-button>
         <el-button type="primary" @click="issueBtn">发布</el-button>
       </div>
     </el-dialog>
