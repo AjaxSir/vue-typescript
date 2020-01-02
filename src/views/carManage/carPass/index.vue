@@ -160,12 +160,13 @@
 
             <el-table-column align="center" prop="isVisitCar" label="车辆类型" width="100px">
               <template slot-scope="scope">
-                <el-tag
+                <span>{{ scope.row.isVisitCar? "访客" : "常驻" }}</span>
+                <!-- <el-tag
                   size="small"
                   style="border-radius: 50px;padding: 0 10px;"
                   :type="scope.row.isVisitCar? 'success' : 'danger'"
                   @click="editType(scope.row)"
-                >{{ scope.row.isVisitCar? "访客" : "常驻" }}</el-tag>
+                >{{ scope.row.isVisitCar? "访客" : "常驻" }}</el-tag>-->
               </template>
             </el-table-column>
 
@@ -174,12 +175,13 @@
             <el-table-column align="center" prop="ownerPhone" label="车主电话"></el-table-column>
             <el-table-column align="center" prop="inOut" label="通行方向" width="100px">
               <template slot-scope="scope">
-                <el-tag
+                <span>{{ scope.row.inOut==="进" ? '进入' : '出行' }}</span>
+                <!-- <el-tag
                   size="small"
                   style="border-radius: 50px;padding: 0 10px; "
                   :type="scope.row.inOut==='进'? 'success' : 'danger'"
                   @click="editType(scope.row)"
-                >{{ scope.row.inOut==="进" ? '进入' : '出行' }}</el-tag>
+                >{{ scope.row.inOut==="进" ? '进入' : '出行' }}</el-tag>-->
               </template>
             </el-table-column>
             <el-table-column

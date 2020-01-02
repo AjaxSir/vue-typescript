@@ -196,11 +196,12 @@
             ></el-table-column>
             <el-table-column prop="status" align="center" label="状态">
               <template slot-scope="scope">
-                <el-tag
+                <span>{{ scope.row.status && scope.row.status =='1' ? "未到访" : "已到访" }}</span>
+                <!-- <el-tag
                   size="small"
                   style="border-radius: 50px;padding: 0 10px;"
                   :type="scope.row.status==='1' ? 'success' : 'warning'"
-                >{{ scope.row.status && scope.row.status =='1' ? "未到访" : "已到访" }}</el-tag>
+                >{{ scope.row.status && scope.row.status =='1' ? "未到访" : "已到访" }}</el-tag>-->
               </template>
             </el-table-column>
             <el-table-column
