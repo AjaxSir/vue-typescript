@@ -553,12 +553,7 @@ export default class CardManage extends Vue {
   }
   // 修改备注
   confirmUpdateNote(row) {
-    this.$confirm("此操作将修改房屋备注, 是否继续?", "提示", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning"
-        })
-          .then(() => {
+
             updateStatusNote({
                   id: row.id,
                   note: this.noteString,
@@ -574,15 +569,7 @@ export default class CardManage extends Vue {
                     this.$message.error(res.data.message);
                   }
                 });
-          })
-          .catch(() => {
-            row.noteStatus = false;
-            this.$set(row, 'phoneStatus', false)
-            this.$message({
-              type: "info",
-              message: "已取消修改"
-            });
-          });
+
 
   }
   // 添加房屋

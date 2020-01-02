@@ -305,12 +305,7 @@ export default class InformIssue extends Vue {
   }
   // 修改备注
   confirmUpdateNote(row) {
-    this.$confirm("此操作将修改管理员备注, 是否继续?", "提示", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning"
-        })
-          .then(() => {
+
             let roleId = ''
             this.roleList.forEach(ele => {
               if (ele['name'] === row['roleName']) {
@@ -332,15 +327,6 @@ export default class InformIssue extends Vue {
                     this.$message.error(res.data.message);
                   }
                 });
-          })
-          .catch(() => {
-            row.noteStatus = false;
-            this.$set(row, 'phoneStatus', false)
-            this.$message({
-              type: "info",
-              message: "已取消修改"
-            });
-          });
 
   }
   // 确定添加/修改管理员
