@@ -76,7 +76,7 @@
               <!-- </template> -->
             </el-table-column>
 
-            <el-table-column  :show-overflow-tooltip='true' width="180" label="操作" align="center">
+            <el-table-column  :show-overflow-tooltip='true' width="180" label="状态" align="center">
               <template slot-scope="{row}">
                 <el-dropdown @command="changeStatus"
                 trigger="click">
