@@ -62,6 +62,7 @@
               <el-select
                 class="select-class"
                 size="small"
+                multiple
                 v-model="filterForm.status"
                 placeholder="请选择车位状态"
               >
@@ -78,6 +79,7 @@
               <el-select
                 class="select-class"
                 size="small"
+                multiple
                 v-model="filterForm.carSpaceTypeId"
                 placeholder="请选择车位类型"
               >
@@ -113,6 +115,7 @@
             :data="list_data"
             stripe
             height="65vh"
+            border
             v-loading="showLoading"
             highlight-current-row
             @cell-mouse-enter="enterRowChange"
@@ -131,7 +134,7 @@
                     </el-tooltip>
                     <el-dropdown-menu slot="dropdown">
                       <div @click="editTarget(scope.row)">
-                        <el-dropdown-item command="update">修改</el-dropdown-item>
+                        <el-dropdown-item command="update">修改业主</el-dropdown-item>
                       </div>
                       <el-dropdown-item
                         :command="returnCommand('delete', scope.row)"
@@ -196,9 +199,11 @@
             >
               <template slot-scope="scope">
                 <el-button
+                  v-if="scope.row.ownerName"
                   @click="showHouseDetails(scope.row,'first')"
                   type="text"
                 >{{ scope.row.ownerName }}</el-button>
+                <span v-else></span>
               </template>
             </el-table-column>
 
@@ -529,7 +534,12 @@
         </div>
 
         <div class="word-filter">
-          <el-button style="margin-left:20px;" type="primary" size="small" @click="searchUser">搜 索</el-button>
+          <el-button
+            style="margin-left:20px;"
+            type="primary"
+            size="small"
+            @click="searchUser(1)"
+          >搜 索</el-button>
         </div>
       </div>
       <div style="margin-top:10px;">
@@ -551,7 +561,7 @@
         <el-pagination
           background
           style="margin:10px 0"
-          @current-change="handleCurrentChangePass"
+          @current-change="searchUser"
           :page-size="listQuery.limit"
           :current-page="listQuery.page"
           layout="total, prev, pager, next, slot"
@@ -575,27 +585,6 @@
         label-position="right"
         style="margin-right:40px;"
       >
-        <!-- <el-form-item label="所属分组:" prop="carSpaceGroupId">
-          <el-cascader
-            style="width:100%"
-            v-model="editForm.carSpaceGroupId"
-            :options="TreeData"
-            :show-all-levels="false"
-            :props="{ label: 'name', children: 'sonCarSpaceGroups', value: 'id' }"
-            @change="handleEdit"
-          ></el-cascader>
-        </el-form-item>-->
-
-        <!-- <el-form-item label="车位编号:" prop="serialNumber">
-          <el-input
-            clearable
-            v-model="editForm.serialNumber"
-            placeholder="请输入车位编号"
-            :maxlength="10"
-            @input="constraintLength(editForm.serialNumber,'10')"
-          ></el-input>
-        </el-form-item>-->
-
         <el-form-item
           label="选择业主:"
           prop="name"
@@ -665,48 +654,68 @@
         </el-tab-pane>
 
         <el-tab-pane label="通行记录" name="second">
-          <!-- <el-table :data="dtailTable" style="width: 100%">
-            <el-table-column prop="name" align="center" label="姓名" width="150px"></el-table-column>
+          <el-table :data="dtailTable" style="width: 100%" border v-loading="dtailTableLoading">
+            <el-table-column prop="ownerName" align="center" label="姓名" width="150px"></el-table-column>
+
+            <el-table-column prop="carNo" align="center" label="车牌"></el-table-column>
+
+            <el-table-column prop="inOut" align="center" label="进/出" width="60px"></el-table-column>
+
             <el-table-column
               prop="passTime"
-              :show-overflow-tooltip="true"
               align="center"
               label="通行时间"
+              :show-overflow-tooltip="true"
             ></el-table-column>
-            <el-table-column prop="inOut" align="center" label="进/出" width="60px"></el-table-column>
-            <el-table-column prop="passMethod" align="center" width="150" label="通行方式">
-              <template slot-scope="{row}">
-                <span>{{ row.passMethod | passMethod }}</span>
-              </template>
-            </el-table-column>
+
             <el-table-column width="100" align="center" label="抓拍图片">
               <template slot-scope="{row}">
-                <img :src="row.photos" alt />
+                <div style="height:30px;">
+                  <img :src="row.photos ? row.photos : ''" alt />
+                </div>
               </template>
             </el-table-column>
           </el-table>
           <el-pagination
-            @current-change="pagePassChange"
+            @current-change="getOwnerCarPass"
+            :page-size="passListParams.limit"
+            :current-page="passListParams.page"
             style="margin-top:10px;"
             background
             layout="prev, pager, next"
-            :total="passList.total"
-          ></el-pagination>-->
+            :total="passListParams.total"
+          ></el-pagination>
         </el-tab-pane>
         <el-tab-pane label="车辆信息" name="third">
-          <!-- <el-table :data="carDtailTable" style="width: 100%">
+          <el-table :data="carDtailTable" style="width: 100%" border v-loading="dtailTableLoading">
             <el-table-column prop="carNo" align="center" label="车牌号"></el-table-column>
             <el-table-column prop="carType" align="center" label="车辆类型"></el-table-column>
             <el-table-column prop="modal" align="center" label="型号"></el-table-column>
-            <el-table-column align="center" label="照片">
+            <el-table-column width="100" align="center" label="照片">
               <template slot-scope="{row}">
-                <img :src="row.photo" alt />
+                <div style="height:30px;">
+                  <img :src="row.photos ? row.photos : ''" alt />
+                </div>
               </template>
             </el-table-column>
           </el-table>
+          <el-pagination
+            @current-change="fetchCarList"
+            :page-size="carDtailTableParams.limit"
+            :current-page="carDtailTableParams.page"
+            style="margin-top:10px;"
+            background
+            layout="prev, pager, next"
+            :total="carDtailTableParams.total"
+          ></el-pagination>
         </el-tab-pane>
         <el-tab-pane label="房屋信息" name="five">
-          <el-table :data="houseDtailTable" style="width: 100%">
+          <el-table
+            :data="houseDtailTable"
+            style="width: 100%"
+            border
+            v-loading="dtailTableLoading"
+          >
             <el-table-column
               align="center"
               :show-overflow-tooltip="true"
@@ -714,7 +723,7 @@
               label="房屋编号"
             >
               <template slot-scope="{row}">
-                <span>{{ row.groupName }} - {{ row.buildingName }} - {{ row. serialNumber}}</span>
+                <span>{{ row.houseDetail.groupName }}{{row.houseDetail.groupName&&row.houseDetail.buildingName ?' - ' :''}}{{ row.houseDetail.buildingName}}{{row.houseDetail.buildingName&&row.houseDetail.serialNumber ?' - ':''}} {{ row.houseDetail.serialNumber}}</span>
               </template>
             </el-table-column>
             <el-table-column
@@ -748,13 +757,28 @@
               v-if="globalUpdateStatus"
             >
               <template slot-scope="scope">
-                <el-button type="text" @click="deleteHouse(scope.row, scope.$index)">删除</el-button>
+                <div style="height:30px">
+                  <el-button
+                    size="small"
+                    type="text"
+                    @click="deleteHouse(scope.row, scope.$index)"
+                  >删除</el-button>
+                </div>
               </template>
             </el-table-column>
-          </el-table>-->
+          </el-table>
+          <!-- <el-pagination
+            @current-change="fetchOwnerHouse"
+            :page-size="houseDtailTableParams.limit"
+            :current-page="houseDtailTableParams.page"
+            style="margin-top:10px;"
+            background
+            layout="prev, pager, next"
+            :total="houseDtailTableParams.total"
+          ></el-pagination>-->
         </el-tab-pane>
         <el-tab-pane label="人脸库信息" name="six">
-          <!-- <el-table :data="faceList" border style="width: 100%">
+          <el-table :data="faceList" border style="width: 100%" v-loading="dtailTableLoading">
             <el-table-column align="center" width="50" type="index" label="编号"></el-table-column>
             <el-table-column
               :show-overflow-tooltip="true"
@@ -782,10 +806,21 @@
             ></el-table-column>
             <el-table-column width="80" align="center" label="人脸图片">
               <template slot-scope="{row}">
-                <img :src="row.face" alt />
+                <div style="height:30px;">
+                  <img :src="row.face ? row.face : ''" alt />
+                </div>
               </template>
             </el-table-column>
-          </el-table>-->
+          </el-table>
+          <el-pagination
+            @current-change="fetchFaceList"
+            :page-size="facePage.limit"
+            :current-page="facePage.page"
+            style="margin-top:10px;"
+            background
+            layout="prev, pager, next"
+            :total="facePage.total"
+          ></el-pagination>
         </el-tab-pane>
       </el-tabs>
     </el-dialog>
@@ -805,7 +840,7 @@
         v-model="bindingcarnum"
       >
         <el-form-item style="margin-bottom:0" label="车位:" prop="carSpaceGroupName">
-          <span>{{detailDialog.carSpaceGroupName}}</span>
+          <span>{{detailDialog.carSpaceGroupName}} {{detailDialog.serialNumber}}</span>
         </el-form-item>
 
         <el-form-item style="margin-bottom:14px" label="已绑车辆:" prop="bindCarName">
@@ -891,11 +926,18 @@ import {
   querycarno, // 查询车牌号
   addcarno, // 新增绑定车牌
   deleteCarno, // 删除车牌
-  batchStall //批量新增车位
+  batchStall, //批量新增车位
+  // getUserPropertyCar, //获取业主车辆
+  carPassList //查询业主车辆通行记录
 } from "@/api/carApi.ts";
-import { getUser } from "@/api/vistorApi.ts"; //输入人名模糊查询人员
-import { updateUserNote } from "@/api/peopleApi.ts";
-import { getUnitList, addUnit, deleteUnit } from "@/api/houseApi.ts";
+import { getUser, getTargetHouse } from "@/api/vistorApi.ts"; //输入人名模糊查询人员
+import { updateUserNote, getOwnerFaceList } from "@/api/peopleApi.ts";
+import {
+  getUnitList,
+  addUnit,
+  deleteUnit,
+  deleteTheHousePeople
+} from "@/api/houseApi.ts";
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 const DataTree = () => import("../carTree/index.vue");
 const ExportIn = () => import("@/components/exportIn/index.vue");
@@ -951,8 +993,8 @@ export default class CardManage extends Vue {
     phone: null, //电话
     cardName: null, //车牌号
     serialNumber: null, //车位编号
-    status: null, //车位状态
-    carSpaceTypeId: null, //车位类型
+    status: [], //车位状态
+    carSpaceTypeId: [], //车位类型
     carSpaceGroupId: "",
     isData: true //导出车位
   };
@@ -983,12 +1025,7 @@ export default class CardManage extends Vue {
 
   private filterUser: Object = { name: "", phone: "", idCard: "" };
   private targetuser: Object = {}; //选中的业主
-  private listQuery: Object = {
-    // 关注人员目标通行记录翻页
-    total: 0,
-    limit: 7,
-    page: 1
-  };
+
   private addDisabled: Boolean = true; //新增车位是否禁用 | 批量新增是否禁用
 
   createForm: object = {
@@ -1036,6 +1073,7 @@ export default class CardManage extends Vue {
   private ownerName: String = ""; //获取业主id
 
   TreeData: Array<Object> = []; // 树形结构数据
+  tree_data: Object = {}; //目标树
   private menuControl1: String = "menu-control";
   private menuControl2: String = "menu-visible";
   updateArray: Array<string> = ["noteStatus", "houseStatus"];
@@ -1052,13 +1090,43 @@ export default class CardManage extends Vue {
   private activeName: string = "first"; //目标车位详细信息 tab Title
 
   private nameList: Array<Object> = []; //人员
+  private listQuery: Object = {
+    // 关注人员目标通行记录翻页
+    total: 0,
+    limit: 7,
+    page: 1
+  };
   private loading: Boolean = false; //姓名模糊查询
 
   private carStatus: Array<Object> = []; //获取车位类型
 
   private ownerDetail: Object = {}; //业主信息
-  private dtailTable: Array<Object> = []; //通行记录
+  private dtailTableLoading: Boolean = true; //目标车位业主车辆通行记录状态
+  private dtailTable: Array<Object> = []; //目标车位业主车辆通行记录
   private passList: Array<Object> = []; // 关注人员名单目标通行记录
+  passListParams: object = {
+    limit: 7,
+    page: 1,
+    ownerScenceUserId: ""
+  };
+  private carDtailTable: Array<Object> = []; //业主车辆信息
+  carDtailTableParams: object = {
+    limit: 7,
+    page: 1,
+    scenceUserId: ""
+  };
+  private houseDtailTable: Array<Object> = []; // 房屋信息
+  houseDtailTableParams: object = {
+    limit: 7,
+    page: 1,
+    id: ""
+  };
+  private faceList: Array<object> = []; // 人脸库列表
+  facePage: object = {
+    page: 1,
+    limit: 7,
+    scenceUserId: ""
+  };
 
   private carnoList: Array<Object> = []; //车牌号
   private carIdDisabled: Boolean = false; // 是否允许绑定车牌
@@ -1111,6 +1179,7 @@ export default class CardManage extends Vue {
     this.fetchData(info);
     this.addDisabled = obj["status"];
     this.carSpaceGroup = obj["carSpaceGroup"];
+    this.tree_data = obj["tree_data"];
   }
 
   addstalls() {
@@ -1231,7 +1300,11 @@ export default class CardManage extends Vue {
     /**@description 关闭批量添加车位*/
     this.dialogAdds = false;
     this.targetuser = {};
-    this.carSpaceGroup = {};
+    // this.carSpaceGroup = {};
+    this.$refs["dataTree"]["handleNodeClick"](
+      this.tree_data["data"],
+      this.tree_data["node"]
+    );
   }
 
   closeVisible(flag: boolean) {
@@ -1251,12 +1324,13 @@ export default class CardManage extends Vue {
     });
   }
 
-  searchUser() {
+  searchUser(page: Number) {
     /**@description 根据不同条件查询业主 */
+    this.listQuery["page"] = page;
     const info = { ...this.listQuery, ...this.filterUser };
     getUser(info).then(res => {
       this.loading = false;
-      this.nameList = res.data.data.map(item => {
+      this.nameList = res.data.data.records.map(item => {
         return {
           phone: item.phone,
           name: item.name,
@@ -1264,6 +1338,7 @@ export default class CardManage extends Vue {
           cardNo: item.cardNo
         };
       });
+      this.listQuery["total"] = res.data.data.total;
     });
   }
 
@@ -1271,14 +1346,6 @@ export default class CardManage extends Vue {
     /**@description 选中目标业主 */
     this.targetuser = item;
     this.ownerClose();
-  }
-
-  handleCurrentChangePass(val) {
-    /** @description 处理目标关注人员通行记录翻页事件
-     * @augments val: 页数
-     */
-    this.listQuery["page"] = val;
-    // this.fetchPass();
   }
 
   async getSatll() {
@@ -1352,14 +1419,18 @@ export default class CardManage extends Vue {
     }
 
     this.getSatll();
-    this.getHouseTreeData();
+    // this.getHouseTreeData();
     this.nameList = [];
-    this.$refs.dataTree["highlightStatus"] = false;
+    // this.$refs.dataTree["highlightStatus"] = true;
     this.$nextTick(() => {
       this.$refs["dataForm"]["resetFields"]();
     });
     this.targetuser = {};
-    this.carSpaceGroup = {};
+    // this.carSpaceGroup = {};
+    this.$refs["dataTree"]["handleNodeClick"](
+      this.tree_data["data"],
+      this.tree_data["node"]
+    );
     this.errorMessage["name"] = "";
   }
 
@@ -1463,7 +1534,7 @@ export default class CardManage extends Vue {
     for (const key in this.errorMessage) {
       this.errorMessage[key] = "";
     }
-    this.$refs.dataTree["highlightStatus"] = true;
+    // this.$refs.dataTree["highlightStatus"] = true;
     this.$refs["updateForm"]["resetFields"]();
     this.targetuser = {};
     this.errorMessage["name"] = "";
@@ -1529,7 +1600,13 @@ export default class CardManage extends Vue {
     if (tab.name === "first") {
       this.getOwnerDetail(this.detailDialog);
     } else if (tab.name === "second") {
-      // 绑定车牌
+      this.getOwnerCarPass(1);
+    } else if (tab.name === "third") {
+      this.fetchCarList(1);
+    } else if (tab.name === "five") {
+      this.fetchOwnerHouse(1);
+    } else if (tab.name === "six") {
+      this.fetchFaceList(1);
     }
   }
 
@@ -1542,6 +1619,10 @@ export default class CardManage extends Vue {
     this.dialogFormVisible = true;
     this.getOwnerDetail(row);
     this.detailDialog = Object.assign({}, row);
+    this.facePage["scenceUserId"] = row.ownerScenceUserId;
+    this.passListParams["ownerScenceUserId"] = row.ownerScenceUserId;
+    this.carDtailTableParams["scenceUserId"] = row.ownerScenceUserId;
+    this.houseDtailTableParams["id"] = row.ownerScenceUserId;
   }
 
   detailClose() {
@@ -1568,6 +1649,82 @@ export default class CardManage extends Vue {
     const { data } = await getOwnerUser(row.ownerScenceUserId);
     this.ownerDetail = data.data.user;
     console.log(this.ownerDetail);
+  }
+
+  async getOwnerCarPass(page: number) {
+    /**@description  获取目标业主的车辆通行记录*/
+    this.dtailTableLoading = true;
+    this.passListParams["page"] = page;
+    const info = { ...this.passListParams };
+    const { data } = await carPassList(info);
+    this.dtailTable = data.data.records;
+    this.passListParams["total"] = data.data.total;
+    this.dtailTableLoading = false;
+    console.log(data.data.records, "获取目标业主的车辆通行记录");
+  }
+
+  async fetchCarList(page: number) {
+    /**@description  获取业主的车辆信息*/
+    this.dtailTableLoading = true;
+
+    this.carDtailTableParams["page"] = page;
+    const info = { ...this.carDtailTableParams };
+    const { data } = await querycarno(info);
+    this.carDtailTable = data.data.records;
+    this.carDtailTableParams["total"] = data.data.total;
+    this.dtailTableLoading = false;
+    console.log(this.carDtailTable, "获取业主的车辆信息");
+  }
+
+  async fetchOwnerHouse(page: number) {
+    /**@description  查询目标车位业主的房屋信息*/
+    this.dtailTableLoading = true;
+    this.houseDtailTableParams["page"] = page;
+    const info = { ...this.houseDtailTableParams };
+    const { data } = await getTargetHouse(info);
+    // this.houseDtailTableParams["total"] = data.total;
+    this.houseDtailTable = data.data;
+    this.dtailTableLoading = false;
+    console.log(data.data, "查询目标车位业主的房屋信息");
+  }
+
+  deleteHouse(row, index) {
+    /**@description  删除目标车位的业主的某个房屋*/
+    this.$confirm("此操作将永久删除该房屋, 是否继续?", "提示", {
+      confirmButtonText: "确定",
+      cancelButtonText: "取消",
+      type: "warning"
+    })
+      .then(() => {
+        console.log(row);
+        deleteTheHousePeople(
+          row.houseId,
+          "",
+          this.houseDtailTableParams["id"]
+        ).then(res => {
+          if (res.data.code === 200) {
+            this.$message.success("删除成功");
+            this.houseDtailTable.splice(index, 1);
+          }
+        });
+      })
+      .catch(() => {
+        this.$message({
+          type: "info",
+          message: "已取消删除"
+        });
+      });
+  }
+
+  async fetchFaceList(page: number) {
+    /**@description  获取人脸库列表*/
+    this.dtailTableLoading = true;
+    this.facePage["page"] = page;
+    const { data } = await getOwnerFaceList(this.facePage);
+    console.log(data.data, "获取人脸库列表");
+    this.facePage["total"] = data.total;
+    this.faceList = data.data;
+    this.dtailTableLoading = false;
   }
 
   async remoteMethodCar(query) {

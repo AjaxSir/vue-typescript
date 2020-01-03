@@ -575,8 +575,8 @@ export default class DataTree extends Vue {
     // this.HouseUnitVisible = false;
   }
   @Emit("fetchDatas")
-  handleNodeClick(data, node, item) {
-    console.log(data)
+  handleNodeClick(data, node) {
+    console.log(data,node,123456)
     this.showMenu = node.id;
     this.highlightStatus = !!data.id;
     /**@description 树节点点击事件 */
@@ -587,13 +587,13 @@ export default class DataTree extends Vue {
       this["page"]["page"] = 1;
       this.initFormHeader["params"] = Object.assign(
         this.initFormHeader["params"],
-        this.page,
-
+        this.page
       );
       return {
         form: this.initFormHeader,
         status: !!data.sonCarSpaceGroups,
-        carSpaceGroup:{carSpaceGroupName:data.currentName,carSpaceGroupId:data.id}
+        carSpaceGroup:{carSpaceGroupName:data.currentName,carSpaceGroupId:data.id},
+        tree_data:{data:data,node:node}
       };
     } else {
       this["page"]["page"] = 1;
@@ -605,7 +605,8 @@ export default class DataTree extends Vue {
       return {
         form: this.initFormHeader,
         status: !!data.sonCarSpaceGroups,
-        carSpaceGroup:{carSpaceGroupName:data.currentName,carSpaceGroupId:data.id}
+        carSpaceGroup:{carSpaceGroupName:data.currentName,carSpaceGroupId:data.id},
+        tree_data:{data:data,node:node}
       };
     }
   }
