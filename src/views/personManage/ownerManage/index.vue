@@ -917,7 +917,7 @@ export default class OwnerManage extends Vue {
     })
       .then(() => {
         console.log(row);
-        deleteTheHousePeople(row.houseId, this.userId).then(res => {
+        deleteTheHousePeople(row.houseId, this.userId,' ').then(res => {
           if (res.data.code === 200) {
             this['message']('success', '删除成功')
             this.houseDtailTable.splice(index, 1);

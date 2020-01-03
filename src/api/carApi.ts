@@ -69,13 +69,11 @@ export function getvisitUser(id: string) {
 }
 
 //获取目标车辆用户详细信息 || 获取目标访客车辆邀请人的详细信息
-export function getOwnerUser(id: string) {
+export function getOwnerUser(params:object) {
   return _axios({
     url: '/admin/scence-user',
     method: 'get',
-    params: {
-      id
-    }
+    params
   })
 }
 

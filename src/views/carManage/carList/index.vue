@@ -84,6 +84,7 @@
             v-loading="showLoading"
             :data="list_data"
             stripe
+            border
             highlight-current-row
             @cell-mouse-enter="enterRowChange"
             @cell-mouse-leave="leaveRowChange"
@@ -112,7 +113,7 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="carNo" label="车牌号">
+            <el-table-column align="center" prop="carNo" label="车牌号">
               <template slot-scope="scope">
                 <el-button
                   @click="showCarDetails(scope.row)"
@@ -122,16 +123,27 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="ownerName" label="车主" :show-overflow-tooltip="true"></el-table-column>
+            <el-table-column
+              align="center"
+              prop="ownerName"
+              label="车主"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
 
-            <el-table-column prop="ownerPhone" label="电话" :show-overflow-tooltip="true"></el-table-column>
+            <el-table-column
+              align="center"
+              prop="ownerPhone"
+              label="电话"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
 
-            <el-table-column prop="status" label="状态">
+            <el-table-column align="center" prop="status" label="状态">
               <template slot-scope="scope">
                 <el-dropdown trigger="click">
                   <span class="el-dropdown-link">
                     <el-tag
                       style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
+                      size="small"
                       :type="scope.row.status=='1'? 'success' : 'danger'"
                       @click="editStatus(scope.row.id)"
                     >{{ scope.row.status && scope.row.status =='1' ? "正常" : "禁用" }}</el-tag>
@@ -149,29 +161,32 @@
             </el-table-column>
 
             <el-table-column
+              align="center"
               prop="lastInTime"
               label="最近一次访问"
               :show-overflow-tooltip="true"
               min-width="110px"
             ></el-table-column>
 
-            <el-table-column prop="lastInPhoto" label="最近抓拍图片" min-width="110px">
+            <el-table-column align="center" prop="lastInPhoto" label="最近抓拍图片" min-width="110px">
               <template slot-scope="scope">
                 <img
+                  v-if="scope.row.lastInPhoto"
                   class="capture-img"
                   @mouseout="imgVisible=false"
                   @mouseover="imgVisible=true,bigImg=scope.row.lastInPhoto"
                   :src="scope.row.lastInPhoto"
                   alt
                 />
+                <span v-else></span>
               </template>
             </el-table-column>
 
-            <el-table-column prop="modal" label="品牌" :show-overflow-tooltip="true"></el-table-column>
+            <el-table-column align="center" prop="modal" label="品牌" :show-overflow-tooltip="true"></el-table-column>
 
-            <el-table-column prop="carType" label="车型" :show-overflow-tooltip="true"></el-table-column>
+            <el-table-column align="center" prop="carType" label="车型" :show-overflow-tooltip="true"></el-table-column>
 
-            <el-table-column prop="note" align="center" label="备注" :show-overflow-tooltip="true">
+            <el-table-column align="center" prop="note" label="备注" :show-overflow-tooltip="true">
               <template slot-scope="{row}">
                 <p
                   class="rowUpdate"
@@ -418,7 +433,13 @@
                   <span>{{CarDialogForm.lastInTime ? CarDialogForm.lastInTime :''}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="最后一次进照片:">
-                  <img class="capture-img" :src="CarDialogForm.lastInPhoto" alt />
+                  <img
+                    v-if="CarDialogForm.lastInPhoto"
+                    class="capture-img"
+                    :src="CarDialogForm.lastInPhoto"
+                    alt
+                  />
+                  <span v-else></span>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
@@ -433,7 +454,13 @@
                   <span>{{CarDialogForm.lastOutTime ? CarDialogForm.lastOutTime :''}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="最后一次出照片:">
-                  <img class="capture-img" @mouseout="imgVisible=false" alt />
+                  <img
+                    v-if="CarDialogForm.lastOutPhoto"
+                    class="capture-img"
+                    :src="CarDialogForm.lastOutPhoto"
+                    alt
+                  />
+                  <span v-else></span>
                 </el-form-item>
               </el-col>
             </el-row>

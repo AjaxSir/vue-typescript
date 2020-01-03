@@ -194,6 +194,7 @@
             <el-table-column align="center" prop="photos" label="最近抓拍图片">
               <template slot-scope="scope">
                 <img
+                  v-if="scope.row.photos"
                   class="capture-img"
                   width="30px"
                   height="30px"
@@ -202,6 +203,7 @@
                   :src="scope.row.photos"
                   alt
                 />
+                <span v-else></span>
               </template>
             </el-table-column>
           </el-table>

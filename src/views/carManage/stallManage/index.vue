@@ -30,23 +30,23 @@
                 class="input-filter"
                 size="small"
                 clearable
-                v-model="filterForm.name"
+                v-model="filterForm.ownerName"
                 placeholder="请输入姓名"
                 @keyup.enter.native="emitFetchData"
               ></el-input>
             </div>
             <div class="word-filter">
-              <span class="filter-name">电&nbsp;&nbsp;&nbsp;&nbsp;话:</span>
+              <span class="filter-name">编&nbsp;&nbsp;&nbsp;&nbsp;号:</span>
               <el-input
                 class="input-filter"
                 size="small"
                 clearable
-                v-model="filterForm.phone"
+                v-model="filterForm.serialNumber"
                 placeholder="请输入电话"
                 @keyup.enter.native="emitFetchData"
               ></el-input>
             </div>
-            <div class="word-filter">
+            <!-- <div class="word-filter">
               <span class="filter-name">车&nbsp;&nbsp;牌&nbsp;&nbsp;号:</span>
               <el-input
                 class="input-filter"
@@ -56,7 +56,7 @@
                 placeholder="请输入车牌"
                 @keyup.enter.native="emitFetchData"
               ></el-input>
-            </div>
+            </div> -->
             <div class="word-filter">
               <span class="filter-name filter-rewrite">车位状态:</span>
               <el-select
@@ -989,9 +989,9 @@ export default class CardManage extends Vue {
     method: "get"
   };
   filterForm: object = {
-    name: null, //姓名
-    phone: null, //电话
-    cardName: null, //车牌号
+    ownerName: null, //姓名
+    // phone: null, //电话
+    // cardName: null, //车牌号
     serialNumber: null, //车位编号
     status: [], //车位状态
     carSpaceTypeId: [], //车位类型
@@ -1696,10 +1696,9 @@ export default class CardManage extends Vue {
       type: "warning"
     })
       .then(() => {
-        console.log(row);
         deleteTheHousePeople(
           row.houseId,
-          "",
+          ' ',
           this.houseDtailTableParams["id"]
         ).then(res => {
           if (res.data.code === 200) {

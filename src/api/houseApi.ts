@@ -208,6 +208,16 @@ export function getRegisterPeople(houseId: string) {
   })
 }
 
+
+// 根据房屋id查询房屋信息(已删除的也能查出来)
+export function getRegisterHouse(params:object) {
+  return _axios({
+    url: '/admin/hsHouse/by-id',
+    method: 'get',
+    params
+  })
+}
+
 // 删除特定房屋下的某个注册人员
 export function deleteTheHousePeople(houseId: string, userId: string,scenceUserId:string) {
   return _axios({

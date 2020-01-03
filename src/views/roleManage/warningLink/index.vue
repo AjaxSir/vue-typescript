@@ -19,6 +19,7 @@
       v-loading="showLoading"
       :data="list_data"
       stripe
+      border
       highlight-current-row
       @cell-mouse-enter="enterRowChange"
       @cell-mouse-leave="leaveRowChange"
@@ -50,7 +51,11 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="name" align="center" label="姓名" :show-overflow-tooltip="true"></el-table-column>
+      <el-table-column prop="name" align="center" label="姓名" :show-overflow-tooltip="true">
+        <template slot-scope="{row}">
+          <div style="height:40px;line-height:40px;">{{row.name}}</div>
+        </template>
+      </el-table-column>
       <el-table-column prop="phone" align="center" label="电话" :show-overflow-tooltip="true"></el-table-column>
       <el-table-column prop="email" align="center" label="邮箱" :show-overflow-tooltip="true"></el-table-column>
       <el-table-column
