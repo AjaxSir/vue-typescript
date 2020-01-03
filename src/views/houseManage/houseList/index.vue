@@ -278,7 +278,7 @@
           </el-form>
         </el-tab-pane>
         <el-tab-pane label="在住人员" name="在住人员">
-          <el-table :data="dtailTable" style="width: 100%">
+          <el-table v-loading="showLoading" :data="dtailTable" style="width: 100%">
             <el-table-column
               align="center"
               width="50"
@@ -329,8 +329,8 @@
               :key="Math.random()"
                v-if="globalUpdateStatus"
             >
-              <template slot-scope="{row}">
-                <el-button type="text" @click="deleteHousePeople(row)">删除</el-button>
+              <template slot-scope="scope">
+                <el-button type="text" @click="deleteHousePeople(scope.row, scope.$index)">删除</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -471,7 +471,7 @@ export default class CardManage extends Vue {
   }
 
   // 删除房屋下的某个用户
-  deleteHousePeople(row) {
+  deleteHousePeople(row, index) {
     this.$confirm("此操作将永久删除该人员, 是否继续?", "提示", {
       confirmButtonText: "确定",
       cancelButtonText: "取消",
@@ -479,10 +479,14 @@ export default class CardManage extends Vue {
     })
       .then(() => {
         deleteTheHousePeople(this.houseId, row.userId).then(res => {
-          getRegisterPeople(this.houseId).then(res => {
-            this.dtailTable = res.data.data;
+          if (res.data.code === 200) {
+            this.dtailTable.splice(index, 1)
             this.fetchData(this.initForm)
-          });
+          }
+          // getRegisterPeople(this.houseId).then(res => {
+          //   this.dtailTable = res.data.data;
+          //   this.fetchData(this.initForm)
+          // });
         });
       })
       .catch(() => {

@@ -48,8 +48,8 @@
         </el-dropdown>-->
 
         <div v-if="filterStatus" class="content">
-          <span @click="visibleFilter = !visibleFilter,visible = false">
-            <i class="iconfont icon-filtration"></i>
+          <span :class="[hasProty ? 'activeFilter' : '']" @click="visibleFilter = !visibleFilter,visible = false">
+            <i :style="{ color: hasProty ? '#409eff' : '' }" class="iconfont icon-filtration"></i>
             过滤
           </span>
           <transition name="el-zoom-in-top">
@@ -62,6 +62,14 @@
                 plain
                 size="small"
               >筛选</el-button>
+              <el-button
+              style="margin-right:10px"
+                @click="clearFilterForm"
+                class="fliterBtn"
+                type="warning"
+                plain
+                size="small"
+              >清空条件</el-button>
             </div>
           </transition>
         </div>
@@ -141,7 +149,7 @@ export default class ActionManage extends Vue {
   })
   filterForm: object; // 筛选条件
   @Prop({ default: "" }) linkUrl: string;
-
+  hasProty: boolean = false // 有无筛选条件
   private visible: boolean = false; // 数据显示条数dialog状态
   private size: string = "10"; // 默认每页显示10条
   private levelList: Object = {}; // 当前路由的子路由
@@ -220,20 +228,49 @@ export default class ActionManage extends Vue {
    */
   @Emit("fetchData")
   emitFetchData() {
+    this.hasProty = false
     this.visibleFilter = false;
     this.page["page"] = 1;
+    for(let key in this.filterForm) {
+      if (typeof this.filterForm[key] === 'string') {
+        if (this.filterForm[key]) {
+          this.hasProty = true
+        }
+      } else {
+         if (this.filterForm[key].length) {
+          this.hasProty = true
+        }
+      }
+    }
     this.initFormHeader["params"] = Object.assign(
       this.initFormHeader["params"],
       this.filterForm,
       this.page
     );
-    this.visible = false;
-
-    // for (const key in this.filterForm) {
-    //   this.filterForm[key] = this.filterForm[key] ? this.filterForm[key] : null;
-    // }
     this["phoneNum"] = 0;
-    console.log(this.initFormHeader["params"], this.filterForm, this.page);
+    return this.initFormHeader;
+  }
+  /**
+   * 清空筛选条件
+   */
+  @Emit("fetchData")
+  clearFilterForm() {
+    this.hasProty = false
+    this.visibleFilter = false;
+    this.page["page"] = 1;
+    for(let key in this.filterForm) {
+      if (typeof this.filterForm[key] === 'string') {
+        this.filterForm[key] = ''
+      } else {
+        this.filterForm[key] = []
+      }
+    }
+    this["phoneNum"] = 0;
+    this.initFormHeader["params"] = Object.assign(
+      this.initFormHeader["params"],
+      this.filterForm,
+      this.page
+    );
     return this.initFormHeader;
   }
   /**
@@ -248,8 +285,6 @@ export default class ActionManage extends Vue {
       this.initFormHeader["params"],
       this.page
     );
-    this.visibleFilter = false;
-    // this.$emit('fetchData', this.initFormHeader)
     this.visible = false;
     return this.initFormHeader;
   }
@@ -413,5 +448,8 @@ a {
 }
 .icon-_shezhi-xian:hover {
   cursor: pointer;
+}
+.activeFilter{
+  color: #409eff
 }
 </style>
