@@ -22,18 +22,24 @@
             v-loading="showLoading"
             :data="list_data"
             stripe
-
+            border
             highlight-current-row
             @cell-mouse-enter="enterRowChange"
             @cell-mouse-leave="leaveRowChange"
           >
-            <el-table-column v-if="globalUpdateStatus" type="selection" width="50" :selectable="isDisabled" disabled="true"></el-table-column>
+            <el-table-column
+              v-if="globalUpdateStatus"
+              type="selection"
+              width="50"
+              :selectable="isDisabled"
+              disabled="true"
+            ></el-table-column>
 
             <el-table-column type="index" label="序号" width="50"></el-table-column>
 
             <el-table-column prop="address" label="位置" align="center">
               <template slot-scope="scope">
-                <span>{{scope.row.address}}</span>
+                <div style="height:40px;line-height: 40px;">{{scope.row.address}}</div>
                 <!-- <el-button
                   style="padding:0px;"
                   type="text"

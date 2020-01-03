@@ -26,7 +26,7 @@ export function queryUserPhone(phone: string) {
 export function resetDisabledUser(status: string, id: string) {
   return _axios({
     url: status === '1' ? '/admin/usrUser/reset' : '/admin/usrUser/disable',
-    method:'put',
+    method: 'put',
     params: {
       id
     }
@@ -100,6 +100,15 @@ export function getFaceList(params: object) {
   })
 }
 
+// 获取业主的人脸库信息
+export function getOwnerFaceList(params: object) {
+  return _axios({
+    url: '/admin/usr-dev-link/by-scence-user-id',
+    method: 'get',
+    params
+  })
+}
+
 //获取目标人员通行记录 || 访客通行记录
 export function getTargrtRecord(params: object) {
   return _axios({
@@ -110,7 +119,7 @@ export function getTargrtRecord(params: object) {
 }
 
 // 获取人员通行位置的搜索建议
-export function getPassAddress(name:string) {
+export function getPassAddress(name: string) {
   return _axios({
     url: '/admin/hsBuilding/binds',
     method: 'get',
@@ -139,7 +148,7 @@ export function addPropert(data: object) {
 }
 
 // 改变物业人员的权限组
-export function changeRoleGroup(authId:string, id:string) {
+export function changeRoleGroup(authId: string, id: string) {
   return _axios({
     url: '/admin/usrUser/PropertyManager/updateAuth',
     method: 'put',
@@ -151,7 +160,7 @@ export function changeRoleGroup(authId:string, id:string) {
 }
 
 // 查看物业人员
-export function watchPropert(id:string) {
+export function watchPropert(id: string) {
   return _axios({
     url: '/admin/usrUser/PropertyManager',
     method: 'get',
@@ -212,7 +221,7 @@ export function addFocusPeople(data: object) {
 }
 
 // 通过id获取权限组信息
-export function getGroupInfoById(id: string){
+export function getGroupInfoById(id: string) {
   return _axios({
     url: '/admin/devAuthorities',
     method: 'get',

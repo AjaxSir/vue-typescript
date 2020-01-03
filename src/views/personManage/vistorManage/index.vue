@@ -171,6 +171,7 @@
             v-loading="showLoading"
             :data="list_data"
             stripe
+            border
             highlight-current-row
             @cell-mouse-enter="enterRowChange"
             @cell-mouse-leave="leaveRowChange"
@@ -240,17 +241,17 @@
               </template>
             </el-table-column>
 
-            <el-table-column
+            <!-- <el-table-column
               prop="buildingName"
               align="center"
               label="所属楼栋"
               :show-overflow-tooltip="true"
-            ></el-table-column>
+            ></el-table-column>-->
 
             <el-table-column
               prop="houseName"
               align="center"
-              label="房屋编号"
+              label="房屋信息"
               :show-overflow-tooltip="true"
             ></el-table-column>
 
@@ -353,43 +354,44 @@
                 <el-form-item style="margin-bottom:0" label="电话:">
                   <span>{{interUserDetail.phone}}</span>
                 </el-form-item>
+                <el-form-item style="margin-bottom:0" label="人员类型:">
+                  <span>{{typeFilter(houseInviterDetail ? houseInviterDetail.type : '')}}</span>
+                </el-form-item>
+
+                <el-form-item style="margin-bottom:0" label="业主备注:">
+                  <span>{{interUserDetail.note ? interUserDetail.note : ''}}</span>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
                 <el-form-item style="margin-bottom:0" label="证件类型:">
                   <span>{{interUserDetail.cardName}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="证件号码:">
                   <span>{{interUserDetail.cardNo}}</span>
                 </el-form-item>
-                <el-form-item style="margin-bottom:0" label="业主备注:">
-                  <span>{{interUserDetail.note ? interUserDetail.note : ''}}</span>
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item style="margin-bottom:0" label="人员类型:">
-                  <span>{{typeFilter(houseInviterDetail.type)}}</span>
+
+                <el-form-item style="margin-bottom:0" label="房屋信息:">
+                  <span>{{houseInviterDetail&& houseInviterDetail.houseDetail ? houseInviterDetail.houseDetail.locationName : ''}}</span>
                 </el-form-item>
 
-                <el-form-item style="margin-bottom:0" label="居住楼栋:">
-                  <span>{{houseInviterDetail.houseDetail ? houseInviterDetail.houseDetail.houseName : ''}}</span>
-                </el-form-item>
+                <!-- <el-form-item style="margin-bottom:0" label="单元号:">
+                  <span>{{houseInviterDetail.buildingName ? houseInviterDetail.buildingName: ''}}</span>
+                </el-form-item>-->
 
-                <el-form-item style="margin-bottom:0" label="单元号:">
-                  <span>{{houseInviterDetail.houseDetail ? houseInviterDetail.houseDetail.buildingName: ''}}</span>
-                </el-form-item>
+                <!-- <el-form-item style="margin-bottom:0" label="楼层:">
+                  <span>{{houseInviterDetail.storeyNum ? houseInviterDetail.storeyNum: ''}}</span>
+                </el-form-item>-->
 
-                <el-form-item style="margin-bottom:0" label="楼层:">
-                  <span>{{houseInviterDetail.houseDetail ? houseInviterDetail.houseDetail.storeyNum: ''}}</span>
-                </el-form-item>
-
-                <el-form-item style="margin-bottom:0" label="房屋号:">
-                  <span>{{houseInviterDetail.houseDetail ? houseInviterDetail.houseDetail.serialNumber: ''}}</span>
-                </el-form-item>
+                <!-- <el-form-item style="margin-bottom:0" label="房屋号:">
+                  <span>{{houseInviterDetail.serialNumber ? houseInviterDetail.serialNumber: ''}}</span>
+                </el-form-item>-->
 
                 <el-form-item style="margin-bottom:0" label="注册时间:">
-                  <span>{{houseInviterDetail.createTime}}</span>
+                  <span>{{houseInviterDetail&&houseInviterDetail.createTime? houseInviterDetail.createTime :''}}</span>
                 </el-form-item>
 
                 <el-form-item style="margin-bottom:0" label="房屋备注:">
-                  <span>{{houseInviterDetail.note ? houseInviterDetail.note : ""}}</span>
+                  <span>{{houseInviterDetail&&houseInviterDetail.note ? houseInviterDetail.note : ""}}</span>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -477,6 +479,7 @@ import { Getter, Action, Mutation } from "vuex-class";
 import mixin from "@/config/minxins";
 import { getOwnerUser } from "@/api/carApi.ts"; //获取目标访客受访人信息
 import { getTargrtRecord } from "@/api/peopleApi.ts"; //获取目标车辆通行记录
+import { getRegisterHouse } from "@/api/houseApi.ts"; //获取受房人信息的房屋信息
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 @Component({
   mixins: [mixin],
@@ -702,15 +705,30 @@ export default class VistoryManage extends Vue {
 
   async fetchUser() {
     /**@description 查看受访人员详情 */
+    const info = {
+      id: this.visitorDialogForm["scenceUserId"],
+      houseId: this.visitorDialogForm["houseId"]
+    };
     try {
-      const { data } = await getOwnerUser(
-        this.visitorDialogForm["scenceUserId"]
-      );
+      const { data } = await getOwnerUser(info);
       this.interUserDetail = data.data.user;
-      this.houseInviterDetail = { ...data.data.house[0] };
+      if (data.data.house) {
+        this.houseInviterDetail = data.data.house[0];
+      }
+      console.log(this.houseInviterDetail, 789456);
     } catch (err) {
       console.log(err.response);
     }
+
+    // try {
+    //   const { data } = await getRegisterHouse({
+    //     houseId: this.visitorDialogForm["houseId"]
+    //   });
+    //   console.log(data, 789789);
+    //   this.houseInviterDetail = data.data;
+    // } catch (err) {
+    //   console.log(err);
+    // }
   }
 
   async fetchPass() {

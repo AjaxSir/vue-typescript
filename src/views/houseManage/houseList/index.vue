@@ -478,7 +478,7 @@ export default class CardManage extends Vue {
       type: "warning"
     })
       .then(() => {
-        deleteTheHousePeople(this.houseId, row.userId).then(res => {
+        deleteTheHousePeople(this.houseId, row.userId, ' ').then(res => {
           if (res.data.code === 200) {
             this.dtailTable.splice(index, 1)
             this.fetchData(this.initForm)

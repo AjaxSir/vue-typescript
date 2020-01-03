@@ -1,14 +1,11 @@
 import _axios from "../plugins/axios";
 
 // 首页获取车辆通行记录
-export function carPassList() {
+export function carPassList(params) {
   return _axios({
     url: '/admin/car-pass',
     method: 'get',
-    params: {
-      limit: 5,
-      page: 1
-    }
+    params
   })
 }
 
@@ -72,13 +69,11 @@ export function getvisitUser(id: string) {
 }
 
 //获取目标车辆用户详细信息 || 获取目标访客车辆邀请人的详细信息
-export function getOwnerUser(id: string) {
+export function getOwnerUser(params:object) {
   return _axios({
     url: '/admin/scence-user',
     method: 'get',
-    params: {
-      id
-    }
+    params
   })
 }
 

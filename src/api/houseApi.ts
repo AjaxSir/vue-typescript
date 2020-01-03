@@ -75,7 +75,7 @@ export function getUnitList(type: string = 'group') {
 }
 
 // 增加单元楼单位
-export function addUnit(name:string, type: string) {
+export function addUnit(name: string, type: string) {
   return _axios({
     url: '/admin/unit',
     method: 'post',
@@ -87,7 +87,7 @@ export function addUnit(name:string, type: string) {
 }
 
 // 删除单元楼单位
-export function deleteUnit(id:string) {
+export function deleteUnit(id: string) {
   return _axios({
     url: '/admin/unit',
     method: 'delete',
@@ -198,7 +198,7 @@ export function editPassageway(data: object) {
 
 
 // 获取特定房屋下的注册人员
-export function getRegisterPeople(houseId : string){
+export function getRegisterPeople(houseId: string) {
   return _axios({
     url: '/admin/usrHouseLink',
     method: 'get',
@@ -208,14 +208,25 @@ export function getRegisterPeople(houseId : string){
   })
 }
 
+
+// 根据房屋id查询房屋信息(已删除的也能查出来)
+export function getRegisterHouse(params:object) {
+  return _axios({
+    url: '/admin/hsHouse/by-id',
+    method: 'get',
+    params
+  })
+}
+
 // 删除特定房屋下的某个注册人员
-export function deleteTheHousePeople(houseId:string, userId: string) {
+export function deleteTheHousePeople(houseId: string, userId: string,scenceUserId:string) {
   return _axios({
     url: '/admin/usrHouseLink',
-    method:'delete',
+    method: 'delete',
     params: {
       houseId,
-      userId
+      userId,
+      scenceUserId
     }
   })
 }
