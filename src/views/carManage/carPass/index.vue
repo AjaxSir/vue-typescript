@@ -8,7 +8,7 @@
           @fetchData="fetchData"
           :filterForm="filterForm"
           :btnStatus="2"
-          :exportUrl="'/v1/admin/car-pass/export/'"
+          :exportUrl="'/admin/car-pass/export'"
           :exportName="'车辆通行记录'"
           :total="page.total"
         >

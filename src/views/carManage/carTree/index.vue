@@ -5,7 +5,7 @@
 <template>
   <div class="content tree-rename">
     <div
-      @click="handleNodeClick({ type: 'building', id: '' })"
+      @click="handleNodeClick({ type: 'building', id: '' ,sonCarSpaceGroups:[1]},{id:0})"
       :class="['treeHeader', highlightStatus ? '' : 'highlight']"
     >
       <i class="iconfont icon-shuji"></i>
@@ -16,13 +16,14 @@
         @command="commandTreeClick"
         placement="bottom-start"
       >
-        <i class="iconfont icon-menu"></i>
+        <i v-show="showMenu=== 0" class="iconfont icon-menu"></i>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item :command="commandObj('addGroup', {})">添加子分组</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </div>
     <el-tree
+      ref="tree"
       :data="TreeData"
       node-key="id"
       :props="dataFormate"
@@ -32,12 +33,9 @@
       :expand-on-click-node="false"
       @node-click="handleNodeClick"
     >
-      <span
-        slot-scope="{ node }"
-        @mouseenter="MouseNnter(node.id)"
-        @mouseleave="MouseLeave(node.id)"
-        :class="[ 'custom-tree-node']"
-      >
+      <!-- @mouseenter="MouseNnter(node.id)"
+      @mouseleave="MouseLeave(node.id)"-->
+      <span slot-scope="{ node }" :class="[ 'custom-tree-node']">
         <span>
           {{ node.label }}
           <!-- <i v-show='selectId === node.data.id' class="el-icon-check"></i> -->
@@ -46,14 +44,10 @@
           <el-dropdown v-if="UpdateStatus" @command="commandTreeClick" placement="bottom-start">
             <i v-show="node.id===showMenu" class="iconfont icon-menu"></i>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item :command="commandObj('addGroup', node)">添加子分组</el-dropdown-item>
+              <el-dropdown-item v-if="groupDisable" :command="commandObj('addGroup', node)">添加子分组</el-dropdown-item>
 
               <el-dropdown-item :command="commandObj('updateGroup', node)">修改分组</el-dropdown-item>
               <el-dropdown-item :command="commandObj('deleteGroup', node)">删除分组</el-dropdown-item>
-            </el-dropdown-menu>
-            <el-dropdown-menu v-if="type === 'role'" slot="dropdown">
-              <el-dropdown-item :command="commandObj('updateRoleGroup', node)">修改</el-dropdown-item>
-              <el-dropdown-item :command="commandObj('deleteRoleGroup', node)">删除</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </div>
@@ -251,10 +245,10 @@ import { getDeviceList } from "@/api/deviceApi.ts";
 import {
   addRoleGroup,
   getGroupInfoById,
-  updateRoleGroup,
   deleteRoleGroup
 } from "@/api/peopleApi.ts";
 import { Message } from "element-ui";
+import { sprintf } from "sprintf-js";
 
 @Component({})
 export default class DataTree extends Vue {
@@ -262,6 +256,8 @@ export default class DataTree extends Vue {
   UpdateStatus: boolean = true; // 是否具有修改权限
   @Getter("permissionList") permissionList: Array<string>;
   @Prop({ default: "house" }) type: string;
+  @Prop({ default: [] }) listData: Array<object>;
+  @Prop({ default: true }) groupDisable: Boolean;
   @Prop({
     default: () => {
       return []; // 必须是函数式返回
@@ -369,34 +365,7 @@ export default class DataTree extends Vue {
     this.fetchUnitList();
     this.fetchUnitList("build");
   }
-  // 获取设备列表
-  // fetchDeviceList(page: number) {
-  //   this.bindIndex = [];
-  //   // console.log(this.bindDeviceList, '已绑定设备列表')
-  //   getDeviceList({ page, limit: 10 }).then(res => {
-  //     res.data.data.records.forEach((ele, index: number) => {
-  //       this.bindDeviceList.forEach(item => {
-  //         if (ele["serialNumber"] === item["deviceSerialNumber"]) {
-  //           this.bindIndex.push(index);
-  //         }
-  //       });
-  //     });
-  //     this.DeviceList = res.data.data.records;
-  //     this.devicePage["total"] = res.data.data.total;
-  //     // console.log(this.bindIndex, 'index')
-  //     this.$nextTick(() => {
-  //       if (this.$refs["deviceList"]) {
-  //         this.bindIndex.forEach(i => {
-  //           this.$refs["deviceList"]["toggleRowSelection"](this.DeviceList[i]);
-  //         });
-  //       }
-  //     });
-  //   });
-  // }
-  // 自动补充名称
-  // autoName() {
-  //   this.HouseForm['name'] = this.HouseForm['serialNumber'] + this.HouseForm['serialNumberUnit']
-  // }
+
   // 关闭弹框
   closeDialog() {
     // 添加分组表单
@@ -416,15 +385,11 @@ export default class DataTree extends Vue {
       title: "添加子分组"
     }; // 批量添加表单
 
-    // if (this.HouseUnitVisible) {
-    //   this.$refs["buildings"]["resetFields"]();
-    // }
     if (this.HouseVisible) {
       this.$refs["batchForm"] && this.$refs["batchForm"]["resetFields"]();
       this.$refs["HouseForm"] && this.$refs["HouseForm"]["resetFields"]();
       this.$refs["HouseForms"] && this.$refs["HouseForms"]["resetFields"]();
     }
-    // this.HouseUnitVisible = false;
     this.HouseVisible = false;
     this.sample = [];
   }
@@ -471,8 +436,14 @@ export default class DataTree extends Vue {
 
   checkHouseInput() {
     /**@description 检测子分组开始和结束规则 */
-    if (/^[1-9]\d*$/.test(this.batchForm["start"])) {
-      if (!/^\d+$/.test(this.batchForm["end"])) {
+    if (/^0*$/.test(this.batchForm["start"])) {
+      this.$message.error("请输入正整数");
+      this.batchForm["unitId"] = "";
+      return false;
+    }
+
+    if (/^0{0,2}[1-9]\d*$/.test(this.batchForm["start"])) {
+      if (!/^0{0,2}[1-9]\d*$/.test(this.batchForm["end"])) {
         this.$message.error("开始和结束的序号类型不一致");
         this.batchForm["unitId"] = "";
         return false;
@@ -520,8 +491,13 @@ export default class DataTree extends Vue {
     }
 
     if (/^\d+$/.test(this.batchForm["start"])) {
-      for (let i = this.batchForm["start"]; i <= this.batchForm["end"]; i++) {
-        this.sample.push(i + unitName);
+      const zeroCount = this.batchForm["start"].search(/[1-9]/) + 1;
+      for (
+        let i = Number(this.batchForm["start"]);
+        i <= Number(this.batchForm["end"]);
+        i++
+      ) {
+        this.sample.push(sprintf(`%0${zeroCount}d${unitName}`, i));
       }
     } else if (/^[A-Z]$/.test(this.batchForm["start"])) {
       for (
@@ -598,32 +574,27 @@ export default class DataTree extends Vue {
     this.$refs["buildings"]["resetFields"]();
     // this.HouseUnitVisible = false;
   }
-  @Emit("fetchData")
-  handleNodeClick(data) {
+  @Emit("fetchDatas")
+  handleNodeClick(data, node, item) {
+    console.log(data)
+    this.showMenu = node.id;
     this.highlightStatus = !!data.id;
     /**@description 树节点点击事件 */
     if (this.type === "house") {
-      if (data.type === "group") {
-        this.selectId = data.id;
-        this.initFormHeader["params"]["carSpaceGroupId"] = "";
-        this.initFormHeader["params"]["groupId"] = data.id;
-        this["page"]["page"] = 1;
-        this.initFormHeader["params"] = Object.assign(
-          this.initFormHeader["params"],
-          this.page
-        );
-        return this.initFormHeader;
-      } else {
-        this.selectId = data.id;
-        this.initFormHeader["params"]["carSpaceGroupId"] = data.id;
-        this.initFormHeader["params"]["groupId"] = "";
-        this["page"]["page"] = 1;
-        this.initFormHeader["params"] = Object.assign(
-          this.initFormHeader["params"],
-          this.page
-        );
-        return this.initFormHeader;
-      }
+      this.selectId = data.id;
+      this.initFormHeader["params"]["carSpaceGroupId"] = data.id;
+      this.initFormHeader["params"]["groupId"] = "";
+      this["page"]["page"] = 1;
+      this.initFormHeader["params"] = Object.assign(
+        this.initFormHeader["params"],
+        this.page,
+
+      );
+      return {
+        form: this.initFormHeader,
+        status: !!data.sonCarSpaceGroups,
+        carSpaceGroup:{carSpaceGroupName:data.currentName,carSpaceGroupId:data.id}
+      };
     } else {
       this["page"]["page"] = 1;
       this.initFormHeader["params"]["authId"] = data.id;
@@ -631,9 +602,14 @@ export default class DataTree extends Vue {
         this.initFormHeader["params"],
         this.page
       );
-      return this.initFormHeader;
+      return {
+        form: this.initFormHeader,
+        status: !!data.sonCarSpaceGroups,
+        carSpaceGroup:{carSpaceGroupName:data.currentName,carSpaceGroupId:data.id}
+      };
     }
   }
+
   /*** 删除序号单元 */
   deleteTag(tag, type) {
     deleteUnit(tag.id).then(res => {
@@ -642,10 +618,12 @@ export default class DataTree extends Vue {
       }
     });
   }
+
   /**显示更多操作图标 */
   MouseNnter(val) {
-    this.showMenu = val;
+    // this.showMenu = val;
   }
+
   /*** 添加单元序号 */
   handleInputConfirm(type: string) {
     this.newTag = false;
@@ -660,9 +638,9 @@ export default class DataTree extends Vue {
   showInput() {
     this.newTag = true;
   }
-  MouseLeave(val) {
-    this.showMenu = 0;
-  }
+  // MouseLeave(val) {
+  //   this.showMenu = 0;
+  // }
   /**
    * action 分类
    */
@@ -732,7 +710,7 @@ export default class DataTree extends Vue {
   }
 
   // 楼栋编号输入检测
-  private housePartern = /^([1-9]\d*|[A-Z])$/;
+  private housePartern = /^(\d*|[A-Z])$/;
   inputHouseCheck(e: any) {
     let v = e.target.value;
 

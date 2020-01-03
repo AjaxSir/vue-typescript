@@ -25,6 +25,15 @@ export function getUserName(params) {
   })
 }
 
+//genuine姓名 电话 证件类型查找
+export function getUser(params) {
+  return _axios({
+    url: '/admin/scence-user/search-usr',
+    method: 'get',
+    params
+  })
+}
+
 //获取指定房屋
 export function getTargetHouse(params) {
   return _axios({

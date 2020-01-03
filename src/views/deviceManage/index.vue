@@ -4,7 +4,7 @@
       <el-col :span="24">
         <action-header
         :initFormHeader='initForm'
-        exportUrl='/v1/admin/dev-manage/export'
+        exportUrl='/admin/dev-manage/export'
         exportName='设备导出.xls'
         @fetchData='fetchData'
         :filterForm='filterForm'

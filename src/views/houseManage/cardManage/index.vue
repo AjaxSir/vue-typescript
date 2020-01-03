@@ -129,15 +129,13 @@
             <el-table-column align="center" width="120" prop="status" label="状态">
               <template slot-scope="{row}">
                 <el-tag
-                v-if='row.status === "-1"'
-                      size="small"
+                      v-if='row.status === "-1"'
                       style="border-radius: 50px;padding: 0 10px; "
                       type="danger"
                     >过期</el-tag>
                 <el-dropdown v-else @command="cardStatusChange" trigger="click">
                   <span class="el-dropdown-link">
                     <el-tag
-                      size="small"
                       style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
                       :type="row.status === '0' ? 'success' : 'danger'"
                     >{{ row.status === '0' ? "正常" : (row.status === '-2' ? "禁用" : "过期" ) }}</el-tag>
@@ -188,7 +186,6 @@
               <p class="detai-info">
                 <span class="labelTitle">状态</span> :&nbsp;&nbsp;&nbsp;
                 <el-tag
-                  size="small"
                   style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
                   :type="detailDialog.status === '0' ? 'success' : 'danger'"
                 >
