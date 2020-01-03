@@ -399,37 +399,12 @@ export default class DeviceManage extends Vue {
         if (res.status === 0) {
           this.Form['longitude'] = res.result.location.lng
           this.Form['latitude'] = res.result.location.lat
-          console.log(this.Form)
         } else {
-          this.$message({
-            message: '没有找到对应的位置信息',
-            type: 'error'
-          })
+          this['message']('error', `没有找到对应的位置信息`)
           this.Form['longitude'] = ''
           this.Form['latitude'] = ''
         }
       })
-      // axios({
-      //   url: `/map-api/v2/`,
-      //   params: {
-      //     address: ,
-      //     ak: 'vCZU88Guz4BmAODWTm8k9BP0WlwId1V0',
-      //     output: 'json'
-      //   },
-      //   method: 'get'
-      // }).then(res => {
-      //   if (!res.data.status) {
-      //     this.Form['longitude'] = res.data.result.location.lng
-      //     this.Form['latitude'] = res.data.result.location.lat
-      //   } else {
-      //     this.$message({
-      //       message: '没有找到对应的位置信息',
-      //       type: 'error'
-      //     })
-      //     this.Form['longitude'] = ''
-      //     this.Form['latitude'] = ''
-      //   }
-      // })
     }
   // 点击地图选取地址
   pointClick(Object: object) {
@@ -488,7 +463,7 @@ export default class DeviceManage extends Vue {
     this.$refs['Forms']["validate"](valid => {
       if(valid) {
         if (this.Form['longitude'] === '' || this.Form['latitude'] === '') {
-          return this.$message.error('请输入正确的设备地址')
+          return this['message']('error', `请输入正确的设备地址`)
         } else {
           createDevice(this.Form).then(res => {
             if(res.data.code === 200) {

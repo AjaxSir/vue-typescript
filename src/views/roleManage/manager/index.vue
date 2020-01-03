@@ -317,13 +317,13 @@ export default class InformIssue extends Vue {
                   note: this.noteString,
                 }).then(res => {
                   if (res.data.code === 200) {
-                    this.$message.success("修改成功");
+                    this['message']('success', `修改成功`)
                     row.noteStatus = false;
                     this.noteString = "";
                     this.fetchData(this.initForm);
                   } else {
                     row.noteStatus = false;
-                    this.$message.error(res.data.message);
+                    this['message']('error', res.data.message)
                   }
                 });
 
@@ -340,9 +340,9 @@ export default class InformIssue extends Vue {
             addManager(this.Form).then(res => {
               if(res.data.code === 200) {
                 this['fetchData'](this.initForm)
-                this.$message.success(`${this.Form['id'] ? '修改成功' : '添加成功'}`)
+                this['message']('success', `${this.Form['id'] ? '修改成功' : '添加成功'}`)
               } else {
-                this.$message.error(`${this.Form['id'] ? '修改失败' : '添加失败'}`)
+                this['message']('error', `${this.Form['id'] ? '修改失败' : '添加失败'}`)
               }
               this['handleClose']()
             })
@@ -359,7 +359,7 @@ export default class InformIssue extends Vue {
   changeStatus(Obj: object) {
     manageStatus(Obj['status'], Obj['id']).then(res => {
       if(res.data.code === 200) {
-        this.$message.success('修改成功')
+        this['message']('success', `修改成功`)
         this['fetchData'](this.initForm)
       }
     })
@@ -369,7 +369,7 @@ export default class InformIssue extends Vue {
     this.$refs['resetForms']['validate']((valid) => {
       if (valid) {
         if (this.resetForms['newPassword'] !== this.resetForms['reNewPassword']) {
-          this.$message.error('两次密码不一致!')
+          this['message']('error', `两次密码不一致`)
           return
         }
         const Obj = {
@@ -378,9 +378,9 @@ export default class InformIssue extends Vue {
         }
         resetPassword(Obj).then(res => {
           if(res.data.code === 200) {
-            this.$message.success('修改密码成功!')
+            this['message']('success', `修改密码成功`)
           } else {
-            this.$message.error('修改密码失败!')
+            this['message']('error', `修改密码失败`)
           }
           this.resetVisible = false
         })

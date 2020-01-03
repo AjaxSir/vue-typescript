@@ -1,6 +1,6 @@
-/**
- * Created by jiachenpan on 16/11/18.
- */
+import { Message } from 'element-ui'
+import Cookie from 'js-cookie'
+
 export function parseTime(time, cFormat) {
   if (arguments.length === 0) {
     return null;
@@ -104,19 +104,6 @@ export function formatTimeObj(datetime, type = 'day') {
   H = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
   Min = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
   S = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
-  // return (
-  //   Y.toString() +
-  //   "-" +
-  //   M.toString() +
-  //   "-" +
-  //   D +
-  //   " " +
-  //   H.toString() +
-  //   ":" +
-  //   Min.toString() +
-  //   ":" +
-  //   S.toString()
-  // );
   return type === 'day' ? (
     Y.toString() +
     "-" +
@@ -238,5 +225,17 @@ export function baiduDebounce(fn, time) {
     timeout = setTimeout(() => { // 然后又创建一个新的 setTimeout, 这样就能保证输入字符后的 interval 间隔内如果还有字符输入的话，就不会执行 fn 函数
       fn.apply(this, arguments)
     }, time)
+  }
+}
+
+export function message(type = 'success', message) {
+  if (!Cookie.get('error')) {
+    Cookie.set('error', Date.now(), { expires: new Date(new Date().getTime() + 3 * 1000) }) // 五秒钟内不会重复出现提示框
+    Message({
+      type: type === 'success' ? 'success' : 'error',
+      message,
+      customClass: 'messageClass',
+      showClose: true
+    })
   }
 }

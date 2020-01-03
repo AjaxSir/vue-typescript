@@ -386,7 +386,7 @@ export default class CardManage extends Vue {
     cardvalidDateChange({ date, id })
       .then((res: any) => {
         if (res.data.code === 200) {
-          this.$message.success("修改过期时间成功");
+          this['message']('success', '修改过期时间成功')
           this.fetchData(this.initForm);
         }
       })
@@ -418,16 +418,13 @@ export default class CardManage extends Vue {
       .then(() => {
         changeCardStstus(status, id).then(res => {
           if (res.data.code === 200) {
-            this.$message.success(`${status === "0" ? "恢复" : "禁用"}成功`);
+            this['message']('success', `${status === "0" ? "恢复" : "禁用"}成功`)
             this.fetchData(this.initForm);
           }
         });
       })
       .catch(() => {
-        this.$message({
-          type: "info",
-          message: "已取消删除"
-        });
+        this['message']('error', `已取消删除`)
       });
   }
   // 选择搜索建议列表某项 并赋值
@@ -451,7 +448,7 @@ export default class CardManage extends Vue {
     this.Form.validDate = formatTimeObj(this.Form.validDate);
     createCard(this.Form).then(res => {
       if (res.data.code === 200) {
-        this.$message.success(`创建成功`);
+        this['message']('success', `创建成功`)
         this.fetchData(this.initForm);
         this["dialogCreate"] = false;
       }
