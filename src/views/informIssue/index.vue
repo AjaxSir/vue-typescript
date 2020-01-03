@@ -31,31 +31,35 @@
             v-loading="showLoading"
             :data="list_data"
             stripe
+            border
             highlight-current-row
             @cell-mouse-enter="enterRowChange"
             @cell-mouse-leave="leaveRowChange"
             @selection-change="handleSelectionChange"
           >
-            <el-table-column v-if="globalUpdateStatus" type="selection" width="50"></el-table-column>
+            <el-table-column align="center" v-if="globalUpdateStatus" type="selection" width="50"></el-table-column>
 
-            <el-table-column type="index" label="序号" width="50"></el-table-column>
-
-            <el-table-column prop="title" label="标题" align="center" :show-overflow-tooltip="true">
+            <el-table-column type="index" align="center" label="序号" class="indexNum" width="50">
               <template slot-scope="scope">
-                <span>{{scope.row.title}}</span>
+                <span>{{scope.$index+1}}</span>
                 <div v-if="globalUpdateStatus" class="fun-btn">
                   <el-dropdown trigger="click" placement="bottom-start" @command="commandClick">
                     <el-tooltip class="item" effect="dark" content="点击操作" placement="top">
                       <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
                     </el-tooltip>
                     <el-dropdown-menu slot="dropdown">
-                      <!-- <el-dropdown-item :command="returnCommand('delete', scope.row)">批量删除</el-dropdown-item> -->
                       <el-dropdown-item
                         :command="returnCommand('delete', scope.row)"
                       >{{ deleteForm.data.length ? '批量删除' : '删除' }}</el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
                 </div>
+              </template>
+            </el-table-column>
+
+            <el-table-column prop="title" label="标题" align="center" :show-overflow-tooltip="true">
+              <template slot-scope="scope">
+                <div style="height:40px;line-height:40px;">{{scope.row.title}}</div>
               </template>
             </el-table-column>
             <el-table-column
@@ -392,7 +396,7 @@ export default class InformIssue extends Vue {
   }
 
   handleClose() {
-    this['dialogCreate'] = false
+    this["dialogCreate"] = false;
     this.$refs["dataForm"]["resetFields"]();
   }
 
@@ -425,25 +429,25 @@ td {
   position: relative;
 }
 
-.fun-btn {
-  position: absolute;
-  left: -64px;
-  top: 18px;
-  .iconfont {
-    font-size: 19px;
-    color: #8091a5;
-    cursor: pointer;
-  }
-}
+// .fun-btn {
+//   position: absolute;
+//   left: -64px;
+//   top: 18px;
+//   .iconfont {
+//     font-size: 19px;
+//     color: #8091a5;
+//     cursor: pointer;
+//   }
+// }
 
-.close-menu {
-  width: 10px;
-  height: 48px;
-  background: #acb7c1;
-  border-top-right-radius: 20px;
-  border-bottom-right-radius: 20px;
-  position: relative;
-}
+// .close-menu {
+//   width: 10px;
+//   height: 48px;
+//   background: #acb7c1;
+//   border-top-right-radius: 20px;
+//   border-bottom-right-radius: 20px;
+//   position: relative;
+// }
 
 // .icon-class {
 //   font-size: 12px;

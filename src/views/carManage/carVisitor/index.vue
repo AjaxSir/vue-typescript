@@ -137,13 +137,14 @@
             height="65vh"
             :data="list_data"
             stripe
+            border
             highlight-current-row
             v-loading="showLoading"
             @cell-mouse-enter="enterRowChange"
             @cell-mouse-leave="leaveRowChange"
             @selection-change="handleSelectionChange"
           >
-            <el-table-column v-if="globalUpdateStatus" type="selection" width="50"></el-table-column>
+            <el-table-column align="center" v-if="globalUpdateStatus" type="selection" width="50"></el-table-column>
 
             <el-table-column type="index" align="center" label="序号" class="indexNum" width="50">
               <template slot-scope="scope">
@@ -163,7 +164,7 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="visitName" label="邀请人" :show-overflow-tooltip="true">
+            <el-table-column align="center" prop="visitName" label="邀请人" :show-overflow-tooltip="true">
               <template slot-scope="scope">
                 <el-button
                   @click="showCarDetails(scope.row,'second')"

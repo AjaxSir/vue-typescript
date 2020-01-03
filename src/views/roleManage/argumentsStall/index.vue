@@ -28,6 +28,7 @@
             v-loading="showLoading"
             :data="list_data"
             stripe
+            border
             highlight-current-row
             @cell-mouse-enter="enterRowChange"
             @cell-mouse-leave="leaveRowChange"
@@ -58,7 +59,7 @@
 
             <el-table-column prop="name" align="center" label="车位类型" :show-overflow-tooltip="true">
               <template slot-scope="{row}">
-                <p>{{ row.name ? row.name :''}}</p>
+                <p style="height:40px;line-height:40px;">{{ row.name ? row.name :''}}</p>
                 <!-- <p
                   class="rowUpdate"
                   v-show="!row.nameStatus || editForm.id !== row.id"

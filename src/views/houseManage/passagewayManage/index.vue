@@ -32,6 +32,7 @@
             v-loading="showLoading"
             :data="list_data"
             stripe
+            border
             highlight-current-row
             @cell-mouse-enter="enterRowChange"
             @cell-mouse-leave="leaveRowChange"
@@ -68,7 +69,11 @@
               align="center"
               width="150px"
               :show-overflow-tooltip="true"
-            ></el-table-column>
+            >
+              <template slot-scope="{row}">
+                <div style="height:40px;line-height: 40px;">{{row.name}}</div>
+              </template>
+            </el-table-column>
 
             <el-table-column prop="enterTimes" align="center" label="累计进入人数" width="130px"></el-table-column>
 
