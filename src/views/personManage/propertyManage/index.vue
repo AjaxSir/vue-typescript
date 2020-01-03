@@ -100,7 +100,8 @@
                   <span class="el-dropdown-link">
                     <el-tag
                     size="small"
-                    style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
+                    type='info'
+                    style="border-radius: 50px;padding: 0 10px; cursor: pointer;color:#606266"
                     >{{ row.authName }}
                     </el-tag>
                   </span>
@@ -118,7 +119,7 @@
                   <span class="el-dropdown-link">
                     <el-tag
                     size="small"
-                    :type="row.status === '0' ? 'primary' : 'warning'"
+                    :type="row.status === '0' ? 'primary' : 'danger'"
                     style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
                     >{{ row.status === '0' ? '正常' : '禁用' }}
                     </el-tag>
@@ -468,7 +469,7 @@ export default class PropertyManage extends Vue {
   changeGroupRole(Obj: object) {
     changeRoleGroup(Obj['Status'], Obj['id']).then(res => {
       if(res.data.code === 200){
-        this.$message.success('设置成功')
+        this['message']('success', '设置成功')
         this['fetchData'](this.initForm)
       }
     })
@@ -485,10 +486,10 @@ export default class PropertyManage extends Vue {
   // 确定修改 电话
   confirmUpdatePhone(row) {
     if (!/^1[123456789]\d{9}$/.test(this.phoneString)) {
-              this.$message.error("请输入正确的手机格式");
-              this.$set(row, 'phoneStatus', false)
-              return;
-            }
+      this['message']('error', '请输入正确的手机格式')
+      this.$set(row, 'phoneStatus', false)
+      return;
+    }
     this.$confirm("此操作将修改物业人员手机号, 是否继续?", "提示", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
@@ -498,36 +499,19 @@ export default class PropertyManage extends Vue {
 
             updateUserPhone(row.id, this.phoneString).then(res => {
               if (res.data.code === 200) {
-                this.$message.success("修改成功");
+                this['message']('success', '修改成功')
                 row.phoneStatus = false;
                 this.phoneString = "";
                 this.fetchData(this.initForm);
               } else {
-                this.$message.error(res.data.message);
+                this['message']('error', res.data.message)
               }
             });
           })
           .catch(() => {
             this.$set(row, 'phoneStatus', false)
-            this.$message({
-              type: "info",
-              message: "已取消修改"
-            });
+            this['message']('error', '已取消修改')
           });
-    // if(!(/^1[3456789]\d{9}$/.test(this.phoneString))){
-    //   this.$message.error('请输入正确的手机格式');
-    //   return
-    // }
-    // updateUserPhone(row.id, this.phoneString).then(res => {
-    //   if (res.data.code === 200) {
-    //     this.$message.success('修改成功')
-    //     row.phoneStatus = false
-    //     this.phoneString = ''
-    //     this.fetchData(this.initForm)
-    //   } else {
-    //     this.$message.error(res.data.message)
-    //   }
-    // })
   }
   // 修改电话离开输入框
   phoneBlur(row) {
@@ -551,12 +535,12 @@ export default class PropertyManage extends Vue {
 
             updateUserNote( row.id, this.noteString ).then(res => {
               if (res.data.code === 200) {
-                this.$message.success('修改成功')
+                this['message']('success', '修改成功')
                 row.noteStatus = false
                 this.noteString = ''
                 this.fetchData(this.initForm)
               } else {
-                this.$message.error(res.data.message)
+                this['message']('error', res.data.message)
               }
             })
   }
@@ -616,7 +600,7 @@ export default class PropertyManage extends Vue {
   changeStatus(Obj: object) {
     resetDisabledUser(Obj['Status'], Obj['id'] ).then(res => {
       if(res.data.code === 200) {
-        this.$message.success('修改成功')
+        this['message']('success', '修改成功')
         this['fetchData'](this.initForm)
       }
     })
@@ -636,7 +620,7 @@ export default class PropertyManage extends Vue {
       if(valid) {
         addPropert(this.Form).then(res => {
           if(res.data && res.data.code === 200) {
-            this.$message.success('添加成功')
+            this['message']('success', '添加成功')
             this['dialogCreate'] = false
             this['fetchData'](this.initForm)
             this['handleClose']()

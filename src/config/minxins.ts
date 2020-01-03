@@ -1,7 +1,7 @@
 // import axiosConfig from './axios';
 import { Vue, Component } from "vue-property-decorator";
 import { Getter } from 'vuex-class'
-import { MessageBox, Message } from 'element-ui';
+import { MessageBox } from 'element-ui';
 import _axios from '@/plugins/axios.js'
 import Cookie from 'js-cookie'
 // import { deleteRow } from "./../api/common"
@@ -192,7 +192,7 @@ export default class GlobalMimins extends Vue {
     return _axios(option).then(res => {
       if (res.data.code === 200) {
         this.deleteForm['data'] = []
-        this.$message.success('删除成功')
+        this.message('success', '删除成功')
         this.fetchData(this.initForm)
       } else {
         this.deleteForm['data'] = []
@@ -230,10 +230,7 @@ export default class GlobalMimins extends Vue {
         }).then(() => {
           this.deleteRow(this.deleteForm)
         }).catch(() => {
-          Message({
-            type: 'info',
-            message: '已取消删除'
-          });
+          this.message('error', '已取消删除')
           this.deleteForm['data'] = []
         });
         break
@@ -243,22 +240,13 @@ export default class GlobalMimins extends Vue {
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          // deleteRow('url').then((res: any) => {
-          //   Message({
-          //     type: 'success',
-          //     message: '添加成功!'
-          //   });
-          // })
+
         }).catch(() => {
-          Message({
-            type: 'info',
-            message: '已取消添加'
-          });
+          this.message('error', '已取消添加')
         });
         break
     }
   }
-
   /**
    * 添加成功弹出框
    * @param action
@@ -283,33 +271,33 @@ export default class GlobalMimins extends Vue {
       case '200':
         if (value.length === 200) {
           value = value.slice(200)
-          this.message('备注不能超过200个字符')
+          this.message('error', '备注不能超过200个字符')
         }
         break;
       case '30':
         if (value.length === 30) {
           value = value.slice(30)
-          this.message('不能超过30个字符')
+          this.message('error', '不能超过30个字符')
         }
         break;
       case '12':
         if (value.length === 12) {
-          this.message('车牌不能超过12个字符')
+          this.message('error', '车牌不能超过12个字符')
         }
         break;
       case '10':
         if (value.length === 10) {
-          this.message('此项不能超过10个字符')
+          this.message('error', '此项不能超过10个字符')
         }
         break;
       case '5':
         if (value.length === 5) {
-          this.message('此项不能超过5个字符')
+          this.message('error', '此项不能超过5个字符')
         }
         break;
       case '3':
         if (!(/^[1-9]\d*$/).test(value)) {
-          return this.message('年龄只能输入数字')
+          return this.message('error', '年龄只能输入数字')
         }
         break;
       case '11':
@@ -317,31 +305,33 @@ export default class GlobalMimins extends Vue {
         //   return this.message('请输入正确格式的电话号码')
         // }
         if (value.toString().length > 11) {
-          return this.message('电话最多输入11位')
+          return this.message('error', '电话最多输入11位')
         }
         break;
       case '18':
         if (value.length === 18) {
-          this.message('身份证号不能超过18个字符')
+          this.message('error', '身份证号不能超过18个字符')
         }
         break;
     }
 
   }
-  message(val: string) {
+  message(type: string = 'success', message:string) {
     if (!Cookie.get('error')) {
       Cookie.set('error', Date.now(), { expires: new Date(new Date().getTime() + 3 * 1000) }) // 五秒钟内不会重复出现提示框
       this.$message({
-        message: val,
-        type: "warning"
-      });
+        type: type === 'success' ? 'success' : 'error',
+        message,
+        customClass: 'messageClass',
+        showClose: true
+      })
     }
   }
 
   filterNumber(e: any) {
     var v = e.target.value
     if (v !== "" && !this.regPos.test(v)) {
-      this.message('手机号码必须是数值')
+      this.message('error', '手机号码必须是数值')
     }
     e.target.value = v.replace(this.upNum, "");
   }
@@ -350,7 +340,7 @@ export default class GlobalMimins extends Vue {
   UpNumber(e: any) {
     var v = e.target.value
     if (v !== "" && !this.regPos.test(v)) {
-      this.message('手机号码必须是数值')
+      this.message('error', '手机号码必须是数值')
     }
     e.target.value = v.replace(this.upNum, "");
     this.phoneNum = v.length
@@ -378,7 +368,7 @@ export default class GlobalMimins extends Vue {
   ageNumber(e: any) {
     var v = e.target.value
     if (v !== "" && !this.regPos.test(v)) {
-      this.message('年龄必须是数值')
+      this.message('error', '年龄必须是数值')
     }
     e.target.value = v.replace(this.upNum, "");
   }
@@ -387,7 +377,7 @@ export default class GlobalMimins extends Vue {
   earlyPeriodNumber(e: any) {
     var v = e.target.value
     if (v !== "" && !this.regPos.test(v)) {
-      this.message('预警周期必须是数值')
+      this.message('error', '预警周期必须是数值')
     }
     e.target.value = v.replace(this.upNum, "");
   }
@@ -396,7 +386,7 @@ export default class GlobalMimins extends Vue {
   carNumber(e: any) {
     var v = e.target.value
     if (v !== "" && !this.regPos.test(v)) {
-      this.message('最大同时停车数量必须是数值')
+      this.message('error', '最大同时停车数量必须是数值')
     }
     e.target.value = v.replace(this.upNum, "");
   }

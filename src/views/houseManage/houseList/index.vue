@@ -486,10 +486,7 @@ export default class CardManage extends Vue {
         });
       })
       .catch(() => {
-        this.$message({
-          type: "info",
-          message: "已取消删除"
-        });
+        this['message']('error', '已取消删除')
       });
   }
   // 注册人数排序
@@ -525,7 +522,7 @@ export default class CardManage extends Vue {
       status: Obj["houseStatus"]
     }).then(res => {
       if (res.data.code === 200) {
-        this.$message.success("修改成功");
+        this['message']('success', '修改成功')
         this["fetchData"](this.initForm);
       }
     });
@@ -561,13 +558,13 @@ export default class CardManage extends Vue {
                   status: row.status
                 }).then(res => {
                   if (res.data.code === 200) {
-                    this.$message.success("修改成功");
+                    this['message']('success', '修改成功')
                     row.noteStatus = false;
                     this.noteString = "";
                     this.fetchData(this.initForm);
                   } else {
                     row.noteStatus = false;
-                    this.$message.error(res.data.message);
+                    this['message']('error', res.data.message)
                   }
                 });
 
@@ -580,7 +577,7 @@ export default class CardManage extends Vue {
         this.Form["buildingId"] = [...this.Form["buildingIdArr"]].pop();
         addHouse(this.Form).then(res => {
           if (res.data.code === 200) {
-            this.$message.success("添加成功");
+            this['message']('success', '添加成功')
             this["dialogCreate"] = false;
             this["fetchData"](this.initForm);
             this["handleClose"]();

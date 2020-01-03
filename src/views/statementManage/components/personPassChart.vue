@@ -129,7 +129,7 @@ import { formatTimeObj } from '@/utils'
             this.lineY.push(ele.count)
           })
         } else {
-          this.$message.error('获取数据失败')
+          this['message']('error', `获取数据失败`)
         }
 
       })
@@ -137,7 +137,7 @@ import { formatTimeObj } from '@/utils'
     // 点击确定筛选
     dataChange() {
       if (!this.timeRange) {
-        return this.$message.error('请先选择时间段查询')
+        return this['message']('error', `请先选择时间段查询`)
       }
       this.fetchListData()
     }

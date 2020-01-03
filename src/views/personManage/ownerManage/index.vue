@@ -221,7 +221,7 @@
                   <span class="el-dropdown-link">
                     <el-tag
                       size="small"
-                      :type="row.house[0] && row.house[0].enableInviteVisitor === '1' ? 'primary' : 'warning'"
+                      :type="row.house[0] && row.house[0].enableInviteVisitor === '1' ? 'primary' : 'danger'"
                       style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
                     >{{ row.house[0] && row.house[0].enableInviteVisitor === '1' ? '允许' : '禁止' }}</el-tag>
                   </span>
@@ -244,7 +244,7 @@
                   <span class="el-dropdown-link">
                     <el-tag
                       size="small"
-                      :type="row.house[0] && row.house[0].enableInviteCar === '1' ? 'primary' : 'warning'"
+                      :type="row.house[0] && row.house[0].enableInviteCar === '1' ? 'primary' : 'danger'"
                       style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
                     >{{ row.house[0] && row.house[0].enableInviteCar === '1' ? '允许' : '禁止' }}</el-tag>
                   </span>
@@ -267,7 +267,7 @@
                   <span class="el-dropdown-link">
                     <el-tag
                       size="small"
-                      :type="row.house[0] && row.house[0].enableRemoteOpen === '1' ? 'primary' : 'warning'"
+                      :type="row.house[0] && row.house[0].enableRemoteOpen === '1' ? 'primary' : 'danger'"
                       style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
                     >{{ row.house[0] && row.house[0].enableRemoteOpen === '1' ? '允许' : '禁止' }}</el-tag>
                   </span>
@@ -918,16 +918,13 @@ export default class OwnerManage extends Vue {
         console.log(row);
         deleteTheHousePeople(row.houseId, this.userId).then(res => {
           if (res.data.code === 200) {
-            this.$message.success("删除成功");
+            this['message']('success', '删除成功')
             this.houseDtailTable.splice(index, 1);
           }
         });
       })
       .catch(() => {
-        this.$message({
-          type: "info",
-          message: "已取消删除"
-        });
+        this['message']('error', '已取消删除')
       });
   }
   async remoteMethod(query: string, cb) {
@@ -1034,7 +1031,7 @@ export default class OwnerManage extends Vue {
     }
     updateRoleHouse(data).then(res => {
       if (res.data.code === 200) {
-        this.$message.success("设置成功");
+        this['message']('success', '设置成功')
         this.fetchData(this.initForm);
       }
     });
@@ -1050,12 +1047,12 @@ export default class OwnerManage extends Vue {
       if(valid) {
         if (!this.Form['house'].length) {
           this.btnLoading = false
-          this.$message.error('未选择房屋')
+          this['message']('error', '未选择房屋')
           return
         }
         addPeople(this.Form).then(res => {
           if(res.data.code === 200) {
-            this.$message.success('添加成功')
+            this['message']('success', '添加成功')
             this['dialogCreate'] = false
             this.Form['house'] = []
             this['handleClose']()
@@ -1083,7 +1080,7 @@ export default class OwnerManage extends Vue {
   // 确定修改 电话
   confirmUpdatePhone(row) {
     if (!/^1[123456789]\d{9}$/.test(this.phoneString)) {
-              this.$message.error("请输入正确的手机格式");
+              this['message']('error', '请输入正确的手机格式')
               this.$set(row, 'phoneStatus', false)
               return;
             }
@@ -1095,11 +1092,11 @@ export default class OwnerManage extends Vue {
           .then(() => {
             updateUserPhone(row.id, this.phoneString).then(res => {
               if (res.data.code === 200) {
-                this.$message.success("修改成功");
+                this['message']('success', '修改成功')
                 this.phoneString = "";
                 this.fetchData(this.initForm);
               } else {
-                this.$message.error(res.data.message);
+                this['message']('error', res.data.message)
               }
             }).catch(() => {
               this.$set(row, 'phoneStatus', false)
@@ -1107,24 +1104,21 @@ export default class OwnerManage extends Vue {
           })
           .catch(() => {
             this.$set(row, 'phoneStatus', false)
-            this.$message({
-              type: "info",
-              message: "已取消修改"
-            });
+            this['message']('error', '已取消修改')
           });
   }
   // 确定修改 备注
   confirmUpdateNote() {
     if (!this.detailDialog['note']) {
-      return this.$message.error('请输入备注信息')
+      return this['message']('error', '请输入备注信息')
     }
     updateUserNote(this.detailDialog['id'], this.detailDialog['note']).then(res => {
       if (res.data.code === 200) {
-        this.$message.success("修改成功");
+        this['message']('success', '修改成功')
         this.noteString = "";
         this.fetchData(this.initForm);
       } else {
-        this.$message.error(res.data.message);
+        this['message']('error', res.data.message)
       }
     });
   }
@@ -1141,8 +1135,7 @@ export default class OwnerManage extends Vue {
         this.updateHouseForm["overTime"] === "" ||
         this.updateHouseForm["overTime"] === null
       ) {
-        this.$message.error("租客和家庭成员需要添加过期时间!");
-        return;
+        return this['message']('error', '租客和家庭成员需要添加过期时间')
       }
     }
     this.Form["house"][this.houseIndex] = Object.assign(

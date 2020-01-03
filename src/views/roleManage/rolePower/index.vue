@@ -123,7 +123,7 @@
       </el-table>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogTableVisible = false">取 消</el-button>
-        <el-button type="primary" @click="saveRole">保 存</el-button>
+        <el-button type="primary" @click="saveRole">确 定</el-button>
       </div>
     </el-dialog>
     <!-- 添加或修改 -->
@@ -272,7 +272,7 @@ export default class InformIssue extends Vue {
     this.updateRoleForm['permission'] = role
     updateRole(this.updateRoleForm).then(res => {
       if (res.data.code === 200) {
-        this.$message.success('修改权限成功')
+        this['message']('success', `修改权限成功`)
         this.fetchData(this.initForm)
         this.dialogTableVisible = false
       }
@@ -286,7 +286,7 @@ export default class InformIssue extends Vue {
           addRole(this.Form).then(res => {
             if (res.data.code === 200) {
               this['fetchData'](this.initForm)
-              this.$message.success('添加角色成功')
+              this['message']('success', `添加角色成功`)
             }
             this['handleClose']()
           })
@@ -294,7 +294,7 @@ export default class InformIssue extends Vue {
           updateRole(this.Form).then(res => {
             if (res.data.code === 200) {
               this['fetchData'](this.initForm)
-              this.$message.success('修改角色成功')
+              this['message']('success', `修改角色成功`)
             }
              this['handleClose']()
           })

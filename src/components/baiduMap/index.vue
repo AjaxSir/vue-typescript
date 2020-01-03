@@ -65,6 +65,7 @@
 declare function require(string): string;
 import { Component, Prop, Vue, Mixins, Emit } from "vue-property-decorator";
 import axios from "axios";
+import { message } from '@/utils'
 @Component({})
 export default class BaiDuMap extends Vue {
   @Prop({ default: "" }) keyword: string;
@@ -127,10 +128,7 @@ export default class BaiDuMap extends Vue {
           addRess['district'] = res.result.addressComponent.district
            this.$emit('pointClick', addRess)
         } else {
-          this.$message({
-            message: '没有找到对应的位置信息',
-            type: 'error'
-          })
+          message('error', '没有找到对应的位置信息')
         }
 })
       //   axios({

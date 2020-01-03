@@ -589,8 +589,7 @@ import {
   updateRoleGroup,
   deleteRoleGroup
 } from "@/api/peopleApi.ts";
-import { Message } from "element-ui";
-
+import { message } from '@/utils'
 @Component({})
 export default class DataTree extends Vue {
   private showMenu: Number = 0;
@@ -867,12 +866,12 @@ export default class DataTree extends Vue {
       if (valid) {
         this.RoleForm["devAuthoritiesDevice"] = this.bindDeviceList;
         if (!this.RoleForm["devAuthoritiesDevice"].length) {
-          return this.$message.error("请添加权限组的设备");
+          return message('error', '请添加权限组的设备')
         }
         if (!this.RoleForm["id"]) {
           addRoleGroup(this.RoleForm).then(res => {
             if (res.data.code === 200) {
-              this.$message.success("添加权限组成功");
+              message('success', '添加权限组成功')
               this.$emit("fetchRoleGroup");
               this["page"]["page"] = 1;
               this.$emit("fetchData", this.initFormHeader);
@@ -882,7 +881,7 @@ export default class DataTree extends Vue {
         } else {
           updateRoleGroup(this.RoleForm).then(res => {
             if (res.data.code === 200) {
-              this.$message.success("修改权限组成功");
+              message('success', '修改权限组成功')
               this.$emit("fetchRoleGroup");
               this["page"]["page"] = 1;
               this.$emit("fetchData", this.initFormHeader);
@@ -921,7 +920,7 @@ export default class DataTree extends Vue {
           // console.log('confirm', this.UnitForm)
           addBuilding(this.UnitForm).then(res => {
             if (res.data.code === 200) {
-              this.$message.success("添加成功");
+              message('success', '添加成功')
               this.HouseUnitVisible = false;
               this.$emit("getHouseTreeData");
             }
@@ -929,7 +928,7 @@ export default class DataTree extends Vue {
         } else {
           updateBuilding(this.UnitForm).then(res => {
             if (res.data.code === 200) {
-              this.$message.success("添加成功");
+              message('success', '修改成功')
               this.HouseUnitVisible = false;
               this.$emit("getHouseTreeData");
             }
@@ -985,10 +984,7 @@ export default class DataTree extends Vue {
         addHouseGroup(this.HouseForm).then(res => {
           if (res.data.code === 200) {
             this.closeDialog();
-            Message({
-              type: "success",
-              message: "添加成功"
-            });
+            message('success', '添加成功')
             // this.checkParent(this.TreeData, res.data.data)
             this.$emit("getHouseTreeData");
             this.HouseVisible = false;
@@ -998,10 +994,7 @@ export default class DataTree extends Vue {
         updateHouseGroup(this.HouseForm).then(res => {
           if (res.data.code === 200) {
             this.closeDialog();
-            Message({
-              type: "success",
-              message: "修改成功"
-            });
+            message('success', '修改成功')
             this.$emit("getHouseTreeData");
             this.HouseVisible = false;
           }
@@ -1013,14 +1006,15 @@ export default class DataTree extends Vue {
         !reg.test(this.batchForm["min"]) &&
         !reg.test(this.batchForm["max"])
       ) {
-        return this.$message.error("请输入正整数!");
+        return message('error', '请填入正整数')
+
       } else if (
         Number(this.batchForm["min"]) > Number(this.batchForm["max"])
       ) {
-        return this.$message.error("请确保序号由小到大!");
+        return message('error', '请确保序号由小到大')
       } else {
         this.sortCreated().then(res => {
-          this.$message.success(`创建${res.success}个成功,${res.error}个失败`);
+          message('success', `创建${res.success}个成功,${res.error}个失败`)
           this.$refs["batchForm"]["resetFields"]();
           this.$emit("getHouseTreeData");
           this.HouseVisible = false;
@@ -1051,7 +1045,8 @@ export default class DataTree extends Vue {
   }
   constraintLength(value: string) {
     if (value.length === 10) {
-      return this.$message.warning("此项不能超过10个字符");
+
+      return message('error', '此项不能超过10个字符')
     }
   }
   // 关闭添加/修改单元楼
@@ -1149,20 +1144,14 @@ export default class DataTree extends Vue {
           .then(() => {
             deleteHouseGroup(treeData.data.id).then((res: any) => {
               if (res.data.code === 200) {
-                this.$message({
-                  type: "success",
-                  message: "删除成功!"
-                });
+                message('success', '删除成功')
                 this.$emit("getHouseTreeData");
                 this.HouseVisible = false;
               }
             });
           })
           .catch(() => {
-            this.$message({
-              type: "info",
-              message: "已取消删除"
-            });
+            message('error', '已取消删除')
           });
         break;
       case "addBuilding":
@@ -1191,7 +1180,7 @@ export default class DataTree extends Vue {
             this.RoleForm = Object.assign({}, res.data.data);
             this.bindDeviceList = res.data.data.devAuthoritiesDevice;
           } else {
-            this.$message.error("获取全选组信息失败");
+            message('error', '获取权限组信息失败')
           }
         });
         this.RoleVisible = true;
@@ -1205,19 +1194,13 @@ export default class DataTree extends Vue {
           .then(() => {
             deleteRoleGroup(treeData.data.id).then((res: any) => {
               if (res.data.code === 200) {
-                this.$message({
-                  type: "success",
-                  message: "删除成功!"
-                });
+                message('success', '删除成功')
                 this.$emit("fetchRoleGroup");
               }
             });
           })
           .catch(() => {
-            this.$message({
-              type: "info",
-              message: "已取消删除"
-            });
+            message('error', '已取消删除')
           });
         break;
       case "deleteBuilding":
@@ -1229,19 +1212,13 @@ export default class DataTree extends Vue {
           .then(() => {
             deleteBuilding(treeData.data.id).then((res: any) => {
               if (res.data.code === 200) {
-                this.$message({
-                  type: "success",
-                  message: "删除成功!"
-                });
+                message('success', '删除成功')
                 this.$emit("getHouseTreeData");
               }
             });
           })
           .catch(() => {
-            this.$message({
-              type: "info",
-              message: "已取消删除"
-            });
+            message('error', '已取消删除')
           });
         break;
     }

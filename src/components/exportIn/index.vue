@@ -277,6 +277,7 @@
 import { exportList } from '@/api/user.ts'
 import { Component, Vue, Prop, Emit } from "vue-property-decorator";
 import { Getter } from "vuex-class";
+import { message } from '@/utils'
 @Component({})
 export default class ExportIn extends Vue {
   @Prop({ default: "" }) downTemplateUrl: string;
@@ -295,7 +296,7 @@ export default class ExportIn extends Vue {
     })
     this.errData = []
     if (JSON.parse(err.message).code === 400) {
-      this.$message.error(JSON.parse(err.message).message);
+      message('error', JSON.parse(err.message).message)
     } else {
       this.errData = JSON.parse(err.message);
       this.dialogTableVisible = true;
@@ -308,7 +309,7 @@ export default class ExportIn extends Vue {
     this.$nextTick(() => {
       this.fileName = ''
     })
-    this.$message.success("导入成功");
+    message('success', `导入成功`)
     this.$refs.upload["clearFiles"]();
     this.handleClose();
     return true;
