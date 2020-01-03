@@ -72,12 +72,21 @@
           :show-overflow-tooltip="true"
           :key="Math.random()"
           align="center"
+          property="userType"
+          label="住户类型"
+          width="150"
+        ></el-table-column>
+        <el-table-column
+          v-if="uploadUrl.indexOf('/admin/usrUser/import') !== -1"
+          :show-overflow-tooltip="true"
+          :key="Math.random()"
+          align="center"
           property="carNo"
           label="车牌"
           width="150"
         ></el-table-column>
         <el-table-column
-          v-if="uploadUrl.indexOf('/admin/usrUser/import') !== -1"
+          v-if="uploadUrl.indexOf('/admin/usrUser/PropertyManager/import') !== -1"
           :show-overflow-tooltip="true"
           :key="Math.random()"
           align="center"
@@ -301,6 +310,7 @@ export default class ExportIn extends Vue {
       this.dialogTableVisible = true;
       this.$refs.upload["clearFiles"]();
     }
+    this.handleClose();
   }
   @Emit("successUpload")
   successUpload(file) {
@@ -310,10 +320,8 @@ export default class ExportIn extends Vue {
     message('success', `导入成功`)
     this.$refs.upload["clearFiles"]();
     this.handleClose();
-    return true;
   }
   changeFile(file) {
-    console.log(this.uploadUrl.indexOf('/admin/usr-car/import'))
     this.fileName = file.name;
   }
   mounted() {
