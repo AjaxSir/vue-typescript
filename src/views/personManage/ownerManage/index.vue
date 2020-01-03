@@ -411,12 +411,7 @@
               <span>{{ row.groupName }} - {{ row.buildingName }} - {{ row. serialNumber}}</span>
             </template>
             </el-table-column>
-            <el-table-column
-              align="center"
-              :show-overflow-tooltip="true"
-              prop="createTime"
-              label="创建时间"
-            ></el-table-column>
+
 
             <el-table-column align="center" label="邀请车辆">
               <template slot-scope="{row}">{{ row.enableInviteCar === '1' ? '允许' : '禁止' }}</template>
@@ -433,6 +428,12 @@
                 <span>{{row.note}}</span>
               </template>
             </el-table-column>
+            <el-table-column
+              align="center"
+              :show-overflow-tooltip="true"
+              prop="createTime"
+              label="创建时间"
+            ></el-table-column>
             <el-table-column
               align="center"
               :show-overflow-tooltip="true"
