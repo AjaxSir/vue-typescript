@@ -60,11 +60,16 @@
 
             <el-dropdown-menu v-if="type === 'house'" slot="dropdown">
               <el-dropdown-item
-                v-if="node.data.type === 'group'"
+                v-if="
+                (node.data.sonBuildGroups && node.data.sonBuildGroups.length === 0) ||
+                (node.data.sonBuildGroups && node.data.sonBuildGroups.length && node.data.sonBuildGroups[0].type === 'group')"
                 :command="commandObj('addGroup', node)"
-              >添加子分组</el-dropdown-item>
+              >添加子分组
+              </el-dropdown-item>
               <el-dropdown-item
-                v-if="node.data.type === 'group'"
+                v-if="
+                (node.data.sonBuildGroups && node.data.sonBuildGroups.length === 0) ||
+                (node.data.sonBuildGroups && node.data.sonBuildGroups.length && node.data.sonBuildGroups[0].type === 'building')"
                 :command="commandObj('addBuilding', node)"
               >添加单元楼</el-dropdown-item>
               <el-dropdown-item
