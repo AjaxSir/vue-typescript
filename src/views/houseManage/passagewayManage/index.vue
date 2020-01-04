@@ -292,7 +292,7 @@ export default class InformIssue extends Vue {
         creatPassageway(form).then(res => {
           this.handleClose();
           this["fetchData"](this.initForm);
-          this["notify"]("success", "成功", "添加出入口成功");
+          this["message"]("success", "添加出入口成功!");
         });
       }
     });
@@ -307,7 +307,6 @@ export default class InformIssue extends Vue {
   }
 
   modifPassageway() {
-    console.log(123);
     const form = { ...this.editForm };
     for (let key in form) {
       if (form[key] === "") {
@@ -317,7 +316,7 @@ export default class InformIssue extends Vue {
     editPassageway(form).then(() => {
       this.handleClose();
       this["fetchData"](this.initForm);
-      this["notify"]("success", "成功", "修改出入口成功");
+      this["message"]("success", `修改出入口${this.editForm["name"]}成功!`);
     });
   }
 
@@ -343,32 +342,21 @@ export default class InformIssue extends Vue {
 
   confirmUpdateNote(item) {
     /**@description 修改备注 */
-
-    // this.$confirm("此操作将修改出入口的备注, 是否继续?", "提示", {
-    //       confirmButtonText: "确定",
-    //       cancelButtonText: "取消",
-    //       type: "warning"
-    //     })
-    //       .then(() => {
     const form = { note: this.editForm["note"], id: item.id };
-    editPassageway(form)
-      .then(() => {
-        this["notify"]("success", "成功", "修改出入口备注成功");
-        this["fetchData"](this.initForm);
-        item.noteStatus = false;
-      })
-      .catch(() => {
-        item.noteStatus = false;
-      });
-    // })
-    // .catch(() => {
-    //   item.noteStatus = false;
-    //   this.$set(item, 'phoneStatus', false)
-    //   this.$message({
-    //     type: "info",
-    //     message: "已取消修改"
-    //   });
-    // });
+    if (item["note"] !== form["note"]) {
+      editPassageway(form)
+        .then(() => {
+          this["message"](
+            "success",
+            `修改出入口${item["name"]}的备注信息成功!`
+          );
+          this["fetchData"](this.initForm);
+          item.noteStatus = false;
+        })
+        .catch(() => {
+          item.noteStatus = false;
+        });
+    }
   }
 
   handleClose() {

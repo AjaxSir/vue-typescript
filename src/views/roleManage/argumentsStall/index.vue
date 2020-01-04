@@ -34,7 +34,13 @@
             @cell-mouse-leave="leaveRowChange"
             @selection-change="handleSelectionChange"
           >
-            <el-table-column v-if="globalUpdateStatus" type="selection" width="50" disabled="true"></el-table-column>
+            <el-table-column
+              v-if="globalUpdateStatus"
+              align="center"
+              type="selection"
+              width="50"
+              disabled="true"
+            ></el-table-column>
 
             <el-table-column type="index" align="center" label="序号" class="indexNum" width="50">
               <template slot-scope="scope">
@@ -45,7 +51,7 @@
                       <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
                     </el-tooltip>
                     <el-dropdown-menu slot="dropdown">
-                      <div @click="editTarget(scope.row)">
+                      <div v-if="!deleteForm.data.length" @click="editTarget(scope.row)">
                         <el-dropdown-item command="update">修改</el-dropdown-item>
                       </div>
                       <el-dropdown-item
@@ -333,7 +339,7 @@ export default class WarningLink extends Vue {
         addArgumentsStall(form).then(res => {
           this.createClose();
           this["fetchData"](this.initForm);
-          this["notify"]("success", "成功", "添加车位类型成功");
+          this["message"]("success", "添加车位类型成功!");
         });
       }
     });
@@ -366,7 +372,7 @@ export default class WarningLink extends Vue {
       delete form["name"];
     }
     editArgumentsStall(form).then(() => {
-      this["notify"]("success", "成功", "修改车位类型成功");
+      this["message"]("success", "修改车位类型成功!");
       this["fetchData"](this.initForm);
     });
   }
@@ -387,7 +393,7 @@ export default class WarningLink extends Vue {
   // maxCar(row) {
   //   var v = row.maxCar;
   //   if (v !== "" && !this["regPos"].test(v)) {
-  //     this["message"]("最大同时停车数量必须是数值");
+  //     this["message"]('success',"最大同时停车数量必须是数值!");
   //   }
   //   // row.name = v.replace(this["upNum"], "");
   // }
@@ -406,7 +412,7 @@ export default class WarningLink extends Vue {
       delete form["maxCar"];
     }
     editArgumentsStall(form).then(() => {
-      this["notify"]("success", "成功", "修改最大同时停车数量成功");
+      this["message"]("success", "修改最大同时停车数量成功!");
       this["fetchData"](this.initForm);
     });
   }
@@ -440,7 +446,7 @@ export default class WarningLink extends Vue {
       if (valid) {
         editArgumentsStall(form).then(() => {
           this.editClose();
-          this["notify"]("success", "成功", "修改车位类型成功");
+          this["message"]("success", "修改车位类型成功!");
           this["fetchData"](this.initForm);
         });
       }

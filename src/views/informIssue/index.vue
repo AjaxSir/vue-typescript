@@ -331,7 +331,7 @@ export default class InformIssue extends Vue {
         postMessage(form).then(res => {
           this.handleClose();
           this["fetchData"](this.initForm);
-          this["notify"]("success", "成功", "发布消息成功");
+          this["message"]("success", "发布消息成功!");
         });
       }
     });

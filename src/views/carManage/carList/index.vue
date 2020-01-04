@@ -101,7 +101,7 @@
                       <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
                     </el-tooltip>
                     <el-dropdown-menu slot="dropdown">
-                      <div @click="editType(scope.row)">
+                      <div v-if="!deleteForm.data.length" @click="editType(scope.row)">
                         <el-dropdown-item command="update">修改</el-dropdown-item>
                       </div>
                       <el-dropdown-item
@@ -149,10 +149,16 @@
                     >{{ scope.row.status && scope.row.status =='1' ? "正常" : "禁用" }}</el-tag>
                   </span>
                   <el-dropdown-menu slot="dropdown">
-                    <div @click="handleCommand('1')">
+                    <div
+                      v-if="scope.row.status !=='1'"
+                      @click="handleCommand('1',scope.row.status)"
+                    >
                       <el-dropdown-item>正常</el-dropdown-item>
                     </div>
-                    <div @click="handleCommand('2')">
+                    <div
+                      v-if="scope.row.status !=='2'"
+                      @click="handleCommand('2',scope.row.status)"
+                    >
                       <el-dropdown-item>禁用</el-dropdown-item>
                     </div>
                   </el-dropdown-menu>
@@ -639,6 +645,7 @@ export default class CarList extends Vue {
   private noteString: String = "";
 
   private dialogEdit: Boolean = false; // 修改弹出表单
+  private editInfo: Object = {}; //保存初始值
   private editForm: Object = {
     //修改表单字段
     ownerPhone: "", //车主电话
@@ -817,12 +824,6 @@ export default class CarList extends Vue {
 
   createCar() {
     /**@description 添加车辆处理 */
-    // this.verification(this.createForm[0]["ownerPhone"]);
-    // if (
-    //   this.errorMessage["ownerPhone"] === "" &&
-    //   this.createForm[0]["ownerPhone"].length === 11
-    // ) {
-    //   if (this.restaurants.length > 0) {
     this.$refs["dataForm"]["validate"](valid => {
       if (valid) {
         var form = [
@@ -834,23 +835,15 @@ export default class CarList extends Vue {
           this.handleClose();
           this["fetchData"](this.initForm);
           this.nameDisabled = false;
-          this["notify"]("success", "成功", "添加车辆名单成功");
+          this["message"]("success", `添加车辆名单成功!`);
         });
       }
     });
-    //   } else {
-    //     this.errorMessage["ownerPhone"] = "电话号码不存在";
-    //   }
-    // } else if (
-    //   this.createForm[0]["ownerPhone"].length !== 0 &&
-    //   this.createForm[0]["ownerPhone"].length < 11
-    // ) {
-    //   this.errorMessage["ownerPhone"] = "电话号码为11位,请检查是否输入正确";
-    // }
   }
 
   editType(item) {
     /**@description 修改状态 */
+    this.editInfo = item;
     for (const key in this.editForm) {
       this.editForm[key] = item[key];
     }
@@ -883,36 +876,24 @@ export default class CarList extends Vue {
 
   confirmUpdateNote(item) {
     /**@description 修改备注 */
-    // this.$confirm("此操作将修改该车辆的备注, 是否继续?", "提示", {
-    //       confirmButtonText: "确定",
-    //       cancelButtonText: "取消",
-    //       type: "warning"
-    //     })
-    //       .then(() => {
     const form = { note: this.editForm["note"], id: item.id };
     editCar(form)
       .then(() => {
-        this["notify"]("success", "成功", "修改车辆备注成功");
+        this["message"]("success", `修改车牌号${item.carNo}的备注成功`);
         this["fetchData"](this.initForm);
       })
       .catch(() => {
         item.noteStatus = false;
       });
-    // })
-    // .catch(() => {
-    //   item.noteStatus = false;
-    //   this.$set(item, 'phoneStatus', false)
-    //   this.$message({
-    //     type: "info",
-    //     message: "已取消修改"
-    //   });
-    // });
   }
 
-  handleCommand(val) {
+  handleCommand(val, status) {
     const form = { status: val, id: this.editForm["id"] };
     editCar(form).then(() => {
-      this["notify"]("success", "成功", "修改车辆状态成功");
+      this["message"](
+        "success",
+        `修改车牌号${this.editForm["carNo"]}的状态成功`
+      );
       this["fetchData"](this.initForm);
     });
   }
@@ -926,11 +907,22 @@ export default class CarList extends Vue {
       }
     }
     delete form["carNo"];
+    // if (this.editInfo["id"] !== form["id"]) {
     editCar(form).then(() => {
       this.handleClose();
       this["fetchData"](this.initForm);
-      this["notify"]("success", "成功", "修改车辆成功");
+      this["message"](
+        "success",
+        `修改车牌号${this.editForm["carNo"]}的车辆信息成功`
+      );
     });
+    return;
+    // }
+    // this["message"](
+    //   "error",
+    //   `注意: 没有发现你对车牌号为${this.editForm["carNo"]}的车辆进行了修改!`
+    // );
+    // this.handleClose();
   }
 
   handleClose() {
@@ -982,7 +974,9 @@ export default class CarList extends Vue {
   async fetchUser() {
     /**@description 查看车辆管理名单用户详情 */
     try {
-      const { data } = await getOwnerUser(this.CarDialogForm["scenceUserId"]);
+      const { data } = await getOwnerUser({
+        id: this.CarDialogForm["scenceUserId"]
+      });
       this.carUserDetail = data.data.user;
     } catch (err) {
       console.log(err.response);

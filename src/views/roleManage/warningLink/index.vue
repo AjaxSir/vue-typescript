@@ -36,7 +36,7 @@
                 <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
               </el-tooltip>
               <el-dropdown-menu slot="dropdown">
-                <div @click="editTarget(scope.row)">
+                <div v-if="!deleteForm.data.length" @click="editTarget(scope.row)">
                   <el-dropdown-item command="update">修改</el-dropdown-item>
                 </div>
                 <!-- <div @click="deleteBtn(scope.row)">
@@ -95,7 +95,7 @@
           <el-input
             size="mini"
             :ref="scope.row.id"
-            @blur="confirmUpdateNote(scope.row)"
+            @blur="noteBlur(scope.row)"
             v-model="editForm.note"
             v-show="scope.row.noteStatus"
             :clearable="true"
@@ -527,7 +527,7 @@ export default class WarningLink extends Vue {
         addWarning(form).then(res => {
           this.createClose();
           this["fetchData"](this.initForm);
-          this["notify"]("success", "成功", "添加预警联系人成功");
+          this["message"]("success", "添加预警联系人成功!");
         });
         // .catch(err => {
         //   if (err.response.data.data[0].key === "phone") {
@@ -589,6 +589,7 @@ export default class WarningLink extends Vue {
 
   // 修改备注离开输入框
   noteBlur(row) {
+    console.log(row);
     row.noteStatus = false;
     if (this.noteRewrite !== this.editForm["note"]) {
       this.confirmUpdateNote(row);
@@ -598,24 +599,10 @@ export default class WarningLink extends Vue {
   confirmUpdateNote(item) {
     /**@description 修改备注 */
     const form = { note: this.editForm["note"], id: item.id };
-
-    // this.$confirm("此操作将修改该预警人员的备注, 是否继续?", "提示", {
-    //   confirmButtonText: "确定",
-    //   cancelButtonText: "取消",
-    //   type: "warning"
-    // })
-    //   .then(() => {
     editWarning(form).then(() => {
-      this["notify"]("success", "成功", "修改预警人员备注成功");
+      this["message"]("success", `修改预警人员${item["name"]}的备注信息成功!`);
       this["fetchData"](this.initForm);
     });
-    // })
-    // .catch(() => {
-    //   this.$message({
-    //     type: "info",
-    //     message: "已取消修改"
-    //   });
-    // });
   }
 
   editTarget(item) {
@@ -664,7 +651,10 @@ export default class WarningLink extends Vue {
       if (valid) {
         editWarning(form).then(() => {
           this.editClose();
-          this["notify"]("success", "成功", "修改预警联系人成功");
+          this["message"](
+            "success",
+            `修改预警联系人${this.editForm["name"]}成功!`
+          );
           this["fetchData"](this.initForm);
         });
       }
