@@ -528,7 +528,7 @@ export default class CardManage extends Vue {
     if (this.CarDialogForm["isVisitCar"]) {
       this.getvisitCar();
     } else {
-      getOwnerUser(this.CarDialogForm["ownerScenceUserId"]).then(res => {
+      getOwnerUser({id:this.CarDialogForm["ownerScenceUserId"]}).then(res => {
         this.carVisitDetail = res.data.data.user;
       });
     }

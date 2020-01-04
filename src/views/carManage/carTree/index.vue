@@ -54,7 +54,7 @@
       </span>
     </el-tree>
 
-    <!-- 楼栋dialog添加分组 -->
+    <!-- 车位dialog添加分组 -->
     <el-dialog
       :before-close="closeDialog"
       :close-on-click-modal="false"
@@ -193,6 +193,7 @@
         </el-tab-pane>
       </el-tabs>
 
+      <!-- 修改分组 -->
       <el-form
         v-else
         ref="HouseForms"
@@ -291,6 +292,7 @@ export default class DataTree extends Vue {
   selectId: any = "";
   highlightStatus: boolean = false; // 高亮状态
   nodeAction: string = ""; // 记录执行的操作
+  tree_data: Object = {};
   // bindDeviceList: Array<object> = []; // 已选择绑定的设备列表
   // bindDeviceListVisible: boolean = false; // 设备列表弹框状态
   // DeviceList: Array<object> = []; // 所有设备列表
@@ -378,6 +380,7 @@ export default class DataTree extends Vue {
       title: "添加子分组"
     };
     this.batchForm = {
+      name: "",
       end: "",
       parentId: "",
       start: "",
@@ -515,26 +518,22 @@ export default class DataTree extends Vue {
     if (this.activeName === "second") {
       if (this.nodeAction === "addGroup") {
         addHouseGroup(this.HouseForm).then(res => {
-          /**@description 单个增加分组 */
+          /**@description 单个增加分组 手动添加子分组*/
           if (res.data.code === 200) {
+            this.message("success", `添加子分组${this.HouseForm["name"]}成功!`);
             this.closeDialog();
-            Message({
-              type: "success",
-              message: "添加成功"
-            });
             this.$emit("getHouseTreeData");
             this.HouseVisible = false;
+            // const info = { ...this.tree_data };
+            // this.handleNodeClick(info['data'], info['node']);
           }
         });
       } else if (this.nodeAction === "updateGroup") {
         /**@description 修改分组 */
         updateHouseGroup(this.HouseForm).then(res => {
           if (res.data.code === 200) {
+            this.message("success", `分组${this.HouseForm["name"]}修改成功!`);
             this.closeDialog();
-            Message({
-              type: "success",
-              message: "修改成功"
-            });
             this.$emit("getHouseTreeData");
             this.HouseVisible = false;
           }
@@ -546,27 +545,13 @@ export default class DataTree extends Vue {
         this.$message.error("请输入正确的楼栋编号");
         return;
       }
-      this.sortCreated().then(res => {
-        this.$message.success("添加成功");
+      addHouseGroups(this.batchForm).then(res => {
+        this.message("success", `批量添加子分组${this.batchForm["name"]}成功!`);
         this.$refs["batchForm"]["resetFields"]();
         this.$emit("getHouseTreeData");
         this.HouseVisible = false;
       });
     }
-  }
-
-  // 循环创建
-  async sortCreated() {
-    let success = 0;
-    let error = 0;
-    await addHouseGroups(this.batchForm).then(res => {
-      if (res.data.code === 200) {
-        success++;
-      } else {
-        error++;
-      }
-    });
-    return Promise.resolve({ success, error });
   }
 
   // 关闭添加/修改单元楼
@@ -576,9 +561,10 @@ export default class DataTree extends Vue {
   }
   @Emit("fetchDatas")
   handleNodeClick(data, node) {
-    console.log(data,node,123456)
+    console.log(data, node)
     this.showMenu = node.id;
     this.highlightStatus = !!data.id;
+    this.tree_data = { data: data, node: node };
     /**@description 树节点点击事件 */
     if (this.type === "house") {
       this.selectId = data.id;
@@ -592,8 +578,11 @@ export default class DataTree extends Vue {
       return {
         form: this.initFormHeader,
         status: !!data.sonCarSpaceGroups,
-        carSpaceGroup:{carSpaceGroupName:data.currentName,carSpaceGroupId:data.id},
-        tree_data:{data:data,node:node}
+        carSpaceGroup: {
+          carSpaceGroupName: data.currentName,
+          carSpaceGroupId: data.id
+        },
+        tree_data: this.tree_data
       };
     } else {
       this["page"]["page"] = 1;
@@ -605,8 +594,11 @@ export default class DataTree extends Vue {
       return {
         form: this.initFormHeader,
         status: !!data.sonCarSpaceGroups,
-        carSpaceGroup:{carSpaceGroupName:data.currentName,carSpaceGroupId:data.id},
-        tree_data:{data:data,node:node}
+        carSpaceGroup: {
+          carSpaceGroupName: data.currentName,
+          carSpaceGroupId: data.id
+        },
+        tree_data: this.tree_data
       };
     }
   }
@@ -650,7 +642,6 @@ export default class DataTree extends Vue {
     switch (treeData.action) {
       case "addGroup":
         this.closeDialog();
-
         this.HouseForm["title"] = "添加子分组";
         this.HouseForm["parentId"] = treeData.data ? treeData.data.id : "";
         this.batchForm["parentId"] = treeData.data ? treeData.data.id : "";
@@ -664,18 +655,22 @@ export default class DataTree extends Vue {
         this.HouseForm = Object.assign(this.HouseForm, treeData.data);
         break;
       case "deleteGroup":
-        this.$confirm("此操作将永久删除该目标, 是否继续?", "提示", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning"
-        })
+        this.$confirm(
+          `此操作将永久删除${treeData.data.currentName}下的所有子分组及车位,删除后不可恢复,请谨慎操作!, 是否继续?`,
+          "提示",
+          {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            type: "warning"
+          }
+        )
           .then(() => {
             deleteHouseGroup(treeData.data.id).then((res: any) => {
               if (res.data.code === 200) {
-                this.$message({
-                  type: "success",
-                  message: "删除成功!"
-                });
+                this.message(
+                  "success",
+                  `成功删除${treeData.data.currentName}的所有子分组及车位!`
+                );
                 this.$emit("getHouseTreeData");
                 this.HouseVisible = false;
               }
@@ -748,25 +743,27 @@ export default class DataTree extends Vue {
     switch (note) {
       case "10":
         if (value.length === 10) {
-          this.message("此项不能超过10个字符");
+          this.message("error", "此项不能超过10个字符");
         }
         break;
       case "5":
         if (value.length === 5) {
-          this.message("此项不能超过5个字符");
+          this.message("error", "此项不能超过5个字符");
         }
         break;
     }
   }
 
-  message(val: string) {
+  message(type: string = "success", message: string) {
     if (!Cookie.get("error")) {
       Cookie.set("error", Date.now(), {
         expires: new Date(new Date().getTime() + 3 * 1000)
       }); // 五秒钟内不会重复出现提示框
       this.$message({
-        message: val,
-        type: "warning"
+        type: type === "success" ? "success" : "error",
+        message,
+        customClass: "messageClass",
+        showClose: true
       });
     }
   }

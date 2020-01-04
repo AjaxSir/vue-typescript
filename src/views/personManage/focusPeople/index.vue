@@ -90,7 +90,7 @@
                       <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
                     </el-tooltip>
                     <el-dropdown-menu slot="dropdown">
-                      <div @click="editTarget(scope.row)">
+                      <div v-if="!deleteForm.data.length" @click="editTarget(scope.row)">
                         <el-dropdown-item command="update">修改</el-dropdown-item>
                       </div>
                       <el-dropdown-item
@@ -165,6 +165,7 @@
               prop="earlyPeriod"
               align="center"
               label="预警周期(天)"
+              width="110px"
               :show-overflow-tooltip="true"
             >
               <!-- <template slot-scope="{row}">
@@ -183,21 +184,23 @@
               </template>
             </el-table-column>
 
-            <el-table-column align="center" :show-overflow-tooltip="true" prop="note" label="备注">
-              <template slot-scope="scope">
-                <span
+            <el-table-column prop="note" align="center" label="备注" :show-overflow-tooltip="true">
+              <template slot-scope="{row}">
+                <p
                   class="rowUpdate"
-                  v-show="!scope.row.noteStatus"
-                  @click="editNote(scope.row)"
-                >{{ scope.row.note || '--' }}</span>
+                  v-show="!row.noteStatus || editForm.id !== row.id"
+                  @click="editNote(row)"
+                >{{ row.note ? row.note :'--'}}</p>
                 <el-input
-                  size="mini"
-                  :ref="scope.row.id"
-                  @blur="confirmUpdateNote(scope.row)"
+                  :ref="row.id"
+                  v-show="row.noteStatus&&editForm.id === row.id"
+                  size="small"
+                  :maxlength="200"
                   v-model="editForm.note"
-                  v-show="scope.row.noteStatus"
-                  :clearable="true"
+                  @blur="noteBlur(row,'2')"
                   placeholder="输入备注"
+                  clearable
+                  @input="constraintLength(editForm.note,'200')"
                 ></el-input>
               </template>
             </el-table-column>
@@ -672,11 +675,13 @@
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="备注信息:">
                   <!-- <span>{{userDetail.note ? userDetail.note :'暂无'}}</span> -->
+                  <!-- @keyup.enter.native="peopleUpdateNote" -->
                   <el-input
                     size="small"
-                    @keyup.enter.native="peopleUpdateNote"
                     v-model="userDetail.note"
                     placeholder="编辑备注信息"
+                    @blur="peopleUpdateNote(userDetail.note,'2')"
+                    @input="constraintLength(userDetail.note,'200')"
                   ></el-input>
                 </el-form-item>
               </el-col>
@@ -859,6 +864,7 @@ export default class FocusPeople extends Vue {
   newTypeTagValue: string = ""; // 添加类别的值
 
   private dialogEdit: Boolean = false; // 修改弹出表单
+  private editItem: Object = {}; //保存初始需修改的目标信息
   private editForm: Object = {
     //修改表单字段
     name: "", //姓名
@@ -878,6 +884,7 @@ export default class FocusPeople extends Vue {
   private passTarget: Boolean = true; //目标关注人员通行记录的loadding
   private passList: Array<Object> = []; // 关注人员名单目标通行记录
   private userDetail: Object = {}; //关注人员详细信息
+  private userItem: Object = {}; //保存关注人员详细信息初始值
   private earlyList: Array<Object> = []; //预警组别详信息
   private earlyLoading: Boolean = true; //预警组别表格loading
   private noteRewrite: String = ""; //保存未改变的note
@@ -1016,15 +1023,6 @@ export default class FocusPeople extends Vue {
 
   createFocusPeople() {
     /**@description 添加关注人员 */
-    // this.verification(this.createForm["emergencyPhone"], "emergencyPhone");
-    // if (this.createForm["age"] === "") {
-    //   this.createForm["age"] = null;
-    // }
-    // if (
-    //   this.errorMessage["emergencyPhone"] === "" &&
-    //   this.createForm["emergencyPhone"].length === 11
-    // ) {
-    //   if (this.createForm["scenceUser"].length > 0) {
     this.$refs["dataForm"]["validate"](valid => {
       if (valid) {
         var form = {
@@ -1033,36 +1031,24 @@ export default class FocusPeople extends Vue {
           name: this.createForm["scenceUser"][1]
         };
         delete form["scenceUser"];
-        // form["earlyPeriod"] = Number(form["earlyPeriod"]);
         addFocusPeople(form).then(res => {
           this.handleClose();
           this["fetchData"](this.initForm);
-          this["notify"]("success", "成功", "添加关注人员成功");
+          this["message"]("success", "添加关注人员成功!");
         });
       }
     });
-    //   } else {
-    //     this.errorMessage["scenceUser"] = "姓名不能为空";
-    //   }
-    // } else {
-    //   this["message"]("请输入正确的电话号码");
-    // }
   }
 
   editTarget(item) {
     /**@description 修改操作 */
+    this.editItem = item;
     for (const key in this.editForm) {
       this.editForm[key] = item[key];
     }
     if (item.emergencyPhone) {
       this["phoneNum"] = item.emergencyPhone.length;
     }
-    // if (+item["age"]) {
-    //   this.editForm["age"] = +item["age"];
-    // } else if (item["age"] === "") {
-    //   this.editForm["age"] = null;
-    // }
-
     if (+item["earlyPeriod"]) {
       this.editForm["earlyPeriod"] = +item["earlyPeriod"];
     } else if (item["earlyPeriod"] === "") {
@@ -1072,50 +1058,59 @@ export default class FocusPeople extends Vue {
   }
 
   constraint(value, type) {
-    // if (value > 200 && type === "age") {
-    //   this["message"]("年龄不能大于200");
-    // }
     if (value === "") {
       this.editForm[type] = null;
     }
   }
 
   updateFocusPeople() {
-    /**@description 修改预警联系人 */
-    // this.verification(this.editForm["emergencyPhone"], "editEmergencyPhone");
-    // if (
-    //   this.errorMessage["editEmergencyPhone"] === "" ||
-    //   this.editForm["emergencyPhone"] === null ||
-    //   this.editForm["emergencyPhone"].length === 11
-    // ) {
+    /**@description 修改关注人员 */
     this.$refs["updateForm"]["validate"](valid => {
       if (valid) {
         var form = { ...this.editForm };
         form["earlyPeriod"] = Number(form["earlyPeriod"]);
         delete form["name"];
-        editFocusPeople(form).then(() => {
-          this.editClose();
-          this["notify"]("success", "成功", "修改关注人员成功");
-          this["fetchData"](this.initForm);
-        });
+
+        for (const key in this.editForm) {
+          if (this.editForm[key] !== this.editItem[key]) {
+            editFocusPeople(form).then(() => {
+              this.editClose();
+              this["message"](
+                "success",
+                `修改关注人员${this.editItem["name"]}成功!`
+              );
+              this["fetchData"](this.initForm);
+            });
+            return;
+          }
+        }
+        this["message"](
+          "error",
+          `注意: 没有发现你对关注人员${this.editItem["name"]}进行了修改!`
+        );
+        this.editClose();
       }
     });
-    //   } else {
-    //     this["message"]("请输入正确的电话号码");
-    //   }
   }
   // 确定修改人员详情 备注
-  peopleUpdateNote() {
-    if (!this.userDetail["note"]) {
-      return this.$message.error("请输入备注信息");
-    }
+  peopleUpdateNote(note) {
+    // if (this.userItem["note"] !== note) {
     updateUserNote(this.userDetail["id"], this.userDetail["note"]).then(res => {
       if (res.data.code === 200) {
-        this.$message.success("修改成功");
+        this["message"](
+          "success",
+          `修改关注人员${this.userItem["name"]}的备注信息成功!`
+        );
       } else {
         this.$message.error(res.data.message);
       }
     });
+    //   return;
+    // }
+    // this["message"](
+    //   "error",
+    //   `注意: 没有发现你对关注人员${this.userItem["name"]}的备注信息进行了修改!`
+    // );
   }
 
   editNote(row) {
@@ -1133,31 +1128,28 @@ export default class FocusPeople extends Vue {
   // 修改备注离开输入框
   noteBlur(row) {
     row.noteStatus = false;
-    if (this.noteRewrite !== this.editForm["note"]) {
-      this.confirmUpdateNote(row);
-    }
+    // if (this.noteRewrite !== this.editForm["note"]) {
+    this.confirmUpdateNote(row);
+    // }
   }
 
   confirmUpdateNote(item) {
     /**@description 修改备注 */
     const form = { note: this.editForm["note"], id: item.id };
-    // this.$confirm("此操作将修改该关注人员的备注, 是否继续?", "提示", {
-    //   confirmButtonText: "确定",
-    //   cancelButtonText: "取消",
-    //   type: "warning"
-    // })
-    //   .then(() => {
-    editFocusPeople(form).then(() => {
-      this["notify"]("success", "成功", "修改关注人员备注成功");
-      this["fetchData"](this.initForm);
-    });
-    // })
-    // .catch(() => {
-    //   this.$message({
-    //     type: "info",
-    //     message: "已取消修改"
-    //   });
-    // });
+    if (item["note"] !== form["note"]) {
+      editFocusPeople(form)
+        .then(() => {
+          this["message"](
+            "success",
+            `修改关注人员${item["name"]}的备注信息成功!`
+          );
+          this["fetchData"](this.initForm);
+          item.noteStatus = false;
+        })
+        .catch(() => {
+          item.noteStatus = false;
+        });
+    }
   }
 
   editClose() {
@@ -1184,27 +1176,6 @@ export default class FocusPeople extends Vue {
     this.$refs["dataForm"]["resetFields"]();
   }
 
-  deleteBtn(item) {
-    /**@description 单个删除状态 */
-    this.$confirm("此操作将永久删除此关注人员信息, 是否继续?", "提示", {
-      confirmButtonText: "确定",
-      cancelButtonText: "取消",
-      type: "warning"
-    })
-      .then(() => {
-        deleteFocusPeople(item.id).then(() => {
-          this["notify"]("success", "成功", "删除关注人员成功");
-          this["fetchData"](this.initForm);
-        });
-      })
-      .catch(err => {
-        this.$message({
-          type: "info",
-          message: "已取消删除"
-        });
-      });
-  }
-
   showCarDetails(row, inviter) {
     this.detailDialogVisible = true;
     this.activeName = inviter;
@@ -1215,6 +1186,7 @@ export default class FocusPeople extends Vue {
       this.fetchEarlyContact();
     }
   }
+
   handleCurrentChangeEarly(val) {
     /** @description 处理目标预警组别翻页事件
      * @augments val: 页数
@@ -1260,8 +1232,11 @@ export default class FocusPeople extends Vue {
   async fetchUser() {
     /**@description 查看关注人员用户详情 */
     try {
-      const { data } = await getOwnerUser(this.CarDialogForm["scenceUserId"]);
+      const { data } = await getOwnerUser({
+        id: this.CarDialogForm["scenceUserId"]
+      });
       this.userDetail = data.data.user;
+      this.userItem = data.data.user;
     } catch (err) {
       console.log(err.response);
     }

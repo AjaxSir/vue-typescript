@@ -62,12 +62,14 @@
               <template slot-scope="{row}">
                 <div>
                   <img
+                    v-if="row.pic"
                     @mouseover="imgVisible = true,bigImg = row.pic"
                     @mouseout="imgVisible = false"
                     :src="row.pic"
                     width="30px"
                     alt
                   />
+                  <span v-else></span>
                 </div>
               </template>
             </el-table-column>
