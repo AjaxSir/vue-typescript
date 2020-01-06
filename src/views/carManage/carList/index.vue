@@ -149,16 +149,12 @@
                     >{{ scope.row.status && scope.row.status =='1' ? "正常" : "禁用" }}</el-tag>
                   </span>
                   <el-dropdown-menu slot="dropdown">
-                    <div
-                      v-if="scope.row.status !=='1'"
-                      @click="handleCommand('1',scope.row.status)"
-                    >
+                    <!-- v-if="scope.row.status !=='1'" -->
+                    <div @click="handleCommand('1',scope.row.status)">
                       <el-dropdown-item>正常</el-dropdown-item>
                     </div>
-                    <div
-                      v-if="scope.row.status !=='2'"
-                      @click="handleCommand('2',scope.row.status)"
-                    >
+                    <!-- v-if="scope.row.status !=='2'" -->
+                    <div @click="handleCommand('2',scope.row.status)">
                       <el-dropdown-item>禁用</el-dropdown-item>
                     </div>
                   </el-dropdown-menu>
@@ -703,7 +699,8 @@ export default class CarList extends Vue {
     //单个或批量删除
     url: "/admin/usr-car/batch-delete/",
     method: "delete",
-    data: []
+    data: [],
+    message: `此操作将永久删除选中的车辆,删除后车辆将不能通行,请谨慎操作!`
   };
 
   private listQuery: Object = {

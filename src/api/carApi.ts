@@ -69,7 +69,7 @@ export function getvisitUser(id: string) {
 }
 
 //获取目标车辆用户详细信息 || 获取目标访客车辆邀请人的详细信息
-export function getOwnerUser(params:object) {
+export function getOwnerUser(params: object) {
   return _axios({
     url: '/admin/scence-user',
     method: 'get',
@@ -155,6 +155,15 @@ export function editStall(data: any) {
   return _axios({
     url: `/admin/car-space/${data.id}/`,
     method: 'patch',
+    data
+  })
+}
+
+//删除目标业主
+export function deleteOwner(data: any) {
+  return _axios({
+    url: `/admin/car-space/${data.id}/delete-owner`,
+    method: 'delete',
     data
   })
 }

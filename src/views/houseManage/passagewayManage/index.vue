@@ -265,7 +265,8 @@ export default class InformIssue extends Vue {
     //单个或批量删除
     url: "/admin/hs-enter-exit/batch-delete",
     method: "delete",
-    data: []
+    data: [],
+    message: `此操作将永久删除选中的出入口,删除后出入口将影响通行,请谨慎操作!`
   };
 
   created() {

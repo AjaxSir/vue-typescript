@@ -453,7 +453,8 @@ export default class CardManage extends Vue {
     //单个或批量删除
     url: "/admin/usr-visit-car/batch-delete/",
     method: "delete",
-    data: []
+    data: [],
+    message: `此操作将永久删除选中的访客车辆,删除后访客车辆将不能通行,请谨慎操作!`
   };
 
   private listQuery: Object = {
