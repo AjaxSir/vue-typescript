@@ -159,15 +159,6 @@ export function editStall(data: any) {
   })
 }
 
-//删除目标业主
-export function deleteOwner(data: any) {
-  return _axios({
-    url: `/admin/car-space/${data.id}/delete-owner`,
-    method: 'delete',
-    data
-  })
-}
-
 //查询车牌
 export function querycarno(params: any) {
   return _axios({
