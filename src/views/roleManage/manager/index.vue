@@ -276,7 +276,8 @@ export default class InformIssue extends Vue {
   deleteForm: object = {
     url: '/admin/usrUser/admin',
     method: 'delete',
-    data: []
+    data: [],
+    message: '此操作将永久删除选中的管理员, 删除后管理员将不存在,请谨慎操作!'
   }
   created() {
     this.initForm['params'] = Object.assign(this.initForm['params'], this.page, this.filterForm) // 合并参数

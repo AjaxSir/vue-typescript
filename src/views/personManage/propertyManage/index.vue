@@ -394,7 +394,8 @@ export default class PropertyManage extends Vue {
   deleteForm: object = {
     url: '/admin/usrUser/propertyManager',
     method: 'delete',
-    data: []
+    data: [],
+    message: '此操作将永久删除选中的物业人员,删除后物业人员将不存在,请谨慎操作!'
   }
   passList: object = {
     id: '',
@@ -490,7 +491,7 @@ export default class PropertyManage extends Vue {
       this.$set(row, 'phoneStatus', false)
       return;
     }
-    this.$confirm("此操作将修改物业人员手机号, 是否继续?", "提示", {
+    this.$confirm(`此操作将修改${row.name}的手机号,请谨慎操作!`, "提示", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"

@@ -838,7 +838,8 @@ export default class OwnerManage extends Vue {
   deleteForm: object = {
     url: "/admin/usrUser",
     method: "delete",
-    data: []
+    data: [],
+    message: '此操作将永久删除选中的住户, 删除后住户将不存在,请谨慎操作!'
   };
   loading: boolean = false;
   phoneList: Array<object> = [];
@@ -910,7 +911,7 @@ export default class OwnerManage extends Vue {
   }
   // 删除某个用户下的某个房屋
   deleteHouse(row, index) {
-    this.$confirm("此操作将永久删除该房屋, 是否继续?", "提示", {
+    this.$confirm("此操作将永久删除该用户下的房屋,删除后房屋将不会与住户绑定,请谨慎操作!?", "提示", {
       confirmButtonText: "确定",
       cancelButtonText: "取消",
       type: "warning"
@@ -1085,7 +1086,7 @@ export default class OwnerManage extends Vue {
               this.$set(row, 'phoneStatus', false)
               return;
             }
-    this.$confirm("此操作将修改用户手机号, 是否继续?", "提示", {
+    this.$confirm(`此操作将永久修改${row.name}电话号码,请谨慎操作!`, "提示", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"

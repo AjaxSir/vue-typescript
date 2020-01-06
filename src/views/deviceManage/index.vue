@@ -319,7 +319,8 @@ export default class DeviceManage extends Vue {
   deleteForm: object = {
     url: '/admin/dev-manage/unbind',
     method: 'delete',
-    data: []
+    data: [],
+    message: '此操作将永久解绑选中的设备,请谨慎操作!'
   }
   passPage: object = {
     total: 1,

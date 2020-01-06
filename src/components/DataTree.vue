@@ -489,12 +489,12 @@
       </div>
       <el-table :data="bindDeviceList" style="width: 100%">
         <el-table-column type="index" align="center" prop="date" label="序号" width="50"></el-table-column>
-        <el-table-column align="center" label="位置">
+        <el-table-column :show-overflow-tooltip="true" align="center" label="位置">
           <template slot-scope="{row}">
             <span>{{row.address || row.position}}</span>
           </template>
         </el-table-column>
-        <el-table-column align="center" width="350" label="时间">
+        <el-table-column :show-overflow-tooltip="true" align="center" width="350" label="时间">
           <template slot-scope="{row}">
             <span
               v-if="!row.timeStatus"
@@ -551,13 +551,13 @@
       <el-table :data="DeviceList" ref="deviceList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="50"></el-table-column>
         <el-table-column type="index" label="序号" align="center" width="50"></el-table-column>
-        <el-table-column property="name" align="center" label="位置">
+        <el-table-column :show-overflow-tooltip="true" property="name" align="center" label="位置">
           <template slot-scope="{row}">
-            <span>{{row.address || row.position}}</span>
+            <span>{{row.bindingAddress || row.address}}</span>
           </template>
         </el-table-column>
-        <el-table-column align="center" property="name" label="设备名称"></el-table-column>
-        <el-table-column align="center" property="serialNumber" label="设备编号"></el-table-column>
+        <el-table-column :show-overflow-tooltip="true" align="center" property="name" label="设备名称"></el-table-column>
+        <el-table-column :show-overflow-tooltip="true" align="center" property="serialNumber" label="设备编号"></el-table-column>
       </el-table>
       <el-pagination
         background
@@ -1128,6 +1128,7 @@ export default class DataTree extends Vue {
    * action 分类
    */
   commandTreeClick(treeData) {
+    console.log(treeData)
     this.nodeAction = treeData.action;
     switch (treeData.action) {
       case "addGroup":
@@ -1141,7 +1142,7 @@ export default class DataTree extends Vue {
         this.activeName = "first";
         break;
       case "deleteGroup":
-        this.$confirm("此操作将永久删除该分组, 是否继续?", "提示", {
+        this.$confirm(`此操作将永久删除${treeData.data.name}分组,删除后分组将不存在,请谨慎操作!`, "提示", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
@@ -1191,7 +1192,7 @@ export default class DataTree extends Vue {
         this.RoleVisible = true;
         break;
       case "deleteRoleGroup":
-        this.$confirm("此操作将永久删除该权限组, 是否继续?", "提示", {
+        this.$confirm(`此操作将永久删除${treeData.data.name}权限组,删除后权限组将不存在,请谨慎操作!`, "提示", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
@@ -1209,7 +1210,7 @@ export default class DataTree extends Vue {
           });
         break;
       case "deleteBuilding":
-        this.$confirm("此操作将永久删除该单元楼, 是否继续?", "提示", {
+        this.$confirm(`此操作将永久删除${treeData.data.name}单元楼,删除后单元楼将不存在,请谨慎操作!`, "提示", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"

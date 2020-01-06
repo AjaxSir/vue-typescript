@@ -240,7 +240,7 @@ export default class ActionManage extends Vue {
     this.visibleFilter = false;
     this.page["page"] = 1;
     for(let key in this.filterForm) {
-      if (typeof this.filterForm[key] === 'string') {
+      if (typeof this.filterForm[key] === 'string' || this.filterForm[key] === null) {
         if (this.filterForm[key]) {
           this.hasProty = true
         }
@@ -267,11 +267,15 @@ export default class ActionManage extends Vue {
     this.visibleFilter = false;
     this.page["page"] = 1;
     for(let key in this.filterForm) {
-      if (typeof this.filterForm[key] === 'string') {
-        this.filterForm[key] = ''
-      } else {
-        this.filterForm[key] = []
-      }
+        if (typeof this.filterForm[key] === 'string') {
+          this.filterForm[key] = ''
+        } else if(this.filterForm[key] === null) {
+          this.filterForm[key] = null
+        } else if (typeof this.filterForm[key] === 'boolean')  {
+          this.filterForm[key] = false
+        } else {
+          this.filterForm[key] = []
+        }
     }
     this["phoneNum"] = 0;
     this.initFormHeader["params"] = Object.assign(

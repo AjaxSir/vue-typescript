@@ -351,7 +351,8 @@ export default class CardManage extends Vue {
   deleteForm: Object = {
     url: "/admin/hsDoorCard",
     method: "delete",
-    data: []
+    data: [],
+    message: `此操作将永久删除选中的门禁卡, 删除后门禁卡将不存在,请谨慎操作!`
   };
   visible: boolean = false; // 导入框状态
   updateArray: Array<string> = ["cardStatus", "validDateStatus"];

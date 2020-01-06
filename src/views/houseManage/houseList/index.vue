@@ -413,7 +413,8 @@ export default class CardManage extends Vue {
   deleteForm: object = {
     url: "/admin/hsHouse",
     method: "delete",
-    data: []
+    data: [],
+    message: `此操作将永久删除选中的房屋,绑定的业主及车牌同时进行删除, 删除后房屋将不存在,请谨慎操作!`
   };
   Form: object = {
     buildingIdArr: [],
@@ -472,7 +473,7 @@ export default class CardManage extends Vue {
 
   // 删除房屋下的某个用户
   deleteHousePeople(row, index) {
-    this.$confirm("此操作将永久删除该人员, 是否继续?", "提示", {
+    this.$confirm(`此操作将永久删除该房屋下的住户,删除后${row.userName}将不与该房屋绑定,请谨慎操作!?`, "提示", {
       confirmButtonText: "确定",
       cancelButtonText: "取消",
       type: "warning"
