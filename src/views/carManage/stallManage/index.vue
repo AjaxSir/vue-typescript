@@ -928,7 +928,6 @@ import {
   getStall, // 获取车位列表
   addStall, // 新增车位
   editStall, // 修改业主
-  deleteOwner, //删除业主
   getOwnerUser, // 查看业主详情
   querycarno, // 查询车牌号
   addcarno, // 新增绑定车牌
@@ -1442,14 +1441,17 @@ export default class CardManage extends Vue {
     this.getSatll();
     this.nameList = [];
     this.$nextTick(() => {
+      //清空表单
       this.$refs["dataForm"]["resetFields"]();
     });
     this.targetuser = {};
     this.$refs["dataTree"]["handleNodeClick"](
+      //重新触发树结构init方法
       this.tree_data["data"],
       this.tree_data["node"]
     );
-    this.errorMessage["name"] = "";
+    this.errorMessage["name"] = ""; // 取消错误提示信息
+    this.stallStatus = false; //选择业主input是否显示
   }
 
   editStatus(val) {
