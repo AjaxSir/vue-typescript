@@ -79,7 +79,7 @@
             <div class="word-filter">
               <span class="filter-name">用户类型:</span>&nbsp;
               <el-select  style="width:250px" class="input-filter" size="small" v-model="filterForm.userType" placeholder="请选择">
-                <el-option label="全部" value="all"></el-option>
+                <el-option label="全部" value=""></el-option>
                 <el-option label="住户" value="house"></el-option>
                 <el-option label="访客" value="rent"></el-option>
               </el-select>
@@ -233,7 +233,7 @@ export default class PersonPass extends Vue {
     startPassTime: '',
     endPassTime: '',
     passMethod: [],
-    userType: 'all',
+    userType: '',
     isVisitor: false
   }
   timeRange: Array<string> = []
@@ -251,7 +251,7 @@ export default class PersonPass extends Vue {
   @Watch('filterForm.userType')
   isVistorChange() {
     const type = this.filterForm['userType']
-    this.filterForm['isVisitor'] = type === 'all' ? null : (type === 'house' ? false : true)
+    this.filterForm['isVisitor'] = type === '' ? null : (type === 'house' ? false : true)
   }
   // 时间变化
     timeRangeChange(val) {

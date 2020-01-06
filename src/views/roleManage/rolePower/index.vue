@@ -201,7 +201,8 @@ export default class InformIssue extends Vue {
   deleteForm: object = {
     url: '/admin/usrRole',
     method: 'delete',
-    data: []
+    data: [],
+    message: '此操作将永久删除选中的角色, 删除后角色将不存在,请谨慎操作!'
   }
   rules: object = {
    name: [
