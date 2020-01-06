@@ -41,7 +41,7 @@
                 class="input-filter"
                 size="small"
                 clearable
-                v-model="filterForm.phone"
+                v-model="filterForm.ownerPhone"
                 placeholder="请输入电话"
                 @keyup.enter.native="emitFetchData"
               ></el-input>
@@ -877,10 +877,13 @@
             :remote-method="remoteMethodCar"
             :loading="carLoading"
             @change="selectChange"
+            @blur="selectBlur"
           >
             <el-option v-for="item in carnoList" :key="item.carId" :label="item.name" :value="item">
               <span style="float: left">{{ item.name }}</span>
-              <span style="float: right; color: #8492a6; font-size: 13px">{{ item. value }}</span>
+              <span
+                style="float: right; color: #8492a6; font-size: 13px"
+              >{{item.ownerName}} {{ item. value }}</span>
             </el-option>
           </el-select>
 
@@ -924,7 +927,8 @@ import {
   // updateStatusNote,
   getStall, // 获取车位列表
   addStall, // 新增车位
-  editStall, // 修改车位
+  editStall, // 修改业主
+  deleteOwner, //删除业主
   getOwnerUser, // 查看业主详情
   querycarno, // 查询车牌号
   addcarno, // 新增绑定车牌
@@ -993,7 +997,7 @@ export default class CardManage extends Vue {
   };
   filterForm: object = {
     ownerName: null, //姓名
-    // phone: null, //电话
+    ownerPhone: null, //电话
     // cardName: null, //车牌号
     serialNumber: null, //车位编号
     status: [], //车位状态
@@ -1004,7 +1008,8 @@ export default class CardManage extends Vue {
   deleteForm: object = {
     url: "/admin/car-space/batch-delete",
     method: "delete",
-    data: []
+    data: [],
+    message: `此操作将永久删除选中的车位,绑定的业主及车牌同时进行删除, 删除后车位将不存在,请谨慎操作!`
   };
   env: string = process.env.NODE_ENV;
 
@@ -1088,6 +1093,7 @@ export default class CardManage extends Vue {
   private dialogCarVisible: Boolean = false; //绑定车牌
   private selectCar: Boolean = false; //input与按钮切换
   private selectCarNo: Array<Object> = []; //选中的注册车牌
+  private carIdItem: String = "";
 
   private detailDialog: Object = {
     //查看目标详情
@@ -1138,7 +1144,7 @@ export default class CardManage extends Vue {
   private carnoList: Array<Object> = []; //车牌号
   private carIdDisabled: Boolean = false; // 是否允许绑定车牌
   private carLoading: Boolean = false; //车牌模糊查询
-  private bindingcarnum: Object = { carItem: {}, carId: "" }; //绑定车辆
+  private bindingcarnum: Object = { carItem: {}, carId: "", carIds: [] }; //绑定车辆
 
   private carStatusFilter: Array<Object> = [];
 
@@ -1464,7 +1470,7 @@ export default class CardManage extends Vue {
         }
       )
         .then(() => {
-          this.updateStatu(val);
+          this.updateStatus(val);
         })
         .catch(() => {
           this.$message({
@@ -1486,7 +1492,7 @@ export default class CardManage extends Vue {
         }
       )
         .then(() => {
-          this.updateStatu(val);
+          this.updateStatus(val);
         })
         .catch(() => {
           this.$message({
@@ -1496,10 +1502,10 @@ export default class CardManage extends Vue {
         });
       return;
     }
-    this.updateStatu(val);
+    this.updateStatus(val);
   }
 
-  updateStatu(val) {
+  updateStatus(val) {
     /**@description 单独修改车位状态 事件 */
     const form = { status: val, id: this.editForm["id"] };
     editStall(form).then(() => {
@@ -1698,7 +1704,7 @@ export default class CardManage extends Vue {
     /** @description 关闭详情diolog */
     this.dialogFormVisible = false; //车辆详情dialog
     this.activeName = "first";
-    this.bindingcarnum["carId"] = "";
+    this.bindingcarnum = { carItem: {}, carId: "", carIds: [] };
     this.carnoList = [];
   }
 
@@ -1824,7 +1830,8 @@ export default class CardManage extends Vue {
         return {
           value: item.ownerPhone,
           name: item.carNo,
-          carId: item.id
+          carId: item.id,
+          ownerName: item.ownerName
         };
       });
     });
@@ -1844,6 +1851,22 @@ export default class CardManage extends Vue {
       }
     }
     this.selectCarNo.push(this.bindingcarnum["carItem"]);
+    this.bindingcarnum["carIds"] = [];
+    this.selectCarNo.map(item => {
+      this.bindingcarnum["carIds"].push(item["carId"]);
+    });
+
+    const selectLength = this.selectCarNo ? this.selectCarNo.length : 0;
+    const carLength = this.detailDialog["carSpaceVos"]
+      ? this.detailDialog["carSpaceVos"].length
+      : 0;
+    this.carIdDisabled = selectLength + carLength === 6 ? true : false;
+    this.bindingcarnum["carItem"] = {};
+    this.carnoList = [];
+  }
+
+  selectBlur() {
+    // this.selectCar = false;
   }
 
   handeleCar() {
@@ -1853,25 +1876,31 @@ export default class CardManage extends Vue {
 
   bindingcarnumBtn() {
     /**@description 绑定车牌 */
-    const form = { ...this.bindingcarnum["carItem"] };
-    form["id"] = this.detailDialog["id"];
-    console.log(this.bindingcarnum, 77777);
-    // addcarno(form).then(res => {
-    //   this["fetchData"](this.initForm);
-    //   this.selectCarNo = [];
-    //   this.bindingPlatesClose();
-    //   this["notify"]("success", "成功", "绑定车牌成功");
-    // });
+    const form = {
+      id: this.detailDialog["id"],
+      carIds: this.bindingcarnum["carIds"]
+    };
+    addcarno(form).then(res => {
+      this["fetchData"](this.initForm);
+      this.selectCarNo = [];
+      this.bindingPlatesClose();
+      this["notify"]("success", "成功", "绑定车牌成功");
+    });
   }
 
   deleteTagInfo(val) {
     /**@description 删除选中的值 */
-    // this.selectCarNo = [];
     for (const index in this.selectCarNo) {
       if (this.selectCarNo[index]["carId"] === val["carId"]) {
+        this.bindingcarnum["carIds"].splice(Number(index), 1);
         this.selectCarNo.splice(Number(index), 1);
       }
     }
+    // console.log(
+    //   this.bindingcarnum["carIds"],
+    //   789,
+    //   this.selectCarNo[index]["carId"]
+    // );
   }
 
   deleteTag(tag, index) {
@@ -1902,8 +1931,9 @@ export default class CardManage extends Vue {
   bindingPlatesClose() {
     this.dialogCarVisible = false; //车牌绑定dialog
     this.activeName = "first";
-    this.bindingcarnum["carId"] = "";
+    this.bindingcarnum = { carItem: {}, carId: "", carIds: [] };
     this.carnoList = [];
+    this.selectCarNo = [];
     this.selectCar = false;
   }
 

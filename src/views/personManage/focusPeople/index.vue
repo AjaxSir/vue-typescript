@@ -807,7 +807,8 @@ export default class FocusPeople extends Vue {
     //单个或批量删除
     url: "/admin/usr-focus-personnel/batch-delete/",
     method: "delete",
-    data: []
+    data: [],
+    message: `此操作将永久删除选中的关注人员,删除后关注人将不再进行重点关注,请谨慎操作!`
   };
 
   private createForm: Object = {

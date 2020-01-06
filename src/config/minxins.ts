@@ -212,6 +212,7 @@ export default class GlobalMimins extends Vue {
    * @param action
    */
   commandClick(options: Object): void {
+
     switch (options['action']) {
       case 'update':
         this.Form = Object.assign(this.Form, options['row'])
@@ -228,16 +229,18 @@ export default class GlobalMimins extends Vue {
         this['resetForms'] = Object.assign(this['resetForms'], options['row'])
         break
       case 'delete':
+        console.log(this.deleteForm, '删除提示message')
         if (!this.deleteForm['data'].length) {
           this.deleteForm['data'].push(options['row'].id)
         }
-        MessageBox.confirm('此操作将永久删除该列表, 是否继续?', '提示', {
+        MessageBox.confirm(`${this.deleteForm['message']}, 是否继续?`, '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
           this.deleteRow(this.deleteForm)
         }).catch(() => {
+          this.deleteForm['data'] = []
           this.message('error', '已取消删除')
         });
         break
@@ -323,7 +326,7 @@ export default class GlobalMimins extends Vue {
     }
 
   }
-  message(type: string = 'success', message:string) {
+  message(type: string = 'success', message: string) {
     if (!Cookie.get('error')) {
       Cookie.set('error', Date.now(), { expires: new Date(new Date().getTime() + 3 * 1000) }) // 五秒钟内不会重复出现提示框
       this.$message({

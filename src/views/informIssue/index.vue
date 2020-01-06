@@ -257,7 +257,8 @@ export default class InformIssue extends Vue {
     //单个或批量删除
     url: "/admin/hs-notice/batch-delete",
     method: "delete",
-    data: []
+    data: [],
+    message: `此操作将永久删除选中已发布的通知,删除后此条通知将不存在,请谨慎操作!`
   };
 
   private dialogFormVisible: Boolean = false;

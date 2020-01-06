@@ -427,7 +427,8 @@ export default class WarningLink extends Vue {
     //单个或批量删除
     url: "/admin/usr-early-contact/batch-delete/",
     method: "delete",
-    data: []
+    data: [],
+    message: `此操作将永久删除选中的预警联系人,删除后此联系人将无法联系,请谨慎操作!`
   };
 
   showUnitSetting: boolean = false; // 查看已有分组设置状态
