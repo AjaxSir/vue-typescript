@@ -526,6 +526,7 @@ export default class DataTree extends Vue {
             this.HouseVisible = false;
             // const info = { ...this.tree_data };
             // this.handleNodeClick(info['data'], info['node']);
+            this.$refs.tree["setCheckedKeys"]([3]);
           }
         });
       } else if (this.nodeAction === "updateGroup") {
@@ -561,7 +562,7 @@ export default class DataTree extends Vue {
   }
   @Emit("fetchDatas")
   handleNodeClick(data, node) {
-    console.log(data, node)
+    console.log(data, node);
     this.showMenu = node.id;
     this.highlightStatus = !!data.id;
     this.tree_data = { data: data, node: node };

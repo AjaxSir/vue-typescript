@@ -748,7 +748,7 @@
 
             <el-table-column align="center" :show-overflow-tooltip="true" prop="note" label="备注">
               <template slot-scope="{row}">
-                <span>{{row.note}}</span>
+                <span>{{row.houseDetail.note}}</span>
               </template>
             </el-table-column>
             <el-table-column
@@ -903,7 +903,7 @@
     </el-dialog>
     <!-- uploadUrl="/v1/admin/car-space/import" -->
     <ExportIn
-      :uploadUrl="env === 'production' ? 'http://47.103.184.184/admin/car-space/import' : '/v1/admin/usrUser/import'"
+      :uploadUrl="env === 'production' ? 'http://47.103.184.184/admin/car-space/import' : '/v1/admin/car-space/import'"
       downTemplateUrl="/admin/car-space/export"
       @closeVisible="closeVisible"
       TmplateName="车位导出模板.xlsx"
