@@ -285,7 +285,8 @@ export default class WarningLink extends Vue {
     //单个或批量删除
     url: "/admin/car-space-type/batch-delete",
     method: "delete",
-    data: []
+    data: [],
+    message: `此操作将永久删除选中的车位类型,如车位已有此类型,将不可删除;若没有,删除后添加车位不再有此类型,`
   };
 
   private createForm: Object = {

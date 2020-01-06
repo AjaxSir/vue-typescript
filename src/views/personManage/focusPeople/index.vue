@@ -175,12 +175,23 @@
 
             <el-table-column align="center" label="状态" :show-overflow-tooltip="true">
               <template slot-scope="scope">
-                <!-- <el-tag
-                  size="small"
-                  style="border-radius: 50px;padding: 0 10px;"
-                  :type="scope.row.isNormal ? 'success' : 'danger'"
-                >{{ scope.row.isNormal? "启用" : "禁用" }}</el-tag>-->
-                <span>{{ scope.row.isNormal? "启用" : "禁用" }}</span>
+                <el-dropdown trigger="click">
+                  <span class="el-dropdown-link">
+                    <el-tag
+                      style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
+                      size="small"
+                      :type="scope.row.isEarly? 'success' : 'danger'"
+                    >{{ scope.row.isEarly? "启用" : "禁用" }}</el-tag>
+                  </span>
+                  <el-dropdown-menu slot="dropdown">
+                    <div @click="handleCommand(true,scope.row)">
+                      <el-dropdown-item>正常</el-dropdown-item>
+                    </div>
+                    <div @click="handleCommand(false,scope.row)">
+                      <el-dropdown-item>禁用</el-dropdown-item>
+                    </div>
+                  </el-dropdown-menu>
+                </el-dropdown>
               </template>
             </el-table-column>
 
@@ -807,7 +818,8 @@ export default class FocusPeople extends Vue {
     //单个或批量删除
     url: "/admin/usr-focus-personnel/batch-delete/",
     method: "delete",
-    data: []
+    data: [],
+    message: `此操作将永久删除选中的关注人员,删除后关注人将不再进行重点关注,请谨慎操作!`
   };
 
   private createForm: Object = {
@@ -818,6 +830,7 @@ export default class FocusPeople extends Vue {
     emergencyPhone: "", // 紧急联系人电话
     earlyPeriod: "", //预警周期
     typeId: "", //人员类别
+    isEarly: true, //状态
     note: "" //备注
   };
   private rules: Object = {
@@ -1061,6 +1074,14 @@ export default class FocusPeople extends Vue {
     if (value === "") {
       this.editForm[type] = null;
     }
+  }
+
+  handleCommand(val, item) {
+    const form = { isEarly: val, id: item["id"] };
+    editFocusPeople(form).then(() => {
+      this["message"]("success", `修改关注人员${item["name"]}的状态成功`);
+      this["fetchData"](this.initForm);
+    });
   }
 
   updateFocusPeople() {

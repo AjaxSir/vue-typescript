@@ -141,6 +141,33 @@
         ></el-table-column>
 
         <el-table-column
+          v-if="uploadUrl.indexOf('/admin/usrUser/import') !== -1 || uploadUrl.indexOf('/admin/usrUser/PropertyManager/import') !== -1 || uploadUrl.indexOf('/admin/hsDoorCard/import') !== -1"
+          :show-overflow-tooltip="true"
+          :key="Math.random()"
+          align="center"
+          property="caseFail"
+          label="失败原因"
+        >
+          <template slot-scope="{row}">
+            <span v-for="(item,index) in row.caseFail" :key="'caseFail' + index">{{item}},</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          v-if="uploadUrl.indexOf('/admin/usrUser/import') !== -1 || uploadUrl.indexOf('/admin/usrUser/PropertyManager/import') !== -1 || uploadUrl.indexOf('/admin/hsDoorCard/import') !== -1"
+          :show-overflow-tooltip="true"
+          :key="Math.random()"
+          align="center"
+          property="caseFail"
+          label="错误定位"
+        >
+          <template slot-scope="{row}">
+            <span>第 {{row.index}} 行{{uploadUrl}} {{uploadUrl.indexOf('/admin/usr-car/import') === -1}} {{uploadUrl.indexOf('/admin/car-space/import') === -1}}</span>
+          </template>
+        </el-table-column>
+
+        <!-- 车辆 -->
+
+        <el-table-column
           v-if="uploadUrl.indexOf('/admin/usr-car/import') !== -1"
           :show-overflow-tooltip="true"
           :key="Math.random()"
@@ -196,42 +223,6 @@
           property="note"
           label="备注"
         ></el-table-column>
-        <el-table-column
-          v-if="uploadUrl.indexOf('/admin/usr-car/import') === -1"
-          :show-overflow-tooltip="true"
-          :key="Math.random()"
-          align="center"
-          property="caseFail"
-          label="失败原因"
-        >
-          <template slot-scope="{row}">
-            <span v-for="(item,index) in row.caseFail" :key="'caseFail' + index">{{item}},</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          v-if="uploadUrl.indexOf('/admin/usr-car/import') === -1"
-          :show-overflow-tooltip="true"
-          :key="Math.random()"
-          align="center"
-          property="caseFail"
-          label="错误定位"
-        >
-          <template slot-scope="{row}">
-            <span>第 {{row.index}} 行</span>
-          </template>
-        </el-table-column>
-        <!-- <el-table-column
-          v-if="uploadUrl.indexOf('/admin/usr-car/import') !== -1"
-          :show-overflow-tooltip="true"
-          :key="Math.random()"
-          align="center"
-          property="note"
-          label="绑定车辆"
-        >
-          <template slot-scope="{row}">
-            <span v-for="item in row.carSpaceCarVos" :key="item.carId">{{item.carNo}},</span>
-          </template>
-        </el-table-column> -->
 
         <el-table-column
           v-if="uploadUrl.indexOf('/admin/usr-car/import') !== -1"
@@ -250,6 +241,7 @@
           property="ownerName"
           label="业主姓名"
         ></el-table-column>
+
         <el-table-column
           v-if="uploadUrl.indexOf('/admin/usr-car/import') !== -1"
           :show-overflow-tooltip="true"
@@ -275,6 +267,97 @@
             <span>第 {{row.index}} 行</span>
           </template>
         </el-table-column>
+
+        <!-- 车位 -->
+
+        <el-table-column
+          v-if="uploadUrl.indexOf('/admin/car-space/import') !== -1"
+          :show-overflow-tooltip="true"
+          :key="Math.random()"
+          align="center"
+          property="groupName"
+          label="所属分组"
+        ></el-table-column>
+
+        <el-table-column
+          v-if="uploadUrl.indexOf('/admin/car-space/import') !== -1"
+          :show-overflow-tooltip="true"
+          :key="Math.random()"
+          align="center"
+          property="serialNumber"
+          label="编号"
+        ></el-table-column>
+
+        <el-table-column
+          v-if="uploadUrl.indexOf('/admin/car-space/import') !== -1"
+          :show-overflow-tooltip="true"
+          :key="Math.random()"
+          align="center"
+          property="status"
+          label="状态"
+        ></el-table-column>
+
+        <el-table-column
+          v-if="uploadUrl.indexOf('/admin/car-space/import') !== -1"
+          :show-overflow-tooltip="true"
+          :key="Math.random()"
+          align="center"
+          property="carOwnerName"
+          label="业主"
+        ></el-table-column>
+
+        <el-table-column
+          v-if="uploadUrl.indexOf('/admin/car-space/import') !== -1"
+          :show-overflow-tooltip="true"
+          :key="Math.random()"
+          align="center"
+          property="carOwnerPhone"
+          label="业主电话"
+        ></el-table-column>
+
+        <el-table-column
+          v-if="uploadUrl.indexOf('/admin/car-space/import') !== -1"
+          :show-overflow-tooltip="true"
+          :key="Math.random()"
+          align="center"
+          property="carSpaceTypeName"
+          label="车位类型"
+        ></el-table-column>
+
+        <el-table-column
+          v-if="uploadUrl.indexOf('/admin/car-space/import') !== -1"
+          :show-overflow-tooltip="true"
+          :key="Math.random()"
+          align="center"
+          property="bindCarName"
+          label="绑定车辆"
+        ></el-table-column>
+
+        <el-table-column
+          v-if="uploadUrl.indexOf('/admin/car-space/import') !== -1"
+          :show-overflow-tooltip="true"
+          :key="Math.random()"
+          align="center"
+          property="caseFail"
+          label="失败原因"
+        >
+          <template slot-scope="{row}">
+            <span v-for="(item,index) in row.errMsg" :key="'errMsg' + index">{{item}},</span>
+          </template>
+        </el-table-column>
+
+        <el-table-column
+          v-if="uploadUrl.indexOf('/admin/car-space/import') !== -1"
+          :show-overflow-tooltip="true"
+          :key="Math.random()"
+          align="center"
+          property="caseFail"
+          label="错误定位"
+        >
+          <template slot-scope="{row}">
+            <span>第 {{row.rowIndex}} 行{{uploadUrl.indexOf('/admin/car-space/import')}}</span>
+          </template>
+        </el-table-column>
       </el-table>
     </el-dialog>
   </div>
@@ -284,8 +367,8 @@
 import { exportList } from "@/api/user.ts";
 import { Component, Vue, Prop, Emit } from "vue-property-decorator";
 import { Getter } from "vuex-class";
-import { message } from '@/utils'
-import qs from 'qs'
+import { message } from "@/utils";
+import qs from "qs";
 @Component({})
 export default class ExportIn extends Vue {
   @Prop({ default: "" }) downTemplateUrl: string;
@@ -304,7 +387,7 @@ export default class ExportIn extends Vue {
     });
     this.errData = [];
     if (JSON.parse(err.message).code === 400) {
-      message('error', JSON.parse(err.message).message)
+      message("error", JSON.parse(err.message).message);
     } else {
       this.errData = JSON.parse(err.message);
       this.dialogTableVisible = true;
@@ -315,9 +398,9 @@ export default class ExportIn extends Vue {
   @Emit("successUpload")
   successUpload(file) {
     this.$nextTick(() => {
-      this.fileName = ''
-    })
-    message('success', `导入成功`)
+      this.fileName = "";
+    });
+    message("success", `导入成功`);
     this.$refs.upload["clearFiles"]();
     this.handleClose();
   }
