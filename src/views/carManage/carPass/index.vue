@@ -122,6 +122,7 @@
             v-loading="showLoading"
             :data="list_data"
             stripe
+            border
             highlight-current-row
             @cell-mouse-enter="enterRowChange"
             @cell-mouse-leave="leaveRowChange"
@@ -137,7 +138,7 @@
 
             <el-table-column align="center" type="index" label="序号" width="50"></el-table-column>
 
-            <el-table-column align="center" prop="carNo" label="车牌号">
+            <el-table-column align="center" min-width="100px" prop="carNo" label="车牌号">
               <template slot-scope="scope">
                 <el-button
                   @click="showCarDetails(scope.row)"
@@ -158,7 +159,7 @@
               </template>
             </el-table-column>
 
-            <el-table-column align="center" prop="isVisitCar" label="车辆类型" width="100px">
+            <el-table-column align="center" width="100px" prop="isVisitCar" label="车辆类型">
               <template slot-scope="scope">
                 <span>{{ scope.row.isVisitCar? "访客" : "常驻" }}</span>
                 <!-- <el-tag
@@ -171,9 +172,9 @@
             </el-table-column>
 
             <!-- <el-table-column align="center" prop="car" label="车辆颜色"></el-table-column> -->
-            <el-table-column align="center" prop="ownerName" label="车主姓名"></el-table-column>
-            <el-table-column align="center" prop="ownerPhone" label="车主电话"></el-table-column>
-            <el-table-column align="center" prop="inOut" label="通行方向" width="100px">
+            <el-table-column align="center" min-width="100px" prop="ownerName" label="车主姓名"></el-table-column>
+            <el-table-column align="center" prop="ownerPhone" min-width="110px" label="车主电话"></el-table-column>
+            <el-table-column align="center" width="100px" prop="inOut" label="通行方向">
               <template slot-scope="scope">
                 <span>{{ scope.row.inOut==="进" ? '进入' : '出行' }}</span>
                 <!-- <el-tag
@@ -191,7 +192,7 @@
               :show-overflow-tooltip="true"
             ></el-table-column>
 
-            <el-table-column align="center" prop="photos" label="最近抓拍图片">
+            <el-table-column align="center" width="130px" prop="photos" label="最近抓拍图片">
               <template slot-scope="scope">
                 <img
                   v-if="scope.row.photos"
@@ -528,9 +529,11 @@ export default class CardManage extends Vue {
     if (this.CarDialogForm["isVisitCar"]) {
       this.getvisitCar();
     } else {
-      getOwnerUser({id:this.CarDialogForm["ownerScenceUserId"]}).then(res => {
-        this.carVisitDetail = res.data.data.user;
-      });
+      getOwnerUser({ id: this.CarDialogForm["ownerScenceUserId"] }).then(
+        res => {
+          this.carVisitDetail = res.data.data.user;
+        }
+      );
     }
   }
 

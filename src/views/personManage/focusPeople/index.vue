@@ -104,8 +104,8 @@
             <el-table-column
               prop="name"
               align="center"
+              min-width="50"
               label="姓名"
-              width="100"
               :show-overflow-tooltip="true"
             >
               <template slot-scope="scope">
@@ -122,15 +122,23 @@
             <el-table-column
               prop="typeName"
               align="center"
+              width="110px"
               label="分类"
               :show-overflow-tooltip="true"
             ></el-table-column>
 
-            <el-table-column prop="phone" align="center" label="联系电话" :show-overflow-tooltip="true"></el-table-column>
+            <el-table-column
+              prop="phone"
+              align="center"
+              width="110px"
+              label="联系电话"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
 
             <el-table-column
               prop="locationName"
               align="center"
+              min-width="80"
               label="房屋编号"
               :show-overflow-tooltip="true"
             >
@@ -142,6 +150,7 @@
             <el-table-column
               prop="emergencyPhone"
               align="center"
+              width="110px"
               label="紧急电话"
               :show-overflow-tooltip="true"
             ></el-table-column>
@@ -149,6 +158,7 @@
             <el-table-column
               prop="earlyGroupName"
               align="center"
+              min-width="80"
               label="预警组别"
               :show-overflow-tooltip="true"
             >
@@ -173,7 +183,7 @@
               </template>-->
             </el-table-column>
 
-            <el-table-column align="center" label="状态" :show-overflow-tooltip="true">
+            <el-table-column align="center" label="状态" width="70px" :show-overflow-tooltip="true">
               <template slot-scope="scope">
                 <el-dropdown trigger="click">
                   <span class="el-dropdown-link">
