@@ -164,7 +164,12 @@
               </template>
             </el-table-column>
 
-            <el-table-column align="center" prop="visitName" label="邀请人" :show-overflow-tooltip="true">
+            <el-table-column
+              align="center"
+              prop="visitName"
+              label="邀请人"
+              :show-overflow-tooltip="true"
+            >
               <template slot-scope="scope">
                 <el-button
                   @click="showCarDetails(scope.row,'second')"
@@ -269,7 +274,13 @@
                   <span>{{CarDialogForm.lastInTime ? CarDialogForm.lastInTime :''}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="最后一次进照片:">
-                  <img class="capture-img" :src="CarDialogForm.lastInPhoto" alt />
+                  <img
+                    v-if="CarDialogForm.lastInPhoto"
+                    class="capture-img"
+                    :src="CarDialogForm.lastInPhoto"
+                    alt
+                  />
+                  <span v-else></span>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
@@ -289,7 +300,13 @@
                   <span>{{CarDialogForm.lastOutTime ? CarDialogForm.lastOutTime :''}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="最后一次出照片:">
-                  <img class="capture-img" :src="CarDialogForm.lastOutPhoto" alt />
+                  <img
+                    v-if="CarDialogForm.lastOutPhoto"
+                    class="capture-img"
+                    :src="CarDialogForm.lastOutPhoto"
+                    alt
+                  />
+                  <span v-else></span>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -377,7 +394,8 @@
             </el-table-column>
             <el-table-column align="center" prop="address" label="抓拍图片">
               <template slot-scope="scope">
-                <img :src="scope.row.photos" alt />
+                <img v-if="scope.row.photos" :src="scope.row.photos" alt />
+                <span v-else></span>
               </template>
             </el-table-column>
           </el-table>
@@ -562,7 +580,9 @@ export default class CardManage extends Vue {
   async fetchUser() {
     /**@description 查看车辆管理名单用户详情 */
     try {
-      const { data } = await getOwnerUser(this.CarDialogForm["scenceUserId"]);
+      const { data } = await getOwnerUser({
+        id: this.CarDialogForm["scenceUserId"]
+      });
       this.carUserDetail = data.data.user;
       this.carInviterDetail = { ...data.data.house[0] };
     } catch (err) {
