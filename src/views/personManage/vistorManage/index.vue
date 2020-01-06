@@ -197,19 +197,37 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="name" align="center" label="访客姓名" :show-overflow-tooltip="true">
+            <el-table-column
+              prop="name"
+              align="center"
+              min-width="50px"
+              label="访客姓名"
+              :show-overflow-tooltip="true"
+            >
               <template slot-scope="{ row }">
                 <el-button type="text" @click="showDetail(row)">{{ row.name }}</el-button>
               </template>
             </el-table-column>
 
-            <el-table-column prop="status" align="center" label="状态" :show-overflow-tooltip="true">
+            <el-table-column
+              prop="status"
+              align="center"
+              width="70px"
+              label="状态"
+              :show-overflow-tooltip="true"
+            >
               <template slot-scope="scope">
                 <span>{{statusFilter(scope.row.status)}}</span>
               </template>
             </el-table-column>
 
-            <el-table-column prop="phone" align="center" label="访客电话" :show-overflow-tooltip="true"></el-table-column>
+            <el-table-column
+              prop="phone"
+              align="center"
+              width="110px"
+              label="访客电话"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
 
             <el-table-column
               prop="cardNo"
@@ -221,9 +239,9 @@
             <el-table-column
               prop="visitType"
               align="center"
+              width="80px"
               label="访客类型"
               :show-overflow-tooltip="true"
-              width="100px"
             >
               <template slot-scope="scope">
                 <span>{{scope.row.visitType ==='1' ?'APP' : scope.row.visitType ==='2' ?'访客机' : ''}}</span>
@@ -233,6 +251,7 @@
             <el-table-column
               prop="visitName"
               align="center"
+              min-width="50"
               label="受访人"
               :show-overflow-tooltip="true"
             >
@@ -258,6 +277,7 @@
             <el-table-column
               prop="numPeople"
               align="center"
+              width="80px"
               label="同行人数"
               :show-overflow-tooltip="true"
             ></el-table-column>
