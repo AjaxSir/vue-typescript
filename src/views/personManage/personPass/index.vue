@@ -97,7 +97,7 @@
             stripe
             v-loading='showLoading'
             height='65vh'
-
+            border
             highlight-current-row
             @cell-mouse-enter="enterRowChange"
             @cell-mouse-leave="leaveRowChange"

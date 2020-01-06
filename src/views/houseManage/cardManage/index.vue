@@ -186,7 +186,7 @@
               <p class="detai-info">
                 <span class="labelTitle">状态</span> :&nbsp;&nbsp;&nbsp;
                 <el-tag
-                  style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
+                  style="border-radius: 50px;padding: 0 10px"
                   :type="detailDialog.status === '0' ? 'success' : 'danger'"
                 >
                 {{ detailDialog.status === '0' ? "正常" : (detailDialog.status === '-2' ? "禁用" : "过期" ) }}
