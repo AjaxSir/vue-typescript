@@ -239,7 +239,6 @@ export default class GlobalMimins extends Vue {
           this.deleteRow(this.deleteForm)
         }).catch(() => {
           this.message('error', '已取消删除')
-          this.deleteForm['data'] = []
         });
         break
       case 'whiteList':

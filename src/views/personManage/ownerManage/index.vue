@@ -366,7 +366,7 @@
           <el-table :data="dtailTable" style="width: 100%">
             <el-table-column prop="name" align="center" label="姓名" width="150px"></el-table-column>
             <el-table-column prop="passTime" :show-overflow-tooltip="true" align="center" label="通行时间"></el-table-column>
-            <el-table-column prop="inOut" align="center" label="进/出" width="60px"></el-table-column>
+            <el-table-column prop="inOut" align="center" label="出入类型" width="100px"></el-table-column>
             <el-table-column prop="passMethod" align="center" width="150" label="通行方式">
               <template slot-scope="{row}">
                 <span>{{ row.passMethod | passMethod  }}</span>

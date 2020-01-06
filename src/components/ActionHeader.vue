@@ -48,7 +48,7 @@
         </el-dropdown>-->
 
         <div v-if="filterStatus" class="content">
-          <span :class="[hasProty ? 'activeFilter' : '']" @click="visibleFilter = !visibleFilter,visible = false">
+          <span :class="[hasProty ? 'activeFilter' : '']" @click.stop="visibleFilter = !visibleFilter,visible = false">
             <i :style="{ color: hasProty ? '#409eff' : '' }" class="iconfont icon-filtration"></i>
             过滤
           </span>
@@ -78,7 +78,7 @@
 
         <i
           v-if="pageStatus"
-          @click="visible = !visible,visibleFilter = false"
+          @click.stop="visible = !visible,visibleFilter = false"
           style="font-size:18px; margin-right: 20px;"
           class="iconfont icon-_shezhi-xian"
         ></i>
@@ -183,8 +183,16 @@ export default class ActionManage extends Vue {
   fetchData() {
     return Promise.resolve({});
   }
-
   mounted() {
+    document.body.addEventListener('click', (e) => {
+      if (this.$el.contains(e['target'] as HTMLElement)) {
+        return
+      } else {
+        this.visibleFilter = false
+        this.visible = false
+      }
+
+    })
     this.addUpdateStatus = this.permissionList.includes(
       this.$route.name + "Update"
     );
