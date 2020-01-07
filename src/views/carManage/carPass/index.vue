@@ -145,44 +145,20 @@
                   type="text"
                   class="serial-num"
                 >{{scope.row.carNo}}</el-button>
-                <!-- <div class="fun-btn">
-                  <el-dropdown trigger="click" placement="bottom-start" @command="commandClick">
-                       <el-tooltip class="item" effect="dark" content="点击操作" placement="top">
-                      <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
-                    </el-tooltip>
-                    <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item command="update">修改</el-dropdown-item>
-                      <el-dropdown-item :command="returnCommand('delete', scope.row)">批量删除</el-dropdown-item>
-                    </el-dropdown-menu>
-                  </el-dropdown>
-                </div>-->
               </template>
             </el-table-column>
 
             <el-table-column align="center" width="100px" prop="isVisitCar" label="车辆类型">
               <template slot-scope="scope">
                 <span>{{ scope.row.isVisitCar? "访客" : "常驻" }}</span>
-                <!-- <el-tag
-                  size="small"
-                  style="border-radius: 50px;padding: 0 10px;"
-                  :type="scope.row.isVisitCar? 'success' : 'danger'"
-                  @click="editType(scope.row)"
-                >{{ scope.row.isVisitCar? "访客" : "常驻" }}</el-tag>-->
               </template>
             </el-table-column>
 
-            <!-- <el-table-column align="center" prop="car" label="车辆颜色"></el-table-column> -->
             <el-table-column align="center" min-width="100px" prop="ownerName" label="车主姓名"></el-table-column>
             <el-table-column align="center" prop="ownerPhone" min-width="110px" label="车主电话"></el-table-column>
             <el-table-column align="center" width="100px" prop="inOut" label="通行方向">
               <template slot-scope="scope">
                 <span>{{ scope.row.inOut==="进" ? '进入' : '出行' }}</span>
-                <!-- <el-tag
-                  size="small"
-                  style="border-radius: 50px;padding: 0 10px; "
-                  :type="scope.row.inOut==='进'? 'success' : 'danger'"
-                  @click="editType(scope.row)"
-                >{{ scope.row.inOut==="进" ? '进入' : '出行' }}</el-tag>-->
               </template>
             </el-table-column>
             <el-table-column
@@ -366,9 +342,6 @@
           </el-form>
         </el-tab-pane>
       </el-tabs>
-      <!-- <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="detailDialogVisible = false">确 定</el-button>
-      </span>-->
     </el-dialog>
     <ImageMagni :centerDialogVisible="imgVisible" bigTitle="最近抓拍图片" :bigImg="bigImg" />
     <StatisticDataDialog :formShowStatistic.sync="dialogStatisticData" :fromTitle="fromTitle" />

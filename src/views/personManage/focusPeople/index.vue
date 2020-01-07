@@ -711,10 +711,22 @@
         </el-tab-pane>
 
         <el-tab-pane label="预警人员" name="second">
-          <el-table v-loading="earlyLoading" :data="earlyList" style="width: 100%" stripe>
-            <el-table-column prop="name" align="center" label="姓名" :show-overflow-tooltip="true"></el-table-column>
-            <el-table-column prop="phone" align="center" label="电话" :show-overflow-tooltip="true"></el-table-column>
-            <el-table-column prop="email" align="center" label="邮箱" :show-overflow-tooltip="true"></el-table-column>
+          <el-table v-loading="earlyLoading" :data="earlyList" border style="width: 100%" stripe>
+            <el-table-column prop="name" align="center" label="姓名" :show-overflow-tooltip="true">
+              <template slot-scope="{row}">
+                <p class="boder-style">{{row.name}}</p>
+              </template>
+            </el-table-column>
+            <el-table-column prop="phone" align="center" label="电话" :show-overflow-tooltip="true">
+              <template slot-scope="{row}">
+                <p class="boder-style">{{row.phone}}</p>
+              </template>
+            </el-table-column>
+            <el-table-column prop="email" align="center" label="邮箱" :show-overflow-tooltip="true">
+              <template slot-scope="{row}">
+                <p class="boder-style">{{row.email}}</p>
+              </template>
+            </el-table-column>
             <el-table-column
               prop="earlyGroupName"
               align="center"
@@ -735,8 +747,12 @@
         </el-tab-pane>
 
         <el-tab-pane label="通行记录" name="thirdly">
-          <el-table v-loading="passTarget" :data="passList" style="width: 100%" stripe>
-            <el-table-column align="center" prop="name" label="姓名" :show-overflow-tooltip="true"></el-table-column>
+          <el-table v-loading="passTarget" :data="passList" border style="width: 100%" stripe>
+            <el-table-column align="center" prop="name" label="姓名" :show-overflow-tooltip="true">
+              <template slot-scope="{row}">
+                <p class="boder-style">{{row.name}}</p>
+              </template>
+            </el-table-column>
             <el-table-column
               align="center"
               prop="devAddress"
@@ -755,7 +771,11 @@
               label="通行时间"
               width="150px"
               :show-overflow-tooltip="true"
-            ></el-table-column>
+            >
+              <template slot-scope="{row}">
+                <p class="boder-style">{{row.passTime}}</p>
+              </template>
+            </el-table-column>
             <el-table-column align="center" prop="inOut" label="通行类型" :show-overflow-tooltip="true">
               <template slot-scope="scope">
                 <span>{{ scope.row.inOut}}</span>

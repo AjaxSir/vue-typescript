@@ -313,6 +313,11 @@ div::-webkit-scrollbar-corner {
   color: white;
 }
 
+.el-tree--highlight-current .el-tree-node.is-expanded>.el-tree-node__content {
+  background-color: #409EFF;
+  color: white;
+}
+
 .el-time-panel {
   left: -34px !important;
 }
@@ -363,8 +368,24 @@ div::-webkit-scrollbar-corner {
   text-align: center;
 }
 
-.messageClass{
+.messageClass {
   background: white;
-  border:1px solid lightgray;
+  border: 1px solid lightgray;
 }
 
+// 修改boder边框颜色
+.el-table--border th,
+.el-table--border td {
+  border-right: 1px solid #F2F6FC;
+}
+
+.el-table th.is-leaf,
+.el-table td {
+  border-bottom: 1px solid #F2F6FC;
+}
+
+// 弹出框boder样式
+.boder-style {
+  height: 37px;
+  line-height: 37px;
+}

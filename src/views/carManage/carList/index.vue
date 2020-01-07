@@ -509,7 +509,7 @@
           </el-form>
         </el-tab-pane>
         <el-tab-pane label="通行记录" name="thirdly">
-          <el-table v-loading="passTarget" :data="passList" style="width: 100%" stripe>
+          <el-table v-loading="passTarget" :data="passList" border style="width: 100%" stripe>
             <el-table-column align="center" prop="carNo" label="车牌号" :show-overflow-tooltip="true"></el-table-column>
             <el-table-column
               align="center"
@@ -517,7 +517,11 @@
               label="通行时间"
               width="150px"
               :show-overflow-tooltip="true"
-            ></el-table-column>
+            >
+              <template slot-scope="{row}">
+                <p class="boder-style">{{row.passTime}}</p>
+              </template>
+            </el-table-column>
             <el-table-column
               align="center"
               prop="address"
@@ -543,7 +547,8 @@
             </el-table-column>
             <el-table-column align="center" prop="address" label="抓拍图片">
               <template slot-scope="scope">
-                <img :src="scope.row.photos" alt />
+                <img v-if="scope.row.photos" :src="scope.row.photos" alt />
+                <span v-else></span>
               </template>
             </el-table-column>
           </el-table>
