@@ -365,6 +365,9 @@ export default class CardManage extends Vue {
       status
     };
   }
+  mounted() {
+    this.Form['validDate'] = (new Date()).valueOf() + 365 * 24 * 60 * 60 * 1000
+  }
   // 切换到修改时间框
   showUpdateTime(row) {
     this["list_data"].forEach(element => {

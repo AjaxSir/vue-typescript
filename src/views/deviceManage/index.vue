@@ -57,40 +57,45 @@
                 <el-button @click="showDetails(scope.row)" type="text">{{scope.row.name}}</el-button>
               </template>
             </el-table-column>
-            <el-table-column :show-overflow-tooltip='true' align="center" prop="serialNumber" label="设备编号" width="90">
+            <el-table-column :show-overflow-tooltip='true' align="center" prop="bindingType" label="设备类型">
+              <template slot-scope="{row}">
+                <span>{{ row.type | devTypes }}</span>
+                </template>
+            </el-table-column>
+            <el-table-column :show-overflow-tooltip='true' align="center" prop="inOut" label="设备进出" width="90">
+            </el-table-column>
+            <el-table-column align="center" prop="type" label="状态">
+              <template slot-scope="scope">
+                <span :style="{ color : scope.row.status === 'ONLINE' ? '#67c23a' : '#f56c6c' }">{{scope.row.status === 'ONLINE' ? "正常" : "离线"}}</span>
+              </template>
             </el-table-column>
             <el-table-column :show-overflow-tooltip='true' align="center" prop="address" label="绑定位置">
               <template slot-scope="{row}">
                 <span> {{ row.bindingAddress }} </span>
               </template>
             </el-table-column>
-
-            <el-table-column :show-overflow-tooltip='true' align="center" prop="bindingType" label="设备类型">
-              <template slot-scope="{row}">
-                <span>{{ row.type | devTypes }}</span>
-                </template>
+            <el-table-column :show-overflow-tooltip='true' align="center" prop="serialNumber" label="设备编号" width="90">
             </el-table-column>
+
+
+
 
             <el-table-column align="center" :show-overflow-tooltip='true' prop="upTime" label="最近上线时间" width="160"></el-table-column>
             <el-table-column align="center" :show-overflow-tooltip='true' prop="downTime" label="最近离线时间" width="160"></el-table-column>
-
+            <el-table-column align="center" prop="bindTime" label="设备添加时间" width="220">
+              <template slot-scope="{row}">
+                <span>{{ row.bindTime || '' }}</span>
+                </template>
+            </el-table-column>
             <el-table-column :show-overflow-tooltip='true' align="center" prop="note" label="设备说明">
               <template slot-scope="{row}">
                 <span>{{ row.note || '' }}</span>
                 </template>
             </el-table-column>
 
-            <el-table-column align="center" prop="type" label="状态">
-              <template slot-scope="scope">
-                <span :style="{ color : scope.row.status === 'ONLINE' ? '#67c23a' : '#f56c6c' }">{{scope.row.status === 'ONLINE' ? "正常" : "离线"}}</span>
-              </template>
-            </el-table-column>
 
-            <el-table-column align="center" prop="bindTime" label="设备添加时间" width="220">
-              <template slot-scope="{row}">
-                <span>{{ row.bindTime || '' }}</span>
-                </template>
-            </el-table-column>
+
+
           </el-table>
         </div>
         <el-pagination

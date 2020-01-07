@@ -230,3 +230,14 @@ export function deleteTheHousePeople(houseId: string, userId: string,scenceUserI
     }
   })
 }
+
+// 通过用户id获取房屋列表信息
+export function getHouseListByUserId(userId: string) {
+  return _axios({
+    url: '/admin/hsHouse/byUserId',
+    method: 'get',
+    params: {
+      userId
+    }
+  })
+}
