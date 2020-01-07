@@ -200,7 +200,7 @@
             <el-table-column
               prop="name"
               align="center"
-              min-width="50px"
+              min-width="80px"
               label="访客姓名"
               :show-overflow-tooltip="true"
             >
@@ -251,7 +251,7 @@
             <el-table-column
               prop="visitName"
               align="center"
-              min-width="50"
+              min-width="70"
               label="受访人"
               :show-overflow-tooltip="true"
             >
@@ -418,14 +418,18 @@
           </el-form>
         </el-tab-pane>
         <el-tab-pane label="通行记录" name="thirdly">
-          <el-table v-loading="passTarget" :data="passList" style="width: 100%" stripe>
+          <el-table v-loading="passTarget" :data="passList" border style="width: 100%" stripe>
             <el-table-column
               :show-overflow-tooltip="true"
               align="center"
               prop="passTime"
               label="通行时间"
               width="150px"
-            ></el-table-column>
+            >
+              <template slot-scope="{row}">
+                <p class="boder-style">{{row.passTime}}</p>
+              </template>
+            </el-table-column>
             <el-table-column
               :show-overflow-tooltip="true"
               align="center"
@@ -445,7 +449,7 @@
             <el-table-column
               :show-overflow-tooltip="true"
               align="center"
-              prop="passTime"
+              prop="devSubAddress"
               label="通行地址"
               min-width="150px"
             >
