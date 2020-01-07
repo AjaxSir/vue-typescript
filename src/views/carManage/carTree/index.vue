@@ -527,8 +527,7 @@ export default class DataTree extends Vue {
             this.$emit("getHouseTreeData");
             this.HouseVisible = false;
             this.defaultKey[0] = this.tree_data["data"]["id"];
-             this.highlightStatus = !!this.tree_data["data"]["id"];
-            console.log(this.defaultKey[0]);
+            this.highlightStatus = !!this.tree_data["data"]["id"];
             this.$refs.tree["setCheckedKeys"]([3]);
           }
         });
@@ -540,6 +539,7 @@ export default class DataTree extends Vue {
             this.closeDialog();
             this.$emit("getHouseTreeData");
             this.HouseVisible = false;
+            this.defaultKey[0] = this.tree_data["data"]["id"];
           }
         });
       }
@@ -554,6 +554,7 @@ export default class DataTree extends Vue {
         this.$refs["batchForm"]["resetFields"]();
         this.$emit("getHouseTreeData");
         this.HouseVisible = false;
+        this.defaultKey[0] = this.tree_data["data"]["id"];
       });
     }
   }
