@@ -317,7 +317,7 @@ export const asyncRoute = [
       path: 'community',
       component: _import_('roleManage/community/index'),
       meta: {
-        title: '小区',
+        title: '小区信息',
         bg_color: '#009bba',
         icon: 'icon-xiaoqu'
       }

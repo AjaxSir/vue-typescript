@@ -25,14 +25,14 @@
             </template>
           </el-table-column>
           <el-table-column
-            prop="date"
+            prop="name"
             :show-overflow-tooltip="true"
             label="姓名"
             align="center"
 
             >
             <template slot-scope="{row}">
-              <span>{{ row.userName || '' }}</span>
+              <span>{{ row.name || '' }}</span>
             </template>
           </el-table-column>
           <el-table-column

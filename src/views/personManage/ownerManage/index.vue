@@ -436,7 +436,8 @@
             <el-table-column prop="modal" align="center" label="型号"></el-table-column>
             <el-table-column align="center" label="照片">
               <template slot-scope="{row}">
-                <img :src="row.photo" alt />
+                <img v-if='row.photo' :src="row.photo" alt />
+                <span v-else></span>
               </template>
             </el-table-column>
           </el-table>
@@ -449,11 +450,14 @@
               prop="serialNumber"
               label="房屋编号"
             >
-              <template slot-scope="{row}">
-                <span>{{ row.groupName }} - {{ row.buildingName }} - {{ row. serialNumber}}</span>
-              </template>
+            <template slot-scope="{row}">
+              <el-button @click='showHouseDetail(row)' type='text'>{{ row.groupName }} - {{ row.buildingName }} - {{ row. serialNumber}}</el-button>
+            </template>
             </el-table-column>
 
+            <el-table-column align="center" label="用户类型">
+              <template slot-scope="{row}">{{ row.type | typeFilter }}</template>
+            </el-table-column>
             <el-table-column align="center" label="邀请车辆">
               <template slot-scope="{row}">{{ row.enableInviteCar === '1' ? '允许' : '禁止' }}</template>
             </el-table-column>
@@ -764,6 +768,113 @@
       </div>
     </el-dialog>
     <BigImg :centerDialogVisible="imgVisible" bigTitle="注册人脸" :bigImg="bigImg" />
+    <!-- 房屋信息 -->
+    <el-dialog
+      :close-on-click-modal="false"
+      class="dialog-rewrite"
+      :title="'编号: '+ houseDetailDialog.serialNumber"
+      :visible.sync="HouseDialogFormVisible"
+    >
+      <el-tabs type="card" v-model="houseActiveName">
+        <el-tab-pane label="详细信息" name="详细信息">
+          <el-form label-width="130px" :model="houseDetailDialog">
+            <el-row :gutter="20">
+              <el-col :span="12" class="col-line">
+                <el-form-item style="margin-bottom:0" label="所在单元:">
+                  <span>{{houseDetailDialog.buildingName ? houseDetailDialog.buildingName : '0'}}</span>
+                </el-form-item>
+
+                <el-form-item style="margin-bottom:0" label="所在楼层:">
+                  <span>{{houseDetailDialog.storeyNum ? houseDetailDialog.storeyNum : ''}}</span>
+                </el-form-item>
+
+                <el-form-item style="margin-bottom:0" label="房屋编号:">
+                  <span>{{houseDetailDialog.serialNumber ? houseDetailDialog.serialNumber : ''}}</span>
+                </el-form-item>
+
+                <el-form-item style="margin-bottom:0" label="注册时间:">
+                  <span>{{houseDetailDialog.createTime && houseDetailDialog.createTime.substr(0, 10)}}</span>
+                </el-form-item>
+              </el-col>
+
+              <el-col :span="12">
+                <el-form-item style="margin-bottom:0" label="注册人数:">
+                  <span>{{houseDetailDialog.personCnt ? houseDetailDialog.personCnt : '0'}}人</span>
+                </el-form-item>
+
+                <el-form-item style="margin-bottom:0" label="房屋状态:">
+                  <span>{{houseDetailDialog.status | status}}</span>
+                </el-form-item>
+
+                <!-- <el-form-item style="margin-bottom:0" label="业主电话:">
+                  <span>{{houseDetailDialog.phone || ''}}</span>
+                </el-form-item> -->
+
+                <el-form-item style="margin-bottom:0" label="备注信息:">
+                  <span>{{ houseDetailDialog.note || '' }}</span>
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </el-form>
+        </el-tab-pane>
+        <el-tab-pane label="在住人员" name="在住人员">
+          <el-table v-loading="showLoading" :data="HouseDtailTable" style="width: 100%">
+            <el-table-column
+              align="center"
+              width="50"
+              :show-overflow-tooltip="true"
+              type="index"
+              label="序号"
+            ></el-table-column>
+            <el-table-column
+              align="center"
+              :show-overflow-tooltip="true"
+              prop="userName"
+              label="姓名"
+            ></el-table-column>
+            <el-table-column
+              align="center"
+              :show-overflow-tooltip="true"
+              prop="userPhone"
+              label="电话"
+            ></el-table-column>
+            <el-table-column align="center" width="80" prop="type" label="人员类型">
+              <template slot-scope="{row}">
+                <span>{{ row.type | type }}</span>
+              </template>
+            </el-table-column>
+
+            <el-table-column
+              align="center"
+              :show-overflow-tooltip="true"
+              prop="createTime"
+              label="注册时间"
+            ></el-table-column>
+
+            <el-table-column :show-overflow-tooltip="true" align="center" prop="note" label="备注">
+              <template slot-scope="{row}">
+                <span>{{ row.note ? row.note : '' }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column
+              align="center"
+              :show-overflow-tooltip="true"
+              prop="createTime"
+              label="操作"
+              :key="Math.random()"
+               v-if="globalUpdateStatus"
+            >
+              <template slot-scope="scope">
+                <el-button type="text" @click="deleteHousePeople(scope.row, scope.$index)">删除</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-tab-pane>
+      </el-tabs>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" size="small" @click="HouseDialogFormVisible = false">确 定</el-button>
+      </span>
+    </el-dialog>
     <ExportIn
       :uploadUrl="env === 'production' ? 'http://47.103.184.184/admin/usrUser/import' : '/v1/admin/usrUser/import'"
       downTemplateUrl="/admin/usrUser/model"
@@ -785,7 +896,7 @@ import {
 } from "@/api/peopleApi.ts";
 import _axios from "@/plugins/axios.js";
 import mixin from "@/config/minxins";
-import { searchSuggestHouse, deleteTheHousePeople } from "@/api/houseApi.ts";
+import { searchSuggestHouse, deleteTheHousePeople, getRegisterPeople } from "@/api/houseApi.ts";
 import { getUserPropertyPass, getFaceList } from "@/api/peopleApi.ts";
 import {
   queryUserPhone //根据手机号模糊查询住户
@@ -804,6 +915,17 @@ const ExportIn = () => import("@/components/exportIn/index.vue");
     ExportIn
   },
   filters: {
+     status(val: string) {
+      const data = {
+        "1": "自住",
+        "2": "出租",
+        // "3": '待售中',
+        // "4": '待租中',
+        "3": "闲置"
+        // "6": '其他'
+      };
+      return data[val];
+    },
     statusFilter(val: string) {
       const data = {
         "0": "正常",
@@ -813,6 +935,14 @@ const ExportIn = () => import("@/components/exportIn/index.vue");
       return data[val];
     },
     typeFilter(val: string) {
+      const data = {
+        "1": "业主",
+        "2": "租户",
+        "3": "家庭成员"
+      };
+      return data[val];
+    },
+    type(val: string) {
       const data = {
         "1": "业主",
         "2": "租户",
@@ -836,7 +966,9 @@ const ExportIn = () => import("@/components/exportIn/index.vue");
 export default class OwnerManage extends Vue {
   btnLoading: boolean = false;
   private activeName: string = "first";
+  private houseActiveName: string = "详细信息";
   private dialogFormVisible: boolean = false;
+  private HouseDialogFormVisible: boolean = false;
   UserType: string = "owner";
   spanArray: Array<number> = []; // 合并单元格
   index: number = 0; // 合并单元格参数
@@ -887,9 +1019,11 @@ export default class OwnerManage extends Vue {
     data: [],
     message: "此操作将永久删除选中的住户, 删除后住户将不存在,请谨慎操作!"
   };
+  houseDetailDialog: object = {}
   loading: boolean = false;
   phoneList: Array<object> = [];
   nameDisabled: boolean = false;
+  HouseDtailTable: Array<object> = [] // 房屋下的注册人员
   visible: boolean = false; // 批量导入状态
   updateArray: Array<string> = ["noteStatus", "phoneStatus"];
   rules: any = {
@@ -982,6 +1116,39 @@ export default class OwnerManage extends Vue {
       })
       .catch(() => {
         this["message"]("error", "已取消删除");
+      });
+  }
+  // 用户详情页 点击房屋编号查看更多信息
+  showHouseDetail(row) {
+    console.log(row)
+    this.HouseDialogFormVisible = true
+    this.houseDetailDialog = Object.assign({}, row)
+    this.houseActiveName = '详细信息'
+    getRegisterPeople(row.houseId).then(res => {
+      this.HouseDtailTable = res.data.data;
+    });
+  }
+  // 删除房屋下的某个用户
+  deleteHousePeople(row, index) {
+    this.$confirm(`此操作将永久删除该房屋下的住户,删除后${row.userName}将不与该房屋绑定,请谨慎操作!?`, "提示", {
+      confirmButtonText: "确定",
+      cancelButtonText: "取消",
+      type: "warning"
+    })
+      .then(() => {
+        deleteTheHousePeople(row.houseId, row.userId, ' ').then(res => {
+          if (res.data.code === 200) {
+            this.HouseDtailTable.splice(index, 1)
+            this.fetchData(this.initForm)
+          }
+          // getRegisterPeople(this.houseId).then(res => {
+          //   this.dtailTable = res.data.data;
+          //   this.fetchData(this.initForm)
+          // });
+        });
+      })
+      .catch(() => {
+        this['message']('error', '已取消删除')
       });
   }
   async remoteMethod(query: string, cb) {
