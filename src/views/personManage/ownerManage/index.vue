@@ -13,7 +13,7 @@
           :total="page.total"
         >
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item >
+            <el-dropdown-item>
               <div @click="showExportIn" v-if="globalUpdateStatus">导入</div>
             </el-dropdown-item>
             <el-dropdown-item command="export">导出</el-dropdown-item>
@@ -21,31 +21,57 @@
           <div slot="houseNum">
             <div class="word-filter">
               <span class="filter-name">姓&nbsp;&nbsp;&nbsp;名:</span>
-              <el-input  clearable
-              placeholder="请输入需要查找的姓名"
-              @keyup.enter.native="emitFetchData" class="input-filter" v-model="filterForm.name" size="small"></el-input>
+              <el-input
+                clearable
+                placeholder="请输入需要查找的姓名"
+                @keyup.enter.native="emitFetchData"
+                class="input-filter"
+                v-model="filterForm.name"
+                size="small"
+              ></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">手机号:</span>
-              <el-input clearable
-              placeholder="请输入需要查找的手机号"
-              @keyup.enter.native="emitFetchData"  class="input-filter" v-model="filterForm.phone" size="small"></el-input>
+              <el-input
+                clearable
+                placeholder="请输入需要查找的手机号"
+                @keyup.enter.native="emitFetchData"
+                class="input-filter"
+                v-model="filterForm.phone"
+                size="small"
+              ></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">证件号码:</span>
-              <el-input  clearable
-              placeholder="请输入需要查找的证件号码"
-              @keyup.enter.native="emitFetchData"  class="input-filter" v-model="filterForm.cardNo" size="small"></el-input>
+              <el-input
+                clearable
+                placeholder="请输入需要查找的证件号码"
+                @keyup.enter.native="emitFetchData"
+                class="input-filter"
+                v-model="filterForm.cardNo"
+                size="small"
+              ></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">房屋编号:</span>
-              <el-input clearable
-              placeholder="请输入需要查找的房屋编号"
-              @keyup.enter.native="emitFetchData"  class="input-filter" v-model="filterForm.key" size="small"></el-input>
+              <el-input
+                clearable
+                placeholder="请输入需要查找的房屋编号"
+                @keyup.enter.native="emitFetchData"
+                class="input-filter"
+                v-model="filterForm.key"
+                size="small"
+              ></el-input>
             </div>
             <div class="word-filter">
               <span class="filter-name">住户类型:</span> &nbsp;&nbsp;
-              <el-select multiple class="select-class" size="small" v-model="filterForm.types" placeholder="请选择">
+              <el-select
+                multiple
+                class="select-class"
+                size="small"
+                v-model="filterForm.types"
+                placeholder="请选择"
+              >
                 <el-option label="业主" value="1"></el-option>
                 <el-option label="租户" value="2"></el-option>
                 <el-option label="家庭成员" value="3"></el-option>
@@ -53,13 +79,18 @@
             </div>
             <div class="word-filter">
               <span class="filter-name">住户状态:</span> &nbsp;&nbsp;
-              <el-select multiple class="select-class" size="small" v-model="filterForm.status" placeholder="请选择">
+              <el-select
+                multiple
+                class="select-class"
+                size="small"
+                v-model="filterForm.status"
+                placeholder="请选择"
+              >
                 <el-option label="正常" value="0"></el-option>
                 <!-- <el-option label="不在住" value="-1"></el-option> -->
                 <el-option label="过期" value="-2"></el-option>
               </el-select>
             </div>
-
           </div>
         </ActionHeader>
       </el-col>
@@ -70,6 +101,7 @@
           <el-table
             :data="list_data"
             border
+            stripe
             highlight-current-row
             v-loading="showLoading"
             height="65vh"
@@ -147,7 +179,7 @@
             <el-table-column prop="img" align="center" width="100" label="注册人脸">
               <template slot-scope="scope">
                 <img
-                v-if='scope.row.face'
+                  v-if="scope.row.face"
                   class="capture-img"
                   @mouseout="imgVisible=false"
                   @mouseover="imgVisible=true,bigImg=scope.row.face"
@@ -307,7 +339,7 @@
               <template slot-scope="{row}">
                 <span>{{ row.house[0] && row.house[0].note }}</span>
               </template>
-            </el-table-column> -->
+            </el-table-column>-->
           </el-table>
         </div>
         <el-pagination
@@ -355,7 +387,12 @@
                 </el-form-item>
 
                 <el-form-item style="margin-bottom:0" label="备注信息:">
-                  <el-input @blur='confirmUpdateNote' maxlength="200" v-model="detailDialog.note" placeholder="编辑备注信息(最多输入200字)"></el-input>
+                  <el-input
+                    @blur="confirmUpdateNote"
+                    maxlength="200"
+                    v-model="detailDialog.note"
+                    placeholder="编辑备注信息(最多输入200字)"
+                  ></el-input>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -365,16 +402,21 @@
         <el-tab-pane label="通行记录" name="second">
           <el-table :data="dtailTable" style="width: 100%">
             <el-table-column prop="name" align="center" label="姓名" width="150px"></el-table-column>
-            <el-table-column prop="passTime" :show-overflow-tooltip="true" align="center" label="通行时间"></el-table-column>
+            <el-table-column
+              prop="passTime"
+              :show-overflow-tooltip="true"
+              align="center"
+              label="通行时间"
+            ></el-table-column>
             <el-table-column prop="inOut" align="center" label="出入类型" width="100px"></el-table-column>
             <el-table-column prop="passMethod" align="center" width="150" label="通行方式">
               <template slot-scope="{row}">
-                <span>{{ row.passMethod | passMethod  }}</span>
+                <span>{{ row.passMethod | passMethod }}</span>
               </template>
             </el-table-column>
             <el-table-column width="100" align="center" label="抓拍图片">
               <template slot-scope="{row}">
-                <img v-if='row.photos' :src="row.photos" alt />
+                <img v-if="row.photos" :src="row.photos" alt />
                 <span v-else></span>
               </template>
             </el-table-column>
@@ -443,7 +485,7 @@
               prop="createTime"
               label="操作"
               :key="Math.random()"
-               v-if="globalUpdateStatus"
+              v-if="globalUpdateStatus"
             >
               <template slot-scope="scope">
                 <el-button type="text" @click="deleteHouse(scope.row, scope.$index)">删除</el-button>
@@ -480,7 +522,7 @@
             ></el-table-column>
             <el-table-column width="80" align="center" label="人脸图片">
               <template slot-scope="{row}">
-                <img v-if='row.face' :src="row.face" alt />
+                <img v-if="row.face" :src="row.face" alt />
                 <span v-else></span>
               </template>
             </el-table-column>
@@ -670,7 +712,7 @@
         </el-form-item>-->
         <el-form-item v-if="updateHouseForm.type !== '1'" label="过期时间">
           <el-date-picker
-           style="width:320px"
+            style="width:320px"
             format="yyyy-MM-dd HH:mm:ss"
             value-format="yyyy-MM-dd HH:mm:ss"
             v-model="updateHouseForm.overTime"
@@ -712,7 +754,12 @@
           ></el-switch>
         </el-form-item>
         <el-form-item label="备注信息:" prop="note">
-          <el-input style="width:320px" type="textarea" v-model="updateHouseForm.note" placeholder="输入备注"></el-input>
+          <el-input
+            style="width:320px"
+            type="textarea"
+            v-model="updateHouseForm.note"
+            placeholder="输入备注"
+          ></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -905,19 +952,19 @@ const ExportIn = () => import("@/components/exportIn/index.vue");
     },
     passMethod(val: string) {
       const data = {
-        "1": '人脸开门',
-        "2": '二维码开门',
-        "3": '蓝牙开门',
-        "4": '远程开门',
-        "5": '密码开门',
-        "6": '刷卡开门'
-      }
-      return data[val]
+        "1": "人脸开门",
+        "2": "二维码开门",
+        "3": "蓝牙开门",
+        "4": "远程开门",
+        "5": "密码开门",
+        "6": "刷卡开门"
+      };
+      return data[val];
     }
   }
 })
 export default class OwnerManage extends Vue {
-  btnLoading: boolean = false
+  btnLoading: boolean = false;
   private activeName: string = "first";
   private houseActiveName: string = "详细信息";
   private dialogFormVisible: boolean = false;
@@ -926,9 +973,9 @@ export default class OwnerManage extends Vue {
   spanArray: Array<number> = []; // 合并单元格
   index: number = 0; // 合并单元格参数
   private detailDialog: Object = {
-    note: ''
+    note: ""
   };
-  env: string =  process.env.NODE_ENV
+  env: string = process.env.NODE_ENV;
   phoneString: string = ""; // 需要改成的电话
   noteString: string = ""; // 需要改成的备注
   houseIndex: number = 0; // 合并单元格用
@@ -959,18 +1006,18 @@ export default class OwnerManage extends Vue {
     method: "get"
   };
   filterForm: object = {
-    name: '',
-    phone: '',
-    key: '',
+    name: "",
+    phone: "",
+    key: "",
     types: [],
-    cardNo: '',
+    cardNo: "",
     status: []
-  }
+  };
   deleteForm: object = {
     url: "/admin/usrUser",
     method: "delete",
     data: [],
-    message: '此操作将永久删除选中的住户, 删除后住户将不存在,请谨慎操作!'
+    message: "此操作将永久删除选中的住户, 删除后住户将不存在,请谨慎操作!"
   };
   houseDetailDialog: object = {}
   loading: boolean = false;
@@ -981,9 +1028,7 @@ export default class OwnerManage extends Vue {
   updateArray: Array<string> = ["noteStatus", "phoneStatus"];
   rules: any = {
     name: [{ required: true, message: "请输入姓名", trigger: "blur" }],
-    sex: [
-            { required: true, message: '请选择性别', trigger: 'change' }
-          ],
+    sex: [{ required: true, message: "请选择性别", trigger: "change" }],
     cardName: [{ required: true, message: "请填入证件名", trigger: "change" }],
     phone: [
       {
@@ -999,17 +1044,24 @@ export default class OwnerManage extends Vue {
       }
     ],
     cardNo: [
-            { required: true, trigger: 'blur', validator: (rule, value, callback) => {
-                if (!(value.length === 15 || value.length === 18) && this.Form['otherCardName'] === '身份证') {
-                  callback(new Error('填写正确的证件号号'))
-                } else {
-                  callback()
-                }
-              } }
-          ],
+      {
+        required: true,
+        trigger: "blur",
+        validator: (rule, value, callback) => {
+          if (
+            !(value.length === 15 || value.length === 18) &&
+            this.Form["otherCardName"] === "身份证"
+          ) {
+            callback(new Error("填写正确的证件号号"));
+          } else {
+            callback();
+          }
+        }
+      }
+    ],
     otherCardName: [
-            { required: true, trigger: 'change', message: '请选择证件' }
-          ],
+      { required: true, trigger: "change", message: "请选择证件" }
+    ],
     house: [
       {
         required: true,
@@ -1044,22 +1096,26 @@ export default class OwnerManage extends Vue {
   }
   // 删除某个用户下的某个房屋
   deleteHouse(row, index) {
-    this.$confirm("此操作将永久删除该用户下的房屋,删除后房屋将不会与住户绑定,请谨慎操作!?", "提示", {
-      confirmButtonText: "确定",
-      cancelButtonText: "取消",
-      type: "warning"
-    })
+    this.$confirm(
+      "此操作将永久删除该用户下的房屋,删除后房屋将不会与住户绑定,请谨慎操作!?",
+      "提示",
+      {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      }
+    )
       .then(() => {
         console.log(row);
-        deleteTheHousePeople(row.houseId, this.userId,' ').then(res => {
+        deleteTheHousePeople(row.houseId, this.userId, " ").then(res => {
           if (res.data.code === 200) {
-            this['message']('success', '删除成功')
+            this["message"]("success", "删除成功");
             this.houseDtailTable.splice(index, 1);
           }
         });
       })
       .catch(() => {
-        this['message']('error', '已取消删除')
+        this["message"]("error", "已取消删除");
       });
   }
   // 用户详情页 点击房屋编号查看更多信息
@@ -1134,7 +1190,7 @@ export default class OwnerManage extends Vue {
     this.Form["house"] = [];
     this.$refs["Forms"]["resetFields"]();
     this["dialogCreate"] = false;
-    this.nameDisabled = false
+    this.nameDisabled = false;
   }
   handleSelectWatchlist(item) {
     this.$refs["Forms"]["clearValidate"]();
@@ -1199,39 +1255,41 @@ export default class OwnerManage extends Vue {
     }
     updateRoleHouse(data).then(res => {
       if (res.data.code === 200) {
-        this['message']('success', '设置成功')
+        this["message"]("success", "设置成功");
         this.fetchData(this.initForm);
       }
     });
   }
   // 确定添加住户
   addUserConfirm() {
-    this.btnLoading = true
-    if (this.Form.otherCardName !== '其它') {
-      this.Form.cardName = this.Form.otherCardName
+    this.btnLoading = true;
+    if (this.Form.otherCardName !== "其它") {
+      this.Form.cardName = this.Form.otherCardName;
     }
 
-    this.$refs['Forms']['validate']((valid) => {
-      if(valid) {
-        if (!this.Form['house'].length) {
-          this.btnLoading = false
-          this['message']('error', '未选择房屋')
-          return
+    this.$refs["Forms"]["validate"](valid => {
+      if (valid) {
+        if (!this.Form["house"].length) {
+          this.btnLoading = false;
+          this["message"]("error", "未选择房屋");
+          return;
         }
-        addPeople(this.Form).then(res => {
-          if(res.data.code === 200) {
-            this['message']('success', '添加成功')
-            this['dialogCreate'] = false
-            this.Form['house'] = []
-            this['handleClose']()
-            this.fetchData(this.initForm)
-            this.btnLoading = false
-          }
-        }).catch(err => {
-          this.btnLoading = false
-        })
+        addPeople(this.Form)
+          .then(res => {
+            if (res.data.code === 200) {
+              this["message"]("success", "添加成功");
+              this["dialogCreate"] = false;
+              this.Form["house"] = [];
+              this["handleClose"]();
+              this.fetchData(this.initForm);
+              this.btnLoading = false;
+            }
+          })
+          .catch(err => {
+            this.btnLoading = false;
+          });
       } else {
-        this.btnLoading = false
+        this.btnLoading = false;
       }
     });
   }
@@ -1248,47 +1306,51 @@ export default class OwnerManage extends Vue {
   // 确定修改 电话
   confirmUpdatePhone(row) {
     if (!/^1[123456789]\d{9}$/.test(this.phoneString)) {
-              this['message']('error', '请输入正确的手机格式')
-              this.$set(row, 'phoneStatus', false)
-              return;
-            }
+      this["message"]("error", "请输入正确的手机格式");
+      this.$set(row, "phoneStatus", false);
+      return;
+    }
     this.$confirm(`此操作将永久修改${row.name}电话号码,请谨慎操作!`, "提示", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning"
-        })
-          .then(() => {
-            updateUserPhone(row.id, this.phoneString).then(res => {
-              if (res.data.code === 200) {
-                this['message']('success', '修改成功')
-                this.phoneString = "";
-                this.fetchData(this.initForm);
-              } else {
-                this['message']('error', res.data.message)
-              }
-            }).catch(() => {
-              this.$set(row, 'phoneStatus', false)
-            })
+      confirmButtonText: "确定",
+      cancelButtonText: "取消",
+      type: "warning"
+    })
+      .then(() => {
+        updateUserPhone(row.id, this.phoneString)
+          .then(res => {
+            if (res.data.code === 200) {
+              this["message"]("success", "修改成功");
+              this.phoneString = "";
+              this.fetchData(this.initForm);
+            } else {
+              this["message"]("error", res.data.message);
+            }
           })
           .catch(() => {
-            this.$set(row, 'phoneStatus', false)
-            this['message']('error', '已取消修改')
+            this.$set(row, "phoneStatus", false);
           });
+      })
+      .catch(() => {
+        this.$set(row, "phoneStatus", false);
+        this["message"]("error", "已取消修改");
+      });
   }
   // 确定修改 备注
   confirmUpdateNote() {
-    if (!this.detailDialog['note']) {
-      return this['message']('error', '请输入备注信息')
+    if (!this.detailDialog["note"]) {
+      return this["message"]("error", "请输入备注信息");
     }
-    updateUserNote(this.detailDialog['id'], this.detailDialog['note']).then(res => {
-      if (res.data.code === 200) {
-        this['message']('success', '修改成功')
-        this.noteString = "";
-        this.fetchData(this.initForm);
-      } else {
-        this['message']('error', res.data.message)
+    updateUserNote(this.detailDialog["id"], this.detailDialog["note"]).then(
+      res => {
+        if (res.data.code === 200) {
+          this["message"]("success", "修改成功");
+          this.noteString = "";
+          this.fetchData(this.initForm);
+        } else {
+          this["message"]("error", res.data.message);
+        }
       }
-    });
+    );
   }
   // 打开修改房屋的状态
   updateAddHouse(index, item) {
@@ -1303,7 +1365,7 @@ export default class OwnerManage extends Vue {
         this.updateHouseForm["overTime"] === "" ||
         this.updateHouseForm["overTime"] === null
       ) {
-        return this['message']('error', '租客和家庭成员需要添加过期时间')
+        return this["message"]("error", "租客和家庭成员需要添加过期时间");
       }
     }
     this.Form["house"][this.houseIndex] = Object.assign(

@@ -365,7 +365,7 @@
           </el-form>
         </el-tab-pane>
         <el-tab-pane label="通行记录" name="thirdly">
-          <el-table v-loading="passTarget" :data="passList" style="width: 100%" stripe>
+          <el-table v-loading="passTarget" :data="passList" border style="width: 100%" stripe>
             <el-table-column align="center" prop="carNo" label="车牌号" :show-overflow-tooltip="true"></el-table-column>
             <el-table-column
               align="center"
@@ -376,20 +376,12 @@
             ></el-table-column>
             <el-table-column align="center" prop="address" label="访客通行">
               <template slot-scope="scope">
-                <el-tag
-                  size="small"
-                  style="border-radius: 50px;"
-                  :type="scope.row.isVisitCar? 'success' : 'danger'"
-                >{{ scope.row.isVisitCar ? '是' : '否' }}</el-tag>
+                <p class="boder-style">{{ scope.row.isVisitCar ? '是' : '否' }}</p>
               </template>
             </el-table-column>
             <el-table-column align="center" prop="inOut" label="通行类型">
               <template slot-scope="scope">
-                <el-tag
-                  size="small"
-                  style="border-radius: 50px;"
-                  :type="scope.row.inOut==='进'? 'success' : 'danger'"
-                >{{ scope.row.inOut}}</el-tag>
+                <p class="boder-style">{{ scope.row.inOut}}</p>
               </template>
             </el-table-column>
             <el-table-column align="center" prop="address" label="抓拍图片">

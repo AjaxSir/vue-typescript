@@ -113,7 +113,7 @@
               </template>
             </el-table-column>
 
-            <el-table-column align="center" prop="carNo" label="车牌号">
+            <el-table-column align="center" width="100px" prop="carNo" label="车牌号">
               <template slot-scope="scope">
                 <el-button
                   @click="showCarDetails(scope.row)"
@@ -125,6 +125,7 @@
 
             <el-table-column
               align="center"
+              min-width="100px"
               prop="ownerName"
               label="车主"
               :show-overflow-tooltip="true"
@@ -133,11 +134,12 @@
             <el-table-column
               align="center"
               prop="ownerPhone"
+              width="110px"
               label="电话"
               :show-overflow-tooltip="true"
             ></el-table-column>
 
-            <el-table-column align="center" prop="status" label="状态">
+            <el-table-column align="center" width="80px" prop="status" label="状态">
               <template slot-scope="scope">
                 <el-dropdown trigger="click">
                   <span class="el-dropdown-link">
@@ -170,7 +172,13 @@
               min-width="110px"
             ></el-table-column>
 
-            <el-table-column align="center" prop="lastInPhoto" label="最近抓拍图片" min-width="110px">
+            <el-table-column
+              align="center"
+              width="110px"
+              prop="lastInPhoto"
+              label="最近抓拍图片"
+              min-width="110px"
+            >
               <template slot-scope="scope">
                 <img
                   v-if="scope.row.lastInPhoto"
@@ -501,7 +509,7 @@
           </el-form>
         </el-tab-pane>
         <el-tab-pane label="通行记录" name="thirdly">
-          <el-table v-loading="passTarget" :data="passList" style="width: 100%" stripe>
+          <el-table v-loading="passTarget" :data="passList" border style="width: 100%" stripe>
             <el-table-column align="center" prop="carNo" label="车牌号" :show-overflow-tooltip="true"></el-table-column>
             <el-table-column
               align="center"
@@ -509,7 +517,11 @@
               label="通行时间"
               width="150px"
               :show-overflow-tooltip="true"
-            ></el-table-column>
+            >
+              <template slot-scope="{row}">
+                <p class="boder-style">{{row.passTime}}</p>
+              </template>
+            </el-table-column>
             <el-table-column
               align="center"
               prop="address"
@@ -535,7 +547,8 @@
             </el-table-column>
             <el-table-column align="center" prop="address" label="抓拍图片">
               <template slot-scope="scope">
-                <img :src="scope.row.photos" alt />
+                <img v-if="scope.row.photos" :src="scope.row.photos" alt />
+                <span v-else></span>
               </template>
             </el-table-column>
           </el-table>

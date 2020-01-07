@@ -261,6 +261,28 @@ export const asyncRoute = [
     }]
   },
   {
+    path: '/alarm',
+    name: 'alarm',
+    component: Layout,
+    redirect: '/alarm/module',
+    alwaysShow: true,
+    meta: {
+      title: '告警管理',
+      icon: 'icon-gaojing',
+      bg_color: '#e6504f',
+    },
+    children: [{
+      name: 'module',
+      path: 'module',
+      component: _import_('alarmManage/index'),
+      meta: {
+        title: '告警管理',
+        icon: 'icon-gaojing',
+        bg_color: '#e6504f'
+      }
+    }]
+  },
+  {
     path: '/system',
     name: 'system',
     component: Layout,

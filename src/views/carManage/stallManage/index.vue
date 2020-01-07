@@ -57,17 +57,7 @@
                 @keyup.enter.native="emitFetchData"
               ></el-input>
             </div>
-            <!-- <div class="word-filter">
-              <span class="filter-name">车&nbsp;&nbsp;牌&nbsp;&nbsp;号:</span>
-              <el-input
-                class="input-filter"
-                size="small"
-                clearable
-                v-model="filterForm.cardName"
-                placeholder="请输入车牌"
-                @keyup.enter.native="emitFetchData"
-              ></el-input>
-            </div>-->
+
             <div class="word-filter">
               <span class="filter-name filter-rewrite">车位状态:</span>
               <el-select
@@ -253,10 +243,8 @@
                   @click="bindingPlates(scope.row)"
                   type="text"
                 >
-                  <div
-                    style="width: 100px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"
-                    v-if="scope.row.carSpaceVos && scope.row.carSpaceVos.length > 0"
-                  >
+                  <!-- style="width: 100px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" -->
+                  <div v-if="scope.row.carSpaceVos && scope.row.carSpaceVos.length > 0">
                     <span
                       v-for="(item,index) in scope.row.carSpaceVos"
                       :key="'carSpaceVos' + index"
@@ -658,9 +646,17 @@
 
         <el-tab-pane label="通行记录" name="second">
           <el-table :data="dtailTable" style="width: 100%" border v-loading="dtailTableLoading">
-            <el-table-column prop="ownerName" align="center" label="姓名" width="150px"></el-table-column>
+            <el-table-column prop="ownerName" align="center" label="姓名" width="150px">
+              <template slot-scope="{row}">
+                <p class="boder-style">{{row.ownerName}}</p>
+              </template>
+            </el-table-column>
 
-            <el-table-column prop="carNo" align="center" label="车牌"></el-table-column>
+            <el-table-column prop="carNo" align="center" label="车牌">
+              <template slot-scope="{row}">
+                <p class="boder-style">{{row.carNo}}</p>
+              </template>
+            </el-table-column>
 
             <el-table-column prop="inOut" align="center" label="进/出" width="60px"></el-table-column>
 
@@ -691,12 +687,16 @@
         </el-tab-pane>
         <el-tab-pane label="车辆信息" name="third">
           <el-table :data="carDtailTable" style="width: 100%" border v-loading="dtailTableLoading">
-            <el-table-column prop="carNo" align="center" label="车牌号"></el-table-column>
+            <el-table-column prop="carNo" align="center" label="车牌号">
+              <template slot-scope="{row}">
+                <p class="boder-style">{{row.carNo}}</p>
+              </template>
+            </el-table-column>
             <el-table-column prop="carType" align="center" label="车辆类型"></el-table-column>
             <el-table-column prop="modal" align="center" label="型号"></el-table-column>
             <el-table-column width="100" align="center" label="照片">
               <template slot-scope="{row}">
-                <div style="height:30px;">
+                <div style="height:37px;">
                   <img :src="row.photos ? row.photos : ''" alt />
                 </div>
               </template>
@@ -760,7 +760,7 @@
               v-if="globalUpdateStatus"
             >
               <template slot-scope="scope">
-                <div style="height:30px">
+                <div style="height:37px">
                   <el-button
                     size="small"
                     type="text"
@@ -809,7 +809,7 @@
             ></el-table-column>
             <el-table-column width="80" align="center" label="人脸图片">
               <template slot-scope="{row}">
-                <div style="height:30px;">
+                <div style="height:37px;">
                   <img :src="row.face ? row.face : ''" alt />
                 </div>
               </template>

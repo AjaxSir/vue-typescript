@@ -559,8 +559,7 @@ export default class VistoryManage extends Vue {
 
   private commandType: string = "all"; //根据访客类型筛选 all默认为显示全部
   private commandStatus: String = "0"; //根据访客状态  0 默认显示为全部
-  private pitchOn: string = "y"; //选中A
-  private unchecked: string = "n"; //未选中
+
   private interUserDetail: Object = {}; //受访人的身份详细信息
   private houseInviterDetail: Object = {}; //受访人的房屋信息
   private passTarget: Boolean = true; //目标访客通行记录的loadding
@@ -795,14 +794,6 @@ export default class VistoryManage extends Vue {
 
 .el-dropdown-link {
   color: #20a0ff;
-}
-.y {
-  color: #20a0ff;
-  background: #ecf5ff;
-}
-.n {
-  color: black;
-  background: #fff;
 }
 
 .close-menu {
