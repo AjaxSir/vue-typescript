@@ -648,13 +648,13 @@
           <el-table :data="dtailTable" style="width: 100%" border v-loading="dtailTableLoading">
             <el-table-column prop="ownerName" align="center" label="姓名" width="150px">
               <template slot-scope="{row}">
-                <p class="boder-style">{{row.ownerName}}</p>
+                <p class="boder-style-dialog">{{row.ownerName}}</p>
               </template>
             </el-table-column>
 
             <el-table-column prop="carNo" align="center" label="车牌">
               <template slot-scope="{row}">
-                <p class="boder-style">{{row.carNo}}</p>
+                <p class="boder-style-dialog">{{row.carNo}}</p>
               </template>
             </el-table-column>
 
@@ -689,7 +689,7 @@
           <el-table :data="carDtailTable" style="width: 100%" border v-loading="dtailTableLoading">
             <el-table-column prop="carNo" align="center" label="车牌号">
               <template slot-scope="{row}">
-                <p class="boder-style">{{row.carNo}}</p>
+                <p class="boder-style-dialog">{{row.carNo}}</p>
               </template>
             </el-table-column>
             <el-table-column prop="carType" align="center" label="车辆类型"></el-table-column>

@@ -389,7 +389,17 @@ div::-webkit-scrollbar-corner {
 }
 
 // 弹出框boder样式
-.boder-style {
+.boder-style-dialog {
   height: 37px;
   line-height: 37px;
+}
+
+.boder-style-primary {
+  height: 40px;
+  line-height: 40px;
+}
+
+.el-tag.el-tag--info {
+  background-color: #ffffff;
+  color: #606266;
 }

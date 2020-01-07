@@ -714,17 +714,17 @@
           <el-table v-loading="earlyLoading" :data="earlyList" border style="width: 100%" stripe>
             <el-table-column prop="name" align="center" label="姓名" :show-overflow-tooltip="true">
               <template slot-scope="{row}">
-                <p class="boder-style">{{row.name}}</p>
+                <p class="boder-style-dialog">{{row.name}}</p>
               </template>
             </el-table-column>
             <el-table-column prop="phone" align="center" label="电话" :show-overflow-tooltip="true">
               <template slot-scope="{row}">
-                <p class="boder-style">{{row.phone}}</p>
+                <p class="boder-style-dialog">{{row.phone}}</p>
               </template>
             </el-table-column>
             <el-table-column prop="email" align="center" label="邮箱" :show-overflow-tooltip="true">
               <template slot-scope="{row}">
-                <p class="boder-style">{{row.email}}</p>
+                <p class="boder-style-dialog">{{row.email}}</p>
               </template>
             </el-table-column>
             <el-table-column
@@ -750,7 +750,7 @@
           <el-table v-loading="passTarget" :data="passList" border style="width: 100%" stripe>
             <el-table-column align="center" prop="name" label="姓名" :show-overflow-tooltip="true">
               <template slot-scope="{row}">
-                <p class="boder-style">{{row.name}}</p>
+                <p class="boder-style-dialog">{{row.name}}</p>
               </template>
             </el-table-column>
             <el-table-column
@@ -773,7 +773,7 @@
               :show-overflow-tooltip="true"
             >
               <template slot-scope="{row}">
-                <p class="boder-style">{{row.passTime}}</p>
+                <p class="boder-style-dialog">{{row.passTime}}</p>
               </template>
             </el-table-column>
             <el-table-column align="center" prop="inOut" label="通行类型" :show-overflow-tooltip="true">
