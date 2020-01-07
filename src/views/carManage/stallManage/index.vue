@@ -243,10 +243,8 @@
                   @click="bindingPlates(scope.row)"
                   type="text"
                 >
-                  <div
-                    style="width: 100px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"
-                    v-if="scope.row.carSpaceVos && scope.row.carSpaceVos.length > 0"
-                  >
+                  <!-- style="width: 100px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" -->
+                  <div v-if="scope.row.carSpaceVos && scope.row.carSpaceVos.length > 0">
                     <span
                       v-for="(item,index) in scope.row.carSpaceVos"
                       :key="'carSpaceVos' + index"

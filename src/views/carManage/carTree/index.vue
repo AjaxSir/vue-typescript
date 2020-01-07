@@ -29,6 +29,7 @@
       :props="dataFormate"
       accordion
       :highlight-current="highlightStatus"
+      :default-expanded-keys="defaultKey"
       :default-expand-all="false"
       :expand-on-click-node="false"
       @node-click="handleNodeClick"
@@ -293,6 +294,7 @@ export default class DataTree extends Vue {
   highlightStatus: boolean = false; // 高亮状态
   nodeAction: string = ""; // 记录执行的操作
   tree_data: Object = {};
+  defaultKey: Array<Object> = ["0"];
   // bindDeviceList: Array<object> = []; // 已选择绑定的设备列表
   // bindDeviceListVisible: boolean = false; // 设备列表弹框状态
   // DeviceList: Array<object> = []; // 所有设备列表
@@ -524,8 +526,9 @@ export default class DataTree extends Vue {
             this.closeDialog();
             this.$emit("getHouseTreeData");
             this.HouseVisible = false;
-            // const info = { ...this.tree_data };
-            // this.handleNodeClick(info['data'], info['node']);
+            this.defaultKey[0] = this.tree_data["data"]["id"];
+             this.highlightStatus = !!this.tree_data["data"]["id"];
+            console.log(this.defaultKey[0]);
             this.$refs.tree["setCheckedKeys"]([3]);
           }
         });
@@ -562,7 +565,7 @@ export default class DataTree extends Vue {
   }
   @Emit("fetchDatas")
   handleNodeClick(data, node) {
-    console.log(data, node);
+    console.log(data, node, 4444);
     this.showMenu = node.id;
     this.highlightStatus = !!data.id;
     this.tree_data = { data: data, node: node };
