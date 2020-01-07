@@ -376,12 +376,12 @@
             ></el-table-column>
             <el-table-column align="center" prop="address" label="访客通行">
               <template slot-scope="scope">
-                <p class="boder-style">{{ scope.row.isVisitCar ? '是' : '否' }}</p>
+                <p class="boder-style-dialog">{{ scope.row.isVisitCar ? '是' : '否' }}</p>
               </template>
             </el-table-column>
             <el-table-column align="center" prop="inOut" label="通行类型">
               <template slot-scope="scope">
-                <p class="boder-style">{{ scope.row.inOut}}</p>
+                <p class="boder-style-dialog">{{ scope.row.inOut}}</p>
               </template>
             </el-table-column>
             <el-table-column align="center" prop="address" label="抓拍图片">

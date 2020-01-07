@@ -427,7 +427,7 @@
               width="150px"
             >
               <template slot-scope="{row}">
-                <p class="boder-style">{{row.passTime}}</p>
+                <p class="boder-style-dialog">{{row.passTime}}</p>
               </template>
             </el-table-column>
             <el-table-column
