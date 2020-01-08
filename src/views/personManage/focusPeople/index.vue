@@ -711,7 +711,7 @@
         </el-tab-pane>
 
         <el-tab-pane label="预警人员" name="second">
-          <el-table v-loading="earlyLoading" :data="earlyList" border stripe style="width: 100%" stripe>
+          <el-table v-loading="earlyLoading" :data="earlyList" border stripe style="width: 100%">
             <el-table-column prop="name" align="center" label="姓名" :show-overflow-tooltip="true">
               <template slot-scope="{row}">
                 <p class="boder-style-dialog">{{row.name}}</p>
@@ -747,7 +747,7 @@
         </el-tab-pane>
 
         <el-tab-pane label="通行记录" name="thirdly">
-          <el-table v-loading="passTarget" :data="passList" border stripe style="width: 100%" stripe>
+          <el-table v-loading="passTarget" :data="passList" border stripe style="width: 100%">
             <el-table-column align="center" prop="name" label="姓名" :show-overflow-tooltip="true">
               <template slot-scope="{row}">
                 <p class="boder-style-dialog">{{row.name}}</p>

@@ -339,7 +339,7 @@
           </el-table>
         </el-tab-pane>
         <el-tab-pane label="门禁卡" name="门禁卡">
-          <el-table v-loading="showLoading" stripe :data="cardList" style="width: 100%">
+          <el-table stripe :data="cardList" style="width: 100%">
             <el-table-column
               align="center"
               width="50"
@@ -350,41 +350,33 @@
             <el-table-column
               align="center"
               :show-overflow-tooltip="true"
-              prop="userName"
+              prop="cardNo"
               label="卡号"
             >
-            <template slot-scope="{row}">
-              <el-button @click='showPersonDetails(row)' type='text'>{{ row.userName }}</el-button>
-            </template>
             </el-table-column>
-            <el-table-column
-              align="center"
-              :show-overflow-tooltip="true"
-              prop="userPhone"
-              label="添加时间"
-            ></el-table-column>
-            <el-table-column align="center" width="80" prop="type" label="人员类型">
-              <template slot-scope="{row}">
-                <span>{{ row.type | type }}</span>
-              </template>
-            </el-table-column>
-
             <el-table-column
               align="center"
               :show-overflow-tooltip="true"
               prop="createTime"
+              label="添加时间"
+            ></el-table-column>
+
+            <el-table-column
+              align="center"
+              :show-overflow-tooltip="true"
+              prop="validDate"
               label="过期时间"
             ></el-table-column>
 
             <el-table-column :show-overflow-tooltip="true" align="center" prop="note" label="状态">
               <template slot-scope="{row}">
-                <span>{{ row.note ? row.note : '' }}</span>
+                <span>{{ row.status === '0' ? "正常" : (row.status === '-2' ? "禁用" : "过期" ) }}</span>
               </template>
             </el-table-column>
             <el-table-column
               align="center"
               :show-overflow-tooltip="true"
-              prop="createTime"
+              prop="count"
               label="累计刷卡次数"
             ></el-table-column>
             <el-table-column
@@ -393,8 +385,11 @@
               prop="createTime"
               label="操作"
             >
-            <el-button type='text'>
+            <template slot-scope="scope">
+              <el-button type='text' @click='unbindCard(scope.row, scope.$index)'>
               解绑</el-button>
+            </template>
+
               </el-table-column>
           </el-table>
         </el-tab-pane>
@@ -416,7 +411,7 @@
             <el-row :gutter="20">
               <el-col :span="12" class="col-line">
                 <el-form-item style="margin-bottom:0" label="姓名:">
-                  <span>{{PersonDetailDialog.name ? PersonDetailDialog.name : ''}}</span>
+                  <span>{{PersonDetailDialog.userName ? PersonDetailDialog.userName : ''}}</span>
                 </el-form-item>
 
                 <el-form-item style="margin-bottom:0" label="性别:">
@@ -424,7 +419,7 @@
                 </el-form-item>
 
                 <el-form-item style="margin-bottom:0" label="手机号:">
-                  <span>{{PersonDetailDialog.phone ? PersonDetailDialog.phone : ''}}</span>
+                  <span>{{PersonDetailDialog.userPhone ? PersonDetailDialog.userPhone : ''}}</span>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
@@ -437,7 +432,7 @@
                 </el-form-item>
 
                 <el-form-item style="margin-bottom:0" label="备注信息:">
-                  <el-input @blur='confirmUpdateNote' maxlength="200" v-model="PersonDetailDialog.note" placeholder="编辑备注信息(最多输入200字)"></el-input>
+                  <el-input @blur='confirmUpdateUserNote(PersonDetailDialog)' maxlength="200" v-model="PersonDetailDialog.note" placeholder="编辑备注信息(最多输入200字)"></el-input>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -586,10 +581,12 @@ import {
   updateStatusNote,
   getRegisterPeople,
   deleteTheHousePeople,
-  getHouseListByUserId
+  getHouseListByUserId,
+  getCardListByHouseId,
+  deleteDoorCard
 } from "@/api/houseApi.ts";
 import { getUserPropertyCar } from "@/api/carApi.ts";
-import { getUserPropertyPass, getFaceList } from "@/api/peopleApi.ts";
+import { getUserPropertyPass, getFaceList, updateUserNote } from "@/api/peopleApi.ts";
 
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 const DataTree = () => import("@/components/DataTree.vue");
@@ -625,6 +622,14 @@ const DataTree = () => import("@/components/DataTree.vue");
         "0": "在住",
         "-1": "不在住",
         "-2": "过期"
+      };
+      return data[val];
+    },
+    typeFilter(val: string) {
+      const data = {
+        "1": "业主",
+        "2": "租户",
+        "3": "家庭成员"
       };
       return data[val];
     }
@@ -752,6 +757,27 @@ export default class CardManage extends Vue {
       this.faceList = res.data.data.records;
     });
   }
+  // 确定修改 备注
+  confirmUpdateUserNote() {
+    if (!this.PersonDetailDialog["note"]) {
+      return this["message"]("error", "请输入备注信息");
+    }
+    console.log(this.PersonDetailDialog)
+    updateUserNote(this.PersonDetailDialog["userId"], this.PersonDetailDialog["note"]).then(
+      res => {
+        if (res.data.code === 200) {
+          this["message"]("success", "修改成功");
+          this.noteString = "";
+          this.fetchData(this.initForm);
+          getRegisterPeople(this.houseId).then(res => {
+            this.dtailTable = res.data.data;
+          });
+        } else {
+          this["message"]("error", res.data.message);
+        }
+      }
+    );
+  }
   // 获取特定住户的通行记录
   pagePassChange(page: number) {
     this.passList["page"] = page;
@@ -805,9 +831,30 @@ export default class CardManage extends Vue {
     this.activeName = "详细信息";
     this.detailDialog = Object.assign(this.detailDialog, row);
     this.houseId = row.id;
+    // 获取在住人员
     getRegisterPeople(row.id).then(res => {
       this.dtailTable = res.data.data;
     });
+    // 获取门禁卡列表
+    getCardListByHouseId(row.id).then(res => {
+      this.cardList = res.data.data
+    })
+  }
+  // 解绑门禁卡
+  unbindCard(row, index) {
+    this.$confirm(`此操作将永久解绑该房屋下的此张门禁卡,解绑后将不与该房屋绑定,请谨慎操作!?`, "提示", {
+      confirmButtonText: "确定",
+      cancelButtonText: "取消",
+      type: "warning"
+    })
+      .then(() => {
+        deleteDoorCard([row.id]).then(res => {
+          this.cardList.splice(index, 1)
+        })
+      })
+      .catch(() => {
+        this['message']('error', '已取消删除')
+      });
   }
   // 修改管理员状态
   changeStatus(Obj: object) {

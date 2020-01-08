@@ -137,6 +137,28 @@ export function theCardPassList(params: object) {
     }
   })
 }
+// 获取对应房屋下的门禁卡信息
+export function getCardListByHouseId(houseId: string) {
+  return _axios({
+    url: '/admin/hsDoorCard/houseId',
+    method: 'get',
+    params: {
+      houseId
+    }
+  })
+}
+
+// 删除门禁卡
+export function deleteDoorCard(Arr: Array<string>) {
+  return _axios({
+    url: '/admin/hsDoorCard',
+    method: 'delete',
+    data: {
+      ids: Arr
+    }
+  })
+}
+
 //***********房屋管理********** */
 // 通过关键字查询房屋列表 搜索建议框
 export function searchSuggestHouse(keys: string) {
