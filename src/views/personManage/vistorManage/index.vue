@@ -418,7 +418,7 @@
           </el-form>
         </el-tab-pane>
         <el-tab-pane label="通行记录" name="thirdly">
-          <el-table v-loading="passTarget" :data="passList" border style="width: 100%" stripe>
+          <el-table v-loading="passTarget" :data="passList" border stripe style="width: 100%" >
             <el-table-column
               :show-overflow-tooltip="true"
               align="center"
@@ -427,7 +427,7 @@
               width="150px"
             >
               <template slot-scope="{row}">
-                <p class="boder-style">{{row.passTime}}</p>
+                <p class="boder-style-dialog">{{row.passTime}}</p>
               </template>
             </el-table-column>
             <el-table-column

@@ -17,60 +17,53 @@
         <ActionHeader
           ref="actionHeader"
           :btnStatus="2"
+          :moreStatus="false"
           :initFormHeader="initForm"
           @fetchData="fetchData"
           :filterForm="filterForm"
           :total="page.total"
           :exportUrl="'/admin/usr-visitor/export'"
-          :exportName="'访客列表'"
+          :exportName="'预警列表'"
         >
-          <el-dropdown-menu slot="dropdown">
-            <router-link to="/statementManage/visitorChart">
-              <el-dropdown-item>进出次数排序</el-dropdown-item>
-            </router-link>
-            <router-link to="/statementManage/visitorChart">
-              <el-dropdown-item>次数统计</el-dropdown-item>
-            </router-link>
-          </el-dropdown-menu>
           <div slot="houseNum">
             <div class="word-filter">
-              <span class="filter-name">访客姓名:</span>
-              <el-input
-                class="input-filter"
+              <span class="filter-name filter-rewrite">告警类型:</span>
+              <el-select
+                class="select-class"
                 size="small"
-                v-model="filterForm.name"
-                placeholder="请输入访客姓名"
-                clearable
-                @keyup.enter.native="emitFetchData"
-              ></el-input>
+                multiple
+                v-model="filterForm.alarmType"
+                placeholder="请选择告警状态"
+              >
+                <el-option
+                  v-for="item in alarmType"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </el-select>
             </div>
 
             <div class="word-filter">
-              <span class="filter-name">受访姓名:</span>
-              <el-input
-                class="input-filter"
+              <span class="filter-name filter-rewrite">告警状态:</span>
+              <el-select
+                class="select-class"
                 size="small"
-                v-model="filterForm.visitName"
-                placeholder="请输入受访人姓名"
-                clearable
-                @keyup.enter.native="emitFetchData"
-              ></el-input>
+                multiple
+                v-model="filterForm.alarmStatus"
+                placeholder="请选择告警状态"
+              >
+                <el-option
+                  v-for="item in alarmStatus"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </el-select>
             </div>
 
             <div class="word-filter">
-              <span class="filter-name">证件号码:</span>
-              <el-input
-                class="input-filter"
-                size="small"
-                v-model="filterForm.cardNo"
-                placeholder="请输入证件号码"
-                clearable
-                @keyup.enter.native="emitFetchData"
-              ></el-input>
-            </div>
-
-            <div class="word-filter">
-              <span class="filter-name filter-rewrite">有效时间:</span>
+              <span class="filter-name filter-rewrite">上报时间:</span>
               <el-date-picker
                 :picker-options="pickerOptions"
                 v-model="dateRange"
@@ -83,81 +76,6 @@
                 end-placeholder="结束日期"
                 @change="dateRangeChange"
               ></el-date-picker>
-            </div>
-
-            <div class="word-filter">
-              <span class="filter-name filter-rewrite">创建时间:</span>
-              <el-date-picker
-                :picker-options="pickerOptions"
-                v-model="createDateRange"
-                type="datetimerange"
-                size="small"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                format="yyyy - MM - dd HH:mm:ss"
-                range-separator="-"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-                @change="dateRangeChange"
-              ></el-date-picker>
-            </div>
-
-            <div class="word-filter">
-              <span class="filter-name filter-rewrite">同行人数:</span>
-              <el-input
-                style="width:165px"
-                size="small"
-                min="0"
-                v-model.number="filterForm.minNumPeople"
-                type="number"
-                placeholder="同行人数"
-                clearable
-                @keydown.native="channelInputLimit"
-              ></el-input>&nbsp;&nbsp;-&nbsp;&nbsp;
-              <el-input
-                style="width:165px"
-                size="small"
-                min="0"
-                v-model.number="filterForm.maxNumPeople"
-                type="number"
-                placeholder="同行人数"
-                clearable
-                @keyup.enter.native="emitFetchData"
-                @keydown.native="channelInputLimit"
-              ></el-input>
-            </div>
-            <div class="word-filter">
-              <span class="filter-name filter-rewrite">访客类型:</span>
-              <el-select
-                class="select-class"
-                size="small"
-                v-model="filterForm.visitType"
-                placeholder="请选择访客类型"
-              >
-                <el-option
-                  v-for="item in visitType"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                ></el-option>
-              </el-select>
-            </div>
-
-            <div class="word-filter">
-              <span class="filter-name filter-rewrite">访客状态:</span>
-              <el-select
-                class="select-class"
-                multiple
-                size="small"
-                v-model="filterForm.multiStatus"
-                placeholder="请选择访客状态"
-              >
-                <el-option
-                  v-for="item in selectType"
-                  :key="item.command"
-                  :label="item.lable"
-                  :value="item.command"
-                ></el-option>
-              </el-select>
             </div>
           </div>
         </ActionHeader>
@@ -200,65 +118,66 @@
             <el-table-column
               prop="name"
               align="center"
-              min-width="80px"
-              label="访客姓名"
+              width="120px"
+              label="告警类型"
               :show-overflow-tooltip="true"
             >
-              <template slot-scope="{ row }">
-                <el-button type="text" @click="showDetail(row)">{{ row.name }}</el-button>
+              <template slot-scope="{row}">
+                <el-dropdown trigger="click" @command="handleCommand">
+                  <span class="el-dropdown-link">
+                    <el-tag
+                      type="info"
+                      size="small"
+                      style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
+                      @click="editStatus(row)"
+                    >{{ row.name ? row.name :'--'}}</el-tag>
+                  </span>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item
+                      v-for="item in alarmType"
+                      :key="item.value"
+                      :command="item.value"
+                    >{{item.label}}</el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
               </template>
             </el-table-column>
 
             <el-table-column
               prop="status"
               align="center"
-              width="70px"
-              label="状态"
+              width="120px"
+              label="告警状态"
               :show-overflow-tooltip="true"
             >
-              <template slot-scope="scope">
-                <span>{{statusFilter(scope.row.status)}}</span>
+              <template slot-scope="{row}">
+                <el-dropdown trigger="click" @command="handleCommand">
+                  <span class="el-dropdown-link">
+                    <el-tag
+                      :type="row.status | statusFilterType"
+                      size="small"
+                      style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
+                      @click="editStatus(row)"
+                    >{{row.status | statusFilter}}</el-tag>
+                  </span>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item
+                      v-for="item in alarmStatus"
+                      :key="item.value"
+                      :command="item.value"
+                    >{{item.label}}</el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
               </template>
             </el-table-column>
 
             <el-table-column
               prop="phone"
               align="center"
-              width="110px"
-              label="访客电话"
+              min-width="150px"
+              label="告警内容"
               :show-overflow-tooltip="true"
             ></el-table-column>
-
-            <el-table-column
-              prop="cardNo"
-              align="center"
-              label="证件号码"
-              :show-overflow-tooltip="true"
-            ></el-table-column>
-
-            <el-table-column
-              prop="visitType"
-              align="center"
-              width="80px"
-              label="访客类型"
-              :show-overflow-tooltip="true"
-            >
-              <template slot-scope="scope">
-                <span>{{scope.row.visitType ==='1' ?'APP' : scope.row.visitType ==='2' ?'访客机' : ''}}</span>
-              </template>
-            </el-table-column>
-
-            <el-table-column
-              prop="visitName"
-              align="center"
-              min-width="70"
-              label="受访人"
-              :show-overflow-tooltip="true"
-            >
-              <template slot-scope="{ row }">
-                <el-button type="text" @click="showDetail(row,'second')">{{ row.visitName }}</el-button>
-              </template>
-            </el-table-column>
 
             <!-- <el-table-column
               prop="buildingName"
@@ -268,40 +187,55 @@
             ></el-table-column>-->
 
             <el-table-column
-              prop="houseName"
-              align="center"
-              label="房屋信息"
-              :show-overflow-tooltip="true"
-            ></el-table-column>
-
-            <el-table-column
-              prop="numPeople"
-              align="center"
-              width="80px"
-              label="同行人数"
-              :show-overflow-tooltip="true"
-            ></el-table-column>
-
-            <el-table-column
               prop="visitTime"
               align="center"
-              label="开始时间"
+              width="160px"
+              label="上报时间"
               :show-overflow-tooltip="true"
-            ></el-table-column>
+            >
+              <template slot-scope="{row}">
+                <p class="boder-style-primary">{{row.visitTime}}</p>
+              </template>
+            </el-table-column>
+
+            <el-table-column
+              prop="visitName"
+              align="center"
+              width="160px"
+              label="处理人"
+              :show-overflow-tooltip="true"
+            >
+              <template slot-scope="{ row }">
+                <span>{{ row.visitName }}</span>
+              </template>
+            </el-table-column>
 
             <el-table-column
               prop="invalidDate"
               align="center"
-              label="结束时间"
+              width="160px"
+              label="处理时间"
               :show-overflow-tooltip="true"
             ></el-table-column>
 
-            <el-table-column
-              prop="createTime"
-              align="center"
-              label="创建时间"
-              :show-overflow-tooltip="true"
-            ></el-table-column>
+            <el-table-column align="center" :show-overflow-tooltip="true" prop="note" label="备注">
+              <template slot-scope="scope">
+                <span
+                  class="rowUpdate"
+                  v-show="!scope.row.noteStatus"
+                  @click="focusNoteInput(scope.row)"
+                >{{ scope.row.note || '--' }}</span>
+                <el-input
+                  size="mini"
+                  :ref="scope.row.id"
+                  @blur="noteBlur(scope.row)"
+                  v-model="noteString"
+                  v-show="scope.row.noteStatus"
+                  :clearable="true"
+                  placeholder="输入备注"
+                ></el-input>
+              </template>
+            </el-table-column>
           </el-table>
           <el-pagination
             @current-change="pageChange"
@@ -316,7 +250,7 @@
     </el-row>
 
     <!-- 目标详情 -->
-    <el-dialog
+    <!-- <el-dialog
       width="800px"
       class="dialog-rewrite"
       :title="'访客: ' + visitorDialogForm.name ? visitorDialogForm.name : '未知'"
@@ -368,9 +302,6 @@
                 <el-form-item style="margin-bottom:0" label="性别:">
                   <span>{{interUserDetail.sex==='0'?'女':'男'}}</span>
                 </el-form-item>
-                <!-- <el-form-item style="margin-bottom:0" label="年龄:">
-                  <span>{{interUserDetail.age}}</span>
-                </el-form-item>-->
                 <el-form-item style="margin-bottom:0" label="电话:">
                   <span>{{interUserDetail.phone}}</span>
                 </el-form-item>
@@ -394,18 +325,6 @@
                   <span>{{houseInviterDetail&& houseInviterDetail.houseDetail ? houseInviterDetail.houseDetail.locationName : ''}}</span>
                 </el-form-item>
 
-                <!-- <el-form-item style="margin-bottom:0" label="单元号:">
-                  <span>{{houseInviterDetail.buildingName ? houseInviterDetail.buildingName: ''}}</span>
-                </el-form-item>-->
-
-                <!-- <el-form-item style="margin-bottom:0" label="楼层:">
-                  <span>{{houseInviterDetail.storeyNum ? houseInviterDetail.storeyNum: ''}}</span>
-                </el-form-item>-->
-
-                <!-- <el-form-item style="margin-bottom:0" label="房屋号:">
-                  <span>{{houseInviterDetail.serialNumber ? houseInviterDetail.serialNumber: ''}}</span>
-                </el-form-item>-->
-
                 <el-form-item style="margin-bottom:0" label="注册时间:">
                   <span>{{houseInviterDetail&&houseInviterDetail.createTime? houseInviterDetail.createTime :''}}</span>
                 </el-form-item>
@@ -427,7 +346,7 @@
               width="150px"
             >
               <template slot-scope="{row}">
-                <p class="boder-style">{{row.passTime}}</p>
+                <p class="boder-style-dialog">{{row.passTime}}</p>
               </template>
             </el-table-column>
             <el-table-column
@@ -470,11 +389,6 @@
             <el-table-column :show-overflow-tooltip="true" align="center" prop="inOut" label="通行类型">
               <template slot-scope="scope">
                 <span>{{ scope.row.inOut}}</span>
-                <!-- <el-tag
-                  size="small"
-                  style="border-radius: 50px;"
-                  :type="scope.row.inOut==='进'? 'success' : 'danger'"
-                >{{ scope.row.inOut}}</el-tag>-->
               </template>
             </el-table-column>
             <el-table-column align="center" prop="address" label="抓拍图片">
@@ -494,16 +408,17 @@
           ></el-pagination>
         </el-tab-pane>
       </el-tabs>
-    </el-dialog>
+    </el-dialog>-->
   </div>
 </template>
 <script lang="ts">
 import { Component, Prop, Vue, Mixins } from "vue-property-decorator";
 import { Getter, Action, Mutation } from "vuex-class";
 import mixin from "@/config/minxins";
-import { getOwnerUser } from "@/api/carApi.ts"; //获取目标访客受访人信息
-import { getTargrtRecord } from "@/api/peopleApi.ts"; //获取目标车辆通行记录
-import { getRegisterHouse } from "@/api/houseApi.ts"; //获取受房人信息的房屋信息
+
+import { editStall } from "@/api/alarmApi.ts"; //获取目标访客受访人信息
+// import { getTargrtRecord } from "@/api/peopleApi.ts"; //获取目标车辆通行记录
+// import { getRegisterHouse } from "@/api/houseApi.ts"; //获取受房人信息的房屋信息
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 @Component({
   mixins: [mixin],
@@ -511,31 +426,46 @@ const ActionHeader = () => import("@/components/ActionHeader.vue");
     ActionHeader
   },
   filters: {
-    devTypes(val: string) {
+    // devTypes(val: string) {
+    //   const data = {
+    //     "1": "门禁",
+    //     "2": "车禁",
+    //     "3": "注册机",
+    //     "4": "访客机"
+    //   };
+    //   return data[val] + "设备";
+    // },
+    statusFilterType(status: string) {
+      /** @description 状态显示过滤 */
       const data = {
-        "1": "门禁",
-        "2": "车禁",
-        "3": "注册机",
-        "4": "访客机"
+        "1": "danger",
+        "2": "success",
+        "3": "info",
+        "4": "info"
       };
-      return data[val] + "设备";
+      return data[status];
+    },
+
+    statusFilter(status: string) {
+      /** @description 状态显示过滤 */
+      const data = {
+        "1": "待处理",
+        "2": "处理中",
+        "3": "已处理",
+        "4": "忽略"
+      };
+      return data[status];
     }
   }
 })
 export default class VistoryManage extends Vue {
   filterForm: object = {
-    name: null, //来访者姓名
-    visitName: null, //受访者姓名
-    cardNo: null, //证件号码
-    minNumPeople: null, //最小随行人数
-    maxNumPeople: null, //最大随行人数
-    startCreateTime: null, //创建开始时间
-    endCreateTime: null, //创建结束时间
-    endInvalidDate: null, //有效期开始时间
-    startInvalidDate: null, //有效期结束时间
-    visitType: null, //访客类型
-    multiStatus: [] //访客状态
+    startInvalidDate: null, //上报开始时间
+    endInvalidDate: null, //上报结束时间
+    alarmType: [], //访客类型
+    alarmStatus: [] //访客状态
   }; //根据关键字查询
+
   initForm: object = {
     //获取访客名单列表url
     url: "/admin/usr-visitor/",
@@ -547,83 +477,78 @@ export default class VistoryManage extends Vue {
     url: "/admin/usr-visitor/batch-delete/",
     method: "delete",
     data: [],
-    message: `此操作将永久删除选中的访客,删除后访客将不能通行,请谨慎操作!`
+    message: `此操作将永久删除选中的预警信息,删除后预警信息将丢失,请谨慎操作!`
   };
 
-  private listQuery: Object = {
-    // 访客目标通行记录翻页
-    total: 0,
-    limit: 10,
-    page: 1
+  editForm: object = {
+    //修改状态
+    alarmType: "",
+    alarmStatus: ""
   };
 
-  private commandType: string = "all"; //根据访客类型筛选 all默认为显示全部
-  private commandStatus: String = "0"; //根据访客状态  0 默认显示为全部
+  // private listQuery: Object = {
+  //   // 访客目标通行记录翻页
+  //   total: 0,
+  //   limit: 10,
+  //   page: 1
+  // };
 
-  private interUserDetail: Object = {}; //受访人的身份详细信息
-  private houseInviterDetail: Object = {}; //受访人的房屋信息
-  private passTarget: Boolean = true; //目标访客通行记录的loadding
-  private passList: Array<Object> = []; // 访客目标通行记录
+  // private commandType: string = "all"; //根据访客类型筛选 all默认为显示全部
+  // private commandStatus: String = "0"; //根据访客状态  0 默认显示为全部
 
-  private detailDialogVisible: boolean = false; // 详细信息dialog弹框
-  private visitorDialogForm: Object = {}; // 访客详情
-  private activeName: string = "first"; //目标访客详细信息 tab Title
-  private selectType: Array<Object> = [
-    {
-      command: "1",
-      lable: "待访问"
-    },
-    {
-      command: "2",
-      lable: "已访问"
-    },
-    {
-      command: "3",
-      lable: "过期"
-    }
-  ];
+  // private interUserDetail: Object = {}; //受访人的身份详细信息
+  // private houseInviterDetail: Object = {}; //受访人的房屋信息
+  // private passTarget: Boolean = true; //目标访客通行记录的loadding
+  // private passList: Array<Object> = []; // 访客目标通行记录
 
-  visitType: Array<Object> = [
-    //车辆类型筛选
+  // private detailDialogVisible: boolean = false; // 详细信息dialog弹框
+  // private visitorDialogForm: Object = {}; // 访客详情
+  // private activeName: string = "first"; //目标访客详细信息 tab Title
+
+  updateArray: Array<string> = ["noteStatus"];
+  noteString: string = ""; // 修改的备注
+
+  private alarmType: Array<Object> = [
     {
-      label: "全部",
-      value: null
-    },
-    {
-      label: "App",
+      label: "设备",
       value: "1"
     },
     {
-      label: "访客机",
+      label: "关注人员",
       value: "2"
+    },
+    {
+      label: "布控人员",
+      value: "3"
     }
   ];
 
-  pickOptionStart: object = {}; //按照时间段查询的开始时间
-  pickOptionEnd: object = {}; //按照时间段查询的结束时间
-
-  passMethod(val) {
-    /**@description 过滤通行方式 */
-    switch (val) {
-      case "1":
-        return "人脸开门";
-      case "2":
-        return "二维码开门";
-      case "3":
-        return "蓝牙开门";
-      case "4":
-        return "远程开门";
-      case "5":
-        return "密码开门";
-      case "6":
-        return "刷卡开门";
-      case "7":
-        return "WIFI开门";
+  alarmStatus: Array<Object> = [
+    //车辆类型筛选
+    {
+      label: "待处理",
+      value: "1"
+    },
+    {
+      label: "处理中",
+      value: "2"
+    },
+    {
+      label: "已处理",
+      value: "3"
+    },
+    {
+      label: "忽略",
+      value: "4"
     }
-  }
+  ];
+
+  // pickOptionStart: object = {}; //按照时间段查询的开始时间
+  // pickOptionEnd: object = {}; //按照时间段查询的结束时间
+
   pickerOptions: Object = {};
   dateRange: Array<Object> = [];
-  createDateRange: Array<Object> = [];
+  // createDateRange: Array<Object> = [];
 
   mounted() {
     const _this = this;
@@ -643,13 +568,6 @@ export default class VistoryManage extends Vue {
       this.filterForm["startInvalidDate"] = null;
       this.filterForm["endInvalidDate"] = null;
     }
-    if (this.createDateRange) {
-      this.filterForm["startCreateTime"] = this.createDateRange[0];
-      this.filterForm["endCreateTime"] = this.createDateRange[1];
-    } else {
-      this.filterForm["startCreateTime"] = null;
-      this.filterForm["endCreateTime"] = null;
-    }
   }
 
   handleSelectionChange(val) {
@@ -668,32 +586,20 @@ export default class VistoryManage extends Vue {
     ); // 合并参数
   }
 
-  statusFilter(status) {
-    /** @description 状态显示过滤 */
-    switch (status) {
-      case "1":
-        return "待访问";
-      case "2":
-        return "已访问";
-      case "3":
-        return "过期";
-    }
-  }
-
-  typeFilter(type) {
-    /**@descripution 过滤邀请人类型*/
-    switch (type) {
-      case "1":
-        return "业主";
-        break;
-      case "2":
-        return "租户";
-        break;
-      case "3":
-        return "家庭成员";
-        break;
-    }
-  }
+  // typeFilter(type) {
+  //   /**@descripution 过滤邀请人类型*/
+  //   switch (type) {
+  //     case "1":
+  //       return "业主";
+  //       break;
+  //     case "2":
+  //       return "租户";
+  //       break;
+  //     case "3":
+  //       return "家庭成员";
+  //       break;
+  //   }
+  // }
 
   refreshInfo() {
     /**@description 刷新数据 */
@@ -705,81 +611,122 @@ export default class VistoryManage extends Vue {
     this["fetchData"](this.initForm);
   }
 
+  handleCommand(val) {
+    /**@description 单独修改车位状态 事件 */
+    console.log(val);
+  }
+
+  editStatus(val) {
+    /**@description 单独修改车位状态 */
+    this.editForm = val;
+  }
+
+  focusNoteInput(row) {
+    /**@description  修改备注自动获取焦点 */
+    this.noteString = row.note;
+    row.noteStatus = !row.noteStatus;
+    this.$nextTick(() => {
+      const input = this.$refs[row.id] as HTMLElement;
+      input.focus();
+    });
+  }
+
+  noteBlur(row) {
+    /**@description 修改车位备注信息 */
+    const form = { note: this.noteString, id: row.id };
+    if (row["note"] !== form["note"]) {
+      editStall(form)
+        .then(res => {
+          this["message"](
+            "success",
+            `修改车位编号为${row["serialNumber"]}的备注信息成功!`
+          );
+
+          this.fetchData(this.initForm);
+        })
+        .catch(() => {
+          console.log("修改车位备注信息失败");
+        });
+    }
+    this.noteString = "";
+    row.noteStatus = false;
+  }
+
   /**
    * row 列表数据
    */
-  showDetail(row, inviter) {
-    this.detailDialogVisible = true;
-    this.visitorDialogForm = Object.assign({}, row);
-    if (inviter) {
-      this.activeName = inviter;
-      this.fetchUser();
-    }
-  }
+  // showDetail(row, inviter) {
+  //   this.detailDialogVisible = true;
+  //   this.visitorDialogForm = Object.assign({}, row);
+  //   if (inviter) {
+  //     this.activeName = inviter;
+  //     this.fetchUser();
+  //   }
+  // }
 
-  async handleClick(tab) {
-    /**@description 查看车辆管理名单目标详情 */
-    if (tab.name === "second") {
-      this.fetchUser();
-    } else if (tab.name === "thirdly") {
-      this.listQuery["page"] = 1;
-      this.fetchPass();
-    }
-  }
+  // async handleClick(tab) {
+  //   /**@description 查看车辆管理名单目标详情 */
+  //   if (tab.name === "second") {
+  //     this.fetchUser();
+  //   } else if (tab.name === "thirdly") {
+  //     this.listQuery["page"] = 1;
+  //     this.fetchPass();
+  //   }
+  // }
 
-  async fetchUser() {
-    /**@description 查看受访人员详情 */
-    const info = {
-      id: this.visitorDialogForm["scenceUserId"],
-      houseId: this.visitorDialogForm["houseId"]
-    };
-    try {
-      const { data } = await getOwnerUser(info);
-      this.interUserDetail = data.data.user;
-      if (data.data.house) {
-        this.houseInviterDetail = data.data.house[0];
-      }
-      console.log(this.houseInviterDetail, 789456);
-    } catch (err) {
-      console.log(err.response);
-    }
+  // async fetchUser() {
+  //   /**@description 查看受访人员详情 */
+  //   const info = {
+  //     id: this.visitorDialogForm["scenceUserId"],
+  //     houseId: this.visitorDialogForm["houseId"]
+  //   };
+  //   try {
+  //     const { data } = await getOwnerUser(info);
+  //     this.interUserDetail = data.data.user;
+  //     if (data.data.house) {
+  //       this.houseInviterDetail = data.data.house[0];
+  //     }
+  //     console.log(this.houseInviterDetail, 789456);
+  //   } catch (err) {
+  //     console.log(err.response);
+  //   }
 
-    // try {
-    //   const { data } = await getRegisterHouse({
-    //     houseId: this.visitorDialogForm["houseId"]
-    //   });
-    //   console.log(data, 789789);
-    //   this.houseInviterDetail = data.data;
-    // } catch (err) {
-    //   console.log(err);
-    // }
-  }
+  // try {
+  //   const { data } = await getRegisterHouse({
+  //     houseId: this.visitorDialogForm["houseId"]
+  //   });
+  //   console.log(data, 789789);
+  //   this.houseInviterDetail = data.data;
+  // } catch (err) {
+  //   console.log(err);
+  // }
+  // }
 
-  async fetchPass() {
-    /**@description 查看访客通行通行记录 */
-    this.passTarget = true;
-    const info = { ...this.listQuery, id: this.visitorDialogForm["id"] };
-    const { data } = await getTargrtRecord(info);
-    this.passList = data.data.records;
-    this.listQuery["total"] = data.data.total;
-    this.passTarget = false;
-  }
+  // async fetchPass() {
+  //   /**@description 查看访客通行通行记录 */
+  //   this.passTarget = true;
+  //   const info = { ...this.listQuery, id: this.visitorDialogForm["id"] };
+  //   const { data } = await getTargrtRecord(info);
+  //   this.passList = data.data.records;
+  //   this.listQuery["total"] = data.data.total;
+  //   this.passTarget = false;
+  // }
 
-  handleCurrentChange(val) {
-    /** @description 处理目标访客通行记录录翻页事件
-     * @augments val: 页数
-     */
-    this.listQuery["page"] = val;
-    this.fetchPass();
-  }
+  // handleCurrentChange(val) {
+  //   /** @description 处理目标访客通行记录录翻页事件
+  //    * @augments val: 页数
+  //    */
+  //   this.listQuery["page"] = val;
+  //   this.fetchPass();
+  // }
 
-  handleClose() {
-    /** @description 关闭添加/修改diolog */
-    this.detailDialogVisible = false; //车辆详情dialog
-    this.activeName = "first";
-    this.interUserDetail = {};
-    this.houseInviterDetail = {};
-  }
+  // handleClose() {
+  //   /** @description 关闭添加/修改diolog */
+  //   this.detailDialogVisible = false; //车辆详情dialog
+  //   this.activeName = "first";
+  //   this.interUserDetail = {};
+  //   this.houseInviterDetail = {};
+  // }
 }
 </script>
 

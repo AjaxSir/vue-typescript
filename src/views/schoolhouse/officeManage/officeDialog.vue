@@ -21,7 +21,7 @@
           </el-tab-pane>
           <el-tab-pane label="通行记录">
             <div class="border-card">
-              <el-table stripe :data="gridData">
+              <el-table stripe border :data="gridData">
                 <el-table-column property="name" label="姓名"></el-table-column>
                 <el-table-column property="gender" label="性别" width="50px"></el-table-column>
                 <el-table-column property="num" label="学号" width="50px"></el-table-column>

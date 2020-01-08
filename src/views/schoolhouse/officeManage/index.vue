@@ -40,7 +40,7 @@
 
       <el-col :span="rowSpan.row2" class="table-col">
         <div class="rightContent">
-          <el-table border :data="tableData" style="width: 100%">
+          <el-table border stripe :data="tableData" style="width: 100%">
             <el-table-column type="index" align="center" label="序号" width="50"></el-table-column>
             <el-table-column prop="name" align="center" label="办公室名称"></el-table-column>
             <el-table-column prop="house" align="center" label="楼层">

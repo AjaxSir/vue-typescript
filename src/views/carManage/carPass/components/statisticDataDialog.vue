@@ -76,7 +76,7 @@
         </div>-->
       </div>
       <div v-if="fromTitle === '排序统计'">
-        <el-table stripe :data="gridData">
+        <el-table stripe border :data="gridData">
           <el-table-column property="name" label="姓名"></el-table-column>
           <el-table-column property="gender" label="性别"></el-table-column>
           <el-table-column property="num" label="学号"></el-table-column>

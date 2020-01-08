@@ -487,7 +487,7 @@
           @click="bindDeviceListVisible = true, fetchDeviceList(1)"
         >绑定设备</el-button>
       </div>
-      <el-table :data="bindDeviceList" style="width: 100%">
+      <el-table :data="bindDeviceList" stripe border style="width: 100%">
         <el-table-column type="index" align="center" prop="date" label="序号" width="50"></el-table-column>
         <el-table-column :show-overflow-tooltip="true" align="center" label="位置">
           <template slot-scope="{row}">
@@ -548,7 +548,7 @@
       title="设备列表"
       :visible.sync="bindDeviceListVisible"
     >
-      <el-table :data="DeviceList" ref="deviceList" @selection-change="handleSelectionChange">
+      <el-table :data="DeviceList" stripe border ref="deviceList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="50"></el-table-column>
         <el-table-column type="index" label="序号" align="center" width="50"></el-table-column>
         <el-table-column :show-overflow-tooltip="true" property="name" align="center" label="位置">
