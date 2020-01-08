@@ -22,9 +22,9 @@ import NavMenu from '@/components/NavMenu/index.vue';
 export default class AppMain extends Vue{
   get status (): boolean {
     const whiteList = ['dashboard', 'statistics']
-
     return !whiteList.includes(this.$route.name as string)
   }
+
   changeStatus(status) {
     if (!status) {
       const dom = document.getElementById('navMenu') as HTMLElement
