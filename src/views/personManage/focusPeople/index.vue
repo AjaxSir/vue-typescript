@@ -191,11 +191,11 @@
                       style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
                       size="small"
                       :type="scope.row.isEarly? 'success' : 'danger'"
-                    >{{ scope.row.isEarly? "启用" : "禁用" }}</el-tag>
+                    >{{ scope.row.isEarly? "开启" : "禁用" }}</el-tag>
                   </span>
                   <el-dropdown-menu slot="dropdown">
                     <div @click="handleCommand(true,scope.row)">
-                      <el-dropdown-item>正常</el-dropdown-item>
+                      <el-dropdown-item>开启</el-dropdown-item>
                     </div>
                     <div @click="handleCommand(false,scope.row)">
                       <el-dropdown-item>禁用</el-dropdown-item>
@@ -470,50 +470,6 @@
         label-width="100px"
         style="margin-right:40px;"
       >
-        <!-- <el-form-item label="姓名:" :show-message="showMessage" :error="errorMessage.scenceUser">
-          <el-select
-            style="width:100%"
-            v-model="editForm.name"
-            filterable
-            remote
-            :remote-method="remoteMethod"
-            :loading="loading"
-            placeholder="请输入姓名进行模糊查询"
-          >
-            <el-option
-              v-for="item in nameList"
-              :key="item.scenceUserId"
-              :label="item.name"
-              :value="[item.scenceUserId,item.name]"
-            >
-              <span style="float: left">{{ item.name }}</span>
-              <span style="float: right; color: #8492a6; font-size: 13px">{{ item. value }}</span>
-            </el-option>
-          </el-select>
-        </el-form-item>-->
-        <!-- <div style="display: flex;">
-          <el-form-item
-            class="ei-input-rewrite"
-            label="年龄:"
-            prop="age"
-            :show-message="showMessage"
-            :error="errorMessage.age"
-          >
-            <el-input
-              autocomplete="off"
-              placeholder="输入年龄"
-              min="0"
-              maxlength="3"
-              clearable
-              v-model="editForm.age"
-              @keyup.native="ageNumber"
-              @keydown.native="ageNumber"
-            ></el-input>
-          </el-form-item>
-          <p class="ei-input-hint">岁</p>
-        </div>-->
-
-        <!-- <div style="display: flex;"> -->
         <el-form-item
           label="紧急电话:"
           prop="editEmergencyPhone"
@@ -537,9 +493,7 @@
           ></el-input>
           <span v-show="hintPhone" class="ei-input-hint">{{phoneNum}}/11</span>
         </el-form-item>
-        <!-- </div> -->
 
-        <!-- <div style="display: flex;"> -->
         <el-form-item label="预警周期:" :show-message="showMessage" :error="errorMessage.earlyPeriod">
           <el-input
             v-model.number="editForm.earlyPeriod"
@@ -552,8 +506,6 @@
             @keyup.native="earlyPeriodNumber"
           ></el-input>
         </el-form-item>
-        <!-- <p class="ei-input-hint">天</p> -->
-        <!-- </div> -->
 
         <el-form-item
           label="预警组别:"
@@ -569,30 +521,6 @@
               :value="tag.id"
             ></el-option>
           </el-select>
-          <!-- <el-button @click="showTypeSetting = !showTypeSetting">添加分组</el-button>
-          <div v-if="showTypeSetting">
-            <el-tag
-              style="margin-left:5px"
-              :key="index"
-              v-for="(tag, index) in earlyGroup"
-              closable
-              :disable-transitions="false"
-              @close="deleteTag(tag, index,'group')"
-            >{{tag.groupName}}</el-tag>
-            <el-input
-              class="input-new-tag"
-              v-if="newTag"
-              v-model="newTagValue"
-              ref="saveTagInput"
-              size="small"
-              :maxlength="10"
-              clearable
-              placeholder="请输入添加分组名称"
-              @input="constraintLength(newTagValue,'10')"
-              @blur="handleInputConfirm('group')"
-            ></el-input>
-            <el-button v-else class="button-new-tag" size="small" @click="showInput('group')">添加分组</el-button>
-          </div>-->
         </el-form-item>
 
         <el-form-item
@@ -677,9 +605,6 @@
                 <el-form-item style="margin-bottom:0" label="姓名:">
                   <span>{{userDetail.name ? userDetail.name :''}}</span>
                 </el-form-item>
-                <!-- <el-form-item style="margin-bottom:0" label="年龄:">
-                  <span>{{userDetail.age ? userDetail.age : ''}}</span>
-                </el-form-item>-->
                 <el-form-item style="margin-bottom:0" label="性别:">
                   <span>{{userDetail.sex==='0'?'女':'男'}}</span>
                 </el-form-item>
@@ -695,8 +620,6 @@
                   <span>{{userDetail.cardNo ? userDetail.cardNo :''}}</span>
                 </el-form-item>
                 <el-form-item style="margin-bottom:0" label="备注信息:">
-                  <!-- <span>{{userDetail.note ? userDetail.note :'暂无'}}</span> -->
-                  <!-- @keyup.enter.native="peopleUpdateNote" -->
                   <el-input
                     size="small"
                     v-model="userDetail.note"
