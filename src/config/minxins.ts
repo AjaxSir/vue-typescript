@@ -83,7 +83,7 @@ export default class GlobalMimins extends Vue {
     if (x <= 380) {
       tzDicv.style.left = '210px'
     } else {
-      tzDicv.style.left = x - 174 + 'px'
+      tzDicv.style.left = x - 177 + 'px'
     }
     if ((x - 166) < 216) {
       leftCon.style.width = 216 + 'px'
