@@ -96,209 +96,218 @@
         </action-header>
       </el-col>
     </el-row>
-    <el-row :gutter="10">
-      <el-col :span="rowSpan.row1">
-        <data-tree
-          ref="dataTree"
-          @fetchDatas="fetchDatas"
-          :page="page"
-          :initFormHeader="initForm"
-          :listData="list_data"
-          :groupDisable="groupDisable"
-          @getHouseTreeData="getHouseTreeData"
-          :TreeData="TreeData"
-        />
-      </el-col>
 
-      <el-col :span="rowSpan.row2" class="table-col">
-        <div class="rightContent">
-          <el-table
-            :data="list_data"
-            stripe
-            height="65vh"
-            border
-            v-loading="showLoading"
-            highlight-current-row
-            @cell-mouse-enter="enterRowChange"
-            @selection-change="handleSelectionChange"
-            @cell-mouse-leave="leaveRowChange"
-          >
-            <el-table-column v-if="globalUpdateStatus" type="selection" align="center" width="50"></el-table-column>
+    <div class="components-container">
+      <split-pane split="vertical" @resize="resize" :min-percent="10" :default-percent="rowSpan">
+        <template slot="paneL">
+          <div class="leftContent">
+            <data-tree
+              ref="dataTree"
+              @fetchDatas="fetchDatas"
+              :page="page"
+              :initFormHeader="initForm"
+              :listData="list_data"
+              :groupDisable="groupDisable"
+              @getHouseTreeData="getHouseTreeData"
+              :TreeData="TreeData"
+            />
+          </div>
+        </template>
+        <template slot="paneR">
+          <div class="rightContent">
+            <el-table
+              :data="list_data"
+              stripe
+              height="65vh"
+              border
+              v-loading="showLoading"
+              highlight-current-row
+              @cell-mouse-enter="enterRowChange"
+              @selection-change="handleSelectionChange"
+              @cell-mouse-leave="leaveRowChange"
+            >
+              <el-table-column v-if="globalUpdateStatus" type="selection" align="center" width="50"></el-table-column>
 
-            <el-table-column type="index" align="center" label="序号" class="indexNum" width="50">
-              <template slot-scope="scope">
-                <span>{{scope.$index + 1}}</span>
-                <div v-if="globalUpdateStatus" class="fun-btn">
-                  <el-dropdown trigger="click" placement="bottom-start" @command="commandClick">
-                    <el-tooltip class="item" effect="dark" content="点击操作" placement="top">
-                      <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
-                    </el-tooltip>
-                    <el-dropdown-menu slot="dropdown">
-                      <div v-if="scope.row.status==='已售（自用）' || scope.row.status==='已售（出租）'">
-                        <div v-if="!deleteForm.data.length" @click="editTarget(scope.row)">
-                          <el-dropdown-item command="update">修改业主</el-dropdown-item>
+              <el-table-column type="index" align="center" label="序号" class="indexNum" width="50">
+                <template slot-scope="scope">
+                  <span>{{scope.$index + 1}}</span>
+                  <div v-if="globalUpdateStatus" class="fun-btn">
+                    <el-dropdown trigger="click" placement="bottom-start" @command="commandClick">
+                      <el-tooltip class="item" effect="dark" content="点击操作" placement="top">
+                        <i v-show="scope.row.showMenu" class="iconfont icon-menu"></i>
+                      </el-tooltip>
+                      <el-dropdown-menu slot="dropdown">
+                        <div v-if="scope.row.status==='已售（自用）' || scope.row.status==='已售（出租）'">
+                          <div v-if="!deleteForm.data.length" @click="editTarget(scope.row)">
+                            <el-dropdown-item command="update">修改业主</el-dropdown-item>
+                          </div>
                         </div>
-                      </div>
-                      <el-dropdown-item
-                        :command="returnCommand('delete', scope.row)"
-                      >{{ deleteForm.data.length ? '批量删除' : '删除' }}</el-dropdown-item>
+                        <el-dropdown-item
+                          :command="returnCommand('delete', scope.row)"
+                        >{{ deleteForm.data.length ? '批量删除' : '删除' }}</el-dropdown-item>
+                      </el-dropdown-menu>
+                    </el-dropdown>
+                  </div>
+                </template>
+              </el-table-column>
+
+              <el-table-column
+                align="center"
+                prop="carSpaceGroupName"
+                label="所属分组"
+                :show-overflow-tooltip="true"
+                max-width="120"
+              ></el-table-column>
+
+              <el-table-column
+                align="center"
+                prop="serialNumber"
+                width="200px"
+                :show-overflow-tooltip="true"
+                label="编号"
+              ></el-table-column>
+
+              <el-table-column
+                width="120"
+                align="center"
+                prop="type"
+                label="状态"
+                :show-overflow-tooltip="true"
+              >
+                <template slot-scope="{row}">
+                  <el-dropdown trigger="click" @command="handleCommand">
+                    <span class="el-dropdown-link">
+                      <el-tag
+                        type="info"
+                        size="small"
+                        style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
+                        @click="editStatus(row)"
+                      >{{ row.status ? row.status :'--'}}</el-tag>
+                    </span>
+                    <el-dropdown-menu slot="dropdown">
+                      <el-dropdown-item command="已售（自用）">已售（自用）</el-dropdown-item>
+                      <el-dropdown-item command="已售（出租）">已售（出租）</el-dropdown-item>
+                      <el-dropdown-item command="未售（出租）">未售（出租）</el-dropdown-item>
+                      <el-dropdown-item command="未售（闲置）">未售（闲置）</el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
-                </div>
-              </template>
-            </el-table-column>
+                </template>
+              </el-table-column>
 
-            <el-table-column
-              align="center"
-              prop="carSpaceGroupName"
-              label="所属分组"
-              :show-overflow-tooltip="true"
-              max-width="120"
-            ></el-table-column>
+              <el-table-column
+                prop="ownerName"
+                width="120"
+                align="center"
+                label="业主"
+                :show-overflow-tooltip="true"
+              >
+                <template slot-scope="scope">
+                  <el-button
+                    v-if="scope.row.ownerName"
+                    @click="showHouseDetails(scope.row,'first')"
+                    type="text"
+                  >{{ scope.row.ownerName }}</el-button>
+                  <span v-else></span>
+                </template>
+              </el-table-column>
 
-            <el-table-column
-              align="center"
-              prop="serialNumber"
-              width="200px"
-              :show-overflow-tooltip="true"
-              label="编号"
-            ></el-table-column>
-
-            <el-table-column
-              width="120"
-              align="center"
-              prop="type"
-              label="状态"
-              :show-overflow-tooltip="true"
-            >
-              <template slot-scope="{row}">
-                <el-dropdown trigger="click" @command="handleCommand">
-                  <span class="el-dropdown-link">
-                    <el-tag
-                      type="info"
-                      size="small"
-                      style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
-                      @click="editStatus(row)"
-                    >{{ row.status ? row.status :'--'}}</el-tag>
-                  </span>
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item command="已售（自用）">已售（自用）</el-dropdown-item>
-                    <el-dropdown-item command="已售（出租）">已售（出租）</el-dropdown-item>
-                    <el-dropdown-item command="未售（出租）">未售（出租）</el-dropdown-item>
-                    <el-dropdown-item command="未售（闲置）">未售（闲置）</el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown>
-              </template>
-            </el-table-column>
-
-            <el-table-column
-              prop="ownerName"
-              width="120"
-              align="center"
-              label="业主"
-              :show-overflow-tooltip="true"
-            >
-              <template slot-scope="scope">
-                <el-button
-                  v-if="scope.row.ownerName"
-                  @click="showHouseDetails(scope.row,'first')"
-                  type="text"
-                >{{ scope.row.ownerName }}</el-button>
-                <span v-else></span>
-              </template>
-            </el-table-column>
-
-            <el-table-column
-              prop="carSpaceTypeName"
-              width="120"
-              align="center"
-              label="车位类型"
-              :show-overflow-tooltip="true"
-            >
-              <template slot-scope="{row}">
-                <el-dropdown trigger="click" @command="handlEcarSpaceType">
-                  <span class="el-dropdown-link">
-                    <el-tag
-                      type="info"
-                      size="small"
-                      style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
-                      @click="editStatus(row)"
-                    >{{ row.carSpaceTypeName ? row.carSpaceTypeName :'--'}}</el-tag>
-                  </span>
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item
-                      v-for="item in carStatus"
-                      :key="item.id"
-                      :command="item.id"
-                    >{{item.name}}</el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown>
-              </template>
-            </el-table-column>
-
-            <el-table-column prop="carNo" align="center" label="绑定车辆" :show-overflow-tooltip="true">
-              <template slot-scope="scope">
-                <el-button
-                  v-if="scope.row.status!=='未售（闲置）'"
-                  @click="bindingPlates(scope.row)"
-                  type="text"
-                >
-                  <!-- style="width: 100px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" -->
-                  <div v-if="scope.row.carSpaceVos && scope.row.carSpaceVos.length > 0">
-                    <span
-                      v-for="(item,index) in scope.row.carSpaceVos"
-                      :key="'carSpaceVos' + index"
-                    >
-                      {{item.carNo}}
-                      <span
-                        v-if="scope.row.carSpaceVos"
-                      >{{scope.row.carSpaceVos.length > 1 && index===scope.row.carSpaceVos.length-1? '': ','}}</span>
+              <el-table-column
+                prop="carSpaceTypeName"
+                width="120"
+                align="center"
+                label="车位类型"
+                :show-overflow-tooltip="true"
+              >
+                <template slot-scope="{row}">
+                  <el-dropdown trigger="click" @command="handlEcarSpaceType">
+                    <span class="el-dropdown-link">
+                      <el-tag
+                        type="info"
+                        size="small"
+                        style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
+                        @click="editStatus(row)"
+                      >{{ row.carSpaceTypeName ? row.carSpaceTypeName :'--'}}</el-tag>
                     </span>
-                  </div>
+                    <el-dropdown-menu slot="dropdown">
+                      <el-dropdown-item
+                        v-for="item in carStatus"
+                        :key="item.id"
+                        :command="item.id"
+                      >{{item.name}}</el-dropdown-item>
+                    </el-dropdown-menu>
+                  </el-dropdown>
+                </template>
+              </el-table-column>
 
-                  <span v-else>--</span>
-                </el-button>
-                <p style="height:40px;line-height:40px" v-else></p>
-              </template>
-            </el-table-column>
+              <el-table-column
+                prop="carNo"
+                align="center"
+                label="绑定车辆"
+                :show-overflow-tooltip="true"
+              >
+                <template slot-scope="scope">
+                  <el-button
+                    v-if="scope.row.status!=='未售（闲置）'"
+                    @click="bindingPlates(scope.row)"
+                    type="text"
+                  >
+                    <!-- style="width: 100px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" -->
+                    <div v-if="scope.row.carSpaceVos && scope.row.carSpaceVos.length > 0">
+                      <span
+                        v-for="(item,index) in scope.row.carSpaceVos"
+                        :key="'carSpaceVos' + index"
+                      >
+                        {{item.carNo}}
+                        <span
+                          v-if="scope.row.carSpaceVos"
+                        >{{scope.row.carSpaceVos.length > 1 && index===scope.row.carSpaceVos.length-1? '': ','}}</span>
+                      </span>
+                    </div>
 
-            <el-table-column align="center" :show-overflow-tooltip="true" prop="note" label="备注">
-              <template slot-scope="scope">
-                <span
-                  class="rowUpdate"
-                  v-show="!scope.row.noteStatus"
-                  @click="focusNoteInput(scope.row)"
-                >{{ scope.row.note || '--' }}</span>
-                <el-input
-                  size="mini"
-                  :ref="scope.row.id"
-                  @blur="noteBlur(scope.row)"
-                  v-model="noteString"
-                  v-show="scope.row.noteStatus"
-                  :clearable="true"
-                  placeholder="输入备注"
-                ></el-input>
-              </template>
-            </el-table-column>
-          </el-table>
-          <el-pagination
-            @current-change="pageChange"
-            :page-size="page.limit"
-            style="margin-top:10px;"
-            :current-page.sync="page.page"
-            background
-            layout="prev, pager, next"
-            :total="page.total"
-          ></el-pagination>
-          <div :class="rowSpan.row1===3 ? menuControl1 : menuControl2" @click="menuVisible">
-            <p class="close-menu">
-              <i v-if="rowSpan.row1===3" class="iconfont icon-left icon-class"></i>
-              <i v-else class="iconfont icon-zuo icon-class"></i>
-            </p>
+                    <span v-else>--</span>
+                  </el-button>
+                  <p style="height:40px;line-height:40px" v-else></p>
+                </template>
+              </el-table-column>
+
+              <el-table-column align="center" :show-overflow-tooltip="true" prop="note" label="备注">
+                <template slot-scope="scope">
+                  <span
+                    class="rowUpdate"
+                    v-show="!scope.row.noteStatus"
+                    @click="focusNoteInput(scope.row)"
+                  >{{ scope.row.note || '--' }}</span>
+                  <el-input
+                    size="mini"
+                    :ref="scope.row.id"
+                    @blur="noteBlur(scope.row)"
+                    v-model="noteString"
+                    v-show="scope.row.noteStatus"
+                    :clearable="true"
+                    placeholder="输入备注"
+                  ></el-input>
+                </template>
+              </el-table-column>
+            </el-table>
+            <el-pagination
+              @current-change="pageChange"
+              :page-size="page.limit"
+              style="margin-top:10px;"
+              :current-page.sync="page.page"
+              background
+              layout="prev, pager, next"
+              :total="page.total"
+            ></el-pagination>
+            <div style="z-index:9999;" :class="rowSpan===12 ? menuControl1 : menuControl2" @click="menuVisible">
+              <p class="close-menu">
+                <i v-if="rowSpan===12" class="iconfont icon-left icon-class"></i>
+                <i v-else class="iconfont icon-zuo icon-class"></i>
+              </p>
+            </div>
           </div>
-        </div>
-      </el-col>
-    </el-row>
+        </template>
+      </split-pane>
+    </div>
 
     <!-- 批量添加车位 -->
     <el-dialog
@@ -939,6 +948,7 @@ import { Component, Prop, Vue, Mixins } from "vue-property-decorator";
 import { Getter, Action, Mutation } from "vuex-class";
 import mixin from "@/config/minxins";
 import { sprintf } from "sprintf-js";
+import splitPane from "vue-splitpane";
 import {
   getHouseTreeData,
   // addHouse,
@@ -971,7 +981,8 @@ const ExportIn = () => import("@/components/exportIn/index.vue");
   components: {
     ActionHeader,
     DataTree,
-    ExportIn
+    ExportIn,
+    splitPane
   },
   filters: {
     status(val: string) {
@@ -1004,10 +1015,7 @@ const ExportIn = () => import("@/components/exportIn/index.vue");
   }
 })
 export default class CardManage extends Vue {
-  private rowSpan: any = {
-    row1: 3,
-    row2: 21
-  };
+  private rowSpan: number = 12;
   initForm: object = {
     url: "/admin/car-space/",
     method: "get"
@@ -1190,6 +1198,10 @@ export default class CardManage extends Vue {
       ...row,
       houseStatus
     };
+  }
+
+  resize() {
+    console.log("resize");
   }
 
   created() {
@@ -1949,26 +1961,24 @@ export default class CardManage extends Vue {
 
   menuVisible() {
     /**@description 控制楼栋 */
-    if (this.rowSpan.row1 === 3) {
-      this.rowSpan = {
-        row1: 0,
-        row2: 24
-      };
+    if (this.rowSpan === 0) {
+      this.rowSpan = 12;
     } else {
-      this.rowSpan = {
-        row1: 3,
-        row2: 21
-      };
+      this.rowSpan = 0;
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+.leftContent {
+  margin-right: 5px;
+}
 .main {
   display: flex;
   .rightContent {
     flex: 1;
+    margin-left: 20px;
   }
 }
 
@@ -2027,5 +2037,32 @@ export default class CardManage extends Vue {
   justify-content: space-between;
   padding: 4px;
   border-bottom: 1px solid #dcdfe6;
+}
+// 111
+.components-container {
+  position: relative;
+  height: 65vh;
+}
+
+.left-container {
+  background-color: #f38181;
+  height: 100%;
+}
+
+.right-container {
+  background-color: #fce38a;
+  height: 200px;
+}
+
+.top-container {
+  background-color: #fce38a;
+  width: 100%;
+  height: 100%;
+}
+
+.bottom-container {
+  width: 100%;
+  background-color: #95e1d3;
+  height: 100%;
 }
 </style>
