@@ -251,8 +251,8 @@
                     >
                       {{item.carNo}}
                       <span
-                        v-if="scope.row.carSpaceVos && scope.row.carSpaceVos.length > 1"
-                      >,</span>
+                        v-if="scope.row.carSpaceVos"
+                      >{{scope.row.carSpaceVos.length > 1 && index===scope.row.carSpaceVos.length-1? '': ','}}</span>
                     </span>
                   </div>
 
@@ -645,7 +645,13 @@
         </el-tab-pane>
 
         <el-tab-pane label="通行记录" name="second">
-          <el-table :data="dtailTable" stripe border style="width: 100%"  v-loading="dtailTableLoading">
+          <el-table
+            :data="dtailTable"
+            stripe
+            border
+            style="width: 100%"
+            v-loading="dtailTableLoading"
+          >
             <el-table-column prop="ownerName" align="center" label="姓名" width="150px">
               <template slot-scope="{row}">
                 <p class="boder-style-dialog">{{row.ownerName}}</p>
@@ -686,7 +692,13 @@
           ></el-pagination>
         </el-tab-pane>
         <el-tab-pane label="车辆信息" name="third">
-          <el-table :data="carDtailTable" style="width: 100%;" border stripe v-loading="dtailTableLoading">
+          <el-table
+            :data="carDtailTable"
+            style="width: 100%;"
+            border
+            stripe
+            v-loading="dtailTableLoading"
+          >
             <el-table-column prop="carNo" align="center" label="车牌号">
               <template slot-scope="{row}">
                 <p class="boder-style-dialog">{{row.carNo}}</p>
@@ -781,7 +793,13 @@
           ></el-pagination>-->
         </el-tab-pane>
         <el-tab-pane label="人脸库信息" name="six">
-          <el-table :data="faceList" border stripe style="width: 100%" v-loading="dtailTableLoading">
+          <el-table
+            :data="faceList"
+            border
+            stripe
+            style="width: 100%"
+            v-loading="dtailTableLoading"
+          >
             <el-table-column align="center" width="50" type="index" label="编号"></el-table-column>
             <el-table-column
               :show-overflow-tooltip="true"
@@ -1220,8 +1238,6 @@ export default class CardManage extends Vue {
       this["message"]("error", "开始和结束为数值!");
       e.target.value = "";
     }
-    // this.batchForm["start"] = this.batchForm["start"].toUpperCase();
-    // this.batchForm["end"] = this.batchForm["end"].toUpperCase();
   }
 
   clearableBtn(v) {
@@ -1266,12 +1282,10 @@ export default class CardManage extends Vue {
     if (/^0{0,2}[1-9]\d*$/.test(this.batchForm["start"])) {
       if (!/^0{0,2}[1-9]\d*$/.test(this.batchForm["end"])) {
         this["message"]("error", "开始和结束的序号类型不一致!");
-        // this.batchForm["carSpaceTypeId"] = "";
         return false;
       }
       if (Number(this.batchForm["start"]) > Number(this.batchForm["end"])) {
         this["message"]("error", "请确保序号由小到大!");
-        // this.batchForm["unitId"] = "";
         return false;
       }
 
@@ -1461,49 +1475,77 @@ export default class CardManage extends Vue {
 
   handleCommand(val) {
     /**@description 单独修改车位状态 事件 */
-    if (val == "未售（闲置）") {
-      this.$confirm(
-        `将车位的类型改为${val},会把绑定的业主和车牌进行删除,是否继续?`,
-        "提示",
-        {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning"
-        }
-      )
-        .then(() => {
-          this.updateStatus(val);
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消修改"
+    if (
+      this["editForm"]["status"] == "已售（出租）" ||
+      this["editForm"]["status"] == "已售（自用）"
+    ) {
+      if (val == "未售（闲置）") {
+        this.$confirm(
+          `将车位的类型改为${val},会把绑定的业主和车牌进行删除,是否继续?`,
+          "提示",
+          {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            type: "warning"
+          }
+        )
+          .then(() => {
+            this.updateStatus(val);
+          })
+          .catch(() => {
+            this.$message({
+              type: "info",
+              message: "已取消修改"
+            });
           });
-        });
-      return;
+        return;
+      } else if (val == "未售（出租）") {
+        this.$confirm(
+          `将车位的类型改为${val},会把绑定的业主进行删除,是否继续?`,
+          "提示",
+          {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            type: "warning"
+          }
+        )
+          .then(() => {
+            this.updateStatus(val);
+          })
+          .catch(() => {
+            this.$message({
+              type: "info",
+              message: "已取消修改"
+            });
+          });
+        return;
+      }
     }
 
-    if (val == "未售（出租）") {
-      this.$confirm(
-        `将车位的类型改为${val},会把绑定的业主进行删除,是否继续?`,
-        "提示",
-        {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning"
-        }
-      )
-        .then(() => {
-          this.updateStatus(val);
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消修改"
+    if (this["editForm"]["status"] == "未售（出租）") {
+      if (val == "未售（闲置）") {
+        this.$confirm(
+          `将车位的类型改为${val},会把绑定的车牌进行删除,是否继续?`,
+          "提示",
+          {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            type: "warning"
+          }
+        )
+          .then(() => {
+            this.updateStatus(val);
+          })
+          .catch(() => {
+            this.$message({
+              type: "info",
+              message: "已取消修改"
+            });
           });
-        });
-      return;
+        return;
+      }
     }
+
     this.updateStatus(val);
   }
 
@@ -1518,22 +1560,6 @@ export default class CardManage extends Vue {
       this["fetchData"](this.initForm);
     });
   }
-
-  // batchDeleteCarNo() {
-  //   /**@description 批量删除车牌 */
-  //   for (const item of this.editForm["carSpaceVos"]) {
-  //     this.removeCarIds.push(item["carId"]);
-  //   }
-  //   const form = { id: this.editForm["id"], removeCarIds: this.removeCarIds };
-  //   editStall(form).then(() => {
-  //     this["message"](
-  //       "success",
-  //       `修改编号为${this.editForm["serialNumber"]}的车位状态成功!`
-  //     );
-  //     this["fetchData"](this.initForm);
-  //     this.removeCarIds = [];
-  //   });
-  // }
 
   handlEcarSpaceType(val) {
     /**@description 单独修改车位类型 事件 */
@@ -1556,7 +1582,6 @@ export default class CardManage extends Vue {
     this.targetuser["name"] = item.ownerName;
     this.targetuser["ownerScenceUserId"] = item.ownerScenceUserId;
     this.editItem = item;
-    // this.editForm["ownerScenceUserId"] = null;
     this.dialogEdit = true;
   }
 
@@ -1613,7 +1638,6 @@ export default class CardManage extends Vue {
     for (const key in this.errorMessage) {
       this.errorMessage[key] = "";
     }
-    // this.$refs.dataTree["highlightStatus"] = true;
     this.$refs["updateForm"]["resetFields"]();
     this.targetuser = {};
     this.errorMessage["name"] = "";
@@ -1652,9 +1676,6 @@ export default class CardManage extends Vue {
   }
 
   confirmUpdateNoteUser(row) {
-    // if (!this.ownerDetail["note"]) {
-    //   return this["message"]("error", "请输入业主的备注信息!");
-    // }
     console.log(this.ownerDetail["note"], this.ownerItem);
     if (this.ownerDetail["note"] !== this.ownerItem) {
       updateUserNote(this.ownerDetail["id"], this.ownerItem).then(res => {
@@ -1692,7 +1713,6 @@ export default class CardManage extends Vue {
      * @argument first 查询业主信息
      * @argument second 绑定车牌
      */
-    // this.activeName = inviter;
     this.dialogFormVisible = true;
     this.getOwnerDetail(row);
     this.detailDialog = Object.assign({}, row);
@@ -1736,21 +1756,17 @@ export default class CardManage extends Vue {
     const { data } = await carPassList(info);
     this.dtailTable = data.data.records;
     this.passListParams["total"] = data.data.total;
-    this.dtailTableLoading = false;
-    console.log(data.data.records, "获取目标业主的车辆通行记录");
   }
 
   async fetchCarList(page: number) {
     /**@description  获取业主的车辆信息*/
     this.dtailTableLoading = true;
-
     this.carDtailTableParams["page"] = page;
     const info = { ...this.carDtailTableParams };
     const { data } = await querycarno(info);
     this.carDtailTable = data.data.records;
     this.carDtailTableParams["total"] = data.data.total;
     this.dtailTableLoading = false;
-    console.log(this.carDtailTable, "获取业主的车辆信息");
   }
 
   async fetchOwnerHouse(page: number) {
@@ -1759,10 +1775,8 @@ export default class CardManage extends Vue {
     this.houseDtailTableParams["page"] = page;
     const info = { ...this.houseDtailTableParams };
     const { data } = await getTargetHouse(info);
-    // this.houseDtailTableParams["total"] = data.total;
     this.houseDtailTable = data.data;
     this.dtailTableLoading = false;
-    console.log(data.data, "查询目标车位业主的房屋信息");
   }
 
   deleteHouse(row, index) {
@@ -1804,7 +1818,6 @@ export default class CardManage extends Vue {
     this.dtailTableLoading = true;
     this.facePage["page"] = page;
     const { data } = await getOwnerFaceList(this.facePage);
-    console.log(data.data, "获取人脸库列表");
     this.facePage["total"] = data.total;
     this.faceList = data.data;
     this.dtailTableLoading = false;
@@ -1898,11 +1911,6 @@ export default class CardManage extends Vue {
         this.selectCarNo.splice(Number(index), 1);
       }
     }
-    // console.log(
-    //   this.bindingcarnum["carIds"],
-    //   789,
-    //   this.selectCarNo[index]["carId"]
-    // );
   }
 
   deleteTag(tag, index) {
