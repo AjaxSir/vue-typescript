@@ -46,10 +46,51 @@ export default class GlobalMimins extends Vue {
     url: '',
     method: 'delete'
   }
-
+  leftDistrict: number
+  dw: number
   mounted() {
     this.fetchData(this.initForm)
     this.globalUpdateStatus = this.permissionList.includes(this.$route.name + 'Update')
+    const whiteList: Array<string> = ['list']
+    // 实现拖动
+    if (whiteList.includes(this.$route.name as string)) {
+      const tzDicv = document.getElementById('tzDiv') as HTMLElement
+      tzDicv.style.cursor = 'move'
+      tzDicv.addEventListener('mousedown', this.mouseDown, true);
+      tzDicv.addEventListener('mouseup', this.up, true);
+      tzDicv.addEventListener('mouseout', this.up, true);
+    }
+  }
+  up() {
+    const tzDicv = document.getElementById('tzDiv') as HTMLElement
+    tzDicv.removeEventListener('mousemove', this.move, true)
+  }
+  mouseDown() {
+    const tzDicv = document.getElementById('tzDiv') as HTMLElement
+    const e = window.event || arguments[0]
+    const x = e.clientX
+    const cssSty:any = document.defaultView
+    const left: any = cssSty.getComputedStyle(tzDicv, null).left
+    this.leftDistrict = x - parseInt(left)
+    tzDicv.addEventListener('mousemove', this.move, true);
+  }
+  move() {
+    const tzDicv = document.getElementById('tzDiv') as HTMLElement
+    const leftCon = document.getElementById('leftCon') as HTMLElement
+    const rightCon = document.getElementById('rightCon') as HTMLElement
+    const e = window.event || arguments[0]
+    const x = e.clientX
+    if (x <= 380) {
+      tzDicv.style.left = '210px'
+    } else {
+      tzDicv.style.left = x - 174 + 'px'
+    }
+    if ((x - 166) < 216) {
+      leftCon.style.width = 216 + 'px'
+    } else   {
+      leftCon.style.width = x - 180 + 'px'
+    }
+    rightCon.style.width = `calc(100% - ${x - 180}px)`
   }
   is_Phone(str: string) {
     return (/^1[123456789]\d{9}$/).test(str)

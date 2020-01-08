@@ -57,8 +57,8 @@
         </action-header>
       </el-col>
     </el-row>
-    <el-row :gutter="10">
-      <el-col :span="rowSpan.row1">
+    <el-row :gutter="10" id='rowCon'>
+      <el-col id='leftCon' :span="rowSpan.row1">
         <data-tree
           @fetchData="fetchData"
           :page="page"
@@ -68,7 +68,7 @@
         />
       </el-col>
 
-      <el-col :span="rowSpan.row2" class="table-col">
+      <el-col id='rightCon' :span="rowSpan.row2" class="table-col">
         <div class="rightContent">
           <el-table
             :data="list_data"
@@ -167,14 +167,16 @@
             layout="prev, pager, next"
             :total="page.total"
           ></el-pagination>
-          <div :class="rowSpan.row1===3 ? menuControl1 : menuControl2" @click="menuVisible">
+           <!-- @click="menuVisible" -->
+
+        </div>
+      </el-col>
+      <div id='tzDiv' :class="rowSpan.row1===3 ? menuControl1 : menuControl2">
             <p class="close-menu">
               <i v-if="rowSpan.row1===3" class="iconfont icon-left icon-class"></i>
               <i v-else class="iconfont icon-zuo icon-class"></i>
             </p>
           </div>
-        </div>
-      </el-col>
     </el-row>
     <!-- 新建房屋 -->
     <el-dialog
@@ -646,7 +648,7 @@ export default class CardManage extends Vue {
   };
   filterForm: object = {
     keys: '',
-    status: ['1'],
+    status: [],
     buildingId: '',
     userName: '',
     cardNo: '',
@@ -993,7 +995,7 @@ export default class CardManage extends Vue {
 .menu-control {
   position: absolute;
   top: 32vh;
-  left: -10px;
+  left: 210px;
 }
 
 .menu-visible {

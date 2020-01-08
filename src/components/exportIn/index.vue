@@ -161,7 +161,7 @@
           label="错误定位"
         >
           <template slot-scope="{row}">
-            <span>第 {{row.index}} 行{{uploadUrl}} {{uploadUrl.indexOf('/admin/usr-car/import') === -1}} {{uploadUrl.indexOf('/admin/car-space/import') === -1}}</span>
+            <span>第 {{row.index}} 行</span>
           </template>
         </el-table-column>
 
@@ -355,7 +355,7 @@
           label="错误定位"
         >
           <template slot-scope="{row}">
-            <span>第 {{row.rowIndex}} 行{{uploadUrl.indexOf('/admin/car-space/import')}}</span>
+            <span>第 {{row.rowIndex}} 行</span>
           </template>
         </el-table-column>
       </el-table>
