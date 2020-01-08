@@ -36,7 +36,7 @@
         </div>
         <div class="col-201">
           <div class="singleTable" :style="{ width: '301px' }">
-            <el-table class="singleClass" border :data="list_data">
+            <el-table class="singleClass" border stripe :data="list_data">
               <el-table-column label="1" align="center" width="50">
                 <template slot-scope="scope">
                   <el-tooltip
@@ -133,7 +133,7 @@
             <div class="partHouse">西区-1栋</div>
           </div>
           <div class="singleTable" :style="{ width: '602px' }">
-            <el-table class="singleClass" border :data="list_data">
+            <el-table class="singleClass" border stripe :data="list_data">
               <el-table-column label="1" align="center" width="50">
                <template slot-scope="scope">
                   <el-tooltip
@@ -219,7 +219,7 @@
                 </template>
               </el-table-column>
             </el-table>
-            <el-table class="singleClass" border :data="list_data">
+            <el-table class="singleClass" border stripe :data="list_data">
               <el-table-column label="1" align="center" width="50">
                 <template slot-scope="scope">
                   <el-tooltip
@@ -316,7 +316,7 @@
             <div class="partHouse">西区-1栋</div>
           </div>
           <div class="singleTable" :style="{ width: '602px' }">
-            <el-table class="singleClass" border :data="list_data">
+            <el-table class="singleClass" border stripe :data="list_data">
               <el-table-column label="1" align="center" width="50">
                <template slot-scope="scope">
                   <el-tooltip
@@ -402,7 +402,7 @@
                 </template>
               </el-table-column>
             </el-table>
-            <el-table class="singleClass" border :data="list_data">
+            <el-table class="singleClass" border stripe :data="list_data">
               <el-table-column label="1" align="center" width="50">
                 <template slot-scope="scope">
                   <el-tooltip
@@ -548,13 +548,13 @@
           </el-form>
         </el-tab-pane>
         <el-tab-pane label="人员信息" name="second">
-          <el-table :data="HousePeople">
+          <el-table :data="HousePeople" border stripe>
             <el-table-column property="name" align="center" label="姓名"></el-table-column>
             <el-table-column property="age" align="center" label="年龄"></el-table-column>
           </el-table>
         </el-tab-pane>
         <el-tab-pane label="门禁卡信息" name="third">
-          <el-table :data="HouseDoorCard">
+          <el-table :data="HouseDoorCard" border stripe>
             <el-table-column property="linkHouse" align="center" label="关联房屋"></el-table-column>
             <el-table-column property="createTime" align="center" label="创建时间"></el-table-column>
             <el-table-column align="center" label="状态">
@@ -570,7 +570,7 @@
           </el-table>
         </el-tab-pane>
         <el-tab-pane label="通行记录" name="fourth">
-           <el-table :data="HousePeopleRecordList">
+           <el-table :data="HousePeopleRecordList" border stripe>
             <el-table-column property="name" align="center" label="姓名"></el-table-column>
             <el-table-column property="passTime" align="center" label="通过时间"></el-table-column>
             <el-table-column align="center" label="状态">

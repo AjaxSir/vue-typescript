@@ -32,7 +32,7 @@
     <el-row :gutter="10">
       <el-col :span="24" class="table-col">
         <div class="rightContent">
-          <el-table border :data="tableData" style="width: 100%">
+          <el-table border stripe :data="tableData" style="width: 100%">
             <el-table-column type="index" align="center" label="序号" width="50"></el-table-column>
             <el-table-column prop="name" align="center" label="食堂名称">
               <template slot-scope="scope">

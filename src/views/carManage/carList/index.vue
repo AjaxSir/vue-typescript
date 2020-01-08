@@ -509,7 +509,7 @@
           </el-form>
         </el-tab-pane>
         <el-tab-pane label="通行记录" name="thirdly">
-          <el-table v-loading="passTarget" :data="passList" border style="width: 100%" stripe>
+          <el-table v-loading="passTarget" stripe border :data="passList" style="width: 100%">
             <el-table-column align="center" prop="carNo" label="车牌号" :show-overflow-tooltip="true"></el-table-column>
             <el-table-column
               align="center"

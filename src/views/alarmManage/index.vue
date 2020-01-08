@@ -154,11 +154,11 @@
                 <el-dropdown trigger="click" @command="handleCommand">
                   <span class="el-dropdown-link">
                     <el-tag
-                      type="info"
+                      :type="row.status | statusFilterType"
                       size="small"
                       style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
                       @click="editStatus(row)"
-                    >{{statusFilter(row.status)}}</el-tag>
+                    >{{row.status | statusFilter}}</el-tag>
                   </span>
                   <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item
@@ -426,14 +426,35 @@ const ActionHeader = () => import("@/components/ActionHeader.vue");
     ActionHeader
   },
   filters: {
-    devTypes(val: string) {
+    // devTypes(val: string) {
+    //   const data = {
+    //     "1": "门禁",
+    //     "2": "车禁",
+    //     "3": "注册机",
+    //     "4": "访客机"
+    //   };
+    //   return data[val] + "设备";
+    // },
+    statusFilterType(status: string) {
+      /** @description 状态显示过滤 */
       const data = {
-        "1": "门禁",
-        "2": "车禁",
-        "3": "注册机",
-        "4": "访客机"
+        "1": "danger",
+        "2": "success",
+        "3": "info",
+        "4": "info"
       };
-      return data[val] + "设备";
+      return data[status];
+    },
+
+    statusFilter(status: string) {
+      /** @description 状态显示过滤 */
+      const data = {
+        "1": "待处理",
+        "2": "处理中",
+        "3": "已处理",
+        "4": "忽略"
+      };
+      return data[status];
     }
   }
 })
@@ -444,6 +465,7 @@ export default class VistoryManage extends Vue {
     alarmType: [], //访客类型
     alarmStatus: [] //访客状态
   }; //根据关键字查询
+
   initForm: object = {
     //获取访客名单列表url
     url: "/admin/usr-visitor/",
@@ -464,24 +486,24 @@ export default class VistoryManage extends Vue {
     alarmStatus: ""
   };
 
-  private listQuery: Object = {
-    // 访客目标通行记录翻页
-    total: 0,
-    limit: 10,
-    page: 1
-  };
+  // private listQuery: Object = {
+  //   // 访客目标通行记录翻页
+  //   total: 0,
+  //   limit: 10,
+  //   page: 1
+  // };
 
-  private commandType: string = "all"; //根据访客类型筛选 all默认为显示全部
-  private commandStatus: String = "0"; //根据访客状态  0 默认显示为全部
+  // private commandType: string = "all"; //根据访客类型筛选 all默认为显示全部
+  // private commandStatus: String = "0"; //根据访客状态  0 默认显示为全部
 
-  private interUserDetail: Object = {}; //受访人的身份详细信息
-  private houseInviterDetail: Object = {}; //受访人的房屋信息
-  private passTarget: Boolean = true; //目标访客通行记录的loadding
-  private passList: Array<Object> = []; // 访客目标通行记录
+  // private interUserDetail: Object = {}; //受访人的身份详细信息
+  // private houseInviterDetail: Object = {}; //受访人的房屋信息
+  // private passTarget: Boolean = true; //目标访客通行记录的loadding
+  // private passList: Array<Object> = []; // 访客目标通行记录
 
-  private detailDialogVisible: boolean = false; // 详细信息dialog弹框
-  private visitorDialogForm: Object = {}; // 访客详情
-  private activeName: string = "first"; //目标访客详细信息 tab Title
+  // private detailDialogVisible: boolean = false; // 详细信息dialog弹框
+  // private visitorDialogForm: Object = {}; // 访客详情
+  // private activeName: string = "first"; //目标访客详细信息 tab Title
 
   updateArray: Array<string> = ["noteStatus"];
   noteString: string = ""; // 修改的备注
@@ -504,7 +526,7 @@ export default class VistoryManage extends Vue {
   alarmStatus: Array<Object> = [
     //车辆类型筛选
     {
-      label: "未读",
+      label: "待处理",
       value: "1"
     },
     {
@@ -521,31 +543,12 @@ export default class VistoryManage extends Vue {
     }
   ];
 
-  pickOptionStart: object = {}; //按照时间段查询的开始时间
-  pickOptionEnd: object = {}; //按照时间段查询的结束时间
+  // pickOptionStart: object = {}; //按照时间段查询的开始时间
+  // pickOptionEnd: object = {}; //按照时间段查询的结束时间
 
-  passMethod(val) {
-    /**@description 过滤通行方式 */
-    switch (val) {
-      case "1":
-        return "人脸开门";
-      case "2":
-        return "二维码开门";
-      case "3":
-        return "蓝牙开门";
-      case "4":
-        return "远程开门";
-      case "5":
-        return "密码开门";
-      case "6":
-        return "刷卡开门";
-      case "7":
-        return "WIFI开门";
-    }
-  }
   pickerOptions: Object = {};
   dateRange: Array<Object> = [];
-  createDateRange: Array<Object> = [];
+  // createDateRange: Array<Object> = [];
 
   mounted() {
     const _this = this;
@@ -583,34 +586,20 @@ export default class VistoryManage extends Vue {
     ); // 合并参数
   }
 
-  statusFilter(status) {
-    /** @description 状态显示过滤 */
-    switch (status) {
-      case "1":
-        return "未读";
-      case "2":
-        return "处理中";
-      case "3":
-        return "已处理";
-      case "4":
-        return "忽略";
-    }
-  }
-
-  typeFilter(type) {
-    /**@descripution 过滤邀请人类型*/
-    switch (type) {
-      case "1":
-        return "业主";
-        break;
-      case "2":
-        return "租户";
-        break;
-      case "3":
-        return "家庭成员";
-        break;
-    }
-  }
+  // typeFilter(type) {
+  //   /**@descripution 过滤邀请人类型*/
+  //   switch (type) {
+  //     case "1":
+  //       return "业主";
+  //       break;
+  //     case "2":
+  //       return "租户";
+  //       break;
+  //     case "3":
+  //       return "家庭成员";
+  //       break;
+  //   }
+  // }
 
   refreshInfo() {
     /**@description 刷新数据 */

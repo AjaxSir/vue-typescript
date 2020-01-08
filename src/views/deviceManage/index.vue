@@ -136,7 +136,7 @@
           </el-form>
         </el-tab-pane>
         <el-tab-pane v-if='detailDialogForm.type === "1" || detailDialogForm.type === "2"' label="门禁记录" name="second">
-          <el-table :data="doorRecordTable" style="width: 100%">
+          <el-table :data="doorRecordTable" style="width: 100%" stripe border>
             <el-table-column align="center" prop="name" label="姓名" width="150px"></el-table-column>
             <el-table-column :show-overflow-tooltip='true' align="center" prop="passTime" label="通行时间" width="150px"></el-table-column>
             <el-table-column :show-overflow-tooltip='true' align="center" prop="devAddress" label="通行地址"></el-table-column>
