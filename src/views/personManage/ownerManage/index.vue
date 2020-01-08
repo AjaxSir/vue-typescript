@@ -101,11 +101,11 @@
           <el-table
             :data="list_data"
             border
-            stripe
             highlight-current-row
             v-loading="showLoading"
             height="65vh"
             :span-method="objectSpanMethod"
+            :row-class-name="tabRowClassName"
             @selection-change="handleSelectionChange"
             @cell-mouse-enter="enterRowChange"
             @cell-mouse-leave="leaveRowChange"
@@ -400,7 +400,7 @@
         </el-tab-pane>
 
         <el-tab-pane label="通行记录" name="second">
-          <el-table :data="dtailTable" style="width: 100%">
+          <el-table :data="dtailTable" border stripe style="width: 100%">
             <el-table-column prop="name" align="center" label="姓名" width="150px"></el-table-column>
             <el-table-column
               prop="passTime"
@@ -430,29 +430,32 @@
           ></el-pagination>
         </el-tab-pane>
         <el-tab-pane label="车辆信息" name="third">
-          <el-table :data="carDtailTable" style="width: 100%">
+          <el-table :data="carDtailTable" border stripe style="width: 100%">
             <el-table-column prop="carNo" align="center" label="车牌号"></el-table-column>
             <el-table-column prop="carType" align="center" label="车辆类型"></el-table-column>
             <el-table-column prop="modal" align="center" label="型号"></el-table-column>
             <el-table-column align="center" label="照片">
               <template slot-scope="{row}">
-                <img v-if='row.photo' :src="row.photo" alt />
+                <img v-if="row.photo" :src="row.photo" alt />
                 <span v-else></span>
               </template>
             </el-table-column>
           </el-table>
         </el-tab-pane>
         <el-tab-pane label="房屋信息" name="five">
-          <el-table :data="houseDtailTable" style="width: 100%">
+          <el-table :data="houseDtailTable" stripe border style="width: 100%">
             <el-table-column
               align="center"
               :show-overflow-tooltip="true"
               prop="serialNumber"
               label="房屋编号"
             >
-            <template slot-scope="{row}">
-              <el-button @click='showHouseDetail(row)' type='text'>{{ row.groupName }} - {{ row.buildingName }} - {{ row. serialNumber}}</el-button>
-            </template>
+              <template slot-scope="{row}">
+                <el-button
+                  @click="showHouseDetail(row)"
+                  type="text"
+                >{{ row.groupName }} - {{ row.buildingName }} - {{ row. serialNumber}}</el-button>
+              </template>
             </el-table-column>
 
             <el-table-column align="center" label="用户类型">
@@ -494,7 +497,7 @@
           </el-table>
         </el-tab-pane>
         <el-tab-pane label="人脸库信息" name="six">
-          <el-table :data="faceList" border style="width: 100%">
+          <el-table :data="faceList" stripe border style="width: 100%">
             <el-table-column align="center" width="50" type="index" label="编号"></el-table-column>
             <el-table-column
               :show-overflow-tooltip="true"
@@ -808,7 +811,7 @@
 
                 <!-- <el-form-item style="margin-bottom:0" label="业主电话:">
                   <span>{{houseDetailDialog.phone || ''}}</span>
-                </el-form-item> -->
+                </el-form-item>-->
 
                 <el-form-item style="margin-bottom:0" label="备注信息:">
                   <span>{{ houseDetailDialog.note || '' }}</span>
@@ -818,7 +821,7 @@
           </el-form>
         </el-tab-pane>
         <el-tab-pane label="在住人员" name="在住人员">
-          <el-table v-loading="showLoading" :data="HouseDtailTable" style="width: 100%">
+          <el-table v-loading="showLoading" stripe border :data="HouseDtailTable" style="width: 100%">
             <el-table-column
               align="center"
               width="50"
@@ -862,7 +865,7 @@
               prop="createTime"
               label="操作"
               :key="Math.random()"
-               v-if="globalUpdateStatus"
+              v-if="globalUpdateStatus"
             >
               <template slot-scope="scope">
                 <el-button type="text" @click="deleteHousePeople(scope.row, scope.$index)">删除</el-button>
@@ -896,7 +899,11 @@ import {
 } from "@/api/peopleApi.ts";
 import _axios from "@/plugins/axios.js";
 import mixin from "@/config/minxins";
-import { searchSuggestHouse, deleteTheHousePeople, getRegisterPeople } from "@/api/houseApi.ts";
+import {
+  searchSuggestHouse,
+  deleteTheHousePeople,
+  getRegisterPeople
+} from "@/api/houseApi.ts";
 import { getUserPropertyPass, getFaceList } from "@/api/peopleApi.ts";
 import {
   queryUserPhone //根据手机号模糊查询住户
@@ -915,7 +922,7 @@ const ExportIn = () => import("@/components/exportIn/index.vue");
     ExportIn
   },
   filters: {
-     status(val: string) {
+    status(val: string) {
       const data = {
         "1": "自住",
         "2": "出租",
@@ -1019,11 +1026,11 @@ export default class OwnerManage extends Vue {
     data: [],
     message: "此操作将永久删除选中的住户, 删除后住户将不存在,请谨慎操作!"
   };
-  houseDetailDialog: object = {}
+  houseDetailDialog: object = {};
   loading: boolean = false;
   phoneList: Array<object> = [];
   nameDisabled: boolean = false;
-  HouseDtailTable: Array<object> = [] // 房屋下的注册人员
+  HouseDtailTable: Array<object> = []; // 房屋下的注册人员
   visible: boolean = false; // 批量导入状态
   updateArray: Array<string> = ["noteStatus", "phoneStatus"];
   rules: any = {
@@ -1120,26 +1127,30 @@ export default class OwnerManage extends Vue {
   }
   // 用户详情页 点击房屋编号查看更多信息
   showHouseDetail(row) {
-    console.log(row)
-    this.HouseDialogFormVisible = true
-    this.houseDetailDialog = Object.assign({}, row)
-    this.houseActiveName = '详细信息'
+    console.log(row);
+    this.HouseDialogFormVisible = true;
+    this.houseDetailDialog = Object.assign({}, row);
+    this.houseActiveName = "详细信息";
     getRegisterPeople(row.houseId).then(res => {
       this.HouseDtailTable = res.data.data;
     });
   }
   // 删除房屋下的某个用户
   deleteHousePeople(row, index) {
-    this.$confirm(`此操作将永久删除该房屋下的住户,删除后${row.userName}将不与该房屋绑定,请谨慎操作!?`, "提示", {
-      confirmButtonText: "确定",
-      cancelButtonText: "取消",
-      type: "warning"
-    })
+    this.$confirm(
+      `此操作将永久删除该房屋下的住户,删除后${row.userName}将不与该房屋绑定,请谨慎操作!?`,
+      "提示",
+      {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      }
+    )
       .then(() => {
-        deleteTheHousePeople(row.houseId, row.userId, ' ').then(res => {
+        deleteTheHousePeople(row.houseId, row.userId, " ").then(res => {
           if (res.data.code === 200) {
-            this.HouseDtailTable.splice(index, 1)
-            this.fetchData(this.initForm)
+            this.HouseDtailTable.splice(index, 1);
+            this.fetchData(this.initForm);
           }
           // getRegisterPeople(this.houseId).then(res => {
           //   this.dtailTable = res.data.data;
@@ -1148,7 +1159,7 @@ export default class OwnerManage extends Vue {
         });
       })
       .catch(() => {
-        this['message']('error', '已取消删除')
+        this["message"]("error", "已取消删除");
       });
   }
   async remoteMethod(query: string, cb) {
@@ -1480,6 +1491,15 @@ export default class OwnerManage extends Vue {
       }
     });
   }
+
+  tabRowClassName({ row, rowIndex }) {
+    let index = row.indexSort + 1;
+    if (row.indexSort % 2 == 0) {
+      return "info-row";
+    }
+    return "";
+  }
+
   // 合并单元格
   objectSpanMethod({ row, column, rowIndex, columnIndex }) {
     if (
@@ -1498,6 +1518,7 @@ export default class OwnerManage extends Vue {
       };
     }
   }
+
   /*** row 列表数据 查看详情*/
   showDetail(row, index, indexSort) {
     this.userId = row.id;

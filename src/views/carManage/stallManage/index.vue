@@ -645,7 +645,7 @@
         </el-tab-pane>
 
         <el-tab-pane label="通行记录" name="second">
-          <el-table :data="dtailTable" style="width: 100%" border v-loading="dtailTableLoading">
+          <el-table :data="dtailTable" stripe border style="width: 100%"  v-loading="dtailTableLoading">
             <el-table-column prop="ownerName" align="center" label="姓名" width="150px">
               <template slot-scope="{row}">
                 <p class="boder-style-dialog">{{row.ownerName}}</p>
@@ -686,7 +686,7 @@
           ></el-pagination>
         </el-tab-pane>
         <el-tab-pane label="车辆信息" name="third">
-          <el-table :data="carDtailTable" style="width: 100%" border v-loading="dtailTableLoading">
+          <el-table :data="carDtailTable" style="width: 100%;" border stripe v-loading="dtailTableLoading">
             <el-table-column prop="carNo" align="center" label="车牌号">
               <template slot-scope="{row}">
                 <p class="boder-style-dialog">{{row.carNo}}</p>
@@ -781,7 +781,7 @@
           ></el-pagination>-->
         </el-tab-pane>
         <el-tab-pane label="人脸库信息" name="six">
-          <el-table :data="faceList" border style="width: 100%" v-loading="dtailTableLoading">
+          <el-table :data="faceList" border stripe style="width: 100%" v-loading="dtailTableLoading">
             <el-table-column align="center" width="50" type="index" label="编号"></el-table-column>
             <el-table-column
               :show-overflow-tooltip="true"

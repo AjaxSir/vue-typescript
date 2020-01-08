@@ -42,12 +42,14 @@
       <el-col :span="rowSpan.row2" class="table-col">
         <div class="rightContent">
           <el-table :data="list_data"
+          stripe
+          border
           v-loading='showLoading'
           height="65vh"
           @selection-change="handleSelectionChange"
           @cell-mouse-enter="enterRowChange"
           @cell-mouse-leave="leaveRowChange"
-          border>
+          >
             <el-table-column v-if='globalUpdateStatus' type="selection" align="center"></el-table-column>
             <el-table-column type="index" width="60" align="center" class="indexNum" label="编号">
               <template slot-scope="scope">

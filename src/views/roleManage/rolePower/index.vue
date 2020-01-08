@@ -76,7 +76,7 @@
     </el-row>
     <!-- 权限弹框 -->
     <el-dialog :close-on-click-modal='false' class="dialog-rewrite" title="权限修改" :visible.sync="dialogTableVisible">
-      <el-table height="300px" :data="roleData">
+      <el-table height="300px" stripe border :data="roleData">
         <el-table-column align="center" label="权限名称" width="200">
           <template slot-scope="{row}">{{ row.meta && row.meta.title }}</template>
         </el-table-column>

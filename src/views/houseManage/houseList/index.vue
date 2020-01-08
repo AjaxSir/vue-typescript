@@ -276,8 +276,8 @@
             </el-row>
           </el-form>
         </el-tab-pane>
-        <el-tab-pane label="在住人员" name="在住人员">
-          <el-table v-loading="showLoading" :data="dtailTable" style="width: 100%">
+        <el-tab-pane label="在住人员"  name="在住人员">
+          <el-table v-loading="showLoading" stripe :data="dtailTable" style="width: 100%">
             <el-table-column
               align="center"
               width="50"
@@ -339,7 +339,7 @@
           </el-table>
         </el-tab-pane>
         <el-tab-pane label="门禁卡" name="门禁卡">
-          <el-table v-loading="showLoading" :data="cardList" style="width: 100%">
+          <el-table v-loading="showLoading" stripe :data="cardList" style="width: 100%">
             <el-table-column
               align="center"
               width="50"
@@ -444,7 +444,7 @@
           </el-form>
         </el-tab-pane>
         <el-tab-pane label="通行记录" name="second">
-          <el-table border :data="personPassTable" style="width: 100%">
+          <el-table border stripe :data="personPassTable" style="width: 100%">
             <el-table-column prop="name" align="center" label="姓名" width="150px"></el-table-column>
             <el-table-column prop="passTime" :show-overflow-tooltip="true" align="center" label="通行时间"></el-table-column>
             <el-table-column prop="inOut" align="center" label="出入类型" width="100px"></el-table-column>
@@ -469,7 +469,7 @@
           ></el-pagination>
         </el-tab-pane>
         <el-tab-pane label="车辆信息" name="third">
-          <el-table border :data="carDtailTable" style="width: 100%">
+          <el-table border stripe :data="carDtailTable" style="width: 100%">
             <el-table-column prop="carNo" align="center" label="车牌号"></el-table-column>
             <el-table-column prop="carType" align="center" label="车辆类型"></el-table-column>
             <el-table-column prop="modal" align="center" label="型号"></el-table-column>
@@ -482,7 +482,7 @@
           </el-table>
         </el-tab-pane>
         <el-tab-pane label="房屋信息" name="five">
-          <el-table border :data="houseDtailTable" style="width: 100%">
+          <el-table border stripe :data="houseDtailTable" style="width: 100%">
             <el-table-column
               align="center"
               :show-overflow-tooltip="true"
@@ -534,7 +534,7 @@
           </el-table>
         </el-tab-pane>
         <el-tab-pane label="人脸库信息" name="six">
-          <el-table :data="faceList" border style="width: 100%">
+          <el-table :data="faceList" border stripe style="width: 100%">
             <el-table-column align="center" width="50" type="index" label="编号"></el-table-column>
             <el-table-column
               :show-overflow-tooltip="true"

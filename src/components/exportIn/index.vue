@@ -39,7 +39,7 @@
       </span>
     </el-dialog>
     <el-dialog title="失败详情" width="1000px" :visible.sync="dialogTableVisible">
-      <el-table height="300px" border :data="errData">
+      <el-table height="300px" stripe border :data="errData">
         <el-table-column
           v-if="uploadUrl.indexOf('/admin/usrUser/import') !== -1 || uploadUrl.indexOf('/admin/usrUser/PropertyManager/import') !== -1"
           :show-overflow-tooltip="true"

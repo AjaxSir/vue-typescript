@@ -212,7 +212,7 @@
           </el-row>
         </el-tab-pane>
         <el-tab-pane label="通行记录" name="通行记录">
-          <el-table :data="dtailTable" style="width: 100%">
+          <el-table :data="dtailTable" stripe border style="width: 100%">
             <el-table-column align="center" prop="name" label="姓名" width="150px"></el-table-column>
             <el-table-column align="center" prop="date" label="通行时间" width="150px"></el-table-column>
             <el-table-column align="center" prop="address" label="通行地址"></el-table-column>
