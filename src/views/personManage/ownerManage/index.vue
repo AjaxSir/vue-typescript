@@ -193,6 +193,16 @@
               prop="house_info"
               :show-overflow-tooltip="true"
               align="center"
+              label="APP用户"
+            >
+              <template slot-scope="{row}">
+                <span>{{ row.type === '2' ? '是' : '否' }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="house_info"
+              :show-overflow-tooltip="true"
+              align="center"
               label="所属楼栋"
             >
               <template slot-scope="{row}">
@@ -803,7 +813,7 @@
                 </el-form-item>
 
                 <el-form-item style="margin-bottom:0" label="房屋状态:">
-                  <span>{{houseDetailDialog.status | status}}</span>
+                  <span>{{houseDetailDialog.houseStatus | status}}</span>
                 </el-form-item>
 
                 <!-- <el-form-item style="margin-bottom:0" label="业主电话:">
@@ -870,6 +880,61 @@
             </el-table-column>
           </el-table>
         </el-tab-pane>
+        <el-tab-pane label="门禁卡" name="门禁卡">
+          <el-table :data="cardList" style="width: 100%">
+            <el-table-column
+              align="center"
+              width="50"
+              :show-overflow-tooltip="true"
+              type="index"
+              label="序号"
+            ></el-table-column>
+            <el-table-column
+              align="center"
+              :show-overflow-tooltip="true"
+              prop="cardNo"
+              label="卡号"
+            >
+            </el-table-column>
+            <el-table-column
+              align="center"
+              :show-overflow-tooltip="true"
+              prop="createTime"
+              label="添加时间"
+            ></el-table-column>
+
+            <el-table-column
+              align="center"
+              :show-overflow-tooltip="true"
+              prop="validDate"
+              label="过期时间"
+            ></el-table-column>
+
+            <el-table-column :show-overflow-tooltip="true" align="center" prop="note" label="状态">
+              <template slot-scope="{row}">
+                <span>{{ row.status === '0' ? "正常" : (row.status === '-2' ? "禁用" : "过期" ) }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column
+              align="center"
+              :show-overflow-tooltip="true"
+              prop="count"
+              label="累计刷卡次数"
+            ></el-table-column>
+            <el-table-column
+              align="center"
+              :show-overflow-tooltip="true"
+              prop="createTime"
+              label="操作"
+            >
+            <template slot-scope="scope">
+              <el-button type='text' @click='unbindCard(scope.row, scope.$index)'>
+              解绑</el-button>
+            </template>
+
+              </el-table-column>
+          </el-table>
+        </el-tab-pane>
       </el-tabs>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" size="small" @click="HouseDialogFormVisible = false">确 定</el-button>
@@ -896,7 +961,12 @@ import {
 } from "@/api/peopleApi.ts";
 import _axios from "@/plugins/axios.js";
 import mixin from "@/config/minxins";
-import { searchSuggestHouse, deleteTheHousePeople, getRegisterPeople } from "@/api/houseApi.ts";
+import {
+  searchSuggestHouse,
+  deleteTheHousePeople,
+  getRegisterPeople,
+  deleteDoorCard,
+  getCardListByHouseId } from "@/api/houseApi.ts";
 import { getUserPropertyPass, getFaceList } from "@/api/peopleApi.ts";
 import {
   queryUserPhone //根据手机号模糊查询住户
@@ -975,6 +1045,7 @@ export default class OwnerManage extends Vue {
   private detailDialog: Object = {
     note: ""
   };
+  cardList: Array<object> = [] //门禁卡列表
   env: string = process.env.NODE_ENV;
   phoneString: string = ""; // 需要改成的电话
   noteString: string = ""; // 需要改成的备注
@@ -1118,6 +1189,22 @@ export default class OwnerManage extends Vue {
         this["message"]("error", "已取消删除");
       });
   }
+  // 解绑门禁卡
+  unbindCard(row, index) {
+    this.$confirm(`此操作将永久解绑该房屋下的此张门禁卡,解绑后将不与该房屋绑定,请谨慎操作!?`, "提示", {
+      confirmButtonText: "确定",
+      cancelButtonText: "取消",
+      type: "warning"
+    })
+      .then(() => {
+        deleteDoorCard([row.id]).then(res => {
+          this.cardList.splice(index, 1)
+        })
+      })
+      .catch(() => {
+        this['message']('error', '已取消删除')
+      });
+  }
   // 用户详情页 点击房屋编号查看更多信息
   showHouseDetail(row) {
     console.log(row)
@@ -1127,6 +1214,10 @@ export default class OwnerManage extends Vue {
     getRegisterPeople(row.houseId).then(res => {
       this.HouseDtailTable = res.data.data;
     });
+    // 获取门禁卡列表
+    getCardListByHouseId(row.houseId).then(res => {
+      this.cardList = res.data.data
+    })
   }
   // 删除房屋下的某个用户
   deleteHousePeople(row, index) {
@@ -1141,10 +1232,6 @@ export default class OwnerManage extends Vue {
             this.HouseDtailTable.splice(index, 1)
             this.fetchData(this.initForm)
           }
-          // getRegisterPeople(this.houseId).then(res => {
-          //   this.dtailTable = res.data.data;
-          //   this.fetchData(this.initForm)
-          // });
         });
       })
       .catch(() => {
