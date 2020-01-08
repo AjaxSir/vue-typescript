@@ -80,15 +80,16 @@ export default class GlobalMimins extends Vue {
     const rightCon = document.getElementById('rightCon') as HTMLElement
     const e = window.event || arguments[0]
     const x = e.clientX
+    console.log(x)
     if (x <= 380) {
       tzDicv.style.left = '210px'
     } else {
-      tzDicv.style.left = x - 174 + 'px'
+      tzDicv.style.left = x - 170 + 'px'
     }
     if ((x - 166) < 216) {
       leftCon.style.width = 216 + 'px'
     } else   {
-      leftCon.style.width = x - 180 + 'px'
+      leftCon.style.width = x - 164 + 'px'
     }
     rightCon.style.width = `calc(100% - ${x - 180}px)`
   }
