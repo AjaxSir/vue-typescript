@@ -730,6 +730,7 @@
             value-format="yyyy-MM-dd HH:mm:ss"
             v-model="updateHouseForm.overTime"
             type="datetime"
+            :picker-options="pickerOptions"
             placeholder="选择日期"
           ></el-date-picker>
         </el-form-item>
@@ -1093,6 +1094,11 @@ export default class OwnerManage extends Vue {
     data: [],
     message: "此操作将永久删除选中的住户, 删除后住户将不存在,请谨慎操作!"
   };
+  pickerOptions: object = {
+        disabledDate(time) {
+        return time.getTime() < Date.now();
+      }
+    } // 添加用户 房屋的时间限制
   houseDetailDialog: object = {};
   loading: boolean = false;
   phoneList: Array<object> = [];
