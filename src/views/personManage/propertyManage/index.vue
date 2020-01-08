@@ -30,26 +30,29 @@
         </ActionHeader>
       </el-col>
     </el-row>
-    <el-row :gutter="10">
-      <el-col :span="rowSpan.row1">
-        <DataTree
-         @fetchData='fetchData'
-          :page='page'
-          :initFormHeader='initForm'
-         @fetchRoleGroup='fetchRoleGroup'
-         :TreeData='TreeData' :type='"role"' />
-      </el-col>
-      <el-col :span="rowSpan.row2" class="table-col">
-        <div class="rightContent">
-          <el-table :data="list_data"
-          stripe
-          border
-          v-loading='showLoading'
-          height="65vh"
-          @selection-change="handleSelectionChange"
-          @cell-mouse-enter="enterRowChange"
-          @cell-mouse-leave="leaveRowChange"
-          >
+    <div class="components-container">
+      <split-pane split="vertical"   @resize="resize" :min-percent="10" :default-percent="rowSpan">
+        <template slot="paneL">
+          <div class="leftContent">
+            <DataTree
+              @fetchData='fetchData'
+              :page='page'
+              :initFormHeader='initForm'
+              @fetchRoleGroup='fetchRoleGroup'
+              :TreeData='TreeData' :type='"role"' />
+          </div>
+        </template>
+        <template slot="paneR">
+          <div class="rightContent">
+            <el-table :data="list_data"
+            stripe
+            border
+            v-loading='showLoading'
+            height="65vh"
+            @selection-change="handleSelectionChange"
+            @cell-mouse-enter="enterRowChange"
+            @cell-mouse-leave="leaveRowChange"
+            >
             <el-table-column v-if='globalUpdateStatus' type="selection" align="center"></el-table-column>
             <el-table-column type="index" width="60" align="center" class="indexNum" label="编号">
               <template slot-scope="scope">
@@ -151,19 +154,20 @@
             <el-table-column width="200" :show-overflow-tooltip='true' prop="createTime" align="center" label="创建时间"></el-table-column>
           </el-table>
           <el-pagination
-        @current-change='pageChange'
-        :current-page="page.page"
-        :page-size="page.limit"
-        style="margin-top:10px;" background layout="prev, pager, next" :total="page.total"></el-pagination>
-        <div :class="rowSpan.row1===3 ? menuControl1 : menuControl2" @click="menuVisible">
-          <p class="close-menu">
-            <i v-if="rowSpan.row1===3" class="iconfont icon-left icon-class"></i>
-            <i v-else class="iconfont icon-zuo icon-class"></i>
-          </p>
+          @current-change='pageChange'
+          :current-page="page.page"
+          :page-size="page.limit"
+          style="margin-top:10px;" background layout="prev, pager, next" :total="page.total"></el-pagination>
+        <div style="z-index:9;" :class="rowSpan===12 ? menuControl1 : menuControl2" @click="menuVisible">
+              <p class="close-menu">
+                <i v-if="rowSpan===12" class="iconfont icon-left icon-class"></i>
+                <i v-else class="iconfont icon-zuo icon-class"></i>
+              </p>
+            </div>
         </div>
-        </div>
-      </el-col>
-    </el-row>
+        </template>
+      </split-pane>
+    </div>
     <el-dialog :close-on-click-modal='false' width="650px" :title="Dialog.name" :visible.sync="dialogFormVisible">
       <el-tabs v-model="activeName" type='card'>
         <el-tab-pane label="详细信息" name="first">
@@ -332,13 +336,15 @@ import mixin from "@/config/minxins";
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 const DataTree = () => import("@/components/DataTree.vue");
 const ExportIn = () => import("@/components/exportIn/index.vue");
+import splitPane from "vue-splitpane";
 
 @Component({
   mixins: [mixin],
   components: {
     ActionHeader,
     DataTree,
-    ExportIn
+    ExportIn,
+    splitPane
   },
   filters: {
     passMethod(val: string) {
@@ -358,10 +364,7 @@ export default class PropertyManage extends Vue {
   private activeName: string = "first";
   private dialogFormVisible: boolean = false;
   private title: string = "详情";
-  private rowSpan: any = {
-    row1: 3,
-    row2: 21
-  };
+  private rowSpan: number = 12;
   env: string =  process.env.NODE_ENV
   private menuControl1: String = "menu-control";
   private menuControl2: String = "menu-visible";
@@ -456,18 +459,13 @@ export default class PropertyManage extends Vue {
   }
   menuVisible() {
     /**@description 控制楼栋 */
-    if (this.rowSpan.row1 === 3) {
-      this.rowSpan = {
-        row1: 0,
-        row2: 24
-      };
+    if (this.rowSpan === 0) {
+      this.rowSpan = 12;
     } else {
-      this.rowSpan = {
-        row1: 3,
-        row2: 21
-      };
+      this.rowSpan = 0;
     }
   }
+  resize() {}
   // 改变物业人员权限组
   changeGroupRole(Obj: object) {
     changeRoleGroup(Obj['Status'], Obj['id']).then(res => {
@@ -643,10 +641,6 @@ export default class PropertyManage extends Vue {
   height: 30px;
   text-align: right;
 }
-.leftContent {
-  flex: none;
-  width: 200px;
-}
 .rightContent {
   flex: 1;
   box-shadow: 0px 6px 5px 0px lightgray;
@@ -697,5 +691,9 @@ export default class PropertyManage extends Vue {
   &:nth-child(2), &:nth-child(3), &:nth-child(5), &:nth-child(6){
     width: 30%;
   }
+}
+.components-container {
+  position: relative;
+  height: 65vh;
 }
 </style>

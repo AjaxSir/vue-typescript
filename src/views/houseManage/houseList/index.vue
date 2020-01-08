@@ -57,20 +57,22 @@
         </action-header>
       </el-col>
     </el-row>
-    <el-row :gutter="10" id='rowCon'>
-      <el-col id='leftCon' :span="rowSpan.row1">
-        <data-tree
-          @fetchData="fetchData"
-          :page="page"
-          :initFormHeader="initForm"
-          @getHouseTreeData="getHouseTreeData"
-          :TreeData="TreeData"
-        />
-      </el-col>
-
-      <el-col id='rightCon' :span="rowSpan.row2" class="table-col">
-        <div class="rightContent">
-          <el-table
+    <div class="components-container">
+      <split-pane split="vertical" @resize="resize" :min-percent="10" :default-percent="rowSpan">
+        <template slot="paneL">
+          <div class="leftContent">
+            <data-tree
+              @fetchData="fetchData"
+              :page="page"
+              :initFormHeader="initForm"
+              @getHouseTreeData="getHouseTreeData"
+              :TreeData="TreeData"
+            />
+          </div>
+        </template>
+        <template slot="paneR">
+          <div class="rightContent">
+            <el-table
             :data="list_data"
             stripe
             border
@@ -167,17 +169,16 @@
             layout="prev, pager, next"
             :total="page.total"
           ></el-pagination>
-           <!-- @click="menuVisible" -->
-
-        </div>
-      </el-col>
-      <div id='tzDiv' :class="rowSpan.row1===3 ? menuControl1 : menuControl2">
-            <p class="close-menu">
-              <i v-if="rowSpan.row1===3" class="iconfont icon-left icon-class"></i>
-              <i v-else class="iconfont icon-zuo icon-class"></i>
-            </p>
+            <div style="z-index:9;" :class="rowSpan===12 ? menuControl1 : menuControl2" @click="menuVisible">
+              <p class="close-menu">
+                <i v-if="rowSpan===12" class="iconfont icon-left icon-class"></i>
+                <i v-else class="iconfont icon-zuo icon-class"></i>
+              </p>
+            </div>
           </div>
-    </el-row>
+        </template>
+      </split-pane>
+    </div>
     <!-- 新建房屋 -->
     <el-dialog
       :close-on-click-modal="false"
@@ -589,6 +590,7 @@ import {
 } from "@/api/houseApi.ts";
 import { getUserPropertyCar } from "@/api/carApi.ts";
 import { getUserPropertyPass, getFaceList, updateUserNote } from "@/api/peopleApi.ts";
+import splitPane from "vue-splitpane";
 
 const ActionHeader = () => import("@/components/ActionHeader.vue");
 const DataTree = () => import("@/components/DataTree.vue");
@@ -597,7 +599,8 @@ const DataTree = () => import("@/components/DataTree.vue");
   mixins: [mixin],
   components: {
     ActionHeader,
-    DataTree
+    DataTree,
+    splitPane
   },
   filters: {
     status(val: string) {
@@ -638,10 +641,7 @@ const DataTree = () => import("@/components/DataTree.vue");
   }
 })
 export default class CardManage extends Vue {
-  private rowSpan: any = {
-    row1: 3,
-    row2: 21
-  };
+  private rowSpan: number = 12;
   initForm: object = {
     url: "/admin/hsHouse/list",
     method: "get"
@@ -827,6 +827,7 @@ export default class CardManage extends Vue {
       input.focus();
     });
   }
+  resize() {}
   // 查看房屋的具体信息
   showHouseDetails(row) {
     this.dialogFormVisible = true;
@@ -954,16 +955,10 @@ export default class CardManage extends Vue {
 
   menuVisible() {
     /**@description 控制楼栋 */
-    if (this.rowSpan.row1 === 3) {
-      this.rowSpan = {
-        row1: 0,
-        row2: 24
-      };
+    if (this.rowSpan === 0) {
+      this.rowSpan = 12;
     } else {
-      this.rowSpan = {
-        row1: 3,
-        row2: 21
-      };
+      this.rowSpan = 0;
     }
   }
 }
@@ -995,7 +990,7 @@ export default class CardManage extends Vue {
 .menu-control {
   position: absolute;
   top: 32vh;
-  left: 210px;
+  left: -10px;
 }
 
 .menu-visible {
@@ -1020,5 +1015,9 @@ export default class CardManage extends Vue {
   line-height: 48px;
   position: absolute;
   left: -1px;
+}
+.components-container {
+  position: relative;
+  height: 65vh;
 }
 </style>
