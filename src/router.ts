@@ -3,6 +3,8 @@ import Router from "vue-router";
 // 路由懒加载
 const _import_ = (file: string) => () => import(`@/views/${file}.vue`);
 import Layout from '@/views/layout/index.vue'
+import errorPage404 from '@/views/errorPage/404.vue'
+
 Vue.use(Router);
 
 export const constantRouterMap = [
@@ -27,7 +29,13 @@ export const constantRouterMap = [
         icon: 'monitor'
       }
     }]
-  }
+  },
+  {
+    path: '*',
+    name: '404',
+    component: errorPage404,
+    hidden: true
+  },
 ]
 
 export const asyncRoute = [

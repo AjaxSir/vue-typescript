@@ -3,7 +3,10 @@
     <div class="fun-data">
       <div class="data-statistics" v-for="(item, index) in routes" :key="index">
         <div class="fun-title" v-if="!item.hidden && item.children">
-          <div @click='showChildren(item.children, item.meta.title, item.path)' v-if="item.meta && item.meta.title && !noDialog(item.name)">
+          <div
+            @click="showChildren(item.children, item.meta.title, item.path)"
+            v-if="item.meta && item.meta.title && !noDialog(item.name)"
+          >
             <div class="item">
               <div class="sing-svg" :style="{backgroundColor: item.meta.bg_color}">
                 <i v-if="item.meta && item.meta.icon" :class="['iconfont', item.meta.icon]"></i>
@@ -25,15 +28,19 @@
       </div>
     </div>
     <el-dialog
-    center
+      width="500px"
+      style="overflow: hidden"
+      center
       :title="title"
       :visible.sync="dialogVisible"
-      width="500px"
-      style='overflow: hidden'
-      :before-close="handleClose">
+      :before-close="handleClose"
+    >
       <div class="data-statistics childMenu" v-for="(item, index) in childrenRoute" :key="index">
         <div class="fun-title" v-if="!item.hidden">
-          <router-link v-if="item.meta && !item.meta.hidden && item.meta.title" :to='{path: item.parentPath + "/" + item.path}'>
+          <router-link
+            v-if="item.meta && !item.meta.hidden && item.meta.title"
+            :to="{path: item.parentPath + '/' + item.path}"
+          >
             <div class="item">
               <div class="sing-svg" :style="{backgroundColor: item.meta.bg_color}">
                 <i v-if="item.meta && item.meta.icon" :class="['iconfont', item.meta.icon]"></i>
@@ -48,41 +55,41 @@
 </template>
 
 <script lang='ts'>
-import { Component, Vue } from 'vue-property-decorator'
-import { Getter } from 'vuex-class'
+import { Component, Vue } from "vue-property-decorator";
+import { Getter } from "vuex-class";
 
 @Component
 export default class ActionManage extends Vue {
-  dialogVisible: boolean = false
-  title: string = ''
-  childrenRoute: Array<Object> = []
-  @Getter('router') router:Array<object>
+  dialogVisible: boolean = false;
+  title: string = "";
+  childrenRoute: Array<Object> = [];
+  @Getter("router") router: Array<object>;
   get routes() {
     // const NewRoute = [].concat(this.$router['options'].routes)
     this.router.forEach((ele, index) => {
-      if(ele['name'] === 'vistor') {
-        this.router.splice(index, 1)
+      if (ele["name"] === "vistor") {
+        this.router.splice(index, 1);
       }
-    })
-    return this.router
-    }
+    });
+    return this.router;
+  }
   handleClose() {
-    this.dialogVisible = false
+    this.dialogVisible = false;
   }
   showChildren(childRoute: Array<Object>, title: string, parentPath: string) {
-    this.title = title
+    this.title = title;
     childRoute.forEach(element => {
-      element['parentPath'] = parentPath
+      element["parentPath"] = parentPath;
     });
-    this.childrenRoute = childRoute
-    this.dialogVisible = true
+    this.childrenRoute = childRoute;
+    this.dialogVisible = true;
   }
   // 大屏统计 报表管理 访客登记 不需弹框
   noDialog(routeName) {
-    const noDialogList = ['screen', 'vistor', 'inform', 'device']
-    return noDialogList.includes(routeName)
+    const noDialogList = ["screen", "vistor", "inform", "device",'alarm'];
+    return noDialogList.includes(routeName);
   }
-};
+}
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
@@ -118,14 +125,14 @@ p {
 .fun-title {
   font-size: 14px;
   white-space: nowrap;
-  &:hover{
+  &:hover {
     cursor: pointer;
   }
 }
 
 .item-text {
   font-size: 16px;
-  margin-top:5px;
+  margin-top: 5px;
   text-align: center;
   // line-height: 68px;
   // margin-left: 20px;
@@ -156,7 +163,7 @@ p {
     0 4px 20px 0 rgba(0, 0, 0, 0.12), 0 7px 8px -5px rgba(244, 67, 54, 0.2);
   border-radius: 5px;
 }
-.childMenu{
+.childMenu {
   display: inline-block;
 }
 </style>
