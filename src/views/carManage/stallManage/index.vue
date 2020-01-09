@@ -298,6 +298,7 @@
               layout="prev, pager, next"
               :total="page.total"
             ></el-pagination>
+
             <div style="z-index:9;" :class="rowSpan===12 ? menuControl1 : menuControl2" @click="menuVisible">
               <p class="close-menu">
                 <i v-if="rowSpan===12" class="iconfont icon-left icon-class"></i>
@@ -2042,27 +2043,5 @@ export default class CardManage extends Vue {
 .components-container {
   position: relative;
   height: 65vh;
-}
-
-.left-container {
-  background-color: #f38181;
-  height: 100%;
-}
-
-.right-container {
-  background-color: #fce38a;
-  height: 200px;
-}
-
-.top-container {
-  background-color: #fce38a;
-  width: 100%;
-  height: 100%;
-}
-
-.bottom-container {
-  width: 100%;
-  background-color: #95e1d3;
-  height: 100%;
 }
 </style>
