@@ -79,7 +79,7 @@
             <el-table-column prop="birthday" :show-overflow-tooltip='true' width="120" align="center" label="出生日期"></el-table-column>
             <el-table-column prop="sex" width="120" align="center" label="性别">
               <template slot-scope="{row}">
-                <span>{{ row.sex === '1' ? '男' : '女' }}</span>
+               <span>{{ row.sex === '1' ? '男' : row.sex === '0' ? '女' : '' }}</span>
               </template>
             </el-table-column>
             <el-table-column prop="cardName" :show-overflow-tooltip='true' align="center" label="证件类型"></el-table-column>
@@ -172,7 +172,9 @@
       <el-tabs v-model="activeName" type='card'>
         <el-tab-pane label="详细信息" name="first">
           <div class="singleInfo"><span class="right">姓名: </span>&nbsp;&nbsp;{{ Dialog.name }}</div>
-          <div class="singleInfo"><span class="right">性别: </span>&nbsp;&nbsp;{{ Dialog.sex === '1' ? '男' : '女' }}</div>
+          <div class="singleInfo"><span class="right">性别: </span>&nbsp;&nbsp;
+          <span>{{ Dialog.sex === '1' ? '男' : Dialog.sex === '0' ? '女' : '' }}</span>
+          </div>
           <div class="singleInfo"><span class="right">出生日期: </span>&nbsp;&nbsp;{{ Dialog.birthday || '' }}</div>
           <div class="singleInfo"><span class="right">身份证号: </span>&nbsp;&nbsp;{{ Dialog.cardNo }}</div>
           <div class="singleInfo"><span class="right">年龄: </span>&nbsp;&nbsp;{{ Dialog.age }}</div>
@@ -416,9 +418,9 @@ export default class PropertyManage extends Vue {
     name: [
             { required: true, message: '请输入名称', trigger: 'blur' }
           ],
-          sex: [
-            { required: true, message: '请选择性别', trigger: 'change' }
-          ],
+          // sex: [
+          //   { required: true, message: '请选择性别', trigger: 'change' }
+          // ],
     cardName: [
       { required: true, message: '请选择证件', trigger: 'change' }
     ],

@@ -173,7 +173,7 @@
               label="性别"
             >
               <template slot-scope="{row}">
-                <span>{{ row.sex === '1' ? '男' : '女' }}</span>
+                <span>{{ row.sex === '1' ? '男' : row.sex === '0' ? '女' : '' }}</span>
               </template>
             </el-table-column>
             <el-table-column prop="img" align="center" width="100" label="注册人脸">
@@ -340,16 +340,6 @@
                 <span>{{ row.house[0] && row.house[0].createTime }}</span>
               </template>
             </el-table-column>
-            <!-- <el-table-column
-              prop="detail"
-              :show-overflow-tooltip="true"
-              align="center"
-              label="房屋备注"
-            >
-              <template slot-scope="{row}">
-                <span>{{ row.house[0] && row.house[0].note }}</span>
-              </template>
-            </el-table-column>-->
           </el-table>
         </div>
         <el-pagination
@@ -380,7 +370,7 @@
                 </el-form-item>
 
                 <el-form-item style="margin-bottom:0" label="性别:">
-                  <span>{{ detailDialog.sex === '1' ? '男' : '女' }}</span>
+                  <span>{{ detailDialog.sex === '1' ? '男' : detailDialog.sex === '0' ? '女' : '' }}</span>
                 </el-form-item>
 
                 <el-form-item style="margin-bottom:0" label="手机号:">
@@ -408,7 +398,6 @@
             </el-row>
           </el-form>
         </el-tab-pane>
-
         <el-tab-pane label="通行记录" name="second">
           <el-table :data="dtailTable" border stripe style="width: 100%">
             <el-table-column prop="name" align="center" label="姓名" width="150px"></el-table-column>
@@ -588,8 +577,6 @@
             </template>
           </el-autocomplete>
         </el-form-item>
-        <!-- <el-row>
-        <el-col :span="12">-->
         <el-form-item style="margin-bottom:16px;" label="姓名:" prop="name">
           <el-input
             :disabled="nameDisabled"
@@ -599,8 +586,6 @@
             placeholder="输入姓名"
           ></el-input>
         </el-form-item>
-        <!-- </el-col>
-        <el-col :span="12">-->
         <el-form-item style="margin-bottom:16px;" label="性别:" prop="sex">
           <el-select
             style="width:100%"
@@ -614,11 +599,17 @@
             <el-option label="女" value="0"></el-option>
           </el-select>
         </el-form-item>
-        <!-- </el-col>
-        </el-row>-->
-
-        <!-- <el-row>
-        <el-col :span="Form.otherCardName === '其它' ? 12 : 24">-->
+        <el-form-item   class="float" label="出生日期:"  prop='birthday'>
+          <el-date-picker
+            style="width: 320px"
+            v-model="Form.birthday"
+            type="date"
+            format='yyyy - MM - dd'
+            :picker-options="pickerOptionsUser"
+            value-format="yyyy-MM-dd"
+            placeholder="选择日期">
+          </el-date-picker>
+        </el-form-item>
         <el-form-item style="margin-bottom:16px;" label="证件类型:" prop="otherCardName">
           <el-select
             style="width:100%"
@@ -1072,6 +1063,7 @@ export default class OwnerManage extends Vue {
     phone: "",
     house: [],
     note: "",
+    birthday: '',
     houseName: "",
     otherCardName: "身份证"
   };
@@ -1099,6 +1091,11 @@ export default class OwnerManage extends Vue {
         return time.getTime() < Date.now();
       }
     } // 添加用户 房屋的时间限制
+    pickerOptionsUser: object = {
+        disabledDate(time) {
+        return time.getTime() > Date.now();
+      }
+    }
   houseDetailDialog: object = {};
   loading: boolean = false;
   phoneList: Array<object> = [];
@@ -1108,8 +1105,11 @@ export default class OwnerManage extends Vue {
   updateArray: Array<string> = ["noteStatus", "phoneStatus"];
   rules: any = {
     name: [{ required: true, message: "请输入姓名", trigger: "blur" }],
-    sex: [{ required: true, message: "请选择性别", trigger: "change" }],
+    // sex: [{ required: true, message: "请选择性别", trigger: "change" }],
     cardName: [{ required: true, message: "请填入证件名", trigger: "change" }],
+    // birthday: [
+    //   { required: true, message: '请选择出生年月', trigger: 'change' }
+    // ],
     phone: [
       {
         required: true,
@@ -1303,6 +1303,7 @@ export default class OwnerManage extends Vue {
       ? item.cardName
       : "其它";
     this.Form["cardName"] = item.cardName;
+    this.Form["birthday"] = item.birthday;
     this.Form["cardNo"] = item.cardNo;
     this.nameDisabled = true;
     // } else {

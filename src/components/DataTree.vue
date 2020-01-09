@@ -52,12 +52,10 @@
       >
         <span>
           {{ node.label }}
-          <!-- <i v-show='selectId === node.data.id' class="el-icon-check"></i> -->
         </span>
         <div style="position:relative">
           <el-dropdown v-if="UpdateStatus" @command="commandTreeClick" placement="bottom-start">
             <i v-show="node.id===showMenu" class="iconfont icon-menu"></i>
-
             <el-dropdown-menu v-if="type === 'house'" slot="dropdown">
               <el-dropdown-item
                 v-if="
@@ -917,6 +915,14 @@ export default class DataTree extends Vue {
     this.bindDeviceList = this.unConfirmDeviceList;
     this.bindDeviceListVisible = false;
   }
+  // 递归查询分组id
+  // checkoutGroupId(list: Array<object>, groupId: string, addObj: object) {
+  //   list.forEach(item => {
+  //     if(groupId === item['id']) {
+  //       return item['sonBuildGroups'] && item['sonBuildGroups'].push(addObj)
+  //     } else
+  //   })
+  // }
   // 确定添加/修改单元楼
   addUpdateUnitConfim() {
     this.$refs["buildings"]["validate"](valid => {

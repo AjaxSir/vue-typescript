@@ -104,7 +104,7 @@
               </template>
             </el-table-column>
 
-            <el-table-column class="serial-num" align="center" prop="name" label="所属楼栋">
+            <el-table-column :show-overflow-tooltip="true" class="serial-num" align="center" prop="name" label="所属楼栋">
               <template slot-scope="scope">
                 <span>{{scope.row.groupName}}</span>
               </template>
