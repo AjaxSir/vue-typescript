@@ -396,6 +396,102 @@
               </el-table-column>
           </el-table>
         </el-tab-pane>
+        <el-tab-pane label="车位信息" name="车位信息">
+          <el-table stripe :data="carList" style="width: 100%">
+            <el-table-column
+                align="center"
+                prop="carSpaceGroupName"
+                label="所属分组"
+                :show-overflow-tooltip="true"
+                max-width="120"
+              ></el-table-column>
+
+              <el-table-column
+                align="center"
+                prop="serialNumber"
+                width="200px"
+                :show-overflow-tooltip="true"
+                label="编号"
+              ></el-table-column>
+
+              <el-table-column
+                width="120"
+                align="center"
+                label="状态"
+                :show-overflow-tooltip="true"
+              >
+                <template slot-scope="{row}">
+                    <span class="el-dropdown-link">
+                      <el-tag
+                        type="info"
+                        size="small"
+                        style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
+                      >{{ row.status ? row.status :''}}</el-tag>
+                    </span>
+                </template>
+              </el-table-column>
+
+              <el-table-column
+                prop="ownerName"
+                width="120"
+                align="center"
+                label="业主"
+                :show-overflow-tooltip="true"
+              >
+                <template slot-scope="scope">
+                  <span>{{ scope.row.ownerName }}</span>
+                </template>
+              </el-table-column>
+
+              <el-table-column
+                prop="carSpaceTypeName"
+                width="120"
+                align="center"
+                label="车位类型"
+                :show-overflow-tooltip="true"
+              >
+                <template slot-scope="{row}">
+                    <span class="el-dropdown-link">
+                      <el-tag
+                        type="info"
+                        size="small"
+                        style="border-radius: 50px;padding: 0 10px; cursor: pointer;"
+                      >{{ row.carSpaceTypeName ? row.carSpaceTypeName :''}}</el-tag>
+                    </span>
+                </template>
+              </el-table-column>
+
+              <el-table-column
+                prop="carNo"
+                align="center"
+                label="绑定车辆"
+                :show-overflow-tooltip="true"
+              >
+                <template slot-scope="scope">
+                  <el-button
+                    v-if="scope.row.status!=='未售（闲置）'"
+                    @click="bindingPlates(scope.row)"
+                    type="text"
+                  >
+                    <!-- style="width: 100px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" -->
+                    <div v-if="scope.row.carSpaceVos && scope.row.carSpaceVos.length > 0">
+                      <span
+                        v-for="(item,index) in scope.row.carSpaceVos"
+                        :key="'carSpaceVos' + index"
+                      >
+                        {{item.carNo}}
+                        <span
+                          v-if="scope.row.carSpaceVos"
+                        >{{scope.row.carSpaceVos.length > 1 && index===scope.row.carSpaceVos.length-1? '': ','}}</span>
+                      </span>
+                    </div>
+                    <span v-else></span>
+                  </el-button>
+                  <p style="height:40px;line-height:40px" v-else></p>
+                </template>
+              </el-table-column>
+          </el-table>
+        </el-tab-pane>
       </el-tabs>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" size="small" @click="dialogFormVisible = false">确 定</el-button>
@@ -590,6 +686,7 @@ import {
 } from "@/api/houseApi.ts";
 import { getUserPropertyCar } from "@/api/carApi.ts";
 import { getUserPropertyPass, getFaceList, updateUserNote } from "@/api/peopleApi.ts";
+import { getCarStallByUserId } from "@/api/carApi.ts";
 import splitPane from "vue-splitpane";
 
 const ActionHeader = () => import("@/components/ActionHeader.vue");
@@ -727,6 +824,7 @@ export default class CardManage extends Vue {
     id: ''
   }
   cardList: Array<object> = [] // 门禁卡列表
+  carList: Array<object> = [] // 车位信息列表
   ComponentCommand(houseStatus: string, row: object) {
     return {
       ...row,
@@ -802,10 +900,6 @@ export default class CardManage extends Vue {
             this.dtailTable.splice(index, 1)
             this.fetchData(this.initForm)
           }
-          // getRegisterPeople(this.houseId).then(res => {
-          //   this.dtailTable = res.data.data;
-          //   this.fetchData(this.initForm)
-          // });
         });
       })
       .catch(() => {
@@ -837,11 +931,25 @@ export default class CardManage extends Vue {
     // 获取在住人员
     getRegisterPeople(row.id).then(res => {
       this.dtailTable = res.data.data;
+      let userList: Array<string> = []
+      this.dtailTable.forEach(ele => {
+        userList.push(ele['scenceUserId'])
+      })
+      // 获取车位信息列表
+      if (userList.length > 1) {
+        getCarStallByUserId(userList).then(res => {
+          this.carList = res.data.data
+        })
+      } else {
+        this.carList = []
+      }
+
     });
     // 获取门禁卡列表
     getCardListByHouseId(row.id).then(res => {
       this.cardList = res.data.data
     })
+
   }
   // 解绑门禁卡
   unbindCard(row, index) {

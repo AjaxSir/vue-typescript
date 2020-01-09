@@ -199,42 +199,6 @@
             label-position="right"
             style="margin:20px 40px 0 0;"
           >
-            <!-- <el-form-item label="序号:" prop='serialNumber' >
-          <el-input clearable @input='autoName'  placeholder="填写分组的序号" style="width:240px" v-model="HouseForm.serialNumber" autocomplete="off"></el-input>
-            </el-form-item>-->
-            <!-- <el-form-item label="单位:" prop='serialNumberUnit' >
-          <el-select @change='autoName' style="width:110px" v-model="HouseForm.serialNumberUnit" placeholder="请选择">
-            <el-option
-              v-for="item in Tags"
-              :key="item.name"
-              :label="item.name"
-              :value="item.name">
-            </el-option>
-          </el-select>
-          <el-button @click='showUnitSetting = !showUnitSetting'>单元设置</el-button>
-            <div v-if='showUnitSetting'>
-              <el-tag
-              style="margin-left:5px"
-                :key="index"
-                v-for="(tag, index) in Tags"
-                closable
-                :disable-transitions="false"
-                @close="deleteTag(tag, 'group')">
-                {{tag.name}}
-              </el-tag>
-              <el-input
-                class="input-new-tag"
-                v-if="newTag"
-                v-model="newTagValue"
-                ref="saveTagInput"
-                size="small"
-                @keyup.enter.native="handleInputConfirm('group')"
-                @blur="handleInputConfirm('group')"
-              >
-              </el-input>
-              <el-button v-else class="button-new-tag" size="small" @click="showInput">添加单位</el-button>
-            </div>
-            </el-form-item>-->
             <el-form-item label="别名:" prop="name">
               <el-input
                 clearable
@@ -265,43 +229,6 @@
         label-position="right"
         style="margin:20px 40px 0 0;"
       >
-        <!-- <el-form-item label="序号:" prop='serialNumber' >
-          <el-input clearable @input='autoName'  placeholder="填写分组的序号" style="width:240px" v-model="HouseForm.serialNumber" autocomplete="off"></el-input>
-        </el-form-item>-->
-        <!-- <el-form-item label="单位:" prop='serialNumberUnit' >
-          <el-select @change='autoName' style="width:110px" v-model="HouseForm.serialNumberUnit" placeholder="请选择">
-            <el-option
-              v-for="item in Tags"
-              :key="item.name"
-              :label="item.name"
-              :value="item.name">
-            </el-option>
-          </el-select>
-          <el-button @click='showUnitSetting = !showUnitSetting'>分组单元设置</el-button>
-            <div v-if='showUnitSetting'>
-              <el-tag
-              style="margin-left:5px"
-                :key="index"
-                v-for="(tag, index) in Tags"
-                closable
-                :disable-transitions="false"
-                @close="deleteTag(tag, 'group')">
-                {{tag.name}}
-              </el-tag>
-              <el-input
-                class="input-new-tag"
-                v-if="newTag"
-                v-model="newTagValue"
-                ref="saveTagInput"
-                size="small"
-                 clearable
-                @keyup.enter.native="handleInputConfirm('group')"
-                @blur="handleInputConfirm('group')"
-              >
-              </el-input>
-              <el-button v-else class="button-new-tag" size="small" @click="showInput">添加单位</el-button>
-            </div>
-        </el-form-item>-->
         <el-form-item label="别名:" prop="name">
           <el-input
             clearable
@@ -313,7 +240,7 @@
         </el-form-item>
         <el-form-item label="备注:" prop="note">
           <el-input
-            placeholder="填写分组的备注信息"
+            placeholder="填写分组的备注信息1"
             maxlength="200"
             type="textarea"
             v-model="HouseForm.note"
@@ -351,45 +278,7 @@
             v-model="UnitForm.name"
             autocomplete="off"
           ></el-input>
-          <!-- <el-input style='width:50px' v-model="UnitForm.max" autocomplete="off"></el-input> -->
         </el-form-item>
-        <!-- <el-form-item v-if='!this.UnitForm.id' label="序号:" prop='serialNumber' >
-        <el-input clearable style="width:280px" v-model="UnitForm.serialNumber" autocomplete="off"></el-input>-->
-        <!-- <el-input style='width:50px' v-model="UnitForm.max" autocomplete="off"></el-input> -->
-        <!-- </el-form-item> -->
-        <!-- <el-form-item v-if='!this.UnitForm.id' label="序号单位:" prop='serialNumberUnit' >
-          <el-select style="width:140px" v-model="UnitForm.serialNumberUnit" placeholder="请选择">
-            <el-option
-              v-for="item in UnitTags"
-              :key="item.name"
-              :label="item.name"
-              :value="item.name">
-            </el-option>
-          </el-select>
-          <el-button @click='showUnitSetting = !showUnitSetting'>单位设置</el-button>
-            <div v-if='showUnitSetting'>
-              <el-tag
-              style="margin-left:5px"
-                :key="index"
-                v-for="(tag, index) in UnitTags"
-                closable
-                :disable-transitions="false"
-                @close="deleteTag(tag, 'build')">
-                {{tag.name}}
-              </el-tag>
-              <el-input
-                class="input-new-tag"
-                v-if="newTag"
-                v-model="newTagValue"
-                ref="saveTagInput"
-                size="small"
-                 clearable
-                @blur="handleInputConfirm('build')"
-              >
-              </el-input>
-              <el-button v-else class="button-new-tag" size="small" @click="showInput">添加单位</el-button>
-            </div>
-        </el-form-item>-->
         <el-form-item label="楼层数:" prop="storeyNum" >
           <el-input
             clearable
@@ -605,6 +494,7 @@ export default class DataTree extends Vue {
     }
   })
   TreeData: Array<Object>;
+  groupId: string = ''
   // private data: Array<Object> =
   @Prop({
     default: () => {
@@ -916,24 +806,37 @@ export default class DataTree extends Vue {
     this.bindDeviceListVisible = false;
   }
   // 递归查询分组id
-  // checkoutGroupId(list: Array<object>, groupId: string, addObj: object) {
-  //   list.forEach(item => {
-  //     if(groupId === item['id']) {
-  //       return item['sonBuildGroups'] && item['sonBuildGroups'].push(addObj)
-  //     } else
-  //   })
-  // }
+  checkoutGroupId(list: Array<object>, addObj: object, type: string) {
+    list.forEach((item, index) => {
+      if(this.groupId === item['id']) {
+        switch (type) {
+          case 'add':
+            item['sonBuildGroups'] && item['sonBuildGroups'].push(addObj)
+            break
+          case 'update':
+            this.$set(item, 'name', addObj['name'])
+            this.$set(item, 'storeyNum', addObj['storeyNum'])
+            this.$set(item, 'houseNum', addObj['houseNum'])
+            break
+          case 'delete':
+            list.splice(index, 1)
+        }
+      } else {
+        item['sonBuildGroups'] && item['sonBuildGroups'].length > 0 && this.checkoutGroupId(item['sonBuildGroups'], addObj, type)
+      }
+    })
+  }
   // 确定添加/修改单元楼
   addUpdateUnitConfim() {
     this.$refs["buildings"]["validate"](valid => {
       if (valid) {
         if (!this.UnitForm["id"]) {
-          // console.log('confirm', this.UnitForm)
           addBuilding(this.UnitForm).then(res => {
             if (res.data.code === 200) {
               message('success', '添加成功')
+              let obj = Object.assign({ sonBuildGroups: null, type: 'building' }, res.data.data)
+              this.checkoutGroupId(this.TreeData, obj, 'add')
               this.HouseUnitVisible = false;
-              this.$emit("getHouseTreeData");
             }
           });
         } else {
@@ -941,7 +844,9 @@ export default class DataTree extends Vue {
             if (res.data.code === 200) {
               message('success', '修改成功')
               this.HouseUnitVisible = false;
-              this.$emit("getHouseTreeData");
+              let obj = Object.assign({ sonBuildGroups: null, type: 'building' }, this.UnitForm)
+              this.checkoutGroupId(this.TreeData, obj, 'update')
+              // this.$emit("getHouseTreeData");
             }
           });
         }
@@ -996,17 +901,20 @@ export default class DataTree extends Vue {
           if (res.data.code === 200) {
             this.closeDialog();
             message('success', '添加成功')
-            // this.checkParent(this.TreeData, res.data.data)
-            this.$emit("getHouseTreeData");
+            let obj = Object.assign({ sonBuildGroups: [], type: 'group' }, res.data.data)
+            this.checkoutGroupId(this.TreeData, obj, 'add')
+            // this.$emit("getHouseTreeData");
             this.HouseVisible = false;
           }
         });
       } else if (this.nodeAction === "updateGroup") {
         updateHouseGroup(this.HouseForm).then(res => {
           if (res.data.code === 200) {
-            this.closeDialog();
             message('success', '修改成功')
-            this.$emit("getHouseTreeData");
+            let obj = Object.assign({ sonBuildGroups: [], type: 'group' }, this.HouseForm)
+            console.log(obj)
+            this.checkoutGroupId(this.TreeData, obj, 'update')
+            this.closeDialog();
             this.HouseVisible = false;
           }
         });
@@ -1135,6 +1043,7 @@ export default class DataTree extends Vue {
    */
   commandTreeClick(treeData) {
     console.log(treeData)
+    this.groupId = treeData.data.id
     this.nodeAction = treeData.action;
     switch (treeData.action) {
       case "addGroup":
@@ -1157,7 +1066,8 @@ export default class DataTree extends Vue {
             deleteHouseGroup(treeData.data.id).then((res: any) => {
               if (res.data.code === 200) {
                 message('success', '删除成功')
-                this.$emit("getHouseTreeData");
+                // this.$emit("getHouseTreeData");
+                this.checkoutGroupId(this.TreeData, {}, 'delete')
                 this.HouseVisible = false;
               }
             });
@@ -1225,7 +1135,7 @@ export default class DataTree extends Vue {
             deleteBuilding(treeData.data.id).then((res: any) => {
               if (res.data.code === 200) {
                 message('success', '删除成功')
-                this.$emit("getHouseTreeData");
+                this.checkoutGroupId(this.TreeData, {}, 'delete')
               }
             });
           })

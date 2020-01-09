@@ -35,7 +35,7 @@ export const constantRouterMap = [
     name: '404',
     component: errorPage404,
     hidden: true
-  },
+  }
 ]
 
 export const asyncRoute = [

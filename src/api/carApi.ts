@@ -159,6 +159,17 @@ export function editStall(data: any) {
   })
 }
 
+// 通过用户id查询车位信息
+export function getCarStallByUserId(userList:Array<string>) {
+  return _axios({
+    url: '/admin/car-space/search-user',
+    method: 'get',
+    params: {
+      userList
+    }
+  })
+}
+
 //查询车牌
 export function querycarno(params: any) {
   return _axios({
