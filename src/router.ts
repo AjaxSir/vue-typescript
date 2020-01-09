@@ -29,12 +29,6 @@ export const constantRouterMap = [
         icon: 'monitor'
       }
     }]
-  },
-  {
-    path: '*',
-    name: '404',
-    component: errorPage404,
-    hidden: true
   }
 ]
 
@@ -470,6 +464,12 @@ export const asyncRoute = [
       }
     ]
   },
+  // {
+  //   path: '*',
+  //   name: '404',
+  //   component: _import_('/errorPage/404'),
+  //   hidden: true
+  // },
   //---------------------------
   // {
   //   path: '/pass',
