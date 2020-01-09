@@ -6,6 +6,15 @@
         <p class="header-title">一石智能识别门禁系统</p>
       </div>
       <div class="header-left header-right">
+        <div class="menu-item">
+          未读警报
+          <!-- "/watchlist/black-record" -->
+          <router-link to>
+            <el-badge :value="warningCount" :max="9999">
+              <i class="iconfont icon-jingbao"></i>
+            </el-badge>
+          </router-link>
+        </div>
         <div>
           <i class="iconfont icon-icon-user"></i>
         </div>
@@ -27,7 +36,7 @@
 <script lang='ts'>
 import { Component, Vue } from "vue-property-decorator";
 import { clearCookie } from "@/utils/cookie";
-import { Getter } from 'vuex-class'
+import { Getter } from "vuex-class";
 import Breadcrumb from "@/components/Breadcrumb/index.vue";
 
 @Component({
@@ -36,10 +45,9 @@ import Breadcrumb from "@/components/Breadcrumb/index.vue";
   }
 })
 export default class Navbar extends Vue {
-  @Getter('name') name: string
-  created() {
-
-  }
+  @Getter("name") name: string;
+  private warningCount: any = 0;
+  created() {}
   logout() {
     this.$router.push({ path: "/login" });
     clearCookie();
@@ -87,14 +95,23 @@ p {
 .header-right {
   margin-top: 40px;
 }
-.iconfont {
+
+.menu-item{
+  // color: #909399;
+}
+
+.iconfont.icon-jingbao {
+  font-size: 26px;
+}
+
+.iconfont.icon-icon-user {
   padding: 5px;
   font-size: 20px;
   color: #fff;
   background: rgb(235, 137, 27);
   border-radius: 50%;
   margin-right: 5px;
-  margin-left: 15px;
+  margin-left: 20px;
 }
 .logout {
   margin-left: 10px;
