@@ -937,7 +937,7 @@
       :uploadUrl="env === 'production' ? 'http://47.103.184.184/admin/car-space/import' : '/v1/admin/car-space/import'"
       downTemplateUrl="/admin/car-space/export"
       @closeVisible="closeVisible"
-      TmplateName="车位导出模板.xlsx"
+      TmplateName="车位导入模板.xlsx"
       @successUpload="fetchData(initForm)"
       :visible.sync="visible"
     />
