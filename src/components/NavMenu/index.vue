@@ -120,7 +120,7 @@ export default class NavMenu extends Vue {
     return this.router;
   }
   @Watch("$route", { immediate: true })
-  routeChange(n, o) {
+  routeChange(n, o){
     this.locRoute = n.path;
     this.active = this.locRoute;
   }

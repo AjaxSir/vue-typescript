@@ -4,6 +4,7 @@ const state: stateType = {
   name: getName(),
   token: getToken(),
   permissionList: [],
-  router: []
+  router: [],
+  total: 0
 }
 export default state

@@ -84,7 +84,7 @@
               </template>
             </el-table-column>
 
-            <el-table-column align="center" prop="houseName" label="关联房屋"></el-table-column>
+            <el-table-column align="center"  :show-overflow-tooltip="true" prop="houseName" label="关联房屋"></el-table-column>
 
             <el-table-column
               align="center"
@@ -253,6 +253,7 @@
             style="width:100%"
             v-model="Form.validDate"
             type="date"
+            :picker-options="options"
             placeholder="选择过期日期"
           ></el-date-picker>
         </el-form-item>
@@ -385,8 +386,6 @@ export default class CardManage extends Vue {
   }
   /// 修改门禁卡过期时间
   validDateChange(date: string, id: string) {
-    console.log(date, id);
-    // const date1 = formatTimeObj(date)
     cardvalidDateChange({ date, id })
       .then((res: any) => {
         if (res.data.code === 200) {
@@ -454,7 +453,7 @@ export default class CardManage extends Vue {
       if (res.data.code === 200) {
         this['message']('success', `创建成功`)
         this.fetchData(this.initForm);
-        this["dialogCreate"] = false;
+        this['handleClose']()
       }
     });
   }

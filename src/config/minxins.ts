@@ -1,6 +1,6 @@
 // import axiosConfig from './axios';
-import { Vue, Component } from "vue-property-decorator";
-import { Getter } from 'vuex-class'
+import { Vue, Component, Watch } from "vue-property-decorator";
+import { Getter, Action } from 'vuex-class'
 import { MessageBox } from 'element-ui';
 import _axios from '@/plugins/axios.js'
 import Cookie from 'js-cookie'
@@ -15,11 +15,12 @@ declare module 'vue/types/vue' {
 @Component
 export default class GlobalMimins extends Vue {
   public page: any = {
-    total: 1,
+    total: 2,
     page: 1,
     limit: 10,
   }
   @Getter('permissionList') permissionList: Array<string>
+  @Action("SET_TOTAL") set_total: any;
   globalUpdateStatus: boolean = true // 是否具有修改权限
   public dialogCreate: any = false
   public notifyInstance: any; //防止notify重复多次出现提示
@@ -46,6 +47,7 @@ export default class GlobalMimins extends Vue {
     url: '',
     method: 'delete'
   }
+  firstStatus: boolean = true // 第一次加载数据
   leftDistrict: number
   dw: number
   mounted() {
@@ -70,7 +72,7 @@ export default class GlobalMimins extends Vue {
         }
       }
       this.page.limit = Number(option['params'].limit)
-      console.log('mixins获取数据')
+      // console.log('mixins获取数据')
       this.showLoading = true;
       _axios(option).then((res: any) => {
         if (res.data && res.data.data) {
@@ -82,14 +84,21 @@ export default class GlobalMimins extends Vue {
                 })
                 this.$set(ele, 'showMenu', false)
               })
+              if(this.firstStatus){
+                this.set_total(res.data.data.length)
+              }
               this.page.total = res.data.data.length
               this.list_data = res.data.data
-              console.log(this.list_data)
+              this.firstStatus = false
+              // console.log(this.list_data)
             }
           } else {
+            if(this.firstStatus){
+              this.set_total(res.data.data.total)
+            }
             this.page.total = res.data.data.total
             this.list_data = res.data.data.records
-
+            this.firstStatus = false
             if (option['params'].status) {
               this.groupDisable = true;
             } else {

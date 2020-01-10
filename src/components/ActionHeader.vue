@@ -73,8 +73,10 @@
             </div>
           </transition>
         </div>
-
-        <span class="total">总共:{{ total }}条</span>
+        <el-tag v-if='hasProty' closable @close='clearFilterFormfresh'>
+          查询 <span style="color:red"> {{ total }} </span>条结果
+          </el-tag>
+        <span class="total">总共:{{ allTotal }}条</span>
 
         <i
           v-if="pageStatus"
@@ -125,7 +127,7 @@ import { exportList } from "@/api/user.ts";
   components: {}
 })
 export default class ActionManage extends Vue {
-  @Prop() private total: any; // 显示总共多少条记录
+  @Prop() private total: any; // 显示筛选多少条记录
   @Prop({ default: 1 }) btnStatus: Number; //  btnStatus: 0 表示没有创建导出按钮 1 创建按钮 2 导出按钮
   @Prop({ default: false }) addDisabled: Boolean;
   @Prop({ default: false }) houseStatus: boolean; // 住宅管理才显示
@@ -142,6 +144,7 @@ export default class ActionManage extends Vue {
   initFormHeader: object; // 初始化的地址 方式
   addUpdateStatus: boolean = true; // 是否具有修改权限
   @Getter("permissionList") permissionList: Array<string>;
+  @Getter("total") allTotal: Array<string>;
   @Prop({
     default: () => {
       return {};
@@ -259,10 +262,10 @@ export default class ActionManage extends Vue {
     return this.initFormHeader;
   }
   /**
-   * 清空筛选条件
+   * 清空筛选条件 并且刷新列表
    */
   @Emit("fetchData")
-  clearFilterForm() {
+  clearFilterFormfresh() {
     this.hasProty = false
     this.visibleFilter = false;
     this.page["page"] = 1;
@@ -284,6 +287,23 @@ export default class ActionManage extends Vue {
       this.page
     );
     return this.initFormHeader;
+  }
+  // 清空筛选条件 不刷新列表
+  clearFilterForm() {
+    // this.hasProty = false
+    this.visibleFilter = false;
+    this.page["page"] = 1;
+    for(let key in this.filterForm) {
+        if (typeof this.filterForm[key] === 'string') {
+          this.filterForm[key] = ''
+        } else if(this.filterForm[key] === null) {
+          this.filterForm[key] = null
+        } else if (typeof this.filterForm[key] === 'boolean')  {
+          this.filterForm[key] = false
+        } else {
+          this.filterForm[key] = []
+        }
+    }
   }
   /**
    *

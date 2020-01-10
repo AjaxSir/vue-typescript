@@ -19,6 +19,9 @@ const mutation: MutationTree<stateType> = {
   },
   SET_ROUTE(state: stateType, router: Array<object>) {
     state.router = router
+  },
+  SET_TOTAL(state: stateType, total:number) {
+    state.total = total
   }
 }
 export default mutation;

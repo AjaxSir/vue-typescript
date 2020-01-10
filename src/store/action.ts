@@ -27,6 +27,9 @@ const action: ActionTree<stateType, any> = {
   SET_TOKEN({ commit, state: stateType }, token: string) {
     commit('SET_TOKEN', token)
   },
+  SET_TOTAL({ commit, state: stateType }, total: number) {
+    commit('SET_TOTAL', total)
+  },
   SET_PERMISSIONLIST({ commit, state: stateType }, list: Array<object>) {
     return new Promise((resolve, reject) => {
       getRoleList().then((res: any) => {
