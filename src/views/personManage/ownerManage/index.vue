@@ -1738,7 +1738,7 @@ export default class OwnerManage extends Vue {
     this.facePage["page"] = page;
     getFaceList(this.facePage).then(res => {
       this.facePage["total"] = res.data.data.total;
-      this.faceList = res.data.data.records;
+      this.faceList = res.data.data;
     });
   }
 

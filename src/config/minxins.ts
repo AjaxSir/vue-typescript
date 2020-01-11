@@ -15,7 +15,7 @@ declare module 'vue/types/vue' {
 @Component
 export default class GlobalMimins extends Vue {
   public page: any = {
-    total: 2,
+    total: 1,
     page: 1,
     limit: 10,
   }

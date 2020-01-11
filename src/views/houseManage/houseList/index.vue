@@ -854,7 +854,7 @@ export default class CardManage extends Vue {
   // 获取人脸库列表
   fetchFaceList() {
     getFaceList(this.facePage).then(res => {
-      this.faceList = res.data.data.records;
+      this.faceList = res.data.data;
     });
   }
   // 确定修改 备注
